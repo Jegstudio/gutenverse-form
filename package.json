@@ -1,0 +1,49 @@
+{
+  "name": "gutenverse-form",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development & npm run start --prefix gutenverse-core & npm run start:js & npm run start:css",
+    "build": "cross-env NODE_ENV=production & npm run build --prefix gutenverse-core & npm run build:js & npm run build:css",
+    "start:js": "webpack --config .config/webpack.config.dev.js --watch",
+    "build:js": "webpack --config .config/webpack.config.prod.js",
+    "start:css": "gulp watch",
+    "build:css": "gulp build",
+    "development": "cross-env NODE_ENV=development && npm run development --prefix ../gutenverse-core && gulp clean && npm run build && npm run pot && gulp release",
+    "production": "cross-env NODE_ENV=production && npm run production --prefix ../gutenverse-core && gulp clean && npm run build && npm run pot && gulp release",
+    "pot": "wp i18n make-pot ./gutenverse-form ./gutenverse-form/languages/gutenverse-form.pot --domain=gutenverse-form --exclude=\"lib/framework/\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "team@207.148.22.34:/repository/gutenverse-form"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "choices.js": "^10.2.0",
+    "flatpickr": "^4.6.13",
+    "gutenverse-core": "file:gutenverse-core",
+    "react-datepicker": "^4.11.0",
+    "react-feather": "^2.0.10",
+    "umbrellajs": "^3.3.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@wordpress/scripts": "^12.5.0",
+    "concurrently": "^8.0.1",
+    "cross-env": "^7.0.3",
+    "css-mqpacker": "^7.0.0",
+    "cssnano": "^6.0.1",
+    "filemanager-webpack-plugin": "^8.0.0",
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-postcss": "^9.0.1",
+    "gulp-sass": "^5.1.0",
+    "gulp-zip": "^5.1.0",
+    "postcss": "^8.4.23",
+    "sass": "^1.62.1",
+    "webpack": "^5.78.0",
+    "webpack-cli": "^4.10.0"
+  }
+}

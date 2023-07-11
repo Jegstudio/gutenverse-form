@@ -1,0 +1,37 @@
+.guten-form-builder {
+    &.pinned {
+        position: sticky;
+
+        &.fixed {
+            position: fixed;
+        }
+
+        &.sticky-top {
+            top: 0;
+        }
+    
+        &.sticky-bottom {
+            bottom: 0;
+        }
+    }
+
+    .form-notification {
+        width: 100%;
+
+        .notification-body {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 10px;
+
+            &.guten-success {
+                color: #4f8a10;
+                background-color: #dff2bf;
+            }
+
+            &.guten-error {
+                color: #d8000c;
+                background-color: #ffd2d2;
+            }
+        }
+    }
+}

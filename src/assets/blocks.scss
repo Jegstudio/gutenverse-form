@@ -1,0 +1,18 @@
+@import "gutenverse-core/src/assets/mixin";
+@import "gutenverse-core/src/assets/wp-fix";
+
+// Element
+@import "../editor/blocks/form-builder/styles/editor";
+@import "../editor/blocks/form-input-text/styles/editor";
+@import "../editor/blocks/form-input-email/styles/editor";
+@import "../editor/blocks/form-input-number/styles/editor";
+@import "../editor/blocks/form-input-telp/styles/editor";
+@import "../editor/blocks/form-input-date/styles/editor";
+@import "../editor/blocks/form-input-select/styles/editor";
+@import "../editor/blocks/form-input-multiselect/styles/editor";
+@import "../editor/blocks/form-input-textarea/styles/editor";
+@import "../editor/blocks/form-input-switch/styles/editor";
+@import "../editor/blocks/form-input-checkbox/styles/editor";
+@import "../editor/blocks/form-input-radio/styles/editor";
+@import "../editor/blocks/form-input-submit/styles/editor";
+/* reserved line for script, don't delete */

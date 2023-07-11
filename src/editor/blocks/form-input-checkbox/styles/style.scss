@@ -1,0 +1,46 @@
+.guten-form-input-checkbox {
+  .main-wrapper {
+    .gutenverse-inner-input {
+      &.default {
+        label {
+          display: inline-block;
+        }
+      }
+
+      &.block {
+        label {
+          display: block;
+        }
+      }
+    }
+
+    label {
+      display: inline-block;
+      margin-right: 15px;
+
+      input[type="checkbox"] {
+        display: none;
+      }
+
+      .check {
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+        cursor: pointer;
+        font-size: 15px;
+      }
+
+      .check:before {
+        content: "\f0c8";
+        font-family: "Font Awesome 5 Free" !important;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+
+      input:checked + .check:before {
+        content: "\f14a";
+        color: #5f7bff;
+      }
+    }
+  }
+}

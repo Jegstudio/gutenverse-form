@@ -1,0 +1,46 @@
+.guten-form-input-radio {
+  .main-wrapper {
+    .gutenverse-inner-input {
+      &.default {
+        label {
+          display: inline-block;
+        }
+      }
+
+      &.block {
+        label {
+          display: block;
+        }
+      }
+    }
+
+    label {
+      display: inline-block;
+      margin-right: 15px;
+
+      input[type="radio"] {
+        display: none;
+      }
+
+      .radio {
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+        cursor: pointer;
+        font-size: 15px;
+      }
+
+      .radio:before {
+        content: "\f111";
+        font-family: "Font Awesome 5 Free" !important;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+
+      input:checked + .radio:before {
+        content: "\f058";
+        color: #5f7bff;
+      }
+    }
+  }
+}

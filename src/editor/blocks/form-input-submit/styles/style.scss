@@ -1,0 +1,22 @@
+.gutenverse-input-submit-loader,
+.guten-button.gutenverse-input-submit-loader {
+  display: none;
+}
+
+.guten-submit-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.guten-form-builder {
+  &.loading {
+    .gutenverse-input-submit {
+      display: none;
+    }
+
+    .gutenverse-input-submit-loader,
+    .guten-button.gutenverse-input-submit-loader {
+      display: flex;
+    }
+  }
+}

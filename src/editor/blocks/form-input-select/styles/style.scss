@@ -1,0 +1,59 @@
+.guten-form-input {
+  &.input-invalid {
+    .choices {
+      &__inner {
+        border-color: var(--guten-error-text-color);
+      }
+    }
+  }
+
+  .choices__list--multiple {
+    .choices__item {
+      color: var(--guten-txt-alt-color);
+    }
+  }
+
+  .choices {
+    margin-bottom: 0;
+
+    &__inner {
+      background-color: var(--guten-form-bg-color);
+      border-color: var(--guten-form-border-color);
+    }
+
+    &__input {
+      background-color: var(--guten-form-bg-color);
+      border: none;
+      box-shadow: none;
+      font-size: var(--guten-form-font-size);
+
+      &:focus {
+        box-shadow: none;
+        border: none;
+      }
+
+      &::placeholder {
+        color: var(--guten-form-placeholder-color);
+      }
+    }
+
+    &__item {
+      color: var(--guten-form-txt-color);
+      font-size: var(--guten-form-font-size);
+    }
+
+    &__placeholder {
+      color: var(--guten-form-placeholder-color);
+      opacity: 1;
+      font-size: var(--guten-form-font-size);
+    }
+
+    &__button {
+      padding: 1px 6px 1px 16px;
+    }
+
+    &__list--single {
+      padding: 0;
+    }
+  }
+}

@@ -1,0 +1,16 @@
+# Folders to ignore
+build
+vendor
+release
+node_modules
+.idea
+
+gutenverse-form/block
+gutenverse-form/assets/js
+gutenverse-form/assets/css
+gutenverse-form/languages/gutenverse-form.pot
+gutenverse-form/lib/dependencies
+gutenverse-core
+
+# Files to ignore
+package-lock.json

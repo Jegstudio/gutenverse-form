@@ -1,0 +1,103 @@
+.guten-form-input {
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  .input-helper {
+    display: block;
+  }
+
+  .input-label {
+    font-weight: 600;
+    color: $form-bg-txt-color;
+    font-size: $label-font-size;
+    line-height: $line-height-base;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    display: inline-block;
+  }
+
+  .required-badge {
+    color: $error-border-color;
+  }
+
+  .input-helper {
+    font-size: 0.9em;
+    margin-top: 3px;
+    opacity: 0.7;
+    clear: both;
+    font-weight: 400;
+    color: $color-grey-400;
+  }
+
+  .gutenverse-input {
+    width: 100%;
+    max-width: 100%;
+    padding: $input-padding;
+    height: auto;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 2px;
+    background: 0 0;
+    background-color: var(--guten-form-bg-color);
+    border-color: var(--guten-form-border-color);
+    color: var(--guten-form-txt-color);
+    box-shadow: none;
+    box-sizing: border-box;
+    -webkit-transition: all $transition-base;
+    transition: all $transition-base;
+    font-size: var(--guten-form-font-size);
+    line-height: $line-height-base;
+    outline: 0;
+
+    &::placeholder {
+      color: var(--guten-form-placeholder-color);
+    }
+
+    &:focus {
+      box-shadow: none;
+      border-color: var(--guten-form-border-focus);
+    }
+  }
+
+  &.hide-label {
+    .label-wrapper {
+      display: none;
+    }
+
+    .main-wrapper {
+      width: 100%;
+    }
+  }
+
+  .validation-error {
+    display: none;
+    color: $error-border-color;
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  &.input-invalid {
+    input {
+      border-color: $error-border-color;
+    }
+
+    .validation-error {
+      display: block;
+    }
+  }
+}
+
+.guten-input-position- {
+  &left {
+    display: flex;
+
+    .label-wrapper {
+      width: 20%;
+    }
+
+    .main-wrapper {
+      flex-grow: 1;
+    }
+  }
+}
