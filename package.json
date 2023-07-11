@@ -10,8 +10,8 @@
     "build:js": "webpack --config .config/webpack.config.prod.js",
     "start:css": "gulp watch",
     "build:css": "gulp build",
-    "development": "cross-env NODE_ENV=development && npm run development --prefix ../gutenverse-core && gulp clean && npm run build && npm run pot && gulp release",
-    "production": "cross-env NODE_ENV=production && npm run production --prefix ../gutenverse-core && gulp clean && npm run build && npm run pot && gulp release",
+    "development": "cross-env NODE_ENV=development && npm run development --prefix gutenverse-core && gulp clean && npm run build && npm run pot && gulp release",
+    "production": "cross-env NODE_ENV=production && npm run production --prefix gutenverse-core && gulp clean && npm run build && npm run pot && gulp release",
     "pot": "wp i18n make-pot ./gutenverse-form ./gutenverse-form/languages/gutenverse-form.pot --domain=gutenverse-form --exclude=\"lib/framework/\""
   },
   "repository": {
