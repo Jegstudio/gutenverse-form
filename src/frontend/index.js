@@ -1,4 +1,4 @@
-import u from 'umbrellajs';
+import { u } from 'gutenverse-core-frontend';
 import GutenverseFormValidation from './blocks/form-builder';
 import GutenverseInputDate from './blocks/input-date';
 import GutenverseInputSelect from './blocks/input-select';

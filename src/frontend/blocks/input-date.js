@@ -1,6 +1,6 @@
 import { Default } from 'gutenverse-core-frontend';
 import flatpickr from 'flatpickr';
-import u from 'umbrellajs';
+import { u } from 'gutenverse-core-frontend';
 
 class GutenverseInputDate extends Default {
     /* public */
