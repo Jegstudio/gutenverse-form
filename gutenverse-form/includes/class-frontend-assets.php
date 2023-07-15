@@ -43,7 +43,5 @@ class Frontend_Assets {
 			array( 'fontawesome-gutenverse', 'gutenverse-iconlist' ),
 			GUTENVERSE_FORM_VERSION
 		);
-
-		wp_set_script_translations( 'gutenverse-form-frontend', 'gutenverse-form', GUTENVERSE_FORM_LANG_DIR );
 	}
 }

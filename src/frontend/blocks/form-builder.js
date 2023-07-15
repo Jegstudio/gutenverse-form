@@ -1,5 +1,4 @@
-import { Default, u } from 'gutenverse-core-frontend';
-import apiFetch from '@wordpress/api-fetch';
+import { Default, u, apiFetch } from 'gutenverse-core-frontend';
 import isEmpty from 'lodash/isEmpty';
 
 class GutenverseFormValidation extends Default {
@@ -15,6 +14,7 @@ class GutenverseFormValidation extends Default {
         const formBuilder = u(element);
         const formId = formBuilder.data('form-id');
 
+        // Todo: path harus dibenerin
         apiFetch({
             path: 'gutenverse-form-client/v1/form/init',
             method: 'POST',
