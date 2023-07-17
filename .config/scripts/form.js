@@ -4,7 +4,7 @@ const FileManagerPlugin = require("filemanager-webpack-plugin");
 const { output } = require("../config");
 const { stats, plugins } = require("gutenverse-core/.config/config");
 const { externals, coreExternals } = require("gutenverse-core/.config/externals");
-const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extraction-webpack-plugin');
 
 const form = {
     mode: "development",
@@ -29,10 +29,16 @@ const form = {
         new DependencyExtractionWebpackPlugin(),
         new FileManagerPlugin({
             events: {
+                onStart: {
+                    delete: [
+                        "./gutenverse-form/assets/js/form.js*",
+                        "./gutenverse-form/lib/dependencies/form.asset.php"
+                    ]
+                },
                 onEnd: {
                     copy: [
                         {
-                            source: "./build/form.js",
+                            source: process.env.NODE_ENV === 'development' ? "./build/form.js*" : "./build/form.js",
                             destination: "./gutenverse-form/assets/js/",
                         },
                         {
