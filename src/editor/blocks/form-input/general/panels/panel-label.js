@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { ColorControl, DimensionControl, RangeControl, TypographyControl } from 'gutenverse-core/controls';
-import { handleColor, handleTypography, handleDimension } from 'gutenverse-core/controls';
+import { handleColor, handleTypography, handleDimension } from 'gutenverse-core/styling';
 
 export const labelPanel = props => {
     const {

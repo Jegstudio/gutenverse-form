@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 
 import { AlignCenter, AlignLeft, AlignRight } from 'react-feather';
 import { CheckboxControl, DimensionControl, IconRadioControl, RangeControl, SelectControl, SizeControl } from 'gutenverse-core/controls';
-import { deviceStyleValue, handleDimension, handleUnitPoint } from 'gutenverse-core/controls';
+import { deviceStyleValue, handleDimension, handleUnitPoint } from 'gutenverse-core/styling';
 import { getDeviceType } from 'gutenverse-core/editor-helper';
 import { isEmpty } from 'lodash';
 

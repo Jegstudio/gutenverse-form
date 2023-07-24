@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { ColorControl, RangeControl, TextControl, TypographyControl } from 'gutenverse-core/controls';
-import { handleColor, handleTypography } from 'gutenverse-core/controls';
+import { handleColor, handleTypography } from 'gutenverse-core/styling';
 
 export const inputPanel = props => {
     const {
