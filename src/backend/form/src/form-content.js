@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 // import 'gutenverse-core/controls/styles/editor.scss';
-import { IconCloseSVG } from 'gutenverse-core/icons';
+import { IconCloseSVG, IconCrownSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'lodash';
 
@@ -164,6 +164,7 @@ const TabNotification = (props) => {
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
     const [hideFormNotice, setHideFormNotice] = !isEmpty( window['GutenverseConfig'] ) ? useState(window['GutenverseConfig']['hideFormNotice']) : useState(false);
+    const [hideFormProNotice, setHideFormProNotice] = !isEmpty( window['GutenverseConfig'] ) ? useState(window['GutenverseConfig']['hideFormProNotice']) : useState(false);
 
     const tabs = {
         general: __('General', 'gutenverse'),
@@ -186,31 +187,56 @@ export const FormContent = (props) => {
         props
     );
 
-    const closeNotice = () => {
-        setHideFormNotice(true);
+    const closeNotice = (id) => {
         apiFetch({
-            path: 'gutenverse-form-client/v1/form-action/notice',
-            method: 'GET',
+            path: 'gutenverse-client/v1/notice/close',
+            method: 'POST',
+            data: {
+                id: id
+            }
         }).then(() => {});
     };
 
     return <div>
-        {!hideFormNotice && <div style={{ margin: '15px 20px -10px' }}>
+        {!hideFormNotice && <div className="form-notice-wrapper">
             <AlertControl>
                 <>
                     <div>
-                        <span>
+                        <p>
                             {__('Please make sure you have setup SMTP first to be able to use this form full functionality, otherwise the form will not be able to send email. ', 'gutenverse')}
                             {__('Please check this ', 'gutenverse')}<a href="https://gutenverse.com/docs/how-to-setup-smtp">{__('documentation', 'gutenverse')}</a>{__(' on how to use our form.', 'gutenverse')}
-                        </span>
-                        <br />
-                        <span><i>{__('(If you have set it up, you can close this notice).', 'gutenverse')}</i></span>
+                        </p>
                     </div>
-                    <div className="gutenverse-close" onClick={closeNotice}>
-                        <IconCloseSVG size={20} />
+                    <div className="gutenverse-close" onClick={() => {
+                        setHideFormNotice(true);
+                        closeNotice('form_action_notice');
+                    }}>
+                        <IconCloseSVG size={14} />
                     </div>
                 </>
             </AlertControl>
+        </div>}
+        {!hideFormProNotice && <div className="form-notice-wrapper">
+            <div className="form-pro-notice">
+                <h3 className="title">{__('Upgrade to Gutenverse PRO', 'gutenverse-form')}</h3>
+                <p className="description">{__('Use full potential of Gutenverse Form', 'gutenverse-form')}</p>
+                <a href={window?.GutenverseDashboard?.getPro} className="button-upgrade-pro" target="_blank" rel="noreferrer">
+                    <IconCrownSVG />
+                    {__('Upgrade to PRO', 'gutenverse')}
+                </a>
+                <div className="boxes">
+                    <svg width="118" height="93" viewBox="0 0 118 93" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="42" width="76" height="95" rx="2" fill="#DCDCE8"/>
+                        <rect y="20" width="76" height="95" rx="2" fill="#F5F5FA"/>
+                    </svg>
+                </div>
+                <div className="gutenverse-close" onClick={() => {
+                    setHideFormProNotice(true);
+                    closeNotice('form_pro_notice');
+                }}>
+                    <IconCloseSVG size={14} />
+                </div>
+            </div>
         </div>}
         <div className="form-tab-header">
             {Object.keys(tabs).map(key => {

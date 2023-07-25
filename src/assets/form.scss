@@ -14,6 +14,63 @@
     border: 1px solid #f5f7fe;
 }
 
+.form-notice-wrapper {
+    margin: 15px 20px;
+
+    .form-pro-notice {
+        background: #8FE3EA;
+        border-radius: 5px;
+        padding: 20px 24px;
+        position: relative;
+
+        .title {
+            color: #011627;
+            font-family: Roboto;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 22px;
+            margin: 0;
+        }
+
+        .description {
+            color: #40505D;
+            font-family: Roboto;
+            font-size: 12px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 16.8px;
+            margin: 6px 0 14px;
+        }
+
+        .button-upgrade-pro {
+            background-color: #3B57F7;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            font-family: Roboto;
+            font-size: 10px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            width: fit-content;
+        }
+
+        .boxes {
+            display: flex;
+            bottom: 0;
+            right: 22px;
+            position: absolute;
+        }
+    }
+}
+
 .gutenverse-button {
     cursor: pointer;
     line-height: 18px;
@@ -205,9 +262,27 @@
     }
 }
 
+.gutenverse-close {
+    cursor: pointer;
+    top: 10px;
+    right: 10px;
+    position: absolute;
+}
+
 .gutenverse-drawer-body .gutenverse-control-alert {
     .control-alert {
         display: flex;
+
+        p {
+            margin: 5px 0 0;
+            padding-right: 5px;
+            color: #40505D;
+            font-family: Roboto;
+            font-size: 13px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 18px;
+        }
 
         .gutenverse-close {
             cursor: pointer;

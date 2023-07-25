@@ -157,8 +157,9 @@ class Form {
 	 * JS Config.
 	 */
 	public function js_config() {
-		$config                   = \Gutenverse\Framework\Init::instance()->editor_assets->gutenverse_config();
-		$config['hideFormNotice'] = get_option( 'gutenverse_form_action_notice' );
+		$config                      = \Gutenverse\Framework\Init::instance()->editor_assets->gutenverse_config();
+		$config['hideFormNotice']    = get_option( 'gutenverse_form_action_notice' );
+		$config['hideFormProNotice'] = get_option( 'gutenverse_form_pro_notice' );
 
 		return $config;
 	}

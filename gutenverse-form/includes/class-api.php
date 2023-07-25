@@ -122,16 +122,6 @@ class Api {
 
 		register_rest_route(
 			self::ENDPOINT,
-			'form-action/notice',
-			array(
-				'methods'             => 'GET',
-				'callback'            => array( $this, 'form_action_notice' ),
-				'permission_callback' => 'gutenverse_permission_check_author',
-			)
-		);
-
-		register_rest_route(
-			self::ENDPOINT,
 			'form/search',
 			array(
 				'methods'             => 'POST',
@@ -232,16 +222,6 @@ class Api {
 	public function get_form_action( $request ) {
 		$id = $request->get_param( 'id' );
 		return Form::get_form_action_data( $id );
-	}
-
-	/**
-	 * Close Form Action Notice
-	 *
-	 * @return boolean
-	 */
-	public function form_action_notice() {
-		update_option( 'gutenverse_form_action_notice', true );
-		return false;
 	}
 
 	/**
