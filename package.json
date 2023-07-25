@@ -12,9 +12,9 @@
     "build:js": "cross-env NODE_ENV=production webpack --config .config/webpack.config.prod.js",
     "start:css": "cross-env NODE_ENV=development gulp watch",
     "build:css": "cross-env NODE_ENV=production gulp build",
-    "development": "gulp clean && npm run development --prefix gutenverse-core && npm run dev && npm run pot && gulp release",
-    "production": "gulp clean && npm run production --prefix gutenverse-core && npm run build && npm run pot && gulp release",
-    "pot": "wp i18n make-pot ./gutenverse-form ./gutenverse-form/languages/gutenverse-form.pot --domain=gutenverse-form --exclude=\"lib/framework/\""
+    "development": "gulp clean && npm run development --prefix gutenverse-core && npm run dev && gulp release && npm run pot && gulp zip",
+    "production": "gulp clean && npm run production --prefix gutenverse-core && npm run build && gulp release && npm run pot && gulp zip",
+    "pot": "wp i18n make-pot ./release/gutenverse-form ./release/gutenverse-form/languages/gutenverse-form.pot --domain=gutenverse-form"
   },
   "repository": {
     "type": "git",
@@ -42,6 +42,7 @@
     "gulp-concat": "^2.6.1",
     "gulp-postcss": "^9.0.1",
     "gulp-sass": "^5.1.0",
+    "gulp-string-replace": "^1.1.2",
     "gulp-zip": "^5.1.0",
     "postcss": "^8.4.23",
     "sass": "^1.62.1",
