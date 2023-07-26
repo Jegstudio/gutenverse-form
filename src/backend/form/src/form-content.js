@@ -8,6 +8,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { IconCloseSVG, IconCrownSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'lodash';
+import { ButtonUpgradePro } from 'gutenverse-core/components';
 
 const TabGeneral = (props) => {
     const { values, updateValue } = props;
@@ -220,10 +221,7 @@ export const FormContent = (props) => {
             <div className="form-pro-notice">
                 <h3 className="title">{__('Upgrade to Gutenverse PRO', 'gutenverse-form')}</h3>
                 <p className="description">{__('Use full potential of Gutenverse Form', 'gutenverse-form')}</p>
-                <a href={window?.GutenverseDashboard?.getPro} className="button-upgrade-pro" target="_blank" rel="noreferrer">
-                    <IconCrownSVG />
-                    {__('Upgrade to PRO', 'gutenverse')}
-                </a>
+                <ButtonUpgradePro thin={true} smallText={true} />
                 <div className="boxes">
                     <svg width="118" height="93" viewBox="0 0 118 93" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="42" width="76" height="95" rx="2" fill="#DCDCE8"/>

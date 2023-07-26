@@ -2,6 +2,7 @@
 @import "gutenverse-core/src/assets/controls/wrapper";
 @import "gutenverse-core/src/assets/drawer";
 @import "gutenverse-core/src/assets/skeleton";
+@import "gutenverse-core/src/assets/pro";
 
 .entry-title {
     background-color: #f5f7fe;
@@ -41,25 +42,6 @@
             font-weight: 400;
             line-height: 16.8px;
             margin: 6px 0 14px;
-        }
-
-        .button-upgrade-pro {
-            background-color: #3B57F7;
-            border-radius: 50px;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            text-align: center;
-            text-decoration: none;
-            font-family: Roboto;
-            font-size: 10px;
-            font-style: normal;
-            font-weight: 500;
-            line-height: normal;
-            width: fit-content;
         }
 
         .boxes {
