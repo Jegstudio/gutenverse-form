@@ -4,11 +4,11 @@ import { ControlText, ControlTextarea, ControlCheckbox } from 'gutenverse-core/b
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
-// import 'gutenverse-core/controls/styles/editor.scss';
-import { IconCloseSVG, IconCrownSVG } from 'gutenverse-core/icons';
+import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'lodash';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
+import { ImageFormNoticeSVG } from '../../../assets/image';
 
 const TabGeneral = (props) => {
     const { values, updateValue } = props;
@@ -164,8 +164,8 @@ const TabNotification = (props) => {
 
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
-    const [hideFormNotice, setHideFormNotice] = !isEmpty( window['GutenverseConfig'] ) ? useState(window['GutenverseConfig']['hideFormNotice']) : useState(false);
-    const [hideFormProNotice, setHideFormProNotice] = !isEmpty( window['GutenverseConfig'] ) ? useState(window['GutenverseConfig']['hideFormProNotice']) : useState(false);
+    const [hideFormNotice, setHideFormNotice] = !isEmpty(window['GutenverseConfig']) ? useState(window['GutenverseConfig']['hideFormNotice']) : useState(false);
+    const [hideFormProNotice, setHideFormProNotice] = !isEmpty(window['GutenverseConfig']) ? useState(window['GutenverseConfig']['hideFormProNotice']) : useState(false);
 
     const tabs = {
         general: __('General', 'gutenverse'),
@@ -195,7 +195,7 @@ export const FormContent = (props) => {
             data: {
                 id: id
             }
-        }).then(() => {});
+        }).then(() => { });
     };
 
     return <div>
@@ -223,10 +223,7 @@ export const FormContent = (props) => {
                 <p className="description">{__('Use full potential of Gutenverse Form', 'gutenverse-form')}</p>
                 <ButtonUpgradePro thin={true} smallText={true} />
                 <div className="boxes">
-                    <svg width="118" height="93" viewBox="0 0 118 93" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="42" width="76" height="95" rx="2" fill="#DCDCE8"/>
-                        <rect y="20" width="76" height="95" rx="2" fill="#F5F5FA"/>
-                    </svg>
+                    <ImageFormNoticeSVG />
                 </div>
                 <div className="gutenverse-close" onClick={() => {
                     setHideFormProNotice(true);
