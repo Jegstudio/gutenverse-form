@@ -45,8 +45,8 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
 };
 
 const FormBuilderBlock = compose(
-    withAnimationSticky(),
     withCustomStyle(panelList),
+    withAnimationSticky(),
     withCopyElementToolbar()
 )((props) => {
     const {
