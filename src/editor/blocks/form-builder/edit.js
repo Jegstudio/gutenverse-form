@@ -59,8 +59,7 @@ const FormBuilderBlock = compose(
     const {
         clientId,
         attributes,
-        setElementRef,
-        setStickyRef
+        setElementRef
     } = props;
 
     const {
@@ -94,7 +93,6 @@ const FormBuilderBlock = compose(
     useEffect(() => {
         if (formBuilderRef.current) {
             setElementRef(formBuilderRef.current);
-            setStickyRef && setStickyRef(formBuilderRef.current);
         }
     }, [formBuilderRef]);
 
