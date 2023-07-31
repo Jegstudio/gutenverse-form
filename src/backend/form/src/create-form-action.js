@@ -57,33 +57,33 @@ const CreateForm = () => {
         setOpen,
         open,
     }}>
-    {({ closeDrawer }) => {
-        return <DrawerContainer>
-            <DrawerHeader>
-                <>
-                    <h3>
-                        {__('Create Form Action', 'gutenverse')}
-                    </h3>
-                    <div className="gutenverse-close" onClick={() => closeDrawer()}>
-                        <IconCloseSVG size={20} />
-                    </div>
-                </>
-            </DrawerHeader>
-            <DrawerBody>
-                <FormContent values={values} updateValue={updateValue} />
-            </DrawerBody>
-            <DrawerFooter>
-                <>
-                    <div className="gutenverse-button create" onClick={() => submitFormAction()}>
-                        {saving ? __('Saving...', 'gutenverse') : __('Create Form', 'gutenverse')}
-                    </div>
-                    <div className="gutenverse-button cancel" onClick={() => closeDrawer()}>
-                        {__('Cancel', 'gutenverse')}
+        {({ closeDrawer }) => {
+            return <DrawerContainer>
+                <DrawerHeader>
+                    <>
+                        <h3>
+                            {__('Create Form Action', 'gutenverse')}
+                        </h3>
+                        <div className="gutenverse-close" onClick={() => closeDrawer()}>
+                            <IconCloseSVG size={20} />
+                        </div>
+                    </>
+                </DrawerHeader>
+                <DrawerBody>
+                    <FormContent values={values} updateValue={updateValue} />
+                </DrawerBody>
+                <DrawerFooter>
+                    <>
+                        <div className="gutenverse-button create" onClick={() => submitFormAction()}>
+                            {saving ? __('Saving...', 'gutenverse') : __('Create Form', 'gutenverse')}
+                        </div>
+                        <div className="gutenverse-button cancel" onClick={() => closeDrawer()}>
+                            {__('Cancel', 'gutenverse')}
                         </div>
                     </>
                 </DrawerFooter>
             </DrawerContainer>;
-    }}
+        }}
     </DrawerWrapper>;
 };
 
