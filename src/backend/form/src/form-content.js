@@ -165,7 +165,6 @@ const TabNotification = (props) => {
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
     const [hideFormNotice, setHideFormNotice] = !isEmpty(window['GutenverseConfig']) ? useState(window['GutenverseConfig']['hideFormNotice']) : useState(false);
-    const [hideFormProNotice, setHideFormProNotice] = !isEmpty(window['GutenverseConfig']) ? useState(window['GutenverseConfig']['hideFormProNotice']) : useState(false);
 
     const tabs = {
         general: __('General', 'gutenverse'),
@@ -217,7 +216,7 @@ export const FormContent = (props) => {
                 </>
             </AlertControl>
         </div>}
-        {!hideFormProNotice && <div className="form-notice-wrapper">
+        <div className="form-notice-wrapper">
             <div className="form-pro-notice">
                 <h3 className="title">{__('Upgrade to Gutenverse PRO', 'gutenverse-form')}</h3>
                 <p className="description">{__('Use full potential of Gutenverse Form', 'gutenverse-form')}</p>
@@ -225,14 +224,8 @@ export const FormContent = (props) => {
                 <div className="boxes">
                     <ImageFormNoticeSVG />
                 </div>
-                <div className="gutenverse-close" onClick={() => {
-                    setHideFormProNotice(true);
-                    closeNotice('form_pro_notice');
-                }}>
-                    <IconCloseSVG size={14} />
-                </div>
             </div>
-        </div>}
+        </div>
         <div className="form-tab-header">
             {Object.keys(tabs).map(key => {
                 const item = tabs[key];
