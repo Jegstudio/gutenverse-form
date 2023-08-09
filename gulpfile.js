@@ -103,7 +103,7 @@ gulp.task('copy-framework', function () {
 
 gulp.task('replace-text-domain', function () {
     return gulp
-        .src('./release/gutenverse-form/lib/framework/**/*')
+        .src(['./release/gutenverse-form/lib/framework/**/*.js', './release/gutenverse-form/lib/framework/**/*.php'])
         .pipe(replace('--gctd--', 'gutenverse-form'))
         .pipe(gulp.dest('./release/gutenverse-form/lib/framework/'));
 });
