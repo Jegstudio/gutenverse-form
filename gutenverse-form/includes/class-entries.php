@@ -169,15 +169,18 @@ class Entries {
 			return $join;
 		}
 
-		$search    = get_search_query();
 		$post_type = isset( $_GET['post_type'] ) ? wp_kses( wp_unslash( $_GET['post_type'] ), wp_kses_allowed_html() ) : '';
 
-		if ( self::POST_TYPE === $post_type && ! empty( $search ) ) {
-			$join .= 'LEFT JOIN ' . $wpdb->postmeta . ' as pm1 ON ' . $wpdb->posts . '.ID = pm1.post_id ';
+		if ( self::POST_TYPE === $post_type ) {
+			$search = get_search_query();
+			if ( ! empty( $search ) ) {
+				$join .= 'LEFT JOIN ' . $wpdb->postmeta . ' as pm1 ON ' . $wpdb->posts . '.ID = pm1.post_id ';
+			}
 		}
 
 		return $join;
 	}
+
 
 	/**
 	 * Post Where.
@@ -193,15 +196,18 @@ class Entries {
 			return $where;
 		}
 
-		$search    = get_search_query();
 		$post_type = isset( $_GET['post_type'] ) ? wp_kses( wp_unslash( $_GET['post_type'] ), wp_kses_allowed_html() ) : '';
 
-		if ( self::POST_TYPE === $post_type && ! empty( $search ) ) {
-			$search_form = " ( SELECT ID from {$wpdb->posts} where {$wpdb->posts}.post_title LIKE '%{$search}%' ) ";
-			$post_type   = self::POST_TYPE;
+		if ( self::POST_TYPE === $post_type ) {
+			$search = get_search_query();
 
-			$where = " AND ( {$wpdb->posts}.post_type = '{$post_type}' AND {$wpdb->posts}.post_title LIKE '%{$search}%' )
+			if ( ! empty( $search ) ) {
+				$search_form = " ( SELECT ID from {$wpdb->posts} where {$wpdb->posts}.post_title LIKE '%{$search}%' ) ";
+				$post_type   = self::POST_TYPE;
+
+				$where = " AND ( {$wpdb->posts}.post_type = '{$post_type}' AND {$wpdb->posts}.post_title LIKE '%{$search}%' )
 						OR ( pm1.meta_key = 'form-id' AND pm1.meta_value IN {$search_form} ) ";
+			}
 		}
 
 		return $where;
