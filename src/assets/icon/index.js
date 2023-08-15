@@ -12,6 +12,14 @@ import IconFormSelect from './icon-form-select.svg';
 import IconFormSwitch from './icon-form-switch.svg';
 import IconFormTextarea from './icon-form-textarea.svg';
 
+/* PRO Form Icons */
+import IconFormCalculation from './icon-form-calculation.svg';
+import IconFormStepper from './icon-form-stepper.svg';
+import IconFormImageRadio from './icon-form-image-radio.svg';
+import IconFormPayment from './icon-form-payment.svg';
+import IconFormStepperNavigationButton from './icon-form-stepper-navigation-button.svg';
+import IconFormStepperSectionItem from './icon-form-stepper-section-item.svg';
+
 export const IconFormBuilderSVG = () => {
     return <IconFormBuilder />;
 };
@@ -58,4 +66,28 @@ export const IconFormSwitchSVG = () => {
 
 export const IconFormTextareaSVG = () => {
     return <IconFormTextarea />;
+};
+
+export const IconFormCalculationSVG = () => {
+    return <IconFormCalculation />;
+};
+
+export const IconFormStepperSVG = () => {
+    return <IconFormStepper />;
+};
+
+export const IconFormImageRadioSVG = () => {
+    return <IconFormImageRadio />;
+};
+
+export const IconFormPaymentSVG = () => {
+    return <IconFormPayment />;
+};
+
+export const IconFormStepperNavigationButtonSVG = () => {
+    return <IconFormStepperNavigationButton />;
+};
+
+export const IconFormStepperSectionItemSVG = () => {
+    return <IconFormStepperSectionItem />;
 };
