@@ -7,6 +7,7 @@ import { inputPanel } from './panel-input';
 import { radioContentPanel } from './panel-radio-content';
 import { panelRules } from './panel-rules';
 import { TabSetting, TabStyle } from 'gutenverse-core/controls';
+import { panelLogic } from '../../form-input/general/panels/panel-logic';
 
 export const panelList = () => {
     return [
@@ -27,6 +28,12 @@ export const panelList = () => {
             panelArray: panelRules,
             initialOpen: false,
             tabRole: TabSetting,
+        },
+        {
+            title: __('Logic', 'gutenverse'),
+            panelArray: panelLogic,
+            pro: true,
+            initialOpen: false,
         },
         {
             title: __('Label Style', 'gutenverse'),

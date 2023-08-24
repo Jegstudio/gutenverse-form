@@ -33,6 +33,13 @@
         "labelTypography": {
             "type": "object"
         },
+        "defaultLogic": {
+            "type": "string",
+            "default": "show"
+        },
+        "displayLogic": {
+            "type": "array"
+        },
         "labelPadding": {
             "type": "object"
         },
