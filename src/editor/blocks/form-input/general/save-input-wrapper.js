@@ -4,8 +4,9 @@ import { useBlockProps } from '@wordpress/block-editor';
 import { RichText } from '@wordpress/block-editor';
 import { useAnimationFrontend } from 'gutenverse-core/hooks';
 import { useDisplayFrontend } from 'gutenverse-core/hooks';
+import isEmpty from 'lodash/isEmpty';
 
-const SaveInputWrapper = ({ attributes, inputType, children }) => {
+const SaveInputWrapper = ({ attributes, inputType, children, defaultLogic }) => {
     const {
         elementId,
         inputLabel,
@@ -48,8 +49,14 @@ const SaveInputWrapper = ({ attributes, inputType, children }) => {
 
     const Required = required && <span className="required-badge">*</span>;
 
+    const additionalProps = {
+        ['data-guten-input-rule']: !isEmpty(defaultLogic) ? defaultLogic : undefined
+    };
+
     return (
-        <div {...useBlockProps.save({ className })}>
+        <div
+            {...additionalProps}
+            {...useBlockProps.save({ className })}>
             <div className="label-wrapper">
                 {Label}
                 {Required}

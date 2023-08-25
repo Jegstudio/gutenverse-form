@@ -1,5 +1,6 @@
 
 import SaveInputWrapper from '../form-input/general/save-input-wrapper';
+import isEmpty from 'lodash/isEmpty';
 
 const save = props => {
     const {
@@ -13,7 +14,9 @@ const save = props => {
         validationType,
         validationMin,
         validationMax,
-        validationWarning
+        validationWarning,
+        defaultLogic,
+        displayLogic,
     } = attributes;
 
     const validation = {
@@ -25,13 +28,23 @@ const save = props => {
         validationWarning
     };
 
+    const displayRule = {
+        type: defaultLogic,
+        rule: displayLogic
+    };
+
+    const additionalProps = {
+        ['data-display-rule']: !isEmpty(defaultLogic) && !isEmpty(displayLogic) ? JSON.stringify(displayRule) : undefined
+    };
+
     return (
-        <SaveInputWrapper {...props} inputType={validation.type}>
+        <SaveInputWrapper {...props} inputType={validation.type} defaultLogic={defaultLogic}>
             <textarea
                 data-validation={JSON.stringify(validation)}
                 placeholder={inputPlaceholder}
                 name={inputName}
                 className="gutenverse-input gutenverse-input-text"
+                {...additionalProps}
             />
         </SaveInputWrapper>
     );

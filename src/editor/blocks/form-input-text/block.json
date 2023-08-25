@@ -46,8 +46,7 @@
             "type": "object"
         },
         "defaultLogic": {
-            "type": "string",
-            "default": "show"
+            "type": "string"
         },
         "displayLogic": {
             "type": "array"
