@@ -218,8 +218,8 @@ export const FormContent = (props) => {
         </div>}
         <div className="form-notice-wrapper">
             <div className="form-pro-notice">
-                <h3 className="title">{__('Upgrade to Gutenverse PRO', 'gutenverse-form')}</h3>
-                <p className="description">{__('Use full potential of Gutenverse Form', 'gutenverse-form')}</p>
+                <h3 className="title">{__('Upgrade to Gutenverse Pro', 'gutenverse-form')}</h3>
+                <p className="description">{__('Explore the full potential of Gutenverse Form', 'gutenverse-form')}</p>
                 <ButtonUpgradePro thin={true} smallText={true} />
                 <div className="boxes">
                     <ImageFormNoticeSVG />
