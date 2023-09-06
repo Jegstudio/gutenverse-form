@@ -7,8 +7,8 @@ import { applyFilters } from '@wordpress/hooks';
 import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'lodash';
-import { ButtonUpgradePro } from 'gutenverse-core/components';
-import { ImageFormNoticeSVG } from '../../../assets/image';
+import { CardBannerPro } from 'gutenverse-core/components';
+
 
 const TabGeneral = (props) => {
     const { values, updateValue } = props;
@@ -196,7 +196,6 @@ export const FormContent = (props) => {
             }
         }).then(() => { });
     };
-
     return <div>
         {!hideFormNotice && <div className="form-notice-wrapper">
             <AlertControl>
@@ -217,14 +216,7 @@ export const FormContent = (props) => {
             </AlertControl>
         </div>}
         <div className="form-notice-wrapper">
-            <div className="form-pro-notice">
-                <h3 className="title">{__('Upgrade to Gutenverse Pro', 'gutenverse-form')}</h3>
-                <p className="description">{__('Explore the full potential of Gutenverse Form', 'gutenverse-form')}</p>
-                <ButtonUpgradePro thin={true} smallText={true} />
-                <div className="boxes">
-                    <ImageFormNoticeSVG />
-                </div>
-            </div>
+            <CardBannerPro  title = {__('Upgrade to Gutenverse Pro', 'gutenverse-form')} description= {__('Explore the full potential of Gutenverse Form', 'gutenverse-form')}/>
         </div>
         <div className="form-tab-header">
             {Object.keys(tabs).map(key => {
