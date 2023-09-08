@@ -80,7 +80,6 @@ class Form {
 			unset( $actions['view'] );
 		}
 		return $actions;
-
 	}
 
 	/**
@@ -318,5 +317,4 @@ class Form {
 			)
 		);
 	}
-
 }

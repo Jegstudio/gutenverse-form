@@ -9,7 +9,10 @@ export const loadSettings = () => {
         'gutenverse/dashboard/settings/navigation',
         (nav) => ({
             ...nav,
-            form: __('Form', 'gutenverse'),
+            form: {
+                title : __('Form', 'gutenverse'),
+                pro   : false,
+            },
         })
     );
 

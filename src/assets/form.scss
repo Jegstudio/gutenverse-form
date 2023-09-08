@@ -19,13 +19,13 @@
     margin: 15px 20px;
 
     .form-pro-notice {
-        background: linear-gradient(220deg, #FFC121 0%, #FFE68F 100%);
         border-radius: 5px;
+        background: linear-gradient(180deg, #7A7DFF 0%, #3D40BE 100%);
         padding: 20px 24px;
         position: relative;
 
         .title {
-            color: #011627;
+            color: #ffffff;
             font-family: "Roboto", sans-serif;
             font-size: 16px;
             font-style: normal;
@@ -35,7 +35,7 @@
         }
 
         .description {
-            color: #40505D;
+            color: #ffffff;
             font-family: "Roboto", sans-serif;
             font-size: 12px;
             font-style: normal;
@@ -57,7 +57,8 @@
     cursor: pointer;
     line-height: 18px;
     border-radius: 20px;
-    background: #3b57f7;
+    border-radius: 50px;
+    background: var(--primary, #3B57F7);
     color: #fff;
     padding: 10px 24px;
     border: 1px solid #f0f0f3;
