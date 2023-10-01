@@ -28,6 +28,9 @@ defined( 'GUTENVERSE_FORM_PATH' ) || define( 'GUTENVERSE_FORM_PATH', plugin_base
 defined( 'GUTENVERSE_FORM_LIBRARY_URL' ) || define( 'GUTENVERSE_FORM_LIBRARY_URL', 'https://gutenverse.com/' );
 defined( 'GUTENVERSE_FRAMEWORK_URL' ) || define( 'GUTENVERSE_FRAMEWORK_URL', plugins_url( GUTENVERSE_FORM ) . '/lib/framework' );
 
+// Required Pro Version.
+defined( 'GUTENVERSE_FORM_REQUIRED_PRO_VERSION' ) || define( 'GUTENVERSE_FORM_REQUIRED_PRO_VERSION', '1.0.0' );
+
 require_once GUTENVERSE_FORM_DIR . 'lib/autoload.php';
 
 Init::instance();

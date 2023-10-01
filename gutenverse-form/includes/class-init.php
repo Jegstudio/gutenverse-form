@@ -135,6 +135,7 @@ class Init {
 		$framework_file    = GUTENVERSE_FORM_DIR . 'lib/framework/bootstrap.php';
 		$framework_version = $init->get_framework_version( $framework_file );
 		$init->register_version( GUTENVERSE_FORM, $framework_version );
+		$init->register_pro_version( GUTENVERSE_FORM, GUTENVERSE_FORM_REQUIRED_PRO_VERSION );
 	}
 
 	/**
