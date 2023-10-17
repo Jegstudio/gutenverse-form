@@ -223,6 +223,9 @@
         },
         "choicesBgColorHover": {
             "type": "object"
+        },
+        "labelRequireColor": {
+            "type": "object"
         }
     },
     "supports": {

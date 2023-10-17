@@ -81,7 +81,9 @@
     input {
       border-color: $error-border-color;
     }
-
+    textarea{
+      border-color: $error-border-color;
+    }
     .validation-error {
       display: block;
     }

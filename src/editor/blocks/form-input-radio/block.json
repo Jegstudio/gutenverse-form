@@ -187,6 +187,9 @@
         "validationWarning": {
             "type": "string",
             "default": "Input Invalid"
+        },
+        "labelRequireColor": {
+            "type": "object"
         }
     },
     "supports": {

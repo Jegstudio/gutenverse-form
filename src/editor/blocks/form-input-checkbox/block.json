@@ -184,6 +184,9 @@
             "type": "boolean",
             "default": false
         },
+        "labelRequireColor": {
+            "type": "object"
+        },
         "validationWarning": {
             "type": "string",
             "default": "Input Invalid"

@@ -117,7 +117,7 @@ class Form_Input_Radio extends Style_Abstract {
 				)
 			);
 		}
-
+		error_log(print_r($this->attrs,true));
 		if ( isset( $this->attrs['labelRequireColor'] ) ) {
 			$this->inject_style(
 				array(

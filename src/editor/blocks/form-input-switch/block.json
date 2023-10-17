@@ -179,6 +179,9 @@
         },
         "switchTypography": {
             "type": "object"
+        },
+        "labelRequireColor": {
+            "type": "object"
         }
     },
     "supports": {

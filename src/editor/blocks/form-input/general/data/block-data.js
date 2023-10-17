@@ -53,6 +53,9 @@ export default {
         labelMargin: {
             type: 'object',
         },
+        labelRequireColor: {
+            type: 'object',
+        },
 
 
         // helper

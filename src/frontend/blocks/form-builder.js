@@ -114,7 +114,6 @@ class GutenverseFormValidation extends Default {
             let paymentItemName = false;
             let paymentOption = false;
 
-
             formBuilder.find('.gutenverse-input').each(function (input) {
                 const currentInput = u(input);
                 const validation = JSON.parse(currentInput.data('validation'));
@@ -124,7 +123,6 @@ class GutenverseFormValidation extends Default {
                 const parent = currentInput.closest('.guten-form-input');
 
                 const type = instance._getInputType(validation, parent);
-
                 if (valid) {
                     u(parent).removeClass('input-invalid');
                 } else {

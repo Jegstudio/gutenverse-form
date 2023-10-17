@@ -232,6 +232,9 @@
     },
     "inputBgColorHover": {
       "type": "object"
+    },
+    "labelRequireColor": {
+      "type": "object"
     }
   },
   "supports": {
