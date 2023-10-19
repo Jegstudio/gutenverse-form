@@ -20,7 +20,8 @@ const FormInputSelectBlock = compose(
     } = props;
 
     const {
-        selectOptions
+        selectOptions,
+        inputPlaceholder
     } = attributes;
 
     const inputData = {
@@ -40,7 +41,7 @@ const FormInputSelectBlock = compose(
         <InputWrapper {...inputData}>
             <div className="select-wrapper" ref={selectRef}>
                 <ChoiceSelect
-                    placeholder={__('Text Placeholder', 'gutenverse')}
+                    placeholder={inputPlaceholder}
                     options={selectOptions}
                     selected={selected}
                     setSelected={setSelected}

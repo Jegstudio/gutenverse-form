@@ -113,7 +113,6 @@ class GutenverseFormValidation extends Default {
             let paymentPrice = false;
             let paymentItemName = false;
             let paymentOption = false;
-
             formBuilder.find('.gutenverse-input').each(function (input) {
                 const currentInput = u(input);
                 const validation = JSON.parse(currentInput.data('validation'));
@@ -121,27 +120,25 @@ class GutenverseFormValidation extends Default {
                 value = instance._getInputValue(currentFormBuilder, input, validation);
                 const valid = instance.__validate(currentInput, value, validation);
                 const parent = currentInput.closest('.guten-form-input');
-
                 const type = instance._getInputType(validation, parent);
                 if (valid) {
                     u(parent).removeClass('input-invalid');
                 } else {
                     u(parent).addClass('input-invalid');
                 }
-
                 validFlag = validFlag && valid;
-
                 const rule = u(parent).data('guten-input-rule');
-
                 if (!(rule && 'hide' === rule)) {
                     values.push({
                         id: name,
                         value,
                         type
                     });
-                    isPayment = ('payment' === validation.type) && value;
-                    paymentMethod = ('payment' === validation.type) ? value : false;
-                    paymentOption = ('payment' === validation.type) ?  JSON.parse(currentInput.data('payment-option')) : false;
+                    if( validation ){
+                        isPayment = ('payment' === validation.type ) && value;
+                        paymentMethod = ('payment' === validation.type ) ? value : false;
+                        paymentOption = ('payment' === validation.type ) ?  JSON.parse(currentInput.data('payment-option')) : false;
+                    }
                 }
             });
 
@@ -256,18 +253,16 @@ class GutenverseFormValidation extends Default {
     __validate(currentInput, value, validation) {
         const parent = currentInput.closest('.guten-form-input');
         const rule = u(parent).data('guten-input-rule');
-
         if (rule && 'hide' === rule) {
             return true;
         }
 
-        if (validation) {
+        if (validation ) {
             if (validation.required === true) {
                 if (value === '') {
                     return false;
                 }
-
-                if ('radio' === validation.type || 'image-radio' === validation.type || 'payment' === validation.type) {
+                if ('radio' === validation.type || 'image-radio' === validation.type || 'payment' === validation.type ) {
                     return value !== undefined;
                 }
 
