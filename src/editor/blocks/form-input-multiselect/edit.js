@@ -19,9 +19,8 @@ const FormInputMultiSelectBlock = compose(
     const {
         selectedOption,
         selectOptions,
-        inputPlaceHolder,
+        inputPlaceholder,
     } = attributes;
-
     const selectRef = useRef();
     const [selected, setSelected] = useState(selectedOption);
     const inputData = {
@@ -29,8 +28,6 @@ const FormInputMultiSelectBlock = compose(
         type: 'select',
         panelList: panelList
     };
-
-
     useEffect(() => {
         if (selectRef.current) {
             setElementRef(selectRef.current);
@@ -41,7 +38,7 @@ const FormInputMultiSelectBlock = compose(
         <InputWrapper {...inputData}>
             <div className="select-wrapper" ref={selectRef}>
                 <ChoiceSelect
-                    placeholder={inputPlaceHolder}
+                    placeholder={inputPlaceholder}
                     options={selectOptions}
                     selected={selected}
                     setSelected={setSelected}

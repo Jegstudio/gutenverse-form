@@ -119,6 +119,7 @@ class GutenverseFormValidation extends Default {
                 const name = currentInput.attr('name');
                 value = instance._getInputValue(currentFormBuilder, input, validation);
                 const valid = instance.__validate(currentInput, value, validation);
+                // console.log(currentInput,validation);
                 const parent = currentInput.closest('.guten-form-input');
                 const type = instance._getInputType(validation, parent);
                 if (valid) {
@@ -257,17 +258,16 @@ class GutenverseFormValidation extends Default {
             return true;
         }
 
-        if (validation ) {
+        if (validation) {
             if (validation.required === true) {
-                if (value === '') {
-                    return false;
-                }
                 if ('radio' === validation.type || 'image-radio' === validation.type || 'payment' === validation.type ) {
                     return value !== undefined;
                 }
-
                 if ('checkbox' === validation.type) {
                     return value.length !== 0;
+                }
+                if (value === '' || value.length === 0 ) {
+                    return false;
                 }
             }
 
