@@ -23,6 +23,15 @@
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8 <9"
+  },
+  "overrides": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "webpack": "^5.78.0"
+  },
   "dependencies": {
     "choices.js": "^10.2.0",
     "flatpickr": "^4.6.13",
