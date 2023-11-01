@@ -199,7 +199,10 @@
         },
         "inputBgColorFocus": {
             "type": "object"
-        }
+        },
+		"transform": {
+			"type": "object"
+		}
     },
     "supports": {
         "className": false

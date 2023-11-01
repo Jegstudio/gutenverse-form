@@ -187,7 +187,10 @@
         "validationWarning": {
             "type": "string",
             "default": "Input Invalid"
-        }
+        },
+		"transform": {
+			"type": "object"
+		}
     },
     "supports": {
         "className": false
