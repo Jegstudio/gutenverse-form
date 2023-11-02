@@ -119,7 +119,6 @@ class GutenverseFormValidation extends Default {
                 const name = currentInput.attr('name');
                 value = instance._getInputValue(currentFormBuilder, input, validation);
                 const valid = instance.__validate(currentInput, value, validation);
-                // console.log(currentInput,validation);
                 const parent = currentInput.closest('.guten-form-input');
                 const type = instance._getInputType(validation, parent);
                 if (valid) {
