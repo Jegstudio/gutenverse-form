@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { advancePanel, animationPanel, backgroundPanel, borderPanel, responsivePanel } from 'gutenverse-core/controls';
+import { advancePanel, animationPanel, backgroundPanel, borderPanel, responsivePanel, transformPanel } from 'gutenverse-core/controls';
 import { errorNoticePanel } from './panel-error-notice';
 import { formPanel } from './panel-form';
 import { stickyPanel } from './panel-sticky';
@@ -63,6 +63,12 @@ export const panelList = () => {
                 styleId: 'form-builder-animation'
             }),
             tabRole: TabSetting
+        },
+        {
+            title: __('Transform', 'gutenverse'),
+            initialOpen: false,
+            panelArray: transformPanel,
+            pro: true
         },
         {
             title: __('Spacing', 'gutenverse'),

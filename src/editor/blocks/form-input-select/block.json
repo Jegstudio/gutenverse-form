@@ -226,7 +226,10 @@
         },
         "labelRequireColor": {
             "type": "object"
-        }
+        },
+		"transform": {
+			"type": "object"
+		}
     },
     "supports": {
         "className": false
