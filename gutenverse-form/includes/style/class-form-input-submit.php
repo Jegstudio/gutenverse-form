@@ -62,7 +62,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id}",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "justify-content: {$value};";
 					},
 					'value'          => $this->attrs['alignButton'],
@@ -75,7 +75,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .guten-button",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "width: {$value}%;";
 					},
 					'value'          => $this->attrs['buttonWidth'],
@@ -88,7 +88,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .guten-button i",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return 'margin-right: undefinedpx;';
 					},
 					'value'          => $this->attrs['iconPosition'],
@@ -102,7 +102,7 @@ class Form_Input_Submit extends Style_Abstract {
 				$this->inject_style(
 					array(
 						'selector'       => ".{$this->element_id} .guten-button i",
-						'property'       => function( $value ) {
+						'property'       => function ( $value ) {
 							return "margin-left: {$value}px;";
 						},
 						'value'          => $this->attrs['iconSpacing'],
@@ -113,7 +113,7 @@ class Form_Input_Submit extends Style_Abstract {
 				$this->inject_style(
 					array(
 						'selector'       => ".{$this->element_id} .guten-button i",
-						'property'       => function( $value ) {
+						'property'       => function ( $value ) {
 							return "margin-right: {$value}px;";
 						},
 						'value'          => $this->attrs['iconSpacing'],
@@ -127,7 +127,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .guten-button i",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_unit_point( $value, 'font-size' );
 					},
 					'value'          => $this->attrs['iconSize'],
@@ -140,7 +140,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .guten-button",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
 					'value'          => $this->attrs['paddingButton'],
@@ -153,7 +153,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button span",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['color'],
@@ -166,7 +166,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button i",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['iconColor'],
@@ -179,7 +179,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button:hover span",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['hoverTextColor'],
@@ -192,7 +192,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button:hover i",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['hoverIconColor'],
@@ -205,7 +205,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button span",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['typography'],
 					'device_control' => false,
 				)
@@ -216,7 +216,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-input-submit-loader",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "font-size: {$value}px;";
 					},
 					'value'          => $this->attrs['loadingSize'],
@@ -229,7 +229,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-input-submit-loader",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['loadingColor'],
@@ -258,7 +258,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .guten-button",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
 					'value'          => $this->attrs['buttonBoxShadow'],
@@ -271,7 +271,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .guten-button:hover",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
 					'value'          => $this->attrs['buttonBoxShadowHover'],
@@ -288,7 +288,7 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .guten-button:hover",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
 					'value'          => $this->attrs['boxShadowHover'],

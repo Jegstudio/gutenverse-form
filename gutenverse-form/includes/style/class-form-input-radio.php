@@ -59,7 +59,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "width: {$value}%;";
 					},
 					'value'          => $this->attrs['labelWidth'],
@@ -72,7 +72,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper .input-label",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['labelColor'],
@@ -85,7 +85,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper .input-label",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['labelTypography'],
 					'device_control' => false,
 				)
@@ -96,7 +96,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
 					'value'          => $this->attrs['labelPadding'],
@@ -109,7 +109,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'margin' );
 					},
 					'value'          => $this->attrs['labelMargin'],
@@ -117,12 +117,12 @@ class Form_Input_Radio extends Style_Abstract {
 				)
 			);
 		}
-		error_log(print_r($this->attrs,true));
+
 		if ( isset( $this->attrs['labelRequireColor'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper .required-badge",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['labelRequireColor'],
@@ -135,7 +135,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .input-helper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['helperColor'],
@@ -148,7 +148,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .input-helper",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['helperTypography'],
 					'device_control' => false,
 				)
@@ -159,7 +159,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .input-helper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
 					'value'          => $this->attrs['helperPadding'],
@@ -172,7 +172,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .validation-error",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['warningColor'],
@@ -185,7 +185,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .validation-error",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['warningTypography'],
 					'device_control' => false,
 				)
@@ -196,7 +196,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'margin' );
 					},
 					'value'          => $this->attrs['labelSpace'],
@@ -209,7 +209,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label .radio:before",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "font-size: {$value}px;";
 					},
 					'value'          => $this->attrs['radioSize'],
@@ -222,7 +222,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label .radio:before",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "margin-right: {$value}px;";
 					},
 					'value'          => $this->attrs['radioSpace'],
@@ -235,7 +235,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['radioLabelColor'],
@@ -248,7 +248,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .main-wrapper label .radio",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['radioTypography'],
 					'device_control' => false,
 				)
@@ -259,7 +259,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label .radio:before",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['radioColor'],
@@ -272,7 +272,7 @@ class Form_Input_Radio extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label input:checked + .radio:before",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['radioActiveColor'],

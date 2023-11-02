@@ -59,7 +59,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-success",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
 					'value'          => $this->attrs['successBgColor'],
@@ -72,7 +72,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-success",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['successTextColor'],
@@ -85,7 +85,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-success",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "text-align: {$value};";
 					},
 					'value'          => $this->attrs['successAlign'],
@@ -98,7 +98,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-success",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
 					'value'          => $this->attrs['successPadding'],
@@ -115,7 +115,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-success",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
 					'value'          => $this->attrs['successBoxShadow'],
@@ -128,7 +128,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-success",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['successTypography'],
 					'device_control' => false,
 				)
@@ -139,7 +139,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-error",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
 					'value'          => $this->attrs['errorBgColor'],
@@ -152,7 +152,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-error",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['errorTextColor'],
@@ -165,7 +165,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-error",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "text-align: {$value};";
 					},
 					'value'          => $this->attrs['errorAlign'],
@@ -178,7 +178,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-error",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
 					'value'          => $this->attrs['errorPadding'],
@@ -195,7 +195,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-error",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
 					'value'          => $this->attrs['errorBoxShadow'],
@@ -208,7 +208,7 @@ class Form_Builder extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-error",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['errorTypography'],
 					'device_control' => false,
 				)

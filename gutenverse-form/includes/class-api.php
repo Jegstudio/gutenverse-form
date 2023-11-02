@@ -291,7 +291,6 @@ class Api {
 				'require_login'                  => '',
 				'user_browser'                   => '',
 				'user_confirm'                   => '',
-				'user_confirm'                   => '',
 				'auto_select_email'              => '',
 				'email_input_name'               => '',
 				'user_email_subject'             => '',
