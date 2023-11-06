@@ -50,6 +50,7 @@ class Form_Input_Submit extends Style_Abstract {
 					'normal' => ".{$this->element_id} .gutenverse-input-submit",
 					'hover'  => ".{$this->element_id} .gutenverse-input-submit:hover",
 				),
+				'mask'        => null,
 			)
 		);
 	}

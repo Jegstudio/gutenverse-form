@@ -46,6 +46,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 				'positioning' => null,
 				'animation'   => null,
 				'advance'     => null,
+				'mask'        => null,
 			)
 		);
 	}

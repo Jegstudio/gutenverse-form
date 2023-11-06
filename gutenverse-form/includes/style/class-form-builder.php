@@ -45,6 +45,7 @@ class Form_Builder extends Style_Abstract {
 				'border'     => null,
 				'animation'  => null,
 				'advance'    => null,
+				'mask'       => null,
 			)
 		);
 	}

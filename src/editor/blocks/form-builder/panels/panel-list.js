@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { advancePanel, animationPanel, backgroundPanel, borderPanel, responsivePanel, transformPanel } from 'gutenverse-core/controls';
+import { advancePanel, animationPanel, backgroundPanel, borderPanel, maskPanel, responsivePanel, transformPanel } from 'gutenverse-core/controls';
 import { errorNoticePanel } from './panel-error-notice';
 import { formPanel } from './panel-form';
 import { stickyPanel } from './panel-sticky';
@@ -47,6 +47,12 @@ export const panelList = () => {
                 ...props,
                 styleId: 'form-builder-border',
             }),
+            tabRole: TabStyle
+        },
+        {
+            title: __('Masking', 'gutenverse'),
+            initialOpen: false,
+            panelArray: maskPanel,
             tabRole: TabStyle
         },
         {
