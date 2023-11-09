@@ -134,11 +134,16 @@ class GutenverseFormValidation extends Default {
                         value,
                         type
                     });
-                    if( validation ){
-                        isPayment = ('payment' === validation.type ) && value;
-                        paymentMethod = ('payment' === validation.type ) ? value : false;
-                        paymentOption = ('payment' === validation.type ) ?  JSON.parse(currentInput.data('payment-option')) : false;
+                    if(validation){
+                        isPayment = ('payment' === validation.type) && value;
+                        paymentMethod = ('payment' === validation.type) ? value : false;
+                        paymentOption = ('payment' === validation.type) ?  JSON.parse(currentInput.data('payment-option')) : false;
+                    }else{
+                        isPayment = false;
+                        paymentMethod = false;
+                        paymentOption = false;
                     }
+
                 }
             });
 
