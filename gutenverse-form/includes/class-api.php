@@ -496,6 +496,9 @@ class Api {
 		}
 
 		foreach ( $entry_data as $data ) {
+			if ( 'array' === gettype( $data['value'] ) ) {
+				$data['value'] = implode( ', ', $data['value'] );
+			}
 			if ( $input_name ) {
 				if ( $input_name === $data['id'] && preg_match( $mail_rgx, $data['value'] ) ) {
 					$mail_list[] = $data['value'];
