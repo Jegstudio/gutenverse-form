@@ -331,5 +331,29 @@ class Form_Input_Telp extends Style_Abstract {
 		if ( isset( $this->attrs['inputBorderFocus'] ) ) {
 			$this->handle_border( 'inputBorderFocus', ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible" );
 		}
+		if ( isset( $this->attrs['inputAreaBoxShadow'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .gutenverse-input",
+					'property'       => function ( $value ) {
+						return $this->handle_box_shadow( $value );
+					},
+					'value'          => $this->attrs['inputAreaBoxShadow'],
+					'device_control' => false,
+				)
+			);
+		}
+		if ( isset( $this->attrs['inputAreaBoxShadowHover'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .gutenverse-input:hover",
+					'property'       => function ( $value ) {
+						return $this->handle_box_shadow( $value );
+					},
+					'value'          => $this->attrs['inputAreaBoxShadowHover'],
+					'device_control' => false,
+				)
+			);
+		}
 	}
 }

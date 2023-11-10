@@ -341,5 +341,29 @@ class Form_Input_Select extends Style_Abstract {
 		if ( isset( $this->attrs['inputBorderHover'] ) ) {
 			$this->handle_border( 'inputBorderHover', ".{$this->element_id} .choices .choices__inner:hover, .{$this->element_id} .choices .choices__list.choices__list--dropdown:hover" );
 		}
+		if ( isset( $this->attrs['inputAreaBoxShadow'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices",
+					'property'       => function ( $value ) {
+						return $this->handle_box_shadow( $value );
+					},
+					'value'          => $this->attrs['inputAreaBoxShadow'],
+					'device_control' => false,
+				)
+			);
+		}
+		if ( isset( $this->attrs['inputAreaBoxShadowHover'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id}:hover .choices",
+					'property'       => function ( $value ) {
+						return $this->handle_box_shadow( $value );
+					},
+					'value'          => $this->attrs['inputAreaBoxShadowHover'],
+					'device_control' => false,
+				)
+			);
+		}
 	}
 }
