@@ -132,3 +132,11 @@ If your blocks display unexpected or invalid content after an update, follow the
 **Is Gutenverse Form compatible with other Gutenberg plugins?**
 
 Gutenverse Form is designed to be compatible with other Gutenberg plugins. We have thoroughly tested Gutenverse Form with popular Gutenberg plugins like Spectra, Otter, Essential Blocks, Stackable, and Gutenberg Blocks by Kadence Blocks. You can confidently use Gutenverse Form alongside these plugins to enhance your block editing experience.
+
+= 1.0.1 - 2023-XX-XX =
+##### New
+* **Copy Style**, Add new ability to copy styles between blocks
+* **Flexible Wrapper block**, Add new block
+
+= 0.5.1 - 2023-10-09 =
+* Initial Release
