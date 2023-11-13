@@ -46,6 +46,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 				'positioning' => null,
 				'animation'   => null,
 				'advance'     => null,
+				'mask'        => null,
 			)
 		);
 	}
@@ -58,7 +59,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "width: {$value}%;";
 					},
 					'value'          => $this->attrs['labelWidth'],
@@ -71,7 +72,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper .input-label",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['labelColor'],
@@ -84,7 +85,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper .input-label",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['labelTypography'],
 					'device_control' => false,
 				)
@@ -95,7 +96,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
 					'value'          => $this->attrs['labelPadding'],
@@ -108,7 +109,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'margin' );
 					},
 					'value'          => $this->attrs['labelMargin'],
@@ -121,7 +122,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper .required-badge",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['labelRequireColor'],
@@ -134,7 +135,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .input-helper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['helperColor'],
@@ -147,7 +148,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .input-helper",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['helperTypography'],
 					'device_control' => false,
 				)
@@ -158,7 +159,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .input-helper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
 					'value'          => $this->attrs['helperPadding'],
@@ -171,7 +172,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .validation-error",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['warningColor'],
@@ -184,7 +185,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .validation-error",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['warningTypography'],
 					'device_control' => false,
 				)
@@ -195,7 +196,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .main-wrapper .choices__inner",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
 					'value'          => $this->attrs['inputPadding'],
@@ -208,7 +209,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .main-wrapper .choices__inner",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'margin' );
 					},
 					'value'          => $this->attrs['inputMargin'],
@@ -221,7 +222,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices__input::placeholder",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['placeholderColor'],
@@ -234,7 +235,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices__input",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['inputTextColor'],
@@ -247,7 +248,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices__placeholder, .{$this->element_id} .choices__inner, .{$this->element_id} .choices__input",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
 					'value'          => $this->attrs['placeholderBgColor'],
@@ -260,7 +261,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .choices__placeholder, .{$this->element_id} .choices__item, .{$this->element_id} .choices__input",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['inputTypography'],
 					'device_control' => false,
 				)
@@ -271,7 +272,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown .choices__item",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['inputColorNormal'],
@@ -284,7 +285,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown .choices__item",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
 					'value'          => $this->attrs['inputBgColorNormal'],
@@ -301,7 +302,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown .choices__item.is-highlighted",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['inputColorHover'],
@@ -314,7 +315,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown .choices__item.is-highlighted",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
 					'value'          => $this->attrs['inputBgColorHover'],
@@ -331,7 +332,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices__list--multiple .choices__item",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['selectedColor'],
@@ -344,7 +345,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices__list--multiple .choices__item",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
 					'value'          => $this->attrs['selectedBgColor'],
@@ -357,7 +358,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices__list--multiple .choices__item",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'border-color' );
 					},
 					'value'          => $this->attrs['selectedBorderColor'],
@@ -370,7 +371,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices__list--multiple .choices__button",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'border-left-color' );
 					},
 					'value'          => $this->attrs['selectedBorderColor'],
@@ -383,7 +384,7 @@ class Form_Input_Multiselect extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices__list--multiple .choices__item",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_border_radius( $value );
 					},
 					'value'          => $this->attrs['selectedRadius'],

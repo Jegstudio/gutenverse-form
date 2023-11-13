@@ -18,6 +18,7 @@ class GutenverseInputDate extends Default {
 
     __createDate(element) {
         const setting = JSON.parse(u(element).data('date'));
+        setting.disableMobile = 'true';
         flatpickr(element, setting);
     }
 }

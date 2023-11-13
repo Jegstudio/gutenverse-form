@@ -46,6 +46,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 				'positioning' => null,
 				'animation'   => null,
 				'advance'     => null,
+				'mask'        => null,
 			)
 		);
 	}
@@ -58,7 +59,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "width: {$value}%;";
 					},
 					'value'          => $this->attrs['labelWidth'],
@@ -71,7 +72,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper .input-label",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['labelColor'],
@@ -84,7 +85,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper .input-label",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['labelTypography'],
 					'device_control' => false,
 				)
@@ -95,7 +96,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
 					'value'          => $this->attrs['labelPadding'],
@@ -108,7 +109,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'margin' );
 					},
 					'value'          => $this->attrs['labelMargin'],
@@ -121,7 +122,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .label-wrapper .required-badge",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['labelRequireColor'],
@@ -134,7 +135,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .input-helper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['helperColor'],
@@ -147,7 +148,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .input-helper",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['helperTypography'],
 					'device_control' => false,
 				)
@@ -158,7 +159,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .input-helper",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
 					'value'          => $this->attrs['helperPadding'],
@@ -171,7 +172,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .validation-error",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['warningColor'],
@@ -184,7 +185,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .validation-error",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['warningTypography'],
 					'device_control' => false,
 				)
@@ -195,7 +196,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'margin' );
 					},
 					'value'          => $this->attrs['labelSpace'],
@@ -208,7 +209,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label .check:before",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "font-size: {$value}px;";
 					},
 					'value'          => $this->attrs['checkboxSize'],
@@ -221,7 +222,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label .check:before",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return "margin-right: {$value}px;";
 					},
 					'value'          => $this->attrs['checkboxSpace'],
@@ -234,7 +235,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['checkboxLabelColor'],
@@ -247,7 +248,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id} .main-wrapper label .check",
-					'property'       => function( $value ) {},
+					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['checkboxTypography'],
 					'device_control' => false,
 				)
@@ -258,7 +259,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label .check:before",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['checkboxColor'],
@@ -271,7 +272,7 @@ class Form_Input_Checkbox extends Style_Abstract {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-inner-input label input:checked + .check:before",
-					'property'       => function( $value ) {
+					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['checkboxActiveColor'],
