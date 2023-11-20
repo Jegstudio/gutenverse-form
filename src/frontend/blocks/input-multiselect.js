@@ -16,6 +16,7 @@ class GutenverseMultiInputSelect extends Default {
         selects.map(select => {
             this.choiceInstance = new Choices(select, {
                 removeItemButton: true,
+                shouldSort: false,
             });
         });
     }

@@ -4,6 +4,7 @@
     "title": "Textarea",
     "description": "Gutenverse Input Textarea",
     "category": "gutenverse-form",
+    "allowCopyStyle": true,
     "attributes": {
         "elementId": {
             "type": "string"
@@ -25,13 +26,16 @@
             "default": "top"
         },
         "labelWidth": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "labelColor": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "labelTypography": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "defaultLogic": {
             "type": "string"
@@ -40,92 +44,120 @@
             "type": "array"
         },
         "labelPadding": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "labelMargin": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "helperColor": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "helperTypography": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "helperPadding": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "warningColor": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "warningTypography": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
 
         "positioningType": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "positioningWidth": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "positioningAlign": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "positioningLocation": {
-            "type": "string"
+            "type": "string",
+			"copyStyle": true
         },
         "positioningLeft": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "positioningRight": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "positioningTop": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "positioningBottom": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "background": {
             "type": "object",
-            "default": {}
+            "default": {},
+			"copyStyle": true
         },
         "backgroundHover": {
             "type": "object",
-            "default": {}
+            "default": {},
+			"copyStyle": true
         },
         "border": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "boxShadow": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "borderHover": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "boxShadowHover": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "margin": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "padding": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "zIndex": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "animation": {
             "type": "object",
-            "default": {}
+            "default": {},
+			"copyStyle": true
         },
         "hideDesktop": {
-            "type": "boolean"
+            "type": "boolean",
+			"copyStyle": true
         },
         "hideTablet": {
-            "type": "boolean"
+            "type": "boolean",
+			"copyStyle": true
         },
         "hideMobile": {
-            "type": "boolean"
+            "type": "boolean",
+			"copyStyle": true
         },
         "inputHeight": {
             "type": "object"
@@ -161,61 +193,80 @@
             "default": "Input Invalid"
         },
         "inputPadding": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputMargin": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputColor": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "placeholderColor": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputTypography": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputColorNormal": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputBorderNormal": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputColorHover": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputBorderHover": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputColorFocus": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputBorderFocus": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputBgColorNormal": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputBgColorHover": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputBgColorFocus": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "labelRequireColor": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
 		"transform": {
-			"type": "object"
+			"type": "object",
+			"copyStyle": true
 		},
         "mask": {
-			"type": "object"
+			"type": "object",
+			"copyStyle": true
 		},
         "inputAreaBoxShadow": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         },
         "inputAreaBoxShadowHover": {
-            "type": "object"
+            "type": "object",
+			"copyStyle": true
         }
     },
     "supports": {
