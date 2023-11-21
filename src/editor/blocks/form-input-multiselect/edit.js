@@ -4,7 +4,6 @@ import { withCustomStyle } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { ChoiceSelect } from 'gutenverse-core/components';
-import { __ } from '@wordpress/i18n';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 
 const FormInputMultiSelectBlock = compose(
@@ -15,7 +14,6 @@ const FormInputMultiSelectBlock = compose(
         attributes,
         setElementRef
     } = props;
-
     const {
         selectedOption,
         selectOptions,
@@ -28,6 +26,10 @@ const FormInputMultiSelectBlock = compose(
         type: 'select',
         panelList: panelList
     };
+    useEffect(() => {
+        setSelected(selectedOption);
+    },[selectedOption]);
+
     useEffect(() => {
         if (selectRef.current) {
             setElementRef(selectRef.current);

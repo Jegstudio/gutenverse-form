@@ -1,7 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import { CheckboxControl, RepeaterControl, TextControl } from 'gutenverse-core/controls';
 
-export const selectContentPanel = () => {
+export const selectContentPanel = (props) => {
+    const {
+        setAttributes
+    } = props;
     return [
         {
             id: 'selectOptions',
@@ -23,6 +26,17 @@ export const selectContentPanel = () => {
                     id: 'selected',
                     label: __('Selected', 'gutenverse'),
                     component: CheckboxControl,
+                    onChange: values => {
+                        if(values.selected === true){
+                            setAttributes({selectedOption : [...props.selectedOption, values]});
+                        }else{
+                            let arrSelectedOption = props.selectedOption;
+                            const newArr = arrSelectedOption.filter(el => {
+                                return el._key !== values._key;
+                            });
+                            setAttributes({selectedOption : newArr});
+                        }
+                    }
                 },
                 {
                     id: 'disabled',
