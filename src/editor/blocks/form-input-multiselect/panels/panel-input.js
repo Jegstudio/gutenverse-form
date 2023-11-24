@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { BorderControl, BoxShadowControl, ColorControl, DimensionControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
-import { handleDimension, handleColor, handleTypography, handleBorder, allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
+import { handleDimension, handleColor, handleTypography, handleBorderV2, allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
 
 export const inputPanel = props => {
     const {
@@ -108,7 +108,7 @@ export const inputPanel = props => {
                 {
                     selector: `.${elementId} .choices__placeholder, .${elementId} .choices__item, .${elementId} .choices__input`,
                     hasChild: true,
-                    render: (value,id) => handleTypography(value, props, id)
+                    render: (value, id) => handleTypography(value, props, id)
                 }
             ],
         },
@@ -154,15 +154,15 @@ export const inputPanel = props => {
             ]
         },
         {
-            id: 'inputBorderNormal',
+            id: 'inputBorderNormal_v2',
             show: !switcher.inputState || switcher.inputState === 'normal',
             label: __('Options Border Normal', 'gutenverse'),
             component: BorderControl,
+            allowDeviceControl: true,
             style: [
                 {
                     selector: `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
-                    hasChild: true,
-                    render: value => handleBorder(value)
+                    render: value => handleBorderV2(value)
                 }
             ]
         },
@@ -193,15 +193,15 @@ export const inputPanel = props => {
             ]
         },
         {
-            id: 'inputBorderHover',
+            id: 'inputBorderHover_v2',
             show: switcher.inputState === 'hover',
             label: __('Options Border Hover', 'gutenverse'),
             component: BorderControl,
+            allowDeviceControl: true,
             style: [
                 {
                     selector: `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
-                    hasChild: true,
-                    render: value => handleBorder(value)
+                    render: value => handleBorderV2(value)
                 }
             ]
         },
@@ -218,7 +218,7 @@ export const inputPanel = props => {
                     label: 'Hover'
                 }
             ],
-            onChange: ({__inputAreaHover}) => setSwitcher({...switcher, inputAreaHover: __inputAreaHover})
+            onChange: ({ __inputAreaHover }) => setSwitcher({ ...switcher, inputAreaHover: __inputAreaHover })
         },
         {
             id: 'inputAreaBoxShadow',

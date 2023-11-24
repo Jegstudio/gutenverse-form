@@ -42,6 +42,14 @@
             "type": "object",
             "copyStyle": true
         },
+        "successBorder_v2": {
+            "type": "object",
+            "migrate": {
+                "attr": "successBorder",
+                "type": "border"
+            },
+            "copyStyle": true
+        },
         "successBoxShadow": {
             "type": "object",
             "copyStyle": true
@@ -68,6 +76,14 @@
         },
         "errorBorder": {
             "type": "object",
+            "copyStyle": true
+        },
+        "errorBorder_v2": {
+            "type": "object",
+            "migrate": {
+                "attr": "errorBorder",
+                "type": "border"
+            },
             "copyStyle": true
         },
         "errorBoxShadow": {

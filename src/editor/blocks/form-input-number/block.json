@@ -234,6 +234,14 @@
             "type": "object",
             "copyStyle": true
         },
+        "inputBorderNormal_v2": {
+            "type": "object",
+            "migrate": {
+                "attr": "inputBorderNormal",
+                "type": "border"
+            },
+            "copyStyle": true
+        },
         "inputColorHover": {
             "type": "object",
             "copyStyle": true
@@ -242,12 +250,28 @@
             "type": "object",
             "copyStyle": true
         },
+        "inputBorderHover_v2": {
+            "type": "object",
+            "migrate": {
+                "attr": "inputBorderHover",
+                "type": "border"
+            },
+            "copyStyle": true
+        },
         "inputColorFocus": {
             "type": "object",
             "copyStyle": true
         },
         "inputBorderFocus": {
             "type": "object",
+            "copyStyle": true
+        },
+        "inputBorderFocus_v2": {
+            "type": "object",
+            "migrate": {
+                "attr": "inputBorderFocus",
+                "type": "border"
+            },
             "copyStyle": true
         },
         "inputBgColorNormal": {

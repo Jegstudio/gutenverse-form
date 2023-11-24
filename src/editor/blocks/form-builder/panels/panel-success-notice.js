@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { handleBorder, handleColor, handleDimension, handleTypography } from 'gutenverse-core/styling';
+import { handleBorderV2, handleColor, handleDimension, handleTypography } from 'gutenverse-core/styling';
 import { BorderControl, BoxShadowControl, CheckboxControl, ColorControl, DimensionControl, IconRadioControl, TypographyControl } from 'gutenverse-core/controls';
 import { allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
 import { AlignCenter, AlignLeft, AlignRight } from 'react-feather';
@@ -26,17 +26,17 @@ export const successNoticePanel = (props) => {
                 {
                     label: __('Align Left', 'gutenverse'),
                     value: 'left',
-                    icon: <AlignLeft/>,
+                    icon: <AlignLeft />,
                 },
                 {
                     label: __('Align Center', 'gutenverse'),
                     value: 'center',
-                    icon: <AlignCenter/>,
+                    icon: <AlignCenter />,
                 },
                 {
                     label: __('Align Right', 'gutenverse'),
                     value: 'right',
-                    icon: <AlignRight/>,
+                    icon: <AlignRight />,
                 },
             ],
             style: [
@@ -76,7 +76,7 @@ export const successNoticePanel = (props) => {
                 {
                     selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
                     hasChild: true,
-                    render: (value,id) => handleTypography(value, props, id)
+                    render: (value, id) => handleTypography(value, props, id)
                 }
             ],
         },
@@ -108,14 +108,14 @@ export const successNoticePanel = (props) => {
             ],
         },
         {
-            id: 'successBorder',
+            id: 'successBorder_v2',
             label: __('Border Type', 'gutenverse'),
             component: BorderControl,
+            allowDeviceControl: true,
             style: [
                 {
                     selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-                    hasChild: true,
-                    render: value => handleBorder(value)
+                    render: value => handleBorderV2(value)
                 }
             ]
         },
