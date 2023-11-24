@@ -5,7 +5,7 @@ import { DrawerWrapper, DrawerBody, DrawerContainer, DrawerFooter, DrawerHeader,
 import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import FormContent from './form-content';
-import u from 'umbrellajs';
+import { u } from'gutenverse-core/components';
 
 const EditForm = () => {
     const [open, setOpen] = useState(false);
