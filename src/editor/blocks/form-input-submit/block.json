@@ -19,35 +19,35 @@
         "buttonSize": {
             "type": "string",
             "default": "sm",
-			"copyStyle": true
+            "copyStyle": true
         },
         "buttonWidth": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "buttonBackground": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "buttonBackgroundHover": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "buttonBorder": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "buttonBorderHover": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "buttonBoxShadow": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "buttonBoxShadowHover": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "showIcon": {
             "type": "boolean",
@@ -60,151 +60,167 @@
         "iconPosition": {
             "type": "string",
             "default": "before",
-			"copyStyle": true
+            "copyStyle": true
         },
         "iconSpacing": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "iconSize": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "positioningType": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "positioningWidth": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "positioningAlign": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "positioningLocation": {
             "type": "string",
-			"copyStyle": true
+            "copyStyle": true
         },
         "positioningLeft": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "positioningRight": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "positioningTop": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "positioningBottom": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "background": {
             "type": "object",
             "default": {},
-			"copyStyle": true
+            "copyStyle": true
         },
         "backgroundHover": {
             "type": "object",
             "default": {},
-			"copyStyle": true
+            "copyStyle": true
         },
         "border": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
+        },
+        "border_v2": {
+            "type": "object",
+            "migrate": {
+                "attr": "border",
+                "type": "border"
+            },
+            "copyStyle": true
         },
         "boxShadow": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "borderHover": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
+        },
+        "borderHover_v2": {
+            "type": "object",
+            "migrate": {
+                "attr": "borderHover",
+                "type": "border"
+            },
+            "copyStyle": true
         },
         "boxShadowHover": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "margin": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "padding": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "zIndex": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "animation": {
             "type": "object",
             "default": {},
-			"copyStyle": true
+            "copyStyle": true
         },
         "hideDesktop": {
             "type": "boolean",
-			"copyStyle": true
+            "copyStyle": true
         },
         "hideTablet": {
             "type": "boolean",
-			"copyStyle": true
+            "copyStyle": true
         },
         "hideMobile": {
             "type": "boolean",
-			"copyStyle": true
+            "copyStyle": true
         },
         "color": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "iconColor": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "typography": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "hoverIconColor": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "hoverBgColor": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "hoverTextColor": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "hoverBorderColor": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "alignButton": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "paddingButton": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "labelRequireColor": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
-		"transform": {
-			"type": "object",
-			"copyStyle": true
-		},
+        "transform": {
+            "type": "object",
+            "copyStyle": true
+        },
         "mask": {
-			"type": "object",
-			"copyStyle": true
-		}
+            "type": "object",
+            "copyStyle": true
+        }
     },
     "supports": {
         "className": false

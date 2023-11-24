@@ -20,141 +20,157 @@
         },
         "successBgColor": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "successTextColor": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "successTypography": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "successAlign": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "successPadding": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "successBorder": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "successBoxShadow": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "errorBgColor": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "errorTextColor": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "errorTypography": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "errorAlign": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "errorPadding": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "errorBorder": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "errorBoxShadow": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "background": {
             "type": "object",
             "default": {},
-			"copyStyle": true
+            "copyStyle": true
         },
         "backgroundHover": {
             "type": "object",
             "default": {},
-			"copyStyle": true
+            "copyStyle": true
         },
         "border": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
+        },
+        "border_v2": {
+            "type": "object",
+            "migrate": {
+                "attr": "border",
+                "type": "border"
+            },
+            "copyStyle": true
         },
         "boxShadow": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "borderHover": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
+        },
+        "borderHover_v2": {
+            "type": "object",
+            "migrate": {
+                "attr": "borderHover",
+                "type": "border"
+            },
+            "copyStyle": true
         },
         "boxShadowHover": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "margin": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "padding": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "zIndex": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "animation": {
             "type": "object",
             "default": {},
-			"copyStyle": true
+            "copyStyle": true
         },
         "hideDesktop": {
             "type": "boolean",
-			"copyStyle": true
+            "copyStyle": true
         },
         "hideTablet": {
             "type": "boolean",
-			"copyStyle": true
+            "copyStyle": true
         },
         "hideMobile": {
             "type": "boolean",
-			"copyStyle": true
+            "copyStyle": true
         },
         "sticky": {
             "type": "object",
             "default": {
                 "Desktop": false
             },
-			"copyStyle": true
+            "copyStyle": true
         },
         "stickyShowOn": {
             "type": "string",
             "default": "both",
-			"copyStyle": true
+            "copyStyle": true
         },
         "stickyEase": {
             "type": "string",
             "default": "none",
-			"copyStyle": true
+            "copyStyle": true
         },
         "stickyPosition": {
             "type": "string",
             "default": "top",
-			"copyStyle": true
+            "copyStyle": true
         },
         "stickyDuration": {
             "type": "int",
             "default": 0.25,
-			"copyStyle": true
+            "copyStyle": true
         },
         "topSticky": {
             "type": "object",
@@ -164,7 +180,7 @@
                     "unit": "px"
                 }
             },
-			"copyStyle": true
+            "copyStyle": true
         },
         "bottomSticky": {
             "type": "object",
@@ -174,29 +190,29 @@
                     "unit": "px"
                 }
             },
-			"copyStyle": true
+            "copyStyle": true
         },
         "stickyIndex": {
             "type": "int",
             "default": 99,
-			"copyStyle": true
+            "copyStyle": true
         },
         "stickyBackground": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
         "stickyBoxShadow": {
             "type": "object",
-			"copyStyle": true
+            "copyStyle": true
         },
-		"transform": {
-			"type": "object",
-			"copyStyle": true
-		},
+        "transform": {
+            "type": "object",
+            "copyStyle": true
+        },
         "mask": {
-			"type": "object",
-			"copyStyle": true
-		}
+            "type": "object",
+            "copyStyle": true
+        }
     },
     "supports": {
         "className": false

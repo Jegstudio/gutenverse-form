@@ -121,12 +121,28 @@
 			"type": "object",
 			"copyStyle": true
 		},
+		"border_v2": {
+			"type": "object",
+			"migrate": {
+				"attr": "border",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
 		"boxShadow": {
 			"type": "object",
 			"copyStyle": true
 		},
 		"borderHover": {
 			"type": "object",
+			"copyStyle": true
+		},
+		"borderHover_v2": {
+			"type": "object",
+			"migrate": {
+				"attr": "borderHover",
+				"type": "border"
+			},
 			"copyStyle": true
 		},
 		"boxShadowHover": {
@@ -296,16 +312,20 @@
 			"copyStyle": true
 		},
 		"inputAreaBoxShadow": {
-            "type": "object",
+			"type": "object",
 			"copyStyle": true
-        },
-        "inputAreaBoxShadowHover": {
-            "type": "object",
+		},
+		"inputAreaBoxShadowHover": {
+			"type": "object",
 			"copyStyle": true
-        }
+		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "gutenverse"]
+	"keywords": [
+		"input",
+		"form",
+		"gutenverse"
+	]
 }
