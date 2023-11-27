@@ -295,7 +295,16 @@ class Form_Input_Multiselect extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['inputBorderNormal'] ) ) {
-			$this->handle_border( 'inputBorderNormal', ".{$this->element_id} .choices .choices__inner, .{$this->element_id} .choices .choices__list.choices__list--dropdown" );
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices .choices__inner, .{$this->element_id} .choices .choices__list.choices__list--dropdown",
+					'property'       => function ( $value ) {
+						return $this->handle_border_v2( $value );
+					},
+					'value'          => $this->attrs['inputBorderNormal'],
+					'device_control' => true,
+				)
+			);
 		}
 
 		if ( isset( $this->attrs['inputColorHover'] ) ) {
@@ -325,7 +334,16 @@ class Form_Input_Multiselect extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['inputBorderHover'] ) ) {
-			$this->handle_border( 'inputBorderHover', ".{$this->element_id} .choices .choices__inner:hover, .{$this->element_id} .choices .choices__list.choices__list--dropdown:hover" );
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices .choices__inner:hover, .{$this->element_id} .choices .choices__list.choices__list--dropdown:hover",
+					'property'       => function ( $value ) {
+						return $this->handle_border_v2( $value );
+					},
+					'value'          => $this->attrs['inputBorderHover'],
+					'device_control' => true,
+				)
+			);
 		}
 
 		if ( isset( $this->attrs['selectedColor'] ) ) {

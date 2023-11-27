@@ -269,7 +269,16 @@ class Form_Input_Text extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['inputBorderNormal'] ) ) {
-			$this->handle_border( 'inputBorderNormal', ".{$this->element_id} .gutenverse-input" );
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .gutenverse-input",
+					'property'       => function ( $value ) {
+						return $this->handle_border_v2( $value );
+					},
+					'value'          => $this->attrs['inputBorderNormal'],
+					'device_control' => true,
+				)
+			);
 		}
 
 		if ( isset( $this->attrs['inputColorHover'] ) ) {
@@ -299,7 +308,16 @@ class Form_Input_Text extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['inputBorderHover'] ) ) {
-			$this->handle_border( 'inputBorderHover', ".{$this->element_id} .gutenverse-input:hover" );
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .gutenverse-input:hover",
+					'property'       => function ( $value ) {
+						return $this->handle_border_v2( $value );
+					},
+					'value'          => $this->attrs['inputBorderHover'],
+					'device_control' => true,
+				)
+			);
 		}
 
 		if ( isset( $this->attrs['inputColorFocus'] ) ) {
@@ -329,8 +347,18 @@ class Form_Input_Text extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['inputBorderFocus'] ) ) {
-			$this->handle_border( 'inputBorderFocus', ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible" );
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible",
+					'property'       => function ( $value ) {
+						return $this->handle_border_v2( $value );
+					},
+					'value'          => $this->attrs['inputBorderFocus'],
+					'device_control' => true,
+				)
+			);
 		}
+
 		if ( isset( $this->attrs['inputAreaBoxShadow'] ) ) {
 			$this->inject_style(
 				array(
@@ -343,6 +371,7 @@ class Form_Input_Text extends Style_Abstract {
 				)
 			);
 		}
+
 		if ( isset( $this->attrs['inputAreaBoxShadowHover'] ) ) {
 			$this->inject_style(
 				array(

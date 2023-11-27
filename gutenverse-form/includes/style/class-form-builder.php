@@ -109,7 +109,16 @@ class Form_Builder extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['successBorder'] ) ) {
-			$this->handle_border( 'successBorder', ".{$this->element_id} .form-notification .notification-body.guten-success" );
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-success",
+					'property'       => function ( $value ) {
+						return $this->handle_border_v2( $value );
+					},
+					'value'          => $this->attrs['successBorder'],
+					'device_control' => true,
+				)
+			);
 		}
 
 		if ( isset( $this->attrs['successBoxShadow'] ) ) {
@@ -189,7 +198,16 @@ class Form_Builder extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['errorBorder'] ) ) {
-			$this->handle_border( 'errorBorder', ".{$this->element_id} .form-notification .notification-body.guten-error" );
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-error",
+					'property'       => function ( $value ) {
+						return $this->handle_border_v2( $value );
+					},
+					'value'          => $this->attrs['errorBorder'],
+					'device_control' => true,
+				)
+			);
 		}
 
 		if ( isset( $this->attrs['errorBoxShadow'] ) ) {

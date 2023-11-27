@@ -248,11 +248,29 @@ class Form_Input_Submit extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['buttonBorder'] ) ) {
-			$this->handle_border( 'buttonBorder', ".{$this->element_id} .guten-button" );
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .guten-button",
+					'property'       => function ( $value ) {
+						return $this->handle_border_v2( $value );
+					},
+					'value'          => $this->attrs['buttonBorder'],
+					'device_control' => true,
+				)
+			);
 		}
 
 		if ( isset( $this->attrs['buttonBorderHover'] ) ) {
-			$this->handle_border( 'buttonBorderHover', ".{$this->element_id} .guten-button:hover" );
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .guten-button:hover",
+					'property'       => function ( $value ) {
+						return $this->handle_border_v2( $value );
+					},
+					'value'          => $this->attrs['buttonBorderHover'],
+					'device_control' => true,
+				)
+			);
 		}
 
 		if ( isset( $this->attrs['buttonBoxShadow'] ) ) {
@@ -279,10 +297,6 @@ class Form_Input_Submit extends Style_Abstract {
 					'device_control' => false,
 				)
 			);
-		}
-
-		if ( isset( $this->attrs['borderHover'] ) ) {
-			$this->handle_border( 'borderHover', ".{$this->element_id} .guten-button:hover" );
 		}
 
 		if ( isset( $this->attrs['boxShadowHover'] ) ) {
