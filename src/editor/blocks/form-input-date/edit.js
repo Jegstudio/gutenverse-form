@@ -4,7 +4,7 @@ import { withCustomStyle } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import GutenverseInputDate from '../../../frontend/blocks/input-date';
-import u from 'umbrellajs';
+import { u } from'gutenverse-core/components';
 import { useRef } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 

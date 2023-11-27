@@ -1,6 +1,6 @@
 import { Default } from 'gutenverse-core-frontend';
 import { u } from 'gutenverse-core-frontend';
-import Choices from 'choices.js';
+import { Choices } from 'gutenverse-core-frontend';
 
 class GutenverseMultiInputSelect extends Default {
     /* public */

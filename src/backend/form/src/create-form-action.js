@@ -5,7 +5,7 @@ import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import FormContent from './form-content';
 import { applyFilters } from '@wordpress/hooks';
-import u from 'umbrellajs';
+import { u } from'gutenverse-core/components';
 
 const CreateForm = () => {
     const [open, setOpen] = useState(false);

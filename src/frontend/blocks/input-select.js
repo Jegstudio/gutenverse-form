@@ -1,5 +1,5 @@
 import { Default, u } from 'gutenverse-core-frontend';
-import Choices from 'choices.js';
+import { Choices } from 'gutenverse-core-frontend';
 
 class GutenverseInputSelect extends Default {
     /* public */

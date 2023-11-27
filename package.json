@@ -33,12 +33,8 @@
     "webpack": "^5.78.0"
   },
   "dependencies": {
-    "choices.js": "^10.2.0",
     "flatpickr": "^4.6.13",
-    "gutenverse-core": "file:gutenverse-core",
-    "react-datepicker": "^4.11.0",
-    "react-feather": "^2.0.10",
-    "umbrellajs": "^3.3.1"
+    "gutenverse-core": "file:gutenverse-core"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.18.6",

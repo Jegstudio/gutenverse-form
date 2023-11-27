@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { handleBorderV2, handleColor, handleDimension, handleTypography } from 'gutenverse-core/styling';
 import { BorderControl, BoxShadowControl, CheckboxControl, ColorControl, DimensionControl, IconRadioControl, TypographyControl } from 'gutenverse-core/controls';
 import { allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
-import { AlignCenter, AlignLeft, AlignRight } from 'react-feather';
+import { AlignCenter, AlignLeft, AlignRight } from 'gutenverse-core/components';
 
 
 export const errorNoticePanel = (props) => {
