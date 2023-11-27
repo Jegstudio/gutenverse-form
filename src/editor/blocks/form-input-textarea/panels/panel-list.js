@@ -8,6 +8,7 @@ import { inputPanel } from './panel-input';
 import { TabSetting, TabStyle } from 'gutenverse-core/controls';
 import { panelLogic } from '../../form-input/general/panels/panel-logic';
 
+
 export const panelList = () => {
     return [
         {

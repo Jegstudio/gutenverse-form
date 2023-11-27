@@ -252,7 +252,15 @@
         "mask": {
 			"type": "object",
 			"copyStyle": true
-		}
+		},
+        "inputAreaBoxShadow": {
+            "type": "object",
+			"copyStyle": true
+        },
+        "inputAreaBoxShadowHover": {
+            "type": "object",
+			"copyStyle": true
+        }
     },
     "supports": {
         "className": false

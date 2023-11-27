@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { BorderControl, ColorControl, DimensionControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
-import { handleDimension, handleColor, handleTypography, handleBorder } from 'gutenverse-core/styling';
+import { BorderControl, BoxShadowControl, ColorControl, DimensionControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
+import { handleDimension, handleColor, handleTypography, handleBorder, handleBoxShadow, allowRenderBoxShadow } from 'gutenverse-core/styling';
 
 export const inputPanel = props => {
     const {
@@ -224,5 +224,46 @@ export const inputPanel = props => {
                 }
             ]
         },
+        {
+            id: '__inputAreaHover',
+            component: SwitchControl,
+            options: [
+                {
+                    value: 'normal',
+                    label: 'Normal'
+                },
+                {
+                    value: 'hover',
+                    label: 'Hover'
+                }
+            ],
+            onChange: ({__inputAreaHover}) => setSwitcher({...switcher, inputAreaHover: __inputAreaHover})
+        },
+        {
+            id: 'inputAreaBoxShadow',
+            show: !switcher.inputAreaHover || switcher.inputAreaHover === 'normal',
+            label: __('Box Shadow', 'gutenverse'),
+            component: BoxShadowControl,
+            style: [
+                {
+                    selector: `.${elementId} .gutenverse-input`,
+                    allowRender: (value) => allowRenderBoxShadow(value),
+                    render: value => handleBoxShadow(value)
+                }
+            ]
+        },
+        {
+            id: 'inputAreaBoxShadowHover',
+            show: switcher.inputAreaHover === 'hover',
+            label: __('Hover Box Shadow', 'gutenverse'),
+            component: BoxShadowControl,
+            style: [
+                {
+                    selector: `.${elementId} .gutenverse-input:hover`,
+                    allowRender: (value) => allowRenderBoxShadow(value),
+                    render: value => handleBoxShadow(value)
+                }
+            ]
+        }
     ];
 };
