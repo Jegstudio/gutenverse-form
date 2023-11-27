@@ -247,27 +247,27 @@ class Form_Input_Submit extends Style_Abstract {
 			$this->handle_background( ".{$this->element_id}.guten-button-wrapper .guten-button:hover", $this->attrs['buttonBackgroundHover'] );
 		}
 
-		if ( isset( $this->attrs['buttonBorder'] ) ) {
+		if ( isset( $this->attrs['buttonBorder_v2'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .guten-button",
 					'property'       => function ( $value ) {
 						return $this->handle_border_v2( $value );
 					},
-					'value'          => $this->attrs['buttonBorder'],
+					'value'          => $this->attrs['buttonBorder_v2'],
 					'device_control' => true,
 				)
 			);
 		}
 
-		if ( isset( $this->attrs['buttonBorderHover'] ) ) {
+		if ( isset( $this->attrs['buttonBorderHover_v2'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .guten-button:hover",
 					'property'       => function ( $value ) {
 						return $this->handle_border_v2( $value );
 					},
-					'value'          => $this->attrs['buttonBorderHover'],
+					'value'          => $this->attrs['buttonBorderHover_v2'],
 					'device_control' => true,
 				)
 			);

@@ -295,14 +295,14 @@ class Form_Input_Select extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['inputBorderNormal'] ) ) {
+		if ( isset( $this->attrs['inputBorderNormal_v2'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices .choices__inner, .{$this->element_id} .choices .choices__list.choices__list--dropdown",
 					'property'       => function ( $value ) {
 						return $this->handle_border_v2( $value );
 					},
-					'value'          => $this->attrs['inputBorderNormal'],
+					'value'          => $this->attrs['inputBorderNormal_v2'],
 					'device_control' => true,
 				)
 			);
@@ -347,14 +347,14 @@ class Form_Input_Select extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['inputBorderHover'] ) ) {
+		if ( isset( $this->attrs['inputBorderHover_v2'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices .choices__inner:hover, .{$this->element_id} .choices .choices__list.choices__list--dropdown:hover",
 					'property'       => function ( $value ) {
 						return $this->handle_border_v2( $value );
 					},
-					'value'          => $this->attrs['inputBorderHover'],
+					'value'          => $this->attrs['inputBorderHover_v2'],
 					'device_control' => true,
 				)
 			);

@@ -268,14 +268,14 @@ class Form_Input_Telp extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['inputBorderNormal'] ) ) {
+		if ( isset( $this->attrs['inputBorderNormal_v2'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-input",
 					'property'       => function ( $value ) {
 						return $this->handle_border_v2( $value );
 					},
-					'value'          => $this->attrs['inputBorderNormal'],
+					'value'          => $this->attrs['inputBorderNormal_v2'],
 					'device_control' => true,
 				)
 			);
@@ -307,14 +307,14 @@ class Form_Input_Telp extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['inputBorderHover'] ) ) {
+		if ( isset( $this->attrs['inputBorderHover_v2'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-input:hover",
 					'property'       => function ( $value ) {
 						return $this->handle_border_v2( $value );
 					},
-					'value'          => $this->attrs['inputBorderHover'],
+					'value'          => $this->attrs['inputBorderHover_v2'],
 					'device_control' => true,
 				)
 			);
@@ -346,14 +346,14 @@ class Form_Input_Telp extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['inputBorderFocus'] ) ) {
+		if ( isset( $this->attrs['inputBorderFocus_v2'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible",
 					'property'       => function ( $value ) {
 						return $this->handle_border_v2( $value );
 					},
-					'value'          => $this->attrs['inputBorderFocus'],
+					'value'          => $this->attrs['inputBorderFocus_v2'],
 					'device_control' => true,
 				)
 			);
