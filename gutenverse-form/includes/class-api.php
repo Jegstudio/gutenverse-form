@@ -419,9 +419,23 @@ class Api {
 	 * @return WP_Response
 	 */
 	public function submit_form( $request ) {
-		$form_entry = $request['form-entry'];
-		$form_data  = $this->filter_form_params( $form_entry['data'] );
-
+		$form_entry   = $request['form-entry'];
+		$form_data    = $this->filter_form_params( $form_entry['data'] );
+		$form_id      = $this->filter_form_params( $form_entry['formId'] );
+		$is_login     = is_user_logged_in();
+		$form_setting = get_post_meta( (int) $form_id, 'form-data', true );
+		if ( $form_setting['require_login'] ) {
+			if ( ! $is_login ) {
+				$response = rest_ensure_response(
+					array(
+						'error'   => 'Bad Request',
+						'message' => 'Your Must Login To Submit This Form',
+					)
+				);
+				$response->set_status( 400 );
+				return $response;
+			}
+		}
 		if ( isset( $form_data ) ) {
 			$form_id    = (int) $form_entry['formId'];
 			$post_id    = (int) $form_entry['postId'];

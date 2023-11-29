@@ -93,6 +93,13 @@ class Init {
 	public $blocks;
 
 	/**
+	 * Hold Form Validation Instance.
+	 *
+	 * @var Form_Validation
+	 */
+	public $form_validation;
+
+	/**
 	 * Singleton page for Init Class
 	 *
 	 * @return Gutenverse
@@ -192,6 +199,7 @@ class Init {
 		$this->frontend_toolbar = new Frontend_Toolbar();
 		$this->meta_option      = new Meta_Option();
 		$this->blocks           = new Blocks();
+		$this->form_validation  = new Form_Validation();
 	}
 
 	/**

@@ -13,31 +13,23 @@ class GutenverseFormValidation extends Default {
     _init(element) {
         const formBuilder = u(element);
         const formId = formBuilder.data('form-id');
+        const data = window['GutenverseFormValidationData'];
+        const formData = data.filter(el => el.formId == formId);
+        if (formData[0]['require_login'] && !formData[0]['logged_in']) {
+            formBuilder.remove();
+        } else {
+            formBuilder.attr('style', '');
+            this._onSubmit(formBuilder, formData[0]);
+        }
 
-        // Todo: path harus dibenerin
-        apiFetch({
-            path: 'gutenverse-form-client/v1/form/init',
-            method: 'POST',
-            data: {
-                form_id: formId
-            }
-        }).then(data => {
-            if ( data['require_login'] && !data['logged_in'] ) {
-                formBuilder.remove();
-            } else {
-                formBuilder.attr('style', '');
-                this._onSubmit(formBuilder, data);
-            }
-
-            // REMINDER : button classes added here instead of from block save.js, it is done this way to prevent "Block Recovery" issue.
-            formBuilder.find('.guten-submit-wrapper').each(item => {
-                const button = u(item);
-                const buttonClass = button.find('.gutenverse-input-submit').attr('class');
-                const buttonObj = button.find('.gutenverse-input-submit').first().getBoundingClientRect();
-                button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
-                button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
-            });
-        }).catch(() => {});
+        // REMINDER : button classes added here instead of from block save.js, it is done this way to prevent "Block Recovery" issue.
+        formBuilder.find('.guten-submit-wrapper').each(item => {
+            const button = u(item);
+            const buttonClass = button.find('.gutenverse-input-submit').attr('class');
+            const buttonObj = button.find('.gutenverse-input-submit').first().getBoundingClientRect();
+            button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
+            button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
+        });
     }
 
     _getInputValue(currentFormBuilder, input, validation) {
@@ -87,7 +79,7 @@ class GutenverseFormValidation extends Default {
     _getInputType(data, parent) {
         if (data && data.type && parent.hasClass(`guten-form-input-${data.type}`)) {
             return data.type;
-        } else if(parent.hasClass('guten-form-input-switch')) {
+        } else if (parent.hasClass('guten-form-input-switch')) {
             return 'switch';
         }
 
@@ -134,11 +126,11 @@ class GutenverseFormValidation extends Default {
                         value,
                         type
                     });
-                    if(validation){
+                    if (validation) {
                         isPayment = ('payment' === validation.type) && value;
                         paymentMethod = ('payment' === validation.type) ? value : false;
-                        paymentOption = ('payment' === validation.type) ?  JSON.parse(currentInput.data('payment-option')) : false;
-                    }else{
+                        paymentOption = ('payment' === validation.type) ? JSON.parse(currentInput.data('payment-option')) : false;
+                    } else {
                         isPayment = false;
                         paymentMethod = false;
                         paymentOption = false;
@@ -264,13 +256,13 @@ class GutenverseFormValidation extends Default {
 
         if (validation) {
             if (validation.required === true) {
-                if ('radio' === validation.type || 'image-radio' === validation.type || 'payment' === validation.type ) {
+                if ('radio' === validation.type || 'image-radio' === validation.type || 'payment' === validation.type) {
                     return value !== undefined;
                 }
                 if ('checkbox' === validation.type) {
                     return value.length !== 0;
                 }
-                if (value === '' || value.length === 0 ) {
+                if (value === '' || value.length === 0) {
                     return false;
                 }
             }
