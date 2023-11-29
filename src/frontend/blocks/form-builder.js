@@ -21,7 +21,6 @@ class GutenverseFormValidation extends Default {
             formBuilder.attr('style', '');
             this._onSubmit(formBuilder, formData[0]);
         }
-
         // REMINDER : button classes added here instead of from block save.js, it is done this way to prevent "Block Recovery" issue.
         formBuilder.find('.guten-submit-wrapper').each(item => {
             const button = u(item);
@@ -192,7 +191,13 @@ class GutenverseFormValidation extends Default {
                     } else {
                         this._requestMessage(currentFormBuilder, formData, 'success', hideAfterSubmit);
                     }
-                }).catch(() => {
+                }).catch((e) => {
+                    currentFormBuilder.find('.form-notification').remove();
+                    const message = (e.data && e.data.error) ? e.data.error : e.message;
+                    const notifclass = 'guten-error';
+                    const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
+                    currentFormBuilder.prepend(notice);
+                    currentFormBuilder.removeClass('loading');
                     this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit);
                 }).finally(() => {
                     if (!isPayment) {

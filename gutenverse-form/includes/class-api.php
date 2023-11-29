@@ -421,7 +421,7 @@ class Api {
 	public function submit_form( $request ) {
 		$form_entry   = $request['form-entry'];
 		$form_data    = $this->filter_form_params( $form_entry['data'] );
-		$form_id      = $this->filter_form_params( $form_entry['formId'] );
+		$form_id      = $form_entry['formId'];
 		$is_login     = is_user_logged_in();
 		$form_setting = get_post_meta( (int) $form_id, 'form-data', true );
 		if ( $form_setting['require_login'] ) {
