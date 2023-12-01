@@ -15,20 +15,32 @@ class GutenverseFormValidation extends Default {
         const formId = formBuilder.data('form-id');
         const data = window['GutenverseFormValidationData'];
         const formData = data.filter(el => el.formId == formId);
-        if (formData[0]['require_login'] && !formData[0]['logged_in']) {
-            formBuilder.remove();
-        } else {
+        if(formData.length !== 0){
+            if (formData[0]['require_login'] && !formData[0]['logged_in'] ) {
+                formBuilder.remove();
+            } else {
+                formBuilder.attr('style', '');
+                this._onSubmit(formBuilder, formData[0]);
+            }
+            // REMINDER : button classes added here instead of from block save.js, it is done this way to prevent "Block Recovery" issue.
+            formBuilder.find('.guten-submit-wrapper').each(item => {
+                const button = u(item);
+                const buttonClass = button.find('.gutenverse-input-submit').attr('class');
+                const buttonObj = button.find('.gutenverse-input-submit').first().getBoundingClientRect();
+                button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
+                button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
+            });
+        }else{
             formBuilder.attr('style', '');
             this._onSubmit(formBuilder, formData[0]);
+            formBuilder.find('.guten-submit-wrapper').each(item => {
+                const button = u(item);
+                const buttonClass = button.find('.gutenverse-input-submit').attr('class');
+                const buttonObj = button.find('.gutenverse-input-submit').first().getBoundingClientRect();
+                button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
+                button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
+            });
         }
-        // REMINDER : button classes added here instead of from block save.js, it is done this way to prevent "Block Recovery" issue.
-        formBuilder.find('.guten-submit-wrapper').each(item => {
-            const button = u(item);
-            const buttonClass = button.find('.gutenverse-input-submit').attr('class');
-            const buttonObj = button.find('.gutenverse-input-submit').first().getBoundingClientRect();
-            button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
-            button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
-        });
     }
 
     _getInputValue(currentFormBuilder, input, validation) {

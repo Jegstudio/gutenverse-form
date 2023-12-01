@@ -18,7 +18,7 @@ use Gutenverse\Framework\Style_Generator;
  */
 class Form_Validation extends Style_Generator {
 
-    /**
+	/**
 	 * Form Validation Data
 	 *
 	 * @var array
@@ -89,23 +89,30 @@ class Form_Validation extends Style_Generator {
 	public function loop_blocks_to_get_form_data( $blocks ) {
 		foreach ( $blocks as $block ) {
 			if ( 'gutenverse/form-builder' === $block['blockName'] ) {
-				$form_id   = $block['attrs']['formId']['value'];
-				$post_type = get_post_type( (int) $form_id );
-				$result    = array(
-					'formId'        => $form_id,
-					'require_login' => false,
-					'logged_in'     => is_user_logged_in(),
-				);
-				if ( 'gutenverse-form' === $post_type ) {
-					$data                    = get_post_meta( (int) $form_id, 'form-data', true );
-					$result['require_login'] = $data['require_login'] ? $data['require_login'] : false;
-				}
-				if ( $result['formId'] ) {
+				if ( isset( $block['attrs']['formId'] ) ) {
+					$form_id   = $block['attrs']['formId']['value'];
+					$post_type = get_post_type( (int) $form_id );
+					$result    = array(
+						'formId'        => $form_id,
+						'require_login' => false,
+						'logged_in'     => is_user_logged_in(),
+					);
+					if ( 'gutenverse-form' === $post_type ) {
+						$data                    = get_post_meta( (int) $form_id, 'form-data', true );
+						$result['require_login'] = $data['require_login'] ? $data['require_login'] : false;
+					}
 					array_push( $this->form_validation_data, $result );
-					$unique_array               = array_unique( array_column( $this->form_validation_data, 'formId' ), SORT_REGULAR );
-					$final_array                = array_values( array_intersect_key( $this->form_validation_data, $unique_array ) );
-					$this->form_validation_data = $final_array;
+				} else {
+					$result = array(
+						'formId'        => '',
+						'require_login' => false,
+						'logged_in'     => false,
+					);
+					array_push( $this->form_validation_data, $result );
 				}
+				$unique_array               = array_unique( array_column( $this->form_validation_data, 'formId' ), SORT_REGULAR );
+				$final_array                = array_values( array_intersect_key( $this->form_validation_data, $unique_array ) );
+				$this->form_validation_data = $final_array;
 			}
 		}
 	}
