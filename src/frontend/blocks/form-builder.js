@@ -69,10 +69,22 @@ class GutenverseFormValidation extends Default {
                     break;
                 case 'multiselect':
                     value = [];
-                    currentFormBuilder.find('.choices__list--multiple .choices__item').each(function (option) {
-                        if (u(option).data('value')) {
-                            value.push(u(option).data('value'));
-                        }
+                    currentFormBuilder.find('select').filter('.gutenverse-input-multiselect').each(function (option) {
+                        u(option).find('option').each(function( opt ) {
+                            if (u(opt).attr('value')) {
+                                value.push(u(opt).attr('value'));
+                            }
+                        });
+                    });
+                    break;
+                case 'multi-group-select':
+                    value = [];
+                    currentFormBuilder.find('select').filter('.multi-group-select').each(function (option) {
+                        u(option).find('option').each(function( opt ) {
+                            if (u(opt).attr('value')) {
+                                value.push(u(opt).attr('value'));
+                            }
+                        });
                     });
                     break;
                 default:
@@ -155,7 +167,6 @@ class GutenverseFormValidation extends Default {
 
                 // remove existing notification on another submit
                 currentFormBuilder.find('.form-notification').remove();
-
                 apiFetch({
                     path: 'gutenverse-form-client/v1/form/submit',
                     method: 'POST',

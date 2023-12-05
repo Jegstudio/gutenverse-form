@@ -396,6 +396,7 @@ class Api {
 						);
 						break;
 					case 'multiselect':
+					case 'multi-group-select':
 					case 'checkbox':
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),
