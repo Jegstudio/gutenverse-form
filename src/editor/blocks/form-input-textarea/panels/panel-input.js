@@ -1,7 +1,8 @@
 import { __ } from '@wordpress/i18n';
-import { BorderControl, BoxShadowControl, RangeControl } from 'gutenverse-core/controls';
+import { BorderControl, BorderResponsiveControl, BoxShadowControl, RangeControl } from 'gutenverse-core/controls';
 import { ColorControl, DimensionControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
-import { handleDimension, handleColor, handleTypography, handleBorderV2, allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
+import { handleDimension, handleColor, handleTypography, handleBorderResponsive, handleBorder, allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
+import { getDeviceType } from 'gutenverse-core/editor-helper';
 
 export const inputPanel = props => {
     const {
@@ -9,6 +10,8 @@ export const inputPanel = props => {
         setSwitcher,
         switcher
     } = props;
+
+    const device = getDeviceType();
 
     return [
         {
@@ -151,15 +154,29 @@ export const inputPanel = props => {
             ]
         },
         {
-            id: 'inputBorderNormal_v2',
-            show: !switcher.inputState || switcher.inputState === 'normal',
-            label: __('Border Type', 'gutenverse'),
+            id: 'inputBorderNormal',
+            show: (!switcher.inputState || switcher.inputState === 'normal') && device === 'Desktop',
+            label: __('Border', 'gutenverse'),
             component: BorderControl,
+            style: [
+                {
+                    selector: `.${elementId} .gutenverse-input`,
+                    hasChild: true,
+                    render: value => handleBorder(value)
+                }
+            ]
+        },
+        {
+            id: 'inputBorderNormalResponsive',
+            show: (!switcher.inputState || switcher.inputState === 'normal') && device !== 'Desktop',
+            label: __('Border', 'gutenverse'),
+            component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
                 {
                     selector: `.${elementId} .gutenverse-input`,
-                    render: value => handleBorderV2(value)
+                    allowRender: () => device !== 'Desktop',
+                    render: value => handleBorderResponsive(value)
                 }
             ]
         },
@@ -190,15 +207,29 @@ export const inputPanel = props => {
             ]
         },
         {
-            id: 'inputBorderHover_v2',
-            show: switcher.inputState === 'hover',
-            label: __('Border Type', 'gutenverse'),
+            id: 'inputBorderHover',
+            show: switcher.inputState === 'hover' && device === 'Desktop',
+            label: __('Border', 'gutenverse'),
             component: BorderControl,
+            style: [
+                {
+                    selector: `.${elementId} .gutenverse-input:hover`,
+                    hasChild: true,
+                    render: value => handleBorder(value)
+                }
+            ]
+        },
+        {
+            id: 'inputBorderHoverResponsive',
+            show: switcher.inputState === 'hover' && device !== 'Desktop',
+            label: __('Border', 'gutenverse'),
+            component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
                 {
                     selector: `.${elementId} .gutenverse-input:hover`,
-                    render: value => handleBorderV2(value)
+                    allowRender: () => device !== 'Desktop',
+                    render: value => handleBorderResponsive(value)
                 }
             ]
         },
@@ -229,15 +260,29 @@ export const inputPanel = props => {
             ]
         },
         {
-            id: 'inputBorderFocus_v2',
-            show: switcher.inputState === 'focus',
-            label: __('Border Type', 'gutenverse'),
+            id: 'inputBorderFocus',
+            show: switcher.inputState === 'focus' && device === 'Desktop',
+            label: __('Border', 'gutenverse'),
             component: BorderControl,
+            style: [
+                {
+                    selector: `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible`,
+                    hasChild: true,
+                    render: value => handleBorder(value)
+                }
+            ]
+        },
+        {
+            id: 'inputBorderFocusResponsive',
+            show: switcher.inputState === 'focus' && device !== 'Desktop',
+            label: __('Border', 'gutenverse'),
+            component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
                 {
                     selector: `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible`,
-                    render: value => handleBorderV2(value)
+                    allowRender: () => device !== 'Desktop',
+                    render: value => handleBorderResponsive(value)
                 }
             ]
         },

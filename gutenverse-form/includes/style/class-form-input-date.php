@@ -268,15 +268,22 @@ class Form_Input_Date extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['inputBorderNormal_v2'] ) ) {
+		if ( isset( $this->attrs['inputBorderNormal'] ) ) {
+			$this->handle_border( 'inputBorderNormal', ".{$this->element_id} .gutenverse-input" );
+		}
+
+		if ( isset( $this->attrs['inputBorderNormalResponsive'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-input",
 					'property'       => function ( $value ) {
-						return $this->handle_border_v2( $value );
+						return $this->handle_border_responsive( $value );
 					},
-					'value'          => $this->attrs['inputBorderNormal_v2'],
+					'value'          => $this->attrs['inputBorderNormalResponsive'],
 					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
 				)
 			);
 		}
@@ -307,15 +314,22 @@ class Form_Input_Date extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['inputBorderHover_v2'] ) ) {
+		if ( isset( $this->attrs['inputBorderHover'] ) ) {
+			$this->handle_border( 'inputBorderHoverr', ".{$this->element_id} .gutenverse-input:hover" );
+		}
+
+		if ( isset( $this->attrs['inputBorderHoverResponsive'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-input:hover",
 					'property'       => function ( $value ) {
-						return $this->handle_border_v2( $value );
+						return $this->handle_border_responsive( $value );
 					},
-					'value'          => $this->attrs['inputBorderHover_v2'],
+					'value'          => $this->attrs['inputBorderHoverResponsive'],
 					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
 				)
 			);
 		}
@@ -346,15 +360,22 @@ class Form_Input_Date extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['inputBorderFocus_v2'] ) ) {
+		if ( isset( $this->attrs['inputBorderFocus'] ) ) {
+			$this->handle_border( 'inputBorderFocusr', ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible" );
+		}
+
+		if ( isset( $this->attrs['inputBorderFocusResponsive'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible",
 					'property'       => function ( $value ) {
-						return $this->handle_border_v2( $value );
+						return $this->handle_border_responsive( $value );
 					},
-					'value'          => $this->attrs['inputBorderFocus_v2'],
+					'value'          => $this->attrs['inputBorderFocusResponsive'],
 					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
 				)
 			);
 		}

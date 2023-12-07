@@ -42,7 +42,7 @@
             "type": "object",
             "copyStyle": true
         },
-        "successBorder_v2": {
+        "successBorderResponsive": {
             "type": "object",
             "migrate": {
                 "attr": "successBorder",
@@ -78,7 +78,7 @@
             "type": "object",
             "copyStyle": true
         },
-        "errorBorder_v2": {
+        "errorBorderResponsive": {
             "type": "object",
             "migrate": {
                 "attr": "errorBorder",
@@ -104,7 +104,7 @@
             "type": "object",
             "copyStyle": true
         },
-        "border_v2": {
+        "borderResponsive": {
             "type": "object",
             "migrate": {
                 "attr": "border",
@@ -120,7 +120,7 @@
             "type": "object",
             "copyStyle": true
         },
-        "borderHover_v2": {
+        "borderHoverResponsive": {
             "type": "object",
             "migrate": {
                 "attr": "borderHover",

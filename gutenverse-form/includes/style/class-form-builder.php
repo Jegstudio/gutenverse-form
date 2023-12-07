@@ -108,15 +108,22 @@ class Form_Builder extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['successBorder_v2'] ) ) {
+		if ( isset( $this->attrs['successBorder'] ) ) {
+			$this->handle_border( 'successBorder', ".{$this->element_id} .form-notification .notification-body.guten-success" );
+		}
+
+		if ( isset( $this->attrs['successBorderResponsive'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-success",
 					'property'       => function ( $value ) {
-						return $this->handle_border_v2( $value );
+						return $this->handle_border_responsive( $value );
 					},
-					'value'          => $this->attrs['successBorder_v2'],
+					'value'          => $this->attrs['successBorderResponsive'],
 					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
 				)
 			);
 		}
@@ -197,15 +204,22 @@ class Form_Builder extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['errorBorder_v2'] ) ) {
+		if ( isset( $this->attrs['errorBorder'] ) ) {
+			$this->handle_border( 'errorBorder', ".{$this->element_id} .form-notification .notification-body.guten-error" );
+		}
+
+		if ( isset( $this->attrs['errorBorderResponsive'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .form-notification .notification-body.guten-error",
 					'property'       => function ( $value ) {
-						return $this->handle_border_v2( $value );
+						return $this->handle_border_responsive( $value );
 					},
-					'value'          => $this->attrs['errorBorder_v2'],
+					'value'          => $this->attrs['errorBorderResponsive'],
 					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
 				)
 			);
 		}
