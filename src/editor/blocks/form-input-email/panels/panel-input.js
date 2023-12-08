@@ -10,6 +10,8 @@ export const inputPanel = props => {
         switcher
     } = props;
 
+    const device = getDeviceType();
+
     return [
         {
             id: 'inputPadding',
