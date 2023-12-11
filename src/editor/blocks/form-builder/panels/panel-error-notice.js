@@ -1,14 +1,16 @@
 import { __ } from '@wordpress/i18n';
-import { handleBorderV2, handleColor, handleDimension, handleTypography } from 'gutenverse-core/styling';
-import { BorderControl, BoxShadowControl, CheckboxControl, ColorControl, DimensionControl, IconRadioControl, TypographyControl } from 'gutenverse-core/controls';
+import { handleBorderResponsive, handleBorder, handleColor, handleDimension, handleTypography } from 'gutenverse-core/styling';
+import { BorderControl, BorderResponsiveControl, BoxShadowControl, CheckboxControl, ColorControl, DimensionControl, IconRadioControl, TypographyControl } from 'gutenverse-core/controls';
 import { allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
 import { AlignCenter, AlignLeft, AlignRight } from 'gutenverse-core/components';
-
+import { getDeviceType } from 'gutenverse-core/editor-helper';
 
 export const errorNoticePanel = (props) => {
     const {
         elementId,
     } = props;
+
+    const device = getDeviceType();
 
     return [
         {
@@ -108,14 +110,29 @@ export const errorNoticePanel = (props) => {
             ],
         },
         {
-            id: 'errorBorder_v2',
-            label: __('Border Type', 'gutenverse'),
+            id: 'errorBorder',
+            show: device === 'Desktop',
+            label: __('Border', 'gutenverse'),
             component: BorderControl,
+            style: [
+                {
+                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
+                    hasChild: true,
+                    render: value => handleBorder(value)
+                }
+            ]
+        },
+        {
+            id: 'errorBorderResponsive',
+            show: device !== 'Desktop',
+            label: __('Border', 'gutenverse'),
+            component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
                 {
                     selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-                    render: value => handleBorderV2(value)
+                    allowRender: () => device !== 'Desktop',
+                    render: value => handleBorderResponsive(value)
                 }
             ]
         },

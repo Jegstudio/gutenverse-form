@@ -295,15 +295,22 @@ class Form_Input_Select extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['inputBorderNormal_v2'] ) ) {
+		if ( isset( $this->attrs['inputBorderNormal'] ) ) {
+			$this->handle_border( 'inputBorderNormal', ".{$this->element_id} .choices .choices__inner, .{$this->element_id} .choices .choices__list.choices__list--dropdown" );
+		}
+
+		if ( isset( $this->attrs['inputBorderNormalResponsive'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices .choices__inner, .{$this->element_id} .choices .choices__list.choices__list--dropdown",
 					'property'       => function ( $value ) {
-						return $this->handle_border_v2( $value );
+						return $this->handle_border_responsive( $value );
 					},
-					'value'          => $this->attrs['inputBorderNormal_v2'],
+					'value'          => $this->attrs['inputBorderNormalResponsive'],
 					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
 				)
 			);
 		}
@@ -347,15 +354,22 @@ class Form_Input_Select extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['inputBorderHover_v2'] ) ) {
+		if ( isset( $this->attrs['inputBorderHover'] ) ) {
+			$this->handle_border( 'inputBorderHover', ".{$this->element_id} .choices .choices__inner:hover, .{$this->element_id} .choices .choices__list.choices__list--dropdown:hover" );
+		}
+
+		if ( isset( $this->attrs['inputBorderHoverResponsive'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .choices .choices__inner:hover, .{$this->element_id} .choices .choices__list.choices__list--dropdown:hover",
 					'property'       => function ( $value ) {
-						return $this->handle_border_v2( $value );
+						return $this->handle_border_responsive( $value );
 					},
-					'value'          => $this->attrs['inputBorderHover_v2'],
+					'value'          => $this->attrs['inputBorderHoverResponsive'],
 					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
 				)
 			);
 		}
