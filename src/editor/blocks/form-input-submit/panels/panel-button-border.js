@@ -30,7 +30,7 @@ export const buttonBorderPanel = (props) => {
             onChange: ({ __buttonBorderHover }) => setSwitcher({ ...switcher, buttonBorder: __buttonBorderHover })
         },
         {
-            id: 'buttonBoder',
+            id: 'buttonBorder',
             show: (!switcher.buttonBorder || switcher.buttonBorder === 'normal') && device == 'Desktop',
             label: __('Border', 'gutenverse'),
             component: BorderControl,
