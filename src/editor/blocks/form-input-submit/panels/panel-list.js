@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { advancePanel, animationPanel, backgroundPanel, borderPanel, positioningPanel, responsivePanel, buttonStylePanel, transformPanel, maskPanel } from 'gutenverse-core/controls';
+import { advancePanel, animationPanel, backgroundPanel, borderPanel, positioningPanel, responsivePanel, buttonStylePanel, transformPanel, maskPanel, mouseMoveEffectPanel } from 'gutenverse-core/controls';
 import { buttonPanel } from './panel-button';
 import { buttonBackgroundPanel } from './panel-button-background';
 import { loadingPanel } from './panel-loading';
@@ -101,6 +101,13 @@ export const panelList = () => {
                 hoverSelector: `.${props.elementId} .gutenverse-input-submit:hover`
             }),
             pro: true
+        },
+        {
+            title: __('Mouse Move Effect', 'gutenverse-form'),
+            initialOpen: false,
+            panelArray: mouseMoveEffectPanel,
+            tabRole: TabSetting,
+            pro: true,
         },
         {
             title: __('Spacing', 'gutenverse-form'),

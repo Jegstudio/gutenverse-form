@@ -5,8 +5,12 @@ import { InnerBlocks } from '@wordpress/block-editor';
 import { isSticky } from 'gutenverse-core/helper';
 import { useAnimationFrontend } from 'gutenverse-core/hooks';
 import { useDisplayFrontend } from 'gutenverse-core/hooks';
+import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
+import { compose } from '@wordpress/compose';
 
-const save = ({ attributes }) => {
+const save = compose(
+    withMouseMoveEffectScript
+)(({ attributes }) => {
     const {
         elementId,
         formId,
@@ -69,6 +73,6 @@ const save = ({ attributes }) => {
             <InnerBlocks.Content />
         </form>
     );
-};
+});
 
 export default save;
