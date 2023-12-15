@@ -10,7 +10,7 @@ import { selectContentPanel } from './panel-select-content';
 import { TabSetting, TabStyle } from 'gutenverse-core/controls';
 import { panelLogic } from '../../form-input/general/panels/panel-logic';
 
-export const panelList = (props) => {
+export const panelList = () => {
     return [
         {
             title: __('Content', 'gutenverse-form'),
