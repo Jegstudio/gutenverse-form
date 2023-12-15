@@ -10,7 +10,7 @@ export const selectedPanel = props => {
     return [
         {
             id: 'selectedColor',
-            label: __('Selected Text Color', 'gutenverse'),
+            label: __('Selected Text Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -21,7 +21,7 @@ export const selectedPanel = props => {
         },
         {
             id: 'selectedBgColor',
-            label: __('Selected Background Color', 'gutenverse'),
+            label: __('Selected Background Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -32,7 +32,7 @@ export const selectedPanel = props => {
         },
         {
             id: 'selectedBorderColor',
-            label: __('Selected Border Color', 'gutenverse'),
+            label: __('Selected Border Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -47,7 +47,7 @@ export const selectedPanel = props => {
         },
         {
             id: 'selectedRadius',
-            label: __('Selected Border Radius', 'gutenverse'),
+            label: __('Selected Border Radius', 'gutenverse-form'),
             component: DimensionControl,
             allowDeviceControl: true,
             position: ['top', 'right', 'bottom', 'left'],

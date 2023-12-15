@@ -87,8 +87,8 @@ const FormInputSubmitBlock = compose(
             <ToolbarGroup>
                 <ToolbarButton
                     name="icon"
-                    icon={<LogoCircleColor24SVG/>}
-                    title={__('Choose Icon', 'gutenverse')}
+                    icon={<LogoCircleColor24SVG />}
+                    title={__('Choose Icon', 'gutenverse-form')}
                     shortcut={displayShortcut.primary('i')}
                     onClick={() => setOpenIconLibrary(true)}
                 />

@@ -27,18 +27,18 @@ export const formPanel = () => {
     return [
         {
             id: 'formId',
-            label: __('Choose Form', 'gutenverse'),
+            label: __('Choose Form', 'gutenverse-form'),
             component: SelectSearchControl,
             onSearch: searchForms
         },
         {
             id: 'hideAfterSubmit',
-            label: __('Hide After Submit', 'gutenverse'),
+            label: __('Hide After Submit', 'gutenverse-form'),
             component: CheckboxControl,
         },
         {
             id: 'redirectTo',
-            label: __('Redirect To', 'gutenverse'),
+            label: __('Redirect To', 'gutenverse-form'),
             component: TextControl,
         },
     ];

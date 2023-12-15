@@ -19,24 +19,24 @@ export const buttonPanel = (props) => {
     return [
         {
             id: 'alignButton',
-            label: __('Button Alignment', 'gutenverse'),
+            label: __('Button Alignment', 'gutenverse-form'),
             component: IconRadioControl,
             allowDeviceControl: true,
             options: [
                 {
-                    label: __('Align Left', 'gutenverse'),
+                    label: __('Align Left', 'gutenverse-form'),
                     value: 'flex-start',
-                    icon: <AlignLeft/>,
+                    icon: <AlignLeft />,
                 },
                 {
-                    label: __('Align Center', 'gutenverse'),
+                    label: __('Align Center', 'gutenverse-form'),
                     value: 'center',
-                    icon: <AlignCenter/>,
+                    icon: <AlignCenter />,
                 },
                 {
-                    label: __('Align Right', 'gutenverse'),
+                    label: __('Align Right', 'gutenverse-form'),
                     value: 'flex-end',
-                    icon: <AlignRight/>,
+                    icon: <AlignRight />,
                 },
             ],
             style: [
@@ -52,23 +52,23 @@ export const buttonPanel = (props) => {
             component: SelectControl,
             options: [
                 {
-                    label: __('Default', 'gutenverse'),
+                    label: __('Default', 'gutenverse-form'),
                     value: 'default'
                 },
                 {
-                    label: __('Info', 'gutenverse'),
+                    label: __('Info', 'gutenverse-form'),
                     value: 'info'
                 },
                 {
-                    label: __('Success', 'gutenverse'),
+                    label: __('Success', 'gutenverse-form'),
                     value: 'success'
                 },
                 {
-                    label: __('Warning', 'gutenverse'),
+                    label: __('Warning', 'gutenverse-form'),
                     value: 'warning'
                 },
                 {
-                    label: __('Danger', 'gutenverse'),
+                    label: __('Danger', 'gutenverse-form'),
                     value: 'danger'
                 },
             ]
@@ -79,30 +79,30 @@ export const buttonPanel = (props) => {
             component: SelectControl,
             options: [
                 {
-                    label: __('Extra Small', 'gutenverse'),
+                    label: __('Extra Small', 'gutenverse-form'),
                     value: 'xs'
                 },
                 {
-                    label: __('Small', 'gutenverse'),
+                    label: __('Small', 'gutenverse-form'),
                     value: 'sm'
                 },
                 {
-                    label: __('Medium', 'gutenverse'),
+                    label: __('Medium', 'gutenverse-form'),
                     value: 'md'
                 },
                 {
-                    label: __('Large', 'gutenverse'),
+                    label: __('Large', 'gutenverse-form'),
                     value: 'lg'
                 },
                 {
-                    label: __('Extra Large', 'gutenverse'),
+                    label: __('Extra Large', 'gutenverse-form'),
                     value: 'xl'
                 },
             ]
         },
         {
             id: 'buttonWidth',
-            label: __('Set Width', 'gutenverse'),
+            label: __('Set Width', 'gutenverse-form'),
             component: RangeControl,
             allowDeviceControl: true,
             min: 0,
@@ -117,7 +117,7 @@ export const buttonPanel = (props) => {
         },
         {
             id: 'showIcon',
-            label: __('Show Icon', 'gutenverse'),
+            label: __('Show Icon', 'gutenverse-form'),
             component: CheckboxControl,
         },
         {
@@ -127,11 +127,11 @@ export const buttonPanel = (props) => {
             component: SelectControl,
             options: [
                 {
-                    label: __('Before', 'gutenverse'),
+                    label: __('Before', 'gutenverse-form'),
                     value: 'before'
                 },
                 {
-                    label: __('After', 'gutenverse'),
+                    label: __('After', 'gutenverse-form'),
                     value: 'after'
                 },
             ],
@@ -145,7 +145,7 @@ export const buttonPanel = (props) => {
         },
         {
             id: 'iconSpacing',
-            label: __('Icon Spacing', 'gutenverse'),
+            label: __('Icon Spacing', 'gutenverse-form'),
             show: showIcon,
             component: RangeControl,
             allowDeviceControl: true,
@@ -161,7 +161,7 @@ export const buttonPanel = (props) => {
         },
         {
             id: 'iconSize',
-            label: __('Icon Size', 'gutenverse'),
+            label: __('Icon Size', 'gutenverse-form'),
             component: SizeControl,
             allowDeviceControl: true,
             show: showIcon,
@@ -188,7 +188,7 @@ export const buttonPanel = (props) => {
         },
         {
             id: 'paddingButton',
-            label: __('Button Padding', 'gutenverse'),
+            label: __('Button Padding', 'gutenverse-form'),
             component: DimensionControl,
             allowDeviceControl: true,
             position: ['top', 'right', 'bottom', 'left'],

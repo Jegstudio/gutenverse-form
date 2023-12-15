@@ -5,7 +5,7 @@ import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import FormContent from './form-content';
 import { applyFilters } from '@wordpress/hooks';
-import { u } from'gutenverse-core/components';
+import { u } from 'gutenverse-core/components';
 
 const CreateForm = () => {
     const [open, setOpen] = useState(false);
@@ -62,7 +62,7 @@ const CreateForm = () => {
                 <DrawerHeader>
                     <>
                         <h3>
-                            {__('Create Form Action', 'gutenverse')}
+                            {__('Create Form Action', 'gutenverse-form')}
                         </h3>
                         <div className="gutenverse-close" onClick={() => closeDrawer()}>
                             <IconCloseSVG size={20} />
@@ -75,10 +75,10 @@ const CreateForm = () => {
                 <DrawerFooter>
                     <>
                         <div className="gutenverse-button create" onClick={() => submitFormAction()}>
-                            {saving ? __('Saving...', 'gutenverse') : __('Create Form', 'gutenverse')}
+                            {saving ? __('Saving...', 'gutenverse-form') : __('Create Form', 'gutenverse-form')}
                         </div>
                         <div className="gutenverse-button cancel" onClick={() => closeDrawer()}>
-                            {__('Cancel', 'gutenverse')}
+                            {__('Cancel', 'gutenverse-form')}
                         </div>
                     </>
                 </DrawerFooter>

@@ -9,13 +9,13 @@ export const contentPanel = props => {
     return [
         {
             id: 'showLabel',
-            label: __('Show Label', 'gutenverse'),
+            label: __('Show Label', 'gutenverse-form'),
             component: CheckboxControl,
         },
         {
             id: 'position',
             show: showLabel,
-            label: __('Label Position', 'gutenverse'),
+            label: __('Label Position', 'gutenverse-form'),
             component: SelectControl,
             options: [
                 {
@@ -30,19 +30,19 @@ export const contentPanel = props => {
         },
         {
             id: 'showHelper',
-            label: __('Show Helper', 'gutenverse'),
-            description: __('Display helper texts below the input field', 'gutenverse'),
+            label: __('Show Helper', 'gutenverse-form'),
+            description: __('Display helper texts below the input field', 'gutenverse-form'),
             component: CheckboxControl,
         },
         {
             id: 'inputPlaceholder',
-            label: __('Input Placeholder', 'gutenverse'),
+            label: __('Input Placeholder', 'gutenverse-form'),
             component: TextControl,
         },
         {
             id: 'inputName',
-            label: __('Input ID', 'gutenverse'),
-            description: __('This will be identifier used in your entries, make sure the name is unique.', 'gutenverse'),
+            label: __('Input ID', 'gutenverse-form'),
+            description: __('This will be identifier used in your entries, make sure the name is unique.', 'gutenverse-form'),
             component: TextControl,
         },
     ];

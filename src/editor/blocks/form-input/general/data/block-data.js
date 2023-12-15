@@ -14,15 +14,15 @@ export default {
         },
         inputLabel: {
             type: 'string',
-            default: __('Text', 'gutenverse'),
+            default: __('Text', 'gutenverse-form'),
         },
         inputPlaceholder: {
             type: 'string',
-            default: __('Text Placeholder', 'gutenverse'),
+            default: __('Text Placeholder', 'gutenverse-form'),
         },
         inputName: {
             type: 'string',
-            default: __('input-text-name', 'gutenverse'),
+            default: __('input-text-name', 'gutenverse-form'),
         },
         showHelper: {
             type: 'boolean',
@@ -30,7 +30,7 @@ export default {
         },
         inputHelper: {
             type: 'string',
-            default: __('Input Helper', 'gutenverse'),
+            default: __('Input Helper', 'gutenverse-form'),
         },
         position: {
             type: 'string',
@@ -130,9 +130,9 @@ export default {
         className: false,
     },
     keywords: [
-        __('input', 'gutenverse'),
-        __('form', 'gutenverse'),
-        __('gutenverse', 'gutenverse'),
+        __('input', 'gutenverse-form'),
+        __('form', 'gutenverse-form'),
+        __('gutenverse', 'gutenverse-form'),
     ],
     example: {
     }

@@ -15,28 +15,28 @@ export const errorNoticePanel = (props) => {
     return [
         {
             id: 'errorExample',
-            label: __('Error Example', 'gutenverse'),
-            description: __('Show Error Notice Example inside the Editor.', 'gutenverse'),
+            label: __('Error Example', 'gutenverse-form'),
+            description: __('Show Error Notice Example inside the Editor.', 'gutenverse-form'),
             component: CheckboxControl,
         },
         {
             id: 'errorAlign',
-            label: __('Success Alignment', 'gutenverse'),
+            label: __('Success Alignment', 'gutenverse-form'),
             component: IconRadioControl,
             allowDeviceControl: true,
             options: [
                 {
-                    label: __('Align Left', 'gutenverse'),
+                    label: __('Align Left', 'gutenverse-form'),
                     value: 'left',
                     icon: <AlignLeft />,
                 },
                 {
-                    label: __('Align Center', 'gutenverse'),
+                    label: __('Align Center', 'gutenverse-form'),
                     value: 'center',
                     icon: <AlignCenter />,
                 },
                 {
-                    label: __('Align Right', 'gutenverse'),
+                    label: __('Align Right', 'gutenverse-form'),
                     value: 'right',
                     icon: <AlignRight />,
                 },
@@ -50,7 +50,7 @@ export const errorNoticePanel = (props) => {
         },
         {
             id: 'errorBgColor',
-            label: __('Error Background Color', 'gutenverse'),
+            label: __('Error Background Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -61,7 +61,7 @@ export const errorNoticePanel = (props) => {
         },
         {
             id: 'errorTextColor',
-            label: __('Error Text Color', 'gutenverse'),
+            label: __('Error Text Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -72,7 +72,7 @@ export const errorNoticePanel = (props) => {
         },
         {
             id: 'errorTypography',
-            label: __('Error Typography', 'gutenverse'),
+            label: __('Error Typography', 'gutenverse-form'),
             component: TypographyControl,
             style: [
                 {
@@ -84,7 +84,7 @@ export const errorNoticePanel = (props) => {
         },
         {
             id: 'errorPadding',
-            label: __('Error Padding', 'gutenverse'),
+            label: __('Error Padding', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -112,7 +112,7 @@ export const errorNoticePanel = (props) => {
         {
             id: 'errorBorder',
             show: device === 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderControl,
             style: [
                 {
@@ -125,7 +125,7 @@ export const errorNoticePanel = (props) => {
         {
             id: 'errorBorderResponsive',
             show: device !== 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
@@ -138,7 +138,7 @@ export const errorNoticePanel = (props) => {
         },
         {
             id: 'errorBoxShadow',
-            label: __('Box Shadow', 'gutenverse'),
+            label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
             style: [
                 {

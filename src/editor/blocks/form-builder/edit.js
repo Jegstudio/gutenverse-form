@@ -16,7 +16,7 @@ import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { PanelTutorial } from 'gutenverse-core/controls';
 
-const NoticeMessages = ({successExample = false, errorExample = false}) => {
+const NoticeMessages = ({ successExample = false, errorExample = false }) => {
     return <>
         {successExample && <div className="form-notification"><div className="notification-body guten-success">{__('Thank you! (You can setup this message inside your form setting in Dashboard->Form).')}</div></div>}
         {errorExample && <div className="form-notification"><div className="notification-body guten-error">{__('Something went wrong! (You can setup this message inside your form setting in Dashboard->Form).')}</div></div>}
@@ -26,7 +26,7 @@ const NoticeMessages = ({successExample = false, errorExample = false}) => {
 const FormWrapper = ({ blockProps, attributes }) => {
     return (
         <div {...blockProps}>
-            <NoticeMessages {...attributes}/>
+            <NoticeMessages {...attributes} />
             <InnerBlocks />
         </div>
     );
@@ -35,7 +35,7 @@ const FormWrapper = ({ blockProps, attributes }) => {
 const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
     return (
         <div {...blockProps}>
-            <NoticeMessages {...attributes}/>
+            <NoticeMessages {...attributes} />
             <InnerBlocks
                 renderAppender={InnerBlocks.ButtonBlockAppender}
                 clientId={clientId}
@@ -99,19 +99,19 @@ const FormBuilderBlock = compose(
     return <>
         <InspectorControls>
             <PanelTutorial
-                title={__('How to use form builder', 'gutenverse')}
+                title={__('How to use form builder', 'gutenverse-form')}
                 list={[
                     {
-                        title: __('Adding inputs', 'gutenverse'),
-                        description: __('Click the + symbol on form builder block, then search for inputs you need ("checkbox", "text", "email", etc). Also don\'t forget to add "submit button"', 'gutenverse')
+                        title: __('Adding inputs', 'gutenverse-form'),
+                        description: __('Click the + symbol on form builder block, then search for inputs you need ("checkbox", "text", "email", etc). Also don\'t forget to add "submit button"', 'gutenverse-form')
                     },
                     {
-                        title: __('Creating your form setting', 'gutenverse'),
-                        description: __('You need to create a form first from your "Dashboard -> Form."', 'gutenverse')
+                        title: __('Creating your form setting', 'gutenverse-form'),
+                        description: __('You need to create a form first from your "Dashboard -> Form."', 'gutenverse-form')
                     },
                     {
-                        title: __('Selecting your form setting', 'gutenverse'),
-                        description: __('In the "Form Setting" below, you can click "Choose Form" and type your form\'s name to search it.', 'gutenverse')
+                        title: __('Selecting your form setting', 'gutenverse-form'),
+                        description: __('In the "Form Setting" below, you can click "Choose Form" and type your form\'s name to search it.', 'gutenverse-form')
                     }
                 ]}
             />

@@ -6,7 +6,7 @@ export const stickyPanel = (props) => {
     const stickyOption = [
         {
             id: 'sticky',
-            label: __('Enable Sticky', 'gutenverse'),
+            label: __('Enable Sticky', 'gutenverse-form'),
             component: LockedSwitchControl,
         },
     ];

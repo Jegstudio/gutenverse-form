@@ -77,8 +77,8 @@ const InputWrapper = props => {
     const Label = showLabel && <RichText
         className={'input-label'}
         tagName={'label'}
-        aria-label={__('Label Title', 'gutenverse')}
-        placeholder={__('Label Title', 'gutenverse')}
+        aria-label={__('Label Title', 'gutenverse-form')}
+        placeholder={__('Label Title', 'gutenverse-form')}
         value={inputLabel}
         onChange={value => setAttributes({ inputLabel: value })}
         withoutInteractiveFormatting
@@ -87,8 +87,8 @@ const InputWrapper = props => {
     const Helper = showHelper && <RichText
         className={'input-helper'}
         tagName={'span'}
-        aria-label={__('Input Helper', 'gutenverse')}
-        placeholder={__('Input Helper', 'gutenverse')}
+        aria-label={__('Input Helper', 'gutenverse-form')}
+        placeholder={__('Input Helper', 'gutenverse-form')}
         value={inputHelper}
         onChange={value => setAttributes({ inputHelper: value })}
         withoutInteractiveFormatting
@@ -100,7 +100,7 @@ const InputWrapper = props => {
         <PanelController panelList={panelList} {...props} />
         <div  {...blockProps}>
             {!validParent && <h1 className="input-warning">
-                {__('Please put input element inside Form Builder', 'gutenverse')}
+                {__('Please put input element inside Form Builder', 'gutenverse-form')}
             </h1>}
             <div className="label-wrapper">
                 {Label}

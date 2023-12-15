@@ -11,44 +11,44 @@ import { panelLogic } from '../../form-input/general/panels/panel-logic';
 export const panelList = () => {
     return [
         {
-            title: __('Content', 'gutenverse'),
+            title: __('Content', 'gutenverse-form'),
             panelArray: contentPanel,
             initialOpen: true,
             tabRole: TabSetting
         },
         {
-            title: __('Validation', 'gutenverse'),
+            title: __('Validation', 'gutenverse-form'),
             panelArray: panelRules,
             initialOpen: false,
             tabRole: TabSetting
         },
         {
-            title: __('Logic', 'gutenverse'),
+            title: __('Logic', 'gutenverse-form'),
             panelArray: panelLogic,
             pro: true,
             initialOpen: false,
         },
         {
-            title: __('Label Style', 'gutenverse'),
+            title: __('Label Style', 'gutenverse-form'),
             panelArray: labelPanel,
             initialOpen: false,
             tabRole: TabStyle
         },
         {
-            title: __('Main Wrapper', 'gutenverse'),
+            title: __('Main Wrapper', 'gutenverse-form'),
             panelArray: mainPanel,
             initialOpen: false,
             tabRole: TabStyle
         },
         {
-            title: __('Input Style', 'gutenverse'),
+            title: __('Input Style', 'gutenverse-form'),
             panelArray: inputPanel,
             initialOpen: false,
             tabRole: TabStyle
         },
         /* Put Your List Here */
         {
-            title: __('Background', 'gutenverse'),
+            title: __('Background', 'gutenverse-form'),
             initialOpen: false,
             panelArray: (props) => backgroundPanel({
                 ...props,
@@ -59,7 +59,7 @@ export const panelList = () => {
             tabRole: TabStyle
         },
         {
-            title: __('Border', 'gutenverse'),
+            title: __('Border', 'gutenverse-form'),
             initialOpen: false,
             panelArray: (props) => borderPanel({
                 ...props,
@@ -68,25 +68,25 @@ export const panelList = () => {
             tabRole: TabStyle
         },
         {
-            title: __('Masking', 'gutenverse'),
+            title: __('Masking', 'gutenverse-form'),
             initialOpen: false,
             panelArray: maskPanel,
             tabRole: TabStyle
         },
         {
-            title: __('Display', 'gutenverse'),
+            title: __('Display', 'gutenverse-form'),
             initialOpen: false,
             panelArray: responsivePanel,
             tabRole: TabSetting
         },
         {
-            title: __('Positioning', 'gutenverse'),
+            title: __('Positioning', 'gutenverse-form'),
             initialOpen: false,
             panelArray: positioningPanel,
             tabRole: TabSetting
         },
         {
-            title: __('Animation Effects', 'gutenverse'),
+            title: __('Animation Effects', 'gutenverse-form'),
             initialOpen: false,
             panelArray: (props) => animationPanel({
                 ...props,
@@ -95,13 +95,13 @@ export const panelList = () => {
             tabRole: TabSetting
         },
         {
-            title: __('Transform', 'gutenverse'),
+            title: __('Transform', 'gutenverse-form'),
             initialOpen: false,
             panelArray: transformPanel,
             pro: true
         },
         {
-            title: __('Spacing', 'gutenverse'),
+            title: __('Spacing', 'gutenverse-form'),
             initialOpen: false,
             panelArray: (props) => advancePanel({
                 ...props,

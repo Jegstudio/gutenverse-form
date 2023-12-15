@@ -32,7 +32,7 @@ export const buttonBorderPanel = (props) => {
         {
             id: 'buttonBorder',
             show: (!switcher.buttonBorder || switcher.buttonBorder === 'normal') && device == 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderControl,
             style: [
                 {
@@ -45,7 +45,7 @@ export const buttonBorderPanel = (props) => {
         {
             id: 'buttonBorderResponsive',
             show: (!switcher.buttonBorder || switcher.buttonBorder === 'normal') && device !== 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
@@ -59,7 +59,7 @@ export const buttonBorderPanel = (props) => {
         {
             id: 'buttonBorderHover',
             show: switcher.buttonBorder === 'hover' && device == 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderControl,
             style: [
                 {
@@ -72,7 +72,7 @@ export const buttonBorderPanel = (props) => {
         {
             id: 'buttonBorderHoverResponsive',
             show: switcher.buttonBorder === 'hover' && device !== 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
@@ -86,7 +86,7 @@ export const buttonBorderPanel = (props) => {
         {
             id: 'buttonBoxShadow',
             show: !switcher.buttonBorder || switcher.buttonBorder === 'normal',
-            label: __('Box Shadow', 'gutenverse'),
+            label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
             style: [
                 {
@@ -99,7 +99,7 @@ export const buttonBorderPanel = (props) => {
         {
             id: 'buttonBoxShadowHover',
             show: switcher.buttonBorder === 'hover',
-            label: __('Box Shadow', 'gutenverse'),
+            label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
             style: [
                 {
