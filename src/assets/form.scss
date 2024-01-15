@@ -20,35 +20,49 @@
 
     .form-pro-notice {
         border-radius: 5px;
-        background: linear-gradient(180deg, #7A7DFF 0%, #3D40BE 100%);
         padding: 20px 24px;
         position: relative;
 
         .title {
-            color: #ffffff;
+            color: #000000;
             font-family: "Roboto", sans-serif;
             font-size: 16px;
             font-style: normal;
             font-weight: 500;
             line-height: 22px;
             margin: 0;
+            position: relative;
         }
 
         .description {
-            color: #ffffff;
-            font-family: "Roboto", sans-serif;
-            font-size: 12px;
+            color: rgba(1, 22, 39, 0.50);
+            font-family: Roboto;
+            font-size: 11px;
             font-style: normal;
             font-weight: 400;
-            line-height: 16.8px;
-            margin: 6px 0 14px;
+            line-height: 140%;
+            padding-bottom: 9px;
+            position: relative;
         }
 
-        .boxes {
-            display: flex;
-            bottom: 0;
-            right: 22px;
+        .banner-image-mockup { 
             position: absolute;
+            border-radius: inherit;
+            right: 0;
+            bottom: 0;
+            height: auto;
+            width: 150px;
+            object-fit: cover;
+        }
+
+        .banner-image-background {
+            position: absolute;
+            border-radius: inherit;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
         }
     }
 }
