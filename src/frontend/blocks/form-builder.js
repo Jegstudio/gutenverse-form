@@ -69,7 +69,7 @@ class GutenverseFormValidation extends Default {
                     break;
                 case 'multiselect':
                     value = [];
-                    currentFormBuilder.find('select').filter('.gutenverse-input-multiselect').each(function (option) {
+                    currentFormBuilder.find(`select[name='${name}']`).filter('.gutenverse-input-multiselect').each(function (option) {
                         u(option).find('option').each(function( opt ) {
                             if (u(opt).attr('value')) {
                                 value.push(u(opt).attr('value'));

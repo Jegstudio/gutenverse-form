@@ -70,24 +70,24 @@ class Entries {
 			?>
 			<select name='form_id'>
 				<option value=''><?php esc_html_e( 'All Form', 'gutenverse-form' ); ?></option>
-				<?php
-				foreach ( $forms as $form ) {
-					echo wp_kses(
-						sprintf(
-							'<option value="%s"%s>%s</option>',
-							$form->ID,
-							(int) $selected === (int) $form->ID ? ' selected="selected"' : '',
-							$form->post_title
+			<?php
+			foreach ( $forms as $form ) {
+				echo wp_kses(
+					sprintf(
+						'<option value="%s"%s>%s</option>',
+						$form->ID,
+						(int) $selected === (int) $form->ID ? ' selected="selected"' : '',
+						$form->post_title
+					),
+					array(
+						'option' => array(
+							'value'    => true,
+							'selected' => true,
 						),
-						array(
-							'option' => array(
-								'value'    => true,
-								'selected' => true,
-							),
-						)
-					);
-				}
-				?>
+					)
+				);
+			}
+			?>
 			</select>
 			<?php
 		}
@@ -172,15 +172,17 @@ class Entries {
 		$post_type = isset( $_GET['post_type'] ) ? wp_kses( wp_unslash( $_GET['post_type'] ), wp_kses_allowed_html() ) : '';
 
 		if ( self::POST_TYPE === $post_type ) {
-			$search = get_search_query();
-			if ( ! empty( $search ) ) {
-				$join .= 'LEFT JOIN ' . $wpdb->postmeta . ' as pm1 ON ' . $wpdb->posts . '.ID = pm1.post_id ';
+			try {
+				$search = get_search_query();
+				if ( ! empty( $search ) ) {
+					$join .= 'LEFT JOIN ' . $wpdb->postmeta . ' as pm1 ON ' . $wpdb->posts . '.ID = pm1.post_id ';
+				}
+			} catch ( \Throwable $th ) {
+				return $join;
 			}
 		}
-
 		return $join;
 	}
-
 
 	/**
 	 * Post Where.
@@ -202,11 +204,18 @@ class Entries {
 			$search = get_search_query();
 
 			if ( ! empty( $search ) ) {
-				$search_form = " ( SELECT ID from {$wpdb->posts} where {$wpdb->posts}.post_title LIKE '%{$search}%' ) ";
-				$post_type   = self::POST_TYPE;
+				try {
+					$search = get_search_query();
+					if ( ! empty( $search ) ) {
+						$search_form = " ( SELECT ID from {$wpdb->posts} where {$wpdb->posts}.post_title LIKE '%{$search}%' ) ";
+						$post_type   = self::POST_TYPE;
 
-				$where = " AND ( {$wpdb->posts}.post_type = '{$post_type}' AND {$wpdb->posts}.post_title LIKE '%{$search}%' )
-						OR ( pm1.meta_key = 'form-id' AND pm1.meta_value IN {$search_form} ) ";
+						$where = " AND ( {$wpdb->posts}.post_type = '{$post_type}' AND {$wpdb->posts}.post_title LIKE '%{$search}%' )
+								OR ( pm1.meta_key = 'form-id' AND pm1.meta_value IN {$search_form} ) ";
+					}
+				} catch ( \Throwable $th ) {
+					return $where;
+				}
 			}
 		}
 
