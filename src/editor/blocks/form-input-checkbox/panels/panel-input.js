@@ -12,8 +12,8 @@ export const inputPanel = props => {
     return [
         {
             id: 'displayBlock',
-            label: __('Option Display', 'gutenverse'),
-            description: __('Select how options are stacked', 'gutenverse'),
+            label: __('Option Display', 'gutenverse-form'),
+            description: __('Select how options are stacked', 'gutenverse-form'),
             component: SelectControl,
             options: [
                 {
@@ -28,7 +28,7 @@ export const inputPanel = props => {
         },
         {
             id: 'labelSpace',
-            label: __('Label Space', 'gutenverse'),
+            label: __('Label Space', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             units: {
@@ -54,7 +54,7 @@ export const inputPanel = props => {
         },
         {
             id: 'checkboxSize',
-            label: __('Checkbox Size', 'gutenverse'),
+            label: __('Checkbox Size', 'gutenverse-form'),
             component: RangeControl,
             min: 1,
             max: 200,
@@ -68,7 +68,7 @@ export const inputPanel = props => {
         },
         {
             id: 'checkboxSpace',
-            label: __('Checkbox Space', 'gutenverse'),
+            label: __('Checkbox Space', 'gutenverse-form'),
             component: RangeControl,
             min: 1,
             max: 200,
@@ -82,7 +82,7 @@ export const inputPanel = props => {
         },
         {
             id: 'checkboxLabelColor',
-            label: __('Checkbox Label Color', 'gutenverse'),
+            label: __('Checkbox Label Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -93,13 +93,13 @@ export const inputPanel = props => {
         },
         {
             id: 'checkboxTypography',
-            label: __('Checkbox Label Typography', 'gutenverse'),
+            label: __('Checkbox Label Typography', 'gutenverse-form'),
             component: TypographyControl,
             style: [
                 {
                     selector: `.${elementId} .main-wrapper label .check`,
                     hasChild: true,
-                    render: (value,id) => handleTypography(value, props, id)
+                    render: (value, id) => handleTypography(value, props, id)
                 }
             ],
         },
@@ -121,7 +121,7 @@ export const inputPanel = props => {
         {
             id: 'checkboxColor',
             show: !switcher.inputState || switcher.inputState === 'normal',
-            label: __('Checkbox Color', 'gutenverse'),
+            label: __('Checkbox Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -133,7 +133,7 @@ export const inputPanel = props => {
         {
             id: 'checkboxActiveColor',
             show: switcher.inputState === 'active',
-            label: __('Checkbox Active Color', 'gutenverse'),
+            label: __('Checkbox Active Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {

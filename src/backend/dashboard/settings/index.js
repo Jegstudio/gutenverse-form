@@ -10,8 +10,8 @@ export const loadSettings = () => {
         (nav) => ({
             ...nav,
             form: {
-                title : __('Form', 'gutenverse'),
-                pro   : false,
+                title: __('Form', 'gutenverse-form'),
+                pro: false,
             },
         })
     );

@@ -1,8 +1,12 @@
 
 import SaveInputWrapper from '../form-input/general/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
+import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
+import { compose } from '@wordpress/compose';
 
-const save = props => {
+const save = compose(
+    withMouseMoveEffectScript
+)(props => {
     const {
         attributes,
     } = props;
@@ -40,6 +44,6 @@ const save = props => {
             </label>
         </SaveInputWrapper>
     );
-};
+});
 
 export default save;

@@ -15,7 +15,7 @@ export const inputPanel = props => {
     return [
         {
             id: 'inputPadding',
-            label: __('Input Padding', 'gutenverse'),
+            label: __('Input Padding', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -42,7 +42,7 @@ export const inputPanel = props => {
         },
         {
             id: 'inputMargin',
-            label: __('Input Margin', 'gutenverse'),
+            label: __('Input Margin', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -69,7 +69,7 @@ export const inputPanel = props => {
         },
         {
             id: 'placeholderColor',
-            label: __('Input Placeholder Color', 'gutenverse'),
+            label: __('Input Placeholder Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [
@@ -81,7 +81,7 @@ export const inputPanel = props => {
         },
         {
             id: 'inputTypography',
-            label: __('Input Typography', 'gutenverse'),
+            label: __('Input Typography', 'gutenverse-form'),
             component: TypographyControl,
             style: [
                 {
@@ -113,7 +113,7 @@ export const inputPanel = props => {
         {
             id: 'inputColorNormal',
             show: !switcher.inputState || switcher.inputState === 'normal',
-            label: __('Input Color Normal', 'gutenverse'),
+            label: __('Input Color Normal', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [
@@ -126,7 +126,7 @@ export const inputPanel = props => {
         {
             id: 'inputBgColorNormal',
             show: !switcher.inputState || switcher.inputState === 'normal',
-            label: __('Input Background Color Normal', 'gutenverse'),
+            label: __('Input Background Color Normal', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [
@@ -139,7 +139,7 @@ export const inputPanel = props => {
         {
             id: 'inputBorderNormal',
             show: (!switcher.inputState || switcher.inputState === 'normal') && device === 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderControl,
             style: [
                 {
@@ -152,7 +152,7 @@ export const inputPanel = props => {
         {
             id: 'inputBorderNormalResponsive',
             show: (!switcher.inputState || switcher.inputState === 'normal') && device !== 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
@@ -166,7 +166,7 @@ export const inputPanel = props => {
         {
             id: 'inputColorHover',
             show: switcher.inputState === 'hover',
-            label: __('Input Color Hover', 'gutenverse'),
+            label: __('Input Color Hover', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [
@@ -179,7 +179,7 @@ export const inputPanel = props => {
         {
             id: 'inputBgColorHover',
             show: switcher.inputState === 'hover',
-            label: __('Input Background Color Hover', 'gutenverse'),
+            label: __('Input Background Color Hover', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [
@@ -192,7 +192,7 @@ export const inputPanel = props => {
         {
             id: 'inputBorderHover',
             show: switcher.inputState === 'hover' && device === 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderControl,
             style: [
                 {
@@ -205,7 +205,7 @@ export const inputPanel = props => {
         {
             id: 'inputBorderHoverResponsive',
             show: switcher.inputState === 'hover' && device !== 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
@@ -219,7 +219,7 @@ export const inputPanel = props => {
         {
             id: 'inputColorFocus',
             show: switcher.inputState === 'focus',
-            label: __('Input Color Focus', 'gutenverse'),
+            label: __('Input Color Focus', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [
@@ -232,7 +232,7 @@ export const inputPanel = props => {
         {
             id: 'inputBgColorFocus',
             show: switcher.inputState === 'focus',
-            label: __('Input Background Color Focus', 'gutenverse'),
+            label: __('Input Background Color Focus', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [
@@ -245,7 +245,7 @@ export const inputPanel = props => {
         {
             id: 'inputBorderFocus',
             show: switcher.inputState === 'focus' && device === 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderControl,
             style: [
                 {
@@ -258,7 +258,7 @@ export const inputPanel = props => {
         {
             id: 'inputBorderFocusResponsive',
             show: switcher.inputState === 'focus' && device !== 'Desktop',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
@@ -287,7 +287,7 @@ export const inputPanel = props => {
         {
             id: 'inputAreaBoxShadow',
             show: !switcher.inputAreaHover || switcher.inputAreaHover === 'normal',
-            label: __('Box Shadow', 'gutenverse'),
+            label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
             style: [
                 {
@@ -300,7 +300,7 @@ export const inputPanel = props => {
         {
             id: 'inputAreaBoxShadowHover',
             show: switcher.inputAreaHover === 'hover',
-            label: __('Hover Box Shadow', 'gutenverse'),
+            label: __('Hover Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
             style: [
                 {

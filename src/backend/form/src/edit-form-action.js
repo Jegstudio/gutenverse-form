@@ -5,7 +5,7 @@ import { DrawerWrapper, DrawerBody, DrawerContainer, DrawerFooter, DrawerHeader,
 import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import FormContent from './form-content';
-import { u } from'gutenverse-core/components';
+import { u } from 'gutenverse-core/components';
 
 const EditForm = () => {
     const [open, setOpen] = useState(false);
@@ -70,7 +70,7 @@ const EditForm = () => {
                 <DrawerHeader>
                     <>
                         <h3>
-                            {__('Edit Form Action', 'gutenverse')}
+                            {__('Edit Form Action', 'gutenverse-form')}
                         </h3>
                         <div className="gutenverse-close" onClick={() => closeDrawer()}>
                             <IconCloseSVG size={20} />
@@ -83,10 +83,10 @@ const EditForm = () => {
                 {!loading && <DrawerFooter>
                     <>
                         <div className="gutenverse-button create" onClick={() => submitFormAction()}>
-                            {saving ? __('Saving...', 'gutenverse') : __('Edit Form', 'gutenverse')}
+                            {saving ? __('Saving...', 'gutenverse-form') : __('Edit Form', 'gutenverse-form')}
                         </div>
                         <div className="gutenverse-button cancel" onClick={() => closeDrawer()}>
-                            {__('Cancel', 'gutenverse')}
+                            {__('Cancel', 'gutenverse-form')}
                         </div>
                     </>
                 </DrawerFooter>}

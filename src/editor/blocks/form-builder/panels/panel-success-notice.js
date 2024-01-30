@@ -15,28 +15,28 @@ export const successNoticePanel = (props) => {
     return [
         {
             id: 'successExample',
-            label: __('Success Example', 'gutenverse'),
-            description: __('Show Success Notice Example inside the Editor.', 'gutenverse'),
+            label: __('Success Example', 'gutenverse-form'),
+            description: __('Show Success Notice Example inside the Editor.', 'gutenverse-form'),
             component: CheckboxControl,
         },
         {
             id: 'successAlign',
-            label: __('Success Alignment', 'gutenverse'),
+            label: __('Success Alignment', 'gutenverse-form'),
             component: IconRadioControl,
             allowDeviceControl: true,
             options: [
                 {
-                    label: __('Align Left', 'gutenverse'),
+                    label: __('Align Left', 'gutenverse-form'),
                     value: 'left',
                     icon: <AlignLeft />,
                 },
                 {
-                    label: __('Align Center', 'gutenverse'),
+                    label: __('Align Center', 'gutenverse-form'),
                     value: 'center',
                     icon: <AlignCenter />,
                 },
                 {
-                    label: __('Align Right', 'gutenverse'),
+                    label: __('Align Right', 'gutenverse-form'),
                     value: 'right',
                     icon: <AlignRight />,
                 },
@@ -50,7 +50,7 @@ export const successNoticePanel = (props) => {
         },
         {
             id: 'successBgColor',
-            label: __('Success Background Color', 'gutenverse'),
+            label: __('Success Background Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -61,7 +61,7 @@ export const successNoticePanel = (props) => {
         },
         {
             id: 'successTextColor',
-            label: __('Success Text Color', 'gutenverse'),
+            label: __('Success Text Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -72,7 +72,7 @@ export const successNoticePanel = (props) => {
         },
         {
             id: 'successTypography',
-            label: __('Success Typography', 'gutenverse'),
+            label: __('Success Typography', 'gutenverse-form'),
             component: TypographyControl,
             style: [
                 {
@@ -84,7 +84,7 @@ export const successNoticePanel = (props) => {
         },
         {
             id: 'successPadding',
-            label: __('Success Padding', 'gutenverse'),
+            label: __('Success Padding', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -111,7 +111,7 @@ export const successNoticePanel = (props) => {
         },
         {
             id: 'successBorder',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderControl,
             style: [
                 {
@@ -123,7 +123,7 @@ export const successNoticePanel = (props) => {
         },
         {
             id: 'successBorderResponsive',
-            label: __('Border', 'gutenverse'),
+            label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
             style: [
@@ -136,7 +136,7 @@ export const successNoticePanel = (props) => {
         },
         {
             id: 'successBoxShadow',
-            label: __('Box Shadow', 'gutenverse'),
+            label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
             style: [
                 {

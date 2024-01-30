@@ -10,7 +10,7 @@ export const labelPanel = props => {
     return [
         {
             id: 'labelWidth',
-            label: __('Label Width in Percent', 'gutenverse'),
+            label: __('Label Width in Percent', 'gutenverse-form'),
             component: RangeControl,
             min: 1,
             max: 100,
@@ -24,7 +24,7 @@ export const labelPanel = props => {
         },
         {
             id: 'labelColor',
-            label: __('Label Color', 'gutenverse'),
+            label: __('Label Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [
@@ -36,19 +36,19 @@ export const labelPanel = props => {
         },
         {
             id: 'labelTypography',
-            label: __('Title Typography', 'gutenverse'),
+            label: __('Title Typography', 'gutenverse-form'),
             component: TypographyControl,
             style: [
                 {
                     selector: `.${elementId} .label-wrapper .input-label`,
                     hasChild: true,
-                    render: (value,id) => handleTypography(value, props, id)
+                    render: (value, id) => handleTypography(value, props, id)
                 }
             ],
         },
         {
             id: 'labelPadding',
-            label: __('Label Padding', 'gutenverse'),
+            label: __('Label Padding', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -75,7 +75,7 @@ export const labelPanel = props => {
         },
         {
             id: 'labelMargin',
-            label: __('Label Margin', 'gutenverse'),
+            label: __('Label Margin', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -102,7 +102,7 @@ export const labelPanel = props => {
         },
         {
             id: 'labelRequireColor',
-            label: __('Require Indicator Color', 'gutenverse'),
+            label: __('Require Indicator Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [

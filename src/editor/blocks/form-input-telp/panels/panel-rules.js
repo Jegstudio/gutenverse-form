@@ -9,13 +9,13 @@ export const panelRules = props => {
     return [
         {
             id: 'required',
-            label: __('Required', 'gutenverse'),
+            label: __('Required', 'gutenverse-form'),
             component: CheckboxControl,
-            description: __('Check this option to make user required to fill this input', 'gutenverse'),
+            description: __('Check this option to make user required to fill this input', 'gutenverse-form'),
         },
         {
             id: 'validationType',
-            label: __('Validation Type', 'gutenverse'),
+            label: __('Validation Type', 'gutenverse-form'),
             component: SelectControl,
             options: [
                 {
@@ -35,7 +35,7 @@ export const panelRules = props => {
         {
             id: 'validationMin',
             show: validationType !== 'none',
-            label: __('Minimum Length', 'gutenverse'),
+            label: __('Minimum Length', 'gutenverse-form'),
             component: NumberControl,
             min: 1,
             max: 1000,
@@ -44,7 +44,7 @@ export const panelRules = props => {
         {
             id: 'validationMax',
             show: validationType !== 'none',
-            label: __('Maximum Length', 'gutenverse'),
+            label: __('Maximum Length', 'gutenverse-form'),
             component: NumberControl,
             min: 1,
             max: 1000,
@@ -53,8 +53,8 @@ export const panelRules = props => {
         {
             id: 'validationWarning',
             show: validationType !== 'none',
-            label: __('Warning Message', 'gutenverse'),
-            description: __('Validation message if the required input is incorrect', 'gutenverse'),
+            label: __('Warning Message', 'gutenverse-form'),
+            description: __('Validation message if the required input is incorrect', 'gutenverse-form'),
             component: TextControl,
         },
     ];

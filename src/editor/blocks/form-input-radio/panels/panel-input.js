@@ -12,8 +12,8 @@ export const inputPanel = props => {
     return [
         {
             id: 'displayBlock',
-            label: __('Option Display', 'gutenverse'),
-            description: __('Select how options are stacked', 'gutenverse'),
+            label: __('Option Display', 'gutenverse-form'),
+            description: __('Select how options are stacked', 'gutenverse-form'),
             component: SelectControl,
             options: [
                 {
@@ -28,7 +28,7 @@ export const inputPanel = props => {
         },
         {
             id: 'labelSpace',
-            label: __('Label Space', 'gutenverse'),
+            label: __('Label Space', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             units: {
@@ -54,7 +54,7 @@ export const inputPanel = props => {
         },
         {
             id: 'radioSize',
-            label: __('Radio Size', 'gutenverse'),
+            label: __('Radio Size', 'gutenverse-form'),
             component: RangeControl,
             min: 1,
             max: 200,
@@ -68,7 +68,7 @@ export const inputPanel = props => {
         },
         {
             id: 'radioSpace',
-            label: __('Radio Space', 'gutenverse'),
+            label: __('Radio Space', 'gutenverse-form'),
             component: RangeControl,
             min: 1,
             max: 200,
@@ -82,7 +82,7 @@ export const inputPanel = props => {
         },
         {
             id: 'radioLabelColor',
-            label: __('Radio Label Color', 'gutenverse'),
+            label: __('Radio Label Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -93,13 +93,13 @@ export const inputPanel = props => {
         },
         {
             id: 'radioTypography',
-            label: __('Radio Typography', 'gutenverse'),
+            label: __('Radio Typography', 'gutenverse-form'),
             component: TypographyControl,
             style: [
                 {
                     selector: `.${elementId} .main-wrapper label .radio`,
                     hasChild: true,
-                    render: (value,id) => handleTypography(value, props, id)
+                    render: (value, id) => handleTypography(value, props, id)
                 }
             ],
         },
@@ -121,7 +121,7 @@ export const inputPanel = props => {
         {
             id: 'radioColor',
             show: !switcher.inputState || switcher.inputState === 'normal',
-            label: __('Radio Color', 'gutenverse'),
+            label: __('Radio Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -133,7 +133,7 @@ export const inputPanel = props => {
         {
             id: 'radioActiveColor',
             show: switcher.inputState === 'active',
-            label: __('Radio Active Color', 'gutenverse'),
+            label: __('Radio Active Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {

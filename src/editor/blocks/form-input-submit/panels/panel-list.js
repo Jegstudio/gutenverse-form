@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { advancePanel, animationPanel, backgroundPanel, borderPanel, positioningPanel, responsivePanel, buttonStylePanel, transformPanel, maskPanel } from 'gutenverse-core/controls';
+import { advancePanel, animationPanel, backgroundPanel, borderPanel, positioningPanel, responsivePanel, buttonStylePanel, transformPanel, maskPanel, mouseMoveEffectPanel } from 'gutenverse-core/controls';
 import { buttonPanel } from './panel-button';
 import { buttonBackgroundPanel } from './panel-button-background';
 import { loadingPanel } from './panel-loading';
@@ -9,41 +9,41 @@ import { TabSetting, TabStyle } from 'gutenverse-core/controls';
 export const panelList = () => {
     return [
         {
-            title: __('Button', 'gutenverse'),
+            title: __('Button', 'gutenverse-form'),
             panelArray: buttonPanel,
             tabRole: TabSetting,
         },
         {
-            title: __('Style', 'gutenverse'),
+            title: __('Style', 'gutenverse-form'),
             panelArray: buttonStylePanel,
             initialOpen: false,
             tabRole: TabStyle,
         },
         {
-            title: __('Loading Indicator', 'gutenverse'),
+            title: __('Loading Indicator', 'gutenverse-form'),
             panelArray: loadingPanel,
             initialOpen: false,
             tabRole: TabSetting,
         },
         {
-            title: __('Button Background', 'gutenverse'),
+            title: __('Button Background', 'gutenverse-form'),
             initialOpen: false,
             panelArray: (props) => buttonBackgroundPanel({
                 ...props,
                 styleId: 'button-background',
-                normalOptions: [ 'default', 'gradient' ],
-                hoverOptions: [ 'default', 'gradient' ],
+                normalOptions: ['default', 'gradient'],
+                hoverOptions: ['default', 'gradient'],
             }),
             tabRole: TabStyle,
         },
         {
-            title: __('Button Border', 'gutenverse'),
+            title: __('Button Border', 'gutenverse-form'),
             initialOpen: false,
             panelArray: buttonBorderPanel,
             tabRole: TabStyle,
         },
         {
-            title: __('Background', 'gutenverse'),
+            title: __('Background', 'gutenverse-form'),
             initialOpen: false,
             panelArray: (props) => backgroundPanel({
                 ...props,
@@ -54,7 +54,7 @@ export const panelList = () => {
             tabRole: TabStyle
         },
         {
-            title: __('Border', 'gutenverse'),
+            title: __('Border', 'gutenverse-form'),
             initialOpen: false,
             panelArray: (props) => borderPanel({
                 ...props,
@@ -63,25 +63,28 @@ export const panelList = () => {
             tabRole: TabStyle
         },
         {
-            title: __('Masking', 'gutenverse'),
+            title: __('Masking', 'gutenverse-form'),
             initialOpen: false,
             panelArray: maskPanel,
             tabRole: TabStyle
         },
         {
-            title: __('Display', 'gutenverse'),
+            title: __('Display', 'gutenverse-form'),
             initialOpen: false,
             panelArray: responsivePanel,
             tabRole: TabSetting
         },
         {
-            title: __('Positioning', 'gutenverse'),
+            title: __('Positioning', 'gutenverse-form'),
             initialOpen: false,
-            panelArray: positioningPanel,
+            panelArray: (props) => positioningPanel({
+                ...props,
+                inBlock: false
+            }),
             tabRole: TabSetting
         },
         {
-            title: __('Animation Effects', 'gutenverse'),
+            title: __('Animation Effects', 'gutenverse-form'),
             initialOpen: false,
             panelArray: (props) => animationPanel({
                 ...props,
@@ -90,7 +93,7 @@ export const panelList = () => {
             tabRole: TabSetting
         },
         {
-            title: __('Transform', 'gutenverse'),
+            title: __('Transform', 'gutenverse-form'),
             initialOpen: false,
             panelArray: props => transformPanel({
                 ...props,
@@ -100,7 +103,14 @@ export const panelList = () => {
             pro: true
         },
         {
-            title: __('Spacing', 'gutenverse'),
+            title: __('Mouse Move Effect', 'gutenverse-form'),
+            initialOpen: false,
+            panelArray: mouseMoveEffectPanel,
+            tabRole: TabSetting,
+            pro: true,
+        },
+        {
+            title: __('Spacing', 'gutenverse-form'),
             initialOpen: false,
             panelArray: (props) => advancePanel({
                 ...props,

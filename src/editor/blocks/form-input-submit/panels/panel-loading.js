@@ -10,7 +10,7 @@ export const loadingPanel = (props) => {
     return [
         {
             id: 'loadingSize',
-            label: __('Loading Icon Size', 'gutenverse'),
+            label: __('Loading Icon Size', 'gutenverse-form'),
             component: RangeControl,
             allowDeviceControl: true,
             min: 1,
@@ -25,7 +25,7 @@ export const loadingPanel = (props) => {
         },
         {
             id: 'loadingColor',
-            label: __('Loading Color', 'gutenverse'),
+            label: __('Loading Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {

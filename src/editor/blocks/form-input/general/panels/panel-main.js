@@ -10,7 +10,7 @@ export const mainPanel = props => {
     return [
         {
             id: 'helperColor',
-            label: __('Helper Color', 'gutenverse'),
+            label: __('Helper Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [
@@ -22,19 +22,19 @@ export const mainPanel = props => {
         },
         {
             id: 'helperTypography',
-            label: __('Helper Typography', 'gutenverse'),
+            label: __('Helper Typography', 'gutenverse-form'),
             component: TypographyControl,
             style: [
                 {
                     selector: `.${elementId} .input-helper`,
                     hasChild: true,
-                    render: (value,id) => handleTypography(value, props, id)
+                    render: (value, id) => handleTypography(value, props, id)
                 }
             ],
         },
         {
             id: 'helperPadding',
-            label: __('Helper Padding', 'gutenverse'),
+            label: __('Helper Padding', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -61,7 +61,7 @@ export const mainPanel = props => {
         },
         {
             id: 'warningColor',
-            label: __('Warning Color', 'gutenverse'),
+            label: __('Warning Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             style: [
@@ -73,13 +73,13 @@ export const mainPanel = props => {
         },
         {
             id: 'warningTypography',
-            label: __('Warning Typography', 'gutenverse'),
+            label: __('Warning Typography', 'gutenverse-form'),
             component: TypographyControl,
             style: [
                 {
                     selector: `.${elementId} .validation-error`,
                     hasChild: true,
-                    render: (value,id) => handleTypography(value, props, id)
+                    render: (value, id) => handleTypography(value, props, id)
                 }
             ],
         },

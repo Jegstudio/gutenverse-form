@@ -12,17 +12,17 @@ export const inputPanel = props => {
     return [
         {
             id: 'offText',
-            label: __('OFF Text', 'gutenverse'),
+            label: __('OFF Text', 'gutenverse-form'),
             component: TextControl,
         },
         {
             id: 'onText',
-            label: __('ON Text', 'gutenverse'),
+            label: __('ON Text', 'gutenverse-form'),
             component: TextControl,
         },
         {
             id: 'switcherWidth',
-            label: __('Switcher Width', 'gutenverse'),
+            label: __('Switcher Width', 'gutenverse-form'),
             component: RangeControl,
             min: 1,
             max: 200,
@@ -43,7 +43,7 @@ export const inputPanel = props => {
         },
         {
             id: 'switcherHeight',
-            label: __('Switcher Height', 'gutenverse'),
+            label: __('Switcher Height', 'gutenverse-form'),
             component: RangeControl,
             min: 1,
             max: 200,
@@ -73,18 +73,18 @@ export const inputPanel = props => {
         },
         {
             id: 'switchTypography',
-            label: __('Input Typography', 'gutenverse'),
+            label: __('Input Typography', 'gutenverse-form'),
             component: TypographyControl,
             style: [
                 {
                     selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::before`,
                     hasChild: true,
-                    render: (value,id) => handleTypography(value, props, id)
+                    render: (value, id) => handleTypography(value, props, id)
                 },
                 {
                     selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::before`,
                     hasChild: true,
-                    render: (value,id) => handleTypography(value, props, id)
+                    render: (value, id) => handleTypography(value, props, id)
                 }
             ],
         },
@@ -92,7 +92,7 @@ export const inputPanel = props => {
 
         {
             id: 'offBackground',
-            label: __('Off Background Color', 'gutenverse'),
+            label: __('Off Background Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -103,7 +103,7 @@ export const inputPanel = props => {
         },
         {
             id: 'offButton',
-            label: __('Off Button Color', 'gutenverse'),
+            label: __('Off Button Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -114,7 +114,7 @@ export const inputPanel = props => {
         },
         {
             id: 'offTextColor',
-            label: __('Off Text Color', 'gutenverse'),
+            label: __('Off Text Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -125,7 +125,7 @@ export const inputPanel = props => {
         },
         {
             id: 'onBackground',
-            label: __('On Background Color', 'gutenverse'),
+            label: __('On Background Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -136,7 +136,7 @@ export const inputPanel = props => {
         },
         {
             id: 'onButton',
-            label: __('On Button Color', 'gutenverse'),
+            label: __('On Button Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
@@ -147,7 +147,7 @@ export const inputPanel = props => {
         },
         {
             id: 'onTextColor',
-            label: __('On Text Color', 'gutenverse'),
+            label: __('On Text Color', 'gutenverse-form'),
             component: ColorControl,
             style: [
                 {
