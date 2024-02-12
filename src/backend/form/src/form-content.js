@@ -216,7 +216,7 @@ export const FormContent = (props) => {
             </AlertControl>
         </div>}
         <div className="form-notice-wrapper">
-            <CardBannerPro title={__('Upgrade to Gutenverse Pro', 'gutenverse-form')} description={__('Explore the full potential of Gutenverse Form', 'gutenverse-form')} backgroundImg = "bg-form.png"/>
+            <CardBannerPro title={__('Upgrade to Gutenverse Pro', 'gutenverse-form')} description={__('Explore the full potential of Gutenverse Form', 'gutenverse-form')} backgroundImg = "card-banner-bg-form.png"/>
         </div>
         <div className="form-tab-header">
             {Object.keys(tabs).map(key => {
