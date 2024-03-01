@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { advancePanel, animationPanel, backgroundPanel, borderPanel, maskPanel, mouseMoveEffectPanel, positioningPanel, responsivePanel, transformPanel } from 'gutenverse-core/controls';
+import { advancePanel, animationPanel, backgroundPanel, borderPanel, conditionPanel, maskPanel, mouseMoveEffectPanel, positioningPanel, responsivePanel, transformPanel } from 'gutenverse-core/controls';
 import { contentPanel } from '../../form-input/general/panels/panel-content';
 import { labelPanel } from '../../form-input/general/panels/panel-label';
 import { mainPanel } from '../../form-input/general/panels/panel-main';
@@ -108,6 +108,12 @@ export const panelList = () => {
                 styleId: 'form-input-email-advance',
             }),
             tabRole: TabSetting
-        }
+        },
+        {
+            title: __('Condition', 'gutenverse'),
+            panelArray: conditionPanel,
+            initialOpen: false,
+            pro: true
+        },
     ];
 };

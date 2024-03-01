@@ -346,6 +346,10 @@
 		"inputAreaBoxShadowHover": {
 			"type": "object",
 			"copyStyle": true
+		},
+		"condition": {
+			"type": "object",
+			"default": {}
 		}
 	},
 	"supports": {
