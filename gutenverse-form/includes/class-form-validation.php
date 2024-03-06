@@ -126,7 +126,7 @@ class Form_Validation extends Style_Generator {
 	public function findFormBlock( $array ) {
 		$result = array();
 		foreach ( $array as $item ) {
-			if ( $item['blockName'] === 'gutenverse/form-builder' ) {
+			if ( 'gutenverse/form-builder' === $item['blockName'] ) {
 				$result[] = $item;
 			}
 			if ( ! empty( $item['innerBlock'] ) ) {
