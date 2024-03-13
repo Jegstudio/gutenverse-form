@@ -199,7 +199,7 @@
             "default": 100
         },
         "inputStep": {
-            "type": "float",
+            "type": "number",
             "default": 1
         },
         "required": {
