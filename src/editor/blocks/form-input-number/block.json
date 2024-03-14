@@ -199,7 +199,7 @@
             "default": 100
         },
         "inputStep": {
-            "type": "number",
+            "type": "string",
             "default": 1
         },
         "required": {
