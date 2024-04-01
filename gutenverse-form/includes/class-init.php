@@ -137,7 +137,7 @@ class Init {
 	 */
 	public function register_framework() {
 		require_once GUTENVERSE_FORM_DIR . 'lib/framework/init.php';
-		$init = \Initialize_Gutenverse_Framework::instance();
+		$init = \Gutenverse_Initialize_Framework::instance();
 
 		$framework_file    = GUTENVERSE_FORM_DIR . 'lib/framework/bootstrap.php';
 		$framework_version = $init->get_framework_version( $framework_file );
@@ -152,7 +152,7 @@ class Init {
 	 */
 	public function can_load_framework() {
 		require_once GUTENVERSE_FORM_DIR . 'lib/framework/init.php';
-		$init = \Initialize_Gutenverse_Framework::instance();
+		$init = \Gutenverse_Initialize_Framework::instance();
 
 		return $init->can_load_version( GUTENVERSE_FORM );
 	}
@@ -170,7 +170,7 @@ class Init {
 	 */
 	public function plugin_loaded() {
 		require_once GUTENVERSE_FORM_DIR . 'lib/framework/init.php';
-		$init = \Initialize_Gutenverse_Framework::instance();
+		$init = \Gutenverse_Initialize_Framework::instance();
 
 		if ( $init->check_compatibility() ) {
 			$this->init_framework();
