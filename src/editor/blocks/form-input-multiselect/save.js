@@ -51,7 +51,7 @@ const save = compose(
                 multiple
                 {...additionalProps}
             >
-                <option value="">{inputPlaceholder}</option>
+                <option value="" placeholder>{inputPlaceholder}</option>
                 {selectOptions.map(opt => {
                     let attributes = {
                         value: opt.value,

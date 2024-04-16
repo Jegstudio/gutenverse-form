@@ -9,6 +9,7 @@ class GutenverseMultiInputSelect extends Default {
         this._elements.map(element => {
             this._selectItems(element);
         });
+        this.placeholder = '';
     }
 
     _selectItems(element) {
@@ -17,7 +18,18 @@ class GutenverseMultiInputSelect extends Default {
             this.choiceInstance = new Choices(select, {
                 removeItemButton: true,
                 shouldSort: false,
+                placeholder: false
             });
+            select.addEventListener(
+                'change',
+                function(event) {
+                    if( event.target.length > 0 ){
+                        let placeholderInput = u(element).find('.choices__input.choices__input--cloned');
+                        this.placeholder = placeholderInput.nodes[0].placeholder;
+                        placeholderInput.nodes[0].placeholder = '';
+                    }
+                }
+            );
         });
     }
 
