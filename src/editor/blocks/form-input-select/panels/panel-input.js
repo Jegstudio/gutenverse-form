@@ -74,7 +74,7 @@ export const inputPanel = props => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .choices__placeholder`,
+                    selector: `.${elementId} .choices__placeholder:not(.choices__item--choice)`,
                     render: value => handleColor(value, 'color')
                 }
             ]
@@ -126,7 +126,7 @@ export const inputPanel = props => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .choices .choices__inner .choices__list .choices__item`,
+                    selector: `.${elementId} .choices .choices__inner .choices__list .choices__item.choices__item--selectable:not(.choices__placeholder)`,
                     render: value => handleColor(value, 'color')
                 }
             ]
@@ -192,7 +192,7 @@ export const inputPanel = props => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId}:hover .choices .choices__inner .choices__list .choices__item`,
+                    selector: `.${elementId}:hover .choices .choices__inner .choices__list .choices__item.choices__item--selectable:not(.choices__placeholder)`,
                     render: value => handleColor(value, 'color')
                 }
             ]

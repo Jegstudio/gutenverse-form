@@ -222,7 +222,7 @@ class Form_Input_Select extends Style_Abstract {
 		if ( isset( $this->attrs['placeholderColor'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .choices__placeholder, .{$this->element_id} .choices .choices__list.choices__list--dropdown input",
+					'selector'       => ".{$this->element_id} .choices__placeholder:not(.choices__item--choice), .{$this->element_id} .choices .choices__list.choices__list--dropdown input",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -259,7 +259,7 @@ class Form_Input_Select extends Style_Abstract {
 		if ( isset( $this->attrs['inputColorNormal'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .choices .choices__inner .choices__list .choices__item",
+					'selector'       => ".{$this->element_id} .choices .choices__inner .choices__list .choices__item.choices__item--selectable:not(.choices__placeholder)",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -318,7 +318,7 @@ class Form_Input_Select extends Style_Abstract {
 		if ( isset( $this->attrs['inputColorHover'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id}:hover .choices .choices__inner .choices__list .choices__item",
+					'selector'       => ".{$this->element_id}:hover .choices .choices__inner .choices__list .choices__item.choices__item--selectable:not(.choices__placeholder)",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
