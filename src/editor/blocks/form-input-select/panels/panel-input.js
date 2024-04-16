@@ -272,7 +272,7 @@ export const inputPanel = props => {
             component: BoxShadowControl,
             style: [
                 {
-                    selector: `.${elementId} .choices `,
+                    selector: `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
                     allowRender: (value) => allowRenderBoxShadow(value),
                     render: value => handleBoxShadow(value)
                 }
@@ -285,7 +285,7 @@ export const inputPanel = props => {
             component: BoxShadowControl,
             style: [
                 {
-                    selector: `.${elementId}:hover .choices `,
+                    selector: `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
                     allowRender: (value) => allowRenderBoxShadow(value),
                     render: value => handleBoxShadow(value)
                 }

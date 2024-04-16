@@ -377,7 +377,7 @@ class Form_Input_Select extends Style_Abstract {
 		if ( isset( $this->attrs['inputAreaBoxShadow'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .choices",
+					'selector'       => ".{$this->element_id} .choices .choices__inner, .{$this->element_id} .choices .choices__list.choices__list--dropdown",
 					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
@@ -390,7 +390,7 @@ class Form_Input_Select extends Style_Abstract {
 		if ( isset( $this->attrs['inputAreaBoxShadowHover'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id}:hover .choices",
+					'selector'       => ".{$this->element_id} .choices .choices__inner:hover, .{$this->element_id} .choices .choices__list.choices__list--dropdown:hover",
 					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
