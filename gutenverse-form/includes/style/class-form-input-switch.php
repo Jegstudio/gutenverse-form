@@ -210,9 +210,12 @@ class Form_Input_Switch extends Style_Abstract {
 				array(
 					'selector'       => ".{$this->element_id}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after",
 					'property'       => function ( $value ) {
-						return "transform: translate3d({$value}px, -50%, 0);";
+						$circle_diameter = $value['switcherHeight'];
+						$width_switcher = $value['switcherWidth'];
+						$translate_x = $width_switcher - ( $circle_diameter + 3 );
+						return "transform: translate3d({$translate_x}px, -50%, 0);";
 					},
-					'value'          => $this->attrs['switcherWidth'],
+					'value'          => $this->attrs,
 					'device_control' => false,
 				)
 			);
@@ -236,6 +239,7 @@ class Form_Input_Switch extends Style_Abstract {
 				array(
 					'selector'       => ".{$this->element_id}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after",
 					'property'       => function ( $value ) {
+						$value = $value - 3;
 						return "height: {$value}px;";
 					},
 					'value'          => $this->attrs['switcherHeight'],
@@ -249,6 +253,7 @@ class Form_Input_Switch extends Style_Abstract {
 				array(
 					'selector'       => ".{$this->element_id}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after",
 					'property'       => function ( $value ) {
+						$value = $value - 3;
 						return "width: {$value}px;";
 					},
 					'value'          => $this->attrs['switcherHeight'],
@@ -257,18 +262,18 @@ class Form_Input_Switch extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['switcherHeight'] ) ) {
-			$this->inject_style(
-				array(
-					'selector'       => ".{$this->element_id}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after",
-					'property'       => function ( $value ) {
-						return "transform: translate3d({$value}px, -50%, 0);";
-					},
-					'value'          => $this->attrs['switcherHeight'],
-					'device_control' => false,
-				)
-			);
-		}
+		// if ( isset( $this->attrs['switcherHeight'] ) ) {
+		// $this->inject_style(
+		// array(
+		// 'selector'       => ".{$this->element_id}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after",
+		// 'property'       => function ( $value ) {
+		// return "transform: translate3d({$value}px, -50%, 0);";
+		// },
+		// 'value'          => $this->attrs['switcherHeight'],
+		// 'device_control' => false,
+		// )
+		// );
+		// }
 
 		if ( isset( $this->attrs['switchTypography'] ) ) {
 			$this->inject_typography(
