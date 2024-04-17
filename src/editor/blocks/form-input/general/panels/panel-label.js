@@ -15,6 +15,7 @@ export const labelPanel = props => {
             min: 1,
             max: 100,
             step: 1,
+            allowDeviceControl: true,
             style: [
                 {
                     selector: `.${elementId} .label-wrapper`,
