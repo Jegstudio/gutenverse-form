@@ -212,7 +212,7 @@ class Form_Input_Switch extends Style_Abstract {
 					'property'       => function ( $value ) {
 						$circle_diameter = $value['switcherHeight'];
 						$width_switcher = $value['switcherWidth'];
-						$translate_x = $width_switcher - ( $circle_diameter + 3 );
+						$translate_x = $width_switcher - ( $circle_diameter + 1 );
 						return "transform: translate3d({$translate_x}px, -50%, 0);";
 					},
 					'value'          => $this->attrs,

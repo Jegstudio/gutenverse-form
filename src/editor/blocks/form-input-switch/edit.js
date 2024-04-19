@@ -6,6 +6,7 @@ import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
 import { useEffect } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
+import { u } from 'gutenverse-core/components';
 
 const FormInputSwitchBlock = compose(
     withCustomStyle(panelList),
@@ -38,6 +39,11 @@ const FormInputSwitchBlock = compose(
         }
     }, [switchRef]);
 
+    const handleSwitchOn = () => {
+        const element = u(`.${elementId} .gutenverse-input-switch`);
+        const elementStatus = element.is(':checked');
+        element.attr('checked',!elementStatus);
+    };
     return <>
         <InputWrapper {...inputData} inputType={inputData.type}>
             <label className="switch-wrapper" htmlFor={elementId}>
@@ -49,7 +55,7 @@ const FormInputSwitchBlock = compose(
                     hidden
                     ref={switchRef}
                 />
-                <span className="switch" data-on={onText} data-off={offText} />
+                <span className="switch" data-on={onText} data-off={offText} onClick={handleSwitchOn} />
             </label>
         </InputWrapper>
     </>;

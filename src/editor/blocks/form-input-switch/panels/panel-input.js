@@ -35,7 +35,7 @@ export const inputPanel = props => {
                 {
                     selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after`,
                     render: value => {
-                        const result = parseInt(value) - parseInt(switcherHeight);
+                        const result = parseInt(value) - parseInt(switcherHeight) + 1 ;
                         return `transform: translate3d(${result}px, -50%, 0);`;
                     }
                 },
