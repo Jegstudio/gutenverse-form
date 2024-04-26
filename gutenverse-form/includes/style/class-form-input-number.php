@@ -62,7 +62,7 @@ class Form_Input_Number extends Style_Abstract {
 						return "width: {$value}%;";
 					},
 					'value'          => $this->attrs['labelWidth'],
-					'device_control' => false,
+					'device_control' => true,
 				)
 			);
 		}
