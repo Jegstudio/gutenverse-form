@@ -29,6 +29,102 @@
             "type": "string",
             "default": "input-text-name"
         },
+        "iconType": {
+			"type": "string",
+			"default": "icon"
+		},
+		"icon": {
+			"type": "string",
+			"default": "far fa-user"
+		},
+		"iconSize": {
+			"type": "object",
+			"default": {
+				"Desktop": 40
+			},
+			"copyStyle": true
+		},
+        "imageHeight": {
+			"type" : "object",
+			"copyStyle": true
+		},
+		"imageWidth": {
+			"type" : "object",
+			"copyStyle": true
+		},
+		"image": {
+			"type": "object"
+		},
+		"imageAlt": {
+			"type": "string"
+		},
+		"imageFit": {
+			"type" : "string"
+		},
+        "lazyLoad": {
+			"type" : "boolean",
+			"copyStyle": true
+		},
+        "containerBoxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconMargin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconRotate": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconStyleMode": {
+			"type": "string",
+			"copyStyle": true
+		},
+		"iconColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconHoverColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconHoverBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBackground": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBackgroundHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBorder": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBoxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBorderHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBoxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
         "showHelper": {
             "type": "boolean",
             "default": true

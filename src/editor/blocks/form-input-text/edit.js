@@ -5,9 +5,14 @@ import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
 import { useEffect } from '@wordpress/element';
+import { IconLibrary } from 'gutenverse-core/controls';
+import { useState } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import classnames from 'classnames';
+import { gutenverseRoot } from 'gutenverse-core/helper';
+import { createPortal } from 'react-dom';
+import { getImageSrc } from 'gutenverse-core/editor-helper';
 
 const FormInputTextBlock = compose(
     withCustomStyle(panelList),
@@ -16,7 +21,8 @@ const FormInputTextBlock = compose(
 )(props => {
     const {
         attributes,
-        setElementRef
+        setElementRef,
+        setAttributes,
     } = props;
 
     const {
@@ -26,11 +32,19 @@ const FormInputTextBlock = compose(
         validationType,
         validationMin,
         validationMax,
-        validationWarning
+        validationWarning,
+        icon,
+        iconType,
+        lazyLoad,
+        image,
+        imageAlt,
+        iconStyleMode
     } = attributes;
 
     const animationClass = useAnimationEditor(attributes);
     const textFieldRef = useRef();
+    const [openIconLibrary, setOpenIconLibrary] = useState(false);
+    const imageAltText = imageAlt || null;
 
     const inputData = {
         ...props,
@@ -47,6 +61,31 @@ const FormInputTextBlock = compose(
         validationWarning
     };
 
+    const imageLazyLoad = () => {
+        if(lazyLoad){
+            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy"/>;
+        }else{
+            return <img src={getImageSrc(image)} alt={imageAltText}/>;
+        }
+    };
+    const iconContent = () => {
+        switch (iconType) {
+            case 'icon':
+                return <div className="form-input-text-icon">
+                    <div className={`icon style-${iconStyleMode}`} onClick={() => setOpenIconLibrary(true)}>
+                        <i className={icon}></i>
+                    </div>
+                </div>;
+            case 'image':
+                return <div className="form-input-text-icon">
+                    <div className={`icon style-${iconStyleMode}`}>
+                        {imageLazyLoad()}
+                    </div>
+                </div>;
+            default:
+                return null;
+        }
+    };
     useEffect(() => {
         if (textFieldRef.current) {
             setElementRef(textFieldRef.current);
@@ -55,6 +94,15 @@ const FormInputTextBlock = compose(
 
     return <>
         <InputWrapper {...inputData}>
+            {openIconLibrary && createPortal(
+                <IconLibrary
+                    closeLibrary={() => setOpenIconLibrary(false)}
+                    value={icon}
+                    onChange={icon => setAttributes({ icon })}
+                />,
+                gutenverseRoot
+            )}
+            {iconContent()}
             <input data-validation={JSON.stringify(validation)}
                 placeholder={inputPlaceholder}
                 name={inputName}
