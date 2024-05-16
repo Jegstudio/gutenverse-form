@@ -9,15 +9,22 @@ export const panelIcon = (props) => {
         removeStyle,
         iconSize,
         imageWidth,
-        imageHeight
+        imageHeight,
+        useIcon,
     } = props;
     const deviceType = getDeviceType();
 
     return [
         {
+            id: 'useIcon',
+            label: __('Show Icon', 'gutenverse-form'),
+            component: CheckboxControl,
+        },
+        {
             id: 'iconType',
-            label: __('Icon Type', 'gutenverse'),
+            label: __('Icon Type', 'gutenverse-form'),
             component: SelectControl,
+            show: useIcon,
             options: [
                 {
                     value: 'none',
@@ -64,8 +71,8 @@ export const panelIcon = (props) => {
         },
         {
             id: 'iconSize',
-            show: iconType && iconType === 'icon',
-            label: __('Icon Size', 'gutenverse'),
+            show: iconType && iconType === 'icon' && useIcon,
+            label: __('Icon Size', 'gutenverse-form'),
             component: RangeControl,
             allowDeviceControl: true,
             min: 1,
@@ -82,25 +89,25 @@ export const panelIcon = (props) => {
         {
             id: 'image',
             show: iconType && iconType === 'image',
-            label: __('Icon Type', 'gutenverse'),
+            label: __('Icon Type', 'gutenverse-form'),
             component: ImageControl,
         },
         {
             id: 'lazyLoad',
             show: iconType && iconType === 'image',
-            label: __('Set Lazy Load', 'gutenverse'),
+            label: __('Set Lazy Load', 'gutenverse-form'),
             component: CheckboxControl,
         },
         {
             id: 'imageAlt',
             show: iconType && iconType === 'image',
-            label: __('Image Alt', 'gutenverse'),
+            label: __('Image Alt', 'gutenverse-form'),
             component: TextControl,
         },
         {
             id: 'imageFit',
             show: iconType && iconType === 'image',
-            label: __('Image Fit Content', 'gutenverse'),
+            label: __('Image Fit Content', 'gutenverse-form'),
             component: SelectControl,
             options: [
                 {
@@ -135,7 +142,7 @@ export const panelIcon = (props) => {
         {
             id: 'imageWidth',
             show: iconType && iconType === 'image' && deviceType !== 'Desktop',
-            label: __('Image Width', 'gutenverse'),
+            label: __('Image Width', 'gutenverse-form'),
             component: RangeControl,
             allowDeviceControl: true,
             min: 1,
@@ -152,7 +159,7 @@ export const panelIcon = (props) => {
         {
             id: 'imageHeight',
             show: iconType && iconType === 'image',
-            label: __('Image Height', 'gutenverse'),
+            label: __('Image Height', 'gutenverse-form'),
             component: RangeControl,
             allowDeviceControl: true,
             min: 1,

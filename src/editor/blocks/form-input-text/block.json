@@ -69,6 +69,11 @@
 			"type": "object",
 			"copyStyle": true
 		},
+        "useIcon": {
+            "type": "boolean",
+            "default": false,
+            "copyStyle": true
+        },
 		"iconPadding": {
 			"type": "object",
 			"copyStyle": true

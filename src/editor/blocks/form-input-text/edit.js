@@ -38,7 +38,8 @@ const FormInputTextBlock = compose(
         lazyLoad,
         image,
         imageAlt,
-        iconStyleMode
+        iconStyleMode,
+        useIcon,
     } = attributes;
 
     const animationClass = useAnimationEditor(attributes);
@@ -102,18 +103,33 @@ const FormInputTextBlock = compose(
                 />,
                 gutenverseRoot
             )}
-            {iconContent()}
-            <input data-validation={JSON.stringify(validation)}
-                placeholder={inputPlaceholder}
-                name={inputName}
-                className={classnames(
-                    'gutenverse-input',
-                    'gutenverse-input-text',
-                    animationClass
-                )}
-                type="text"
-                ref={textFieldRef}
-            />
+            {useIcon ?
+                <div className="input-icon-wrapper">
+                    {iconContent()}
+                    <input data-validation={JSON.stringify(validation)}
+                        placeholder={inputPlaceholder}
+                        name={inputName}
+                        className={classnames(
+                            'gutenverse-input',
+                            'gutenverse-input-text',
+                            animationClass
+                        )}
+                        type="text"
+                        ref={textFieldRef}
+                    />
+                </div>
+                :
+                <input data-validation={JSON.stringify(validation)}
+                    placeholder={inputPlaceholder}
+                    name={inputName}
+                    className={classnames(
+                        'gutenverse-input',
+                        'gutenverse-input-text',
+                        animationClass
+                    )}
+                    type="text"
+                    ref={textFieldRef}
+                />}
         </InputWrapper>
     </>;
 });
