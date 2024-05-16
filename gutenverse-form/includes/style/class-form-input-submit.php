@@ -201,13 +201,24 @@ class Form_Input_Submit extends Style_Abstract {
 				)
 			);
 		}
-
 		if ( isset( $this->attrs['typography'] ) ) {
 			$this->inject_typography(
 				array(
 					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button span",
 					'property'       => function ( $value ) {},
 					'value'          => $this->attrs['typography'],
+					'device_control' => false,
+				)
+			);
+		}
+		if ( ( $this->attrs['content'] === '' ) && ! isset( $this->attrs['typography'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button span",
+					'property'       => function ( $value ) {
+						return 'height: 15px; ';
+					},
+					'value'          => '',
 					'device_control' => false,
 				)
 			);
