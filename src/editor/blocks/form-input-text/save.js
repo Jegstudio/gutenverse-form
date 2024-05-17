@@ -75,7 +75,7 @@ const save = compose(
     const iconContent = () => {
         switch (iconType) {
             case 'icon':
-                return <div className="form-input-text-icon">
+                return <div className="form-input-text-icon type-icon">
                     <div className={`icon style-${iconStyleMode}`}>
                         <WrapAHref {...props}>
                             <i className={icon}></i>
@@ -83,7 +83,7 @@ const save = compose(
                     </div>
                 </div>;
             case 'image':
-                return <div className="form-input-text-icon">
+                return <div className="form-input-text-icon type-image">
                     <div className={`icon style-${iconStyleMode}`}>
                         <WrapAHref {...props}>
                             {imageLazyLoad()}

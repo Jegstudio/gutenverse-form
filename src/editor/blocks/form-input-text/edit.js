@@ -72,13 +72,13 @@ const FormInputTextBlock = compose(
     const iconContent = () => {
         switch (iconType) {
             case 'icon':
-                return <div className="form-input-text-icon">
+                return <div className="form-input-text-icon type-icon">
                     <div className={`icon style-${iconStyleMode}`} onClick={() => setOpenIconLibrary(true)}>
                         <i className={icon}></i>
                     </div>
                 </div>;
             case 'image':
-                return <div className="form-input-text-icon">
+                return <div className="form-input-text-icon type-image">
                     <div className={`icon style-${iconStyleMode}`}>
                         {imageLazyLoad()}
                     </div>

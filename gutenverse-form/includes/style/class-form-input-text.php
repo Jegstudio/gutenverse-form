@@ -52,6 +52,53 @@ class Form_Input_Text extends Style_Abstract {
 	}
 
 	/**
+	 * Creating custom handle background to handle old values because format is changed
+	 *
+	 * @param string $selector .
+	 * @param object $background .
+	 */
+	public function custom_handle_background( $selector, $background ) {
+		$this->inject_style(
+			array(
+				'selector'       => $selector,
+				'property'       => function ( $value ) {
+					$gradient_color        = $value['gradientColor'];
+					$gradient_type         = $value['gradientType'];
+					$gradient_angle        = $value['gradientAngle'];
+					$gradient_radial       = $value['gradientRadial'];
+
+					if ( ! empty( $gradient_color ) ) {
+						$colors = array();
+
+						foreach ( $gradient_color as $gradient ) {
+							$offset  = $gradient['offset'] * 100;
+							$colors[] = "{$gradient['color']} {$offset}%";
+						}
+
+						$colors = join( ',', $colors );
+
+						if ( 'radial' === $gradient_type ) {
+							return "background-image: radial-gradient(at {$gradient_radial}, {$colors});";
+						} else {
+							return "background-image: linear-gradient({$gradient_angle}deg, {$colors});";
+						}
+					}
+				},
+				'value'          => array(
+					'gradientColor'       => isset( $background['gradientColor'] ) ? $background['gradientColor'] : null,
+					'gradientPosition'    => isset( $background['gradientPosition'] ) ? $background['gradientPosition'] : 0,
+					'gradientEndColor'    => isset( $background['gradientEndColor'] ) ? $background['gradientEndColor'] : null,
+					'gradientEndPosition' => isset( $background['gradientEndPosition'] ) ? $background['gradientEndPosition'] : 100,
+					'gradientType'        => isset( $background['gradientType'] ) ? $background['gradientType'] : 'linear',
+					'gradientAngle'       => isset( $background['gradientAngle'] ) ? $background['gradientAngle'] : 180,
+					'gradientRadial'      => isset( $background['gradientRadial'] ) ? $background['gradientRadial'] : 'center center',
+				),
+				'device_control' => false,
+			)
+		);
+	}
+
+	/**
 	 * Generate style base on attribute.
 	 */
 	public function generate() {
@@ -402,6 +449,302 @@ class Form_Input_Text extends Style_Abstract {
 					},
 					'value'          => $this->attrs['inputAreaBoxShadowHover'],
 					'device_control' => false,
+				)
+			);
+		}
+
+		/*
+		* Icon Style
+		*/
+		if ( isset( $this->attrs['iconAlignment'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon",
+					'property'       => function ( $value ) {
+						return "justify-content: {$value};";
+					},
+					'value'          => $this->attrs['iconAlignment'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconType'] ) && 'icon' === $this->attrs['iconType'] ) {
+			if ( isset( $this->attrs['iconSize'] ) ) {
+				$this->inject_style(
+					array(
+						'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i",
+						'property'       => function ( $value ) {
+							return "font-size: {$value}px;";
+						},
+						'value'          => $this->attrs['iconSize'],
+						'device_control' => true,
+					)
+				);
+			}
+
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .gutenverse-input-text",
+					'property'       => function ( $value ) {
+						if ( 'left' === $this->attrs['iconAlignment'] ) {
+							$padding_left = $value + 15;
+							return "padding-left: {$padding_left}px !important";
+						} else {
+							return 'padding: 8px !important;';
+						}
+					},
+					'value'          => $this->attrs['iconSize'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconType'] ) && 'image' === $this->attrs['iconType'] ) {
+			if ( isset( $this->attrs['imageWidth'] ) ) {
+				$this->inject_style(
+					array(
+						'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
+						'property'       => function ( $value ) {
+							return "width: {$value}px;";
+						},
+						'value'          => $this->attrs['imageWidth'],
+						'device_control' => true,
+					)
+				);
+
+				$this->inject_style(
+					array(
+						'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .gutenverse-input-text",
+						'property'       => function ( $value ) {
+							if ( 'left' === $this->attrs['iconAlignment'] ) {
+								$padding_left = $value + 20;
+								return "padding-left: {$padding_left}px !important";
+							} else {
+								return 'padding: 8px !important;';
+							}
+						},
+						'value'          => $this->attrs['imageWidth'],
+						'device_control' => true,
+					)
+				);
+			}
+
+			if ( isset( $this->attrs['imageHeight'] ) ) {
+				$this->inject_style(
+					array(
+						'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
+						'property'       => function ( $value ) {
+							return "height: {$value}px;";
+						},
+						'value'          => $this->attrs['imageHeight'],
+						'device_control' => true,
+					)
+				);
+			}
+		}
+
+		/*
+		* Tab Style
+		*/
+
+		if ( isset( $this->attrs['iconColor'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'color' );
+					},
+					'value'          => $this->attrs['iconColor'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconHoverColor'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover i",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'color' );
+					},
+					'value'          => $this->attrs['iconHoverColor'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconBgColor'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'background-color' );
+					},
+					'value'          => $this->attrs['iconBgColor'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconHoverBgColor'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'background-color' );
+					},
+					'value'          => $this->attrs['iconHoverBgColor'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconBackground'] ) ) {
+			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient", $this->attrs['iconBackground'] );
+		}
+
+		if ( isset( $this->attrs['iconBackgroundHover'] ) ) {
+			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover.style-gradient", $this->attrs['iconBackgroundHover'] );
+		}
+
+		if ( isset( $this->attrs['iconBorder'] ) && 'icon' === $this->attrs['iconType'] ) {
+			$this->handle_border( 'iconBorder', ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon" );
+		}
+		if ( isset( $this->attrs['iconBorder'] ) && 'image' === $this->attrs['iconType'] ) {
+			$this->handle_border( 'iconBorder', ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon" );
+		}
+
+		if ( isset( $this->attrs['iconBorderResponsive'] ) && 'icon' === $this->attrs['iconType'] ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
+					'property'       => function ( $value ) {
+						return $this->handle_border_responsive( $value );
+					},
+					'value'          => $this->attrs['iconBorderResponsive'],
+					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
+				)
+			);
+		}
+		if ( isset( $this->attrs['iconBorderResponsive'] ) && 'image' === $this->attrs['iconType'] ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
+					'property'       => function ( $value ) {
+						return $this->handle_border_responsive( $value );
+					},
+					'value'          => $this->attrs['iconBorderResponsive'],
+					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconBoxShadow'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
+					'property'       => function ( $value ) {
+						return $this->handle_box_shadow( $value );
+					},
+					'value'          => $this->attrs['iconBoxShadow'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconBorderHover'] ) && 'icon' === $this->attrs['iconType'] ) {
+			$this->handle_border( 'iconBorderHover', ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover" );
+		}
+		if ( isset( $this->attrs['iconBorderHover'] ) && 'image' === $this->attrs['iconType'] ) {
+			$this->handle_border( 'iconBorderHover', ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover" );
+		}
+
+		if ( isset( $this->attrs['iconBorderHoverResponsive'] ) && 'icon' === $this->attrs['iconType'] ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover",
+					'property'       => function ( $value ) {
+						return $this->handle_border_responsive( $value );
+					},
+					'value'          => $this->attrs['iconBorderHoverResponsive'],
+					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
+				)
+			);
+		}
+		if ( isset( $this->attrs['iconBorderHoverResponsive'] ) && 'image' === $this->attrs['iconType'] ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover",
+					'property'       => function ( $value ) {
+						return $this->handle_border_responsive( $value );
+					},
+					'value'          => $this->attrs['iconBorderHoverResponsive'],
+					'device_control' => true,
+					'skip_device'    => array(
+						'Desktop',
+					),
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconBoxShadowHover'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover",
+					'property'       => function ( $value ) {
+						return $this->handle_box_shadow( $value );
+					},
+					'value'          => $this->attrs['iconBoxShadowHover'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconPadding'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
+					'property'       => function ( $value ) {
+						return $this->handle_dimension( $value, 'padding' );
+					},
+					'value'          => $this->attrs['iconPadding'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconMargin'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
+					'property'       => function ( $value ) {
+						return $this->handle_dimension( $value, 'margin' );
+					},
+					'value'          => $this->attrs['iconMargin'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['iconRotate'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
+					'property'       => function ( $value ) {
+						return "transform: rotate({$value}deg);";
+					},
+					'value'          => $this->attrs['iconRotate'],
+					'device_control' => true,
 				)
 			);
 		}

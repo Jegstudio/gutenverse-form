@@ -1,0 +1,22 @@
+.input-icon-wrapper {
+    display: flex;
+    align-items: center;
+
+    .form-input-text-icon {
+        position: absolute;
+        padding: 0 12px;
+        width: 100%;
+        display: flex;
+
+        &.type-image {
+            overflow: hidden;
+        }
+
+        &.type-icon {
+            .icon {
+                align-items: center;
+                display: flex;
+            }
+        }
+    }
+}

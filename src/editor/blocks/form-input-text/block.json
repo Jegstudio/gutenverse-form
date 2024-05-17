@@ -29,6 +29,10 @@
             "type": "string",
             "default": "input-text-name"
         },
+        "iconAlignment": {
+            "type": "object",
+            "default": "left"
+        },
         "iconType": {
 			"type": "string",
 			"default": "icon"
@@ -40,17 +44,23 @@
 		"iconSize": {
 			"type": "object",
 			"default": {
-				"Desktop": 40
+				"Desktop": 20
 			},
 			"copyStyle": true
 		},
         "imageHeight": {
 			"type" : "object",
-			"copyStyle": true
+			"copyStyle": true,
+            "default": {
+                "Desktop": 20
+            }
 		},
 		"imageWidth": {
 			"type" : "object",
-			"copyStyle": true
+			"copyStyle": true,
+            "default": {
+                "Desktop": 20
+            }
 		},
 		"image": {
 			"type": "object"

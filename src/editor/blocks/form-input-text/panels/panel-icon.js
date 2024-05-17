@@ -11,6 +11,7 @@ export const panelIcon = (props) => {
         imageWidth,
         imageHeight,
         useIcon,
+        iconAlignment
     } = props;
     const deviceType = getDeviceType();
 
@@ -19,6 +20,37 @@ export const panelIcon = (props) => {
             id: 'useIcon',
             label: __('Show Icon', 'gutenverse-form'),
             component: CheckboxControl,
+        },
+        {
+            id: 'iconAlignment',
+            label: __('Icon Alignment', 'gutenverse-form'),
+            component: SelectControl,
+            show: useIcon,
+            options: [
+                {
+                    value: 'left',
+                    label: 'Left'
+                },
+                {
+                    value: 'center',
+                    label: 'Center'
+                },
+                {
+                    value: 'right',
+                    label: 'Right'
+                },
+            ],
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon`,
+                    render: (value) => `justify-content: ${value};`
+                },
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper > .gutenverse-input-text`,
+                    allowRender: value => value === 'right' || value === 'center',
+                    render: () => 'padding: 8px !important'
+                }
+            ]
         },
         {
             id: 'iconType',
@@ -51,21 +83,21 @@ export const panelIcon = (props) => {
             },
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon i`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i`,
                     allowRender: value => value === 'icon',
                     render: () => `font-size: ${iconSize[deviceType]}px;`
                 },
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     allowRender: value => value === 'image',
                     render: () => {
-                        return `width: ${imageWidth}px;`;
+                        return `width: ${imageWidth[deviceType]}px;`;
                     }
                 },
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     allowRender: value => value === 'image',
-                    render: () => `height: ${imageHeight}px;`
+                    render: () => `height: ${imageHeight[deviceType]}px;`
                 }
             ]
         },
@@ -80,68 +112,38 @@ export const panelIcon = (props) => {
             step: 1,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon i`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i`,
                     allowRender: () => iconType && iconType === 'icon',
                     render: value => `font-size: ${value}px;`
+                },
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .gutenverse-input-text`,
+                    allowRender: () => iconAlignment === 'left',
+                    render: (value) => `padding-left: ${value + 15}px !important;`
                 }
             ]
         },
         {
             id: 'image',
-            show: iconType && iconType === 'image',
+            show: iconType && iconType === 'image' && useIcon,
             label: __('Icon Type', 'gutenverse-form'),
             component: ImageControl,
         },
         {
             id: 'lazyLoad',
-            show: iconType && iconType === 'image',
+            show: iconType && iconType === 'image' && useIcon,
             label: __('Set Lazy Load', 'gutenverse-form'),
             component: CheckboxControl,
         },
         {
             id: 'imageAlt',
-            show: iconType && iconType === 'image',
+            show: iconType && iconType === 'image' && useIcon,
             label: __('Image Alt', 'gutenverse-form'),
             component: TextControl,
         },
         {
-            id: 'imageFit',
-            show: iconType && iconType === 'image',
-            label: __('Image Fit Content', 'gutenverse-form'),
-            component: SelectControl,
-            options: [
-                {
-                    value: 'fill',
-                    label: 'Default'
-                },
-                {
-                    value: 'contain',
-                    label: 'Contain'
-                },
-                {
-                    value: 'cover',
-                    label: 'Cover'
-                },
-                {
-                    value: 'none',
-                    label: 'None'
-                },
-                {
-                    value: 'scale-down',
-                    label: 'Scale Down'
-                },
-            ],
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon img`,
-                    allowRender: () => iconType && iconType === 'image',
-                    render: value => `object-fit: ${value};`
-                }
-            ]
-        },
-        {
             id: 'imageWidth',
-            show: iconType && iconType === 'image' && deviceType !== 'Desktop',
+            show: iconType && iconType === 'image' && useIcon,
             label: __('Image Width', 'gutenverse-form'),
             component: RangeControl,
             allowDeviceControl: true,
@@ -150,15 +152,20 @@ export const panelIcon = (props) => {
             step: 1,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     allowRender: () => iconType && iconType === 'image',
                     render: value => `width: ${value}px;`
+                },
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .gutenverse-input-text`,
+                    allowRender: () => iconType && iconType === 'image' && iconAlignment === 'left',
+                    render: value => `padding-left: ${20 + value}px !important;`
                 }
             ]
         },
         {
             id: 'imageHeight',
-            show: iconType && iconType === 'image',
+            show: iconType && iconType === 'image' && useIcon,
             label: __('Image Height', 'gutenverse-form'),
             component: RangeControl,
             allowDeviceControl: true,
@@ -167,7 +174,7 @@ export const panelIcon = (props) => {
             step: 1,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     allowRender: () => iconType && iconType === 'image',
                     render: value => `height: ${value}px;`
                 }

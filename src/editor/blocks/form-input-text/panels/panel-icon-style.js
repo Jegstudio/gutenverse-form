@@ -12,8 +12,6 @@ export const panelIconStyle = (props) => {
         iconStyleMode
     } = props;
 
-    const device = getDeviceType();
-
     /**
      * This is custom to prevent older saved values causing errors because BackgroundControl is used instead of GradientControl
      */
@@ -83,7 +81,7 @@ export const panelIconStyle = (props) => {
             component: ColorControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon i`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i`,
                     render: value => handleColor(value, 'color')
                 }
             ]
@@ -95,7 +93,7 @@ export const panelIconStyle = (props) => {
             component: ColorControl,
             style: [
                 {
-                    selector: `.${elementId}:hover .main-wrapper .form-input-text-icon .icon i`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover i`,
                     render: value => handleColor(value, 'color')
                 }
             ]
@@ -107,7 +105,7 @@ export const panelIconStyle = (props) => {
             component: ColorControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     render: value => handleColor(value, 'background-color')
                 }
             ]
@@ -119,7 +117,7 @@ export const panelIconStyle = (props) => {
             component: ColorControl,
             style: [
                 {
-                    selector: `.${elementId}:hover .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover`,
                     render: value => handleColor(value, 'background-color')
                 }
             ]
@@ -131,7 +129,7 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon.style-gradient`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient`,
                     hasChild: true,
                     render: value => customHandleBackground(value)
                 }
@@ -144,7 +142,7 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             style: [
                 {
-                    selector: `.${elementId}:hover .main-wrapper .form-input-text-icon .icon.style-gradient`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover.style-gradient`,
                     hasChild: true,
                     render: value => customHandleBackground(value)
                 }
@@ -158,7 +156,7 @@ export const panelIconStyle = (props) => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     render: value => handleBorderResponsive(value)
                 }
             ]
@@ -170,7 +168,7 @@ export const panelIconStyle = (props) => {
             component: BoxShadowControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     allowRender: (value) => allowRenderBoxShadow(value),
                     render: value => handleBoxShadow(value)
                 }
@@ -184,7 +182,7 @@ export const panelIconStyle = (props) => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId}:hover .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover`,
                     render: value => handleBorderResponsive(value)
                 },
             ]
@@ -196,7 +194,7 @@ export const panelIconStyle = (props) => {
             component: BoxShadowControl,
             style: [
                 {
-                    selector: `.${elementId}:hover .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover`,
                     allowRender: (value) => allowRenderBoxShadow(value),
                     render: value => handleBoxShadow(value)
                 }
@@ -224,7 +222,7 @@ export const panelIconStyle = (props) => {
             },
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     render: value => handleDimension(value, 'padding')
                 }
             ],
@@ -251,7 +249,7 @@ export const panelIconStyle = (props) => {
             },
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     render: value => handleDimension(value, 'margin')
                 }
             ],
@@ -266,7 +264,7 @@ export const panelIconStyle = (props) => {
             step: 1,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     render: value => `transform: rotate(${value}deg);`
                 }
             ]
