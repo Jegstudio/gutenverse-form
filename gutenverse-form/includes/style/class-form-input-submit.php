@@ -85,19 +85,6 @@ class Form_Input_Submit extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['iconPosition'] ) ) {
-			$this->inject_style(
-				array(
-					'selector'       => ".{$this->element_id} .guten-button i",
-					'property'       => function ( $value ) {
-						return 'margin-right: undefinedpx;';
-					},
-					'value'          => $this->attrs['iconPosition'],
-					'device_control' => false,
-				)
-			);
-		}
-
 		if ( isset( $this->attrs['iconSpacing'] ) ) {
 			if ( 'after' === $this->attrs['iconPosition'] ) {
 				$this->inject_style(
