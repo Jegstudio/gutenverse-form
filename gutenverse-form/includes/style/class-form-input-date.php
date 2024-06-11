@@ -315,7 +315,7 @@ class Form_Input_Date extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['inputBorderHover'] ) ) {
-			$this->handle_border( 'inputBorderHoverr', ".{$this->element_id} .gutenverse-input:hover" );
+			$this->handle_border( 'inputBorderHover', ".{$this->element_id} .gutenverse-input:hover" );
 		}
 
 		if ( isset( $this->attrs['inputBorderHoverResponsive'] ) ) {
