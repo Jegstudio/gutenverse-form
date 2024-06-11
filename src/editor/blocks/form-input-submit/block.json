@@ -244,7 +244,11 @@
         "condition": {
             "type": "object",
             "default": {}
-        }
+        },
+        "iconLineHeight": {
+			"type": "boolean",
+			"default": false
+		}
     },
     "supports": {
         "className": false

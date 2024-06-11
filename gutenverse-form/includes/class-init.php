@@ -119,8 +119,16 @@ class Init {
 		$this->register_framework();
 		add_action( 'plugins_loaded', array( $this, 'plugin_loaded' ) );
 		add_filter( 'gutenverse_companion_plugin_list', array( $this, 'plugin_name' ) );
+		register_activation_hook( GUTENVERSE_FORM_FILE, array( $this, 'set_activation_transient') );
 	}
 
+	/**
+	 * Set Activation Transient
+	 */
+	public function set_activation_transient() {
+		set_transient( 'gutenverse_redirect', 1, 30 );
+	}
+	
 	/**
 	 * Register Plugin name.
 	 *
