@@ -32,23 +32,14 @@ export const panelIcon = (props) => {
                     label: 'Left'
                 },
                 {
-                    value: 'center',
-                    label: 'Center'
-                },
-                {
                     value: 'right',
                     label: 'Right'
                 },
             ],
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon`,
-                    render: (value) => `justify-content: ${value};`
-                },
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper > .gutenverse-input-text`,
-                    allowRender: value => value === 'right' || value === 'center',
-                    render: () => 'padding: 8px !important'
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper`,
+                    render: (value) => `flex-direction: ${value === 'right' ? 'row-reverse' : 'row'};`
                 }
             ]
         },
@@ -116,11 +107,6 @@ export const panelIcon = (props) => {
                     allowRender: () => iconType && iconType === 'icon',
                     render: value => `font-size: ${value}px;`
                 },
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .gutenverse-input-text`,
-                    allowRender: () => iconAlignment === 'left',
-                    render: (value) => `padding-left: ${value + 15}px !important;`
-                }
             ]
         },
         {
@@ -156,11 +142,6 @@ export const panelIcon = (props) => {
                     allowRender: () => iconType && iconType === 'image',
                     render: value => `width: ${value}px;`
                 },
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .gutenverse-input-text`,
-                    allowRender: () => iconType && iconType === 'image' && iconAlignment === 'left',
-                    render: value => `padding-left: ${20 + value}px !important;`
-                }
             ]
         },
         {

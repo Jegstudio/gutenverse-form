@@ -30,7 +30,7 @@
             "default": "input-text-name"
         },
         "iconAlignment": {
-            "type": "object",
+            "type": "string",
             "default": "left"
         },
         "iconType": {

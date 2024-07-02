@@ -1,12 +1,10 @@
 .input-icon-wrapper {
     display: flex;
     align-items: center;
+    padding: 8px;
 
     .form-input-text-icon {
-        position: absolute;
-        padding: 0 12px;
-        width: 100%;
-        display: flex;
+        margin: 0 8px;
 
         &.type-image {
             overflow: hidden;
@@ -16,7 +14,20 @@
             .icon {
                 align-items: center;
                 display: flex;
+                overflow: hidden;
             }
+        }
+    }
+
+    .gutenverse-input-text {
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        border-radius: unset !important;
+        box-shadow: none !important;
+
+        &:focus, &:focus-visible {
+            outline: none !important;
         }
     }
 }

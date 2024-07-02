@@ -25,12 +25,6 @@ export const panelList = () => {
             tabRole: TabSetting
         },
         {
-            title: __('Icon Style', 'gutenverse'),
-            initialOpen: false,
-            panelArray: panelIconStyle,
-            tabRole: TabStyle
-        },
-        {
             title: __('Validation', 'gutenverse-form'),
             panelArray: panelRules,
             initialOpen: false,
@@ -58,6 +52,12 @@ export const panelList = () => {
             title: __('Input Style', 'gutenverse-form'),
             panelArray: inputPanel,
             initialOpen: false,
+            tabRole: TabStyle
+        },
+        {
+            title: __('Icon Style', 'gutenverse'),
+            initialOpen: false,
+            panelArray: panelIconStyle,
             tabRole: TabStyle
         },
         /* Put Your List Here */

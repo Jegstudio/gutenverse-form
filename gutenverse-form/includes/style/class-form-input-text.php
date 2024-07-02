@@ -242,7 +242,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputPadding'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input",
+					'selector'       => ".{$this->element_id} .gutenverse-input, .{$this->element_id} .main-wrapper .input-icon-wrapper ",
 					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'padding' );
 					},
@@ -255,7 +255,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputMargin'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input",
+					'selector'       => ".{$this->element_id} .gutenverse-input, .{$this->element_id} .main-wrapper .input-icon-wrapper ",
 					'property'       => function ( $value ) {
 						return $this->handle_dimension( $value, 'margin' );
 					},
@@ -268,7 +268,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['placeholderColor'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input::placeholder",
+					'selector'       => ".{$this->element_id} .gutenverse-input::placeholder, .{$this->element_id} .main-wrapper .input-icon-wrapper::placeholder",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -292,7 +292,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputColorNormal'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input",
+					'selector'       => ".{$this->element_id} .gutenverse-input, .{$this->element_id} .main-wrapper .input-icon-wrapper",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -305,7 +305,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputBgColorNormal'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input",
+					'selector'       => ".{$this->element_id} .gutenverse-input, .{$this->element_id} .main-wrapper .input-icon-wrapper ",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
@@ -316,13 +316,13 @@ class Form_Input_Text extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['inputBorderNormal'] ) ) {
-			$this->handle_border( 'inputBorderNormal', ".{$this->element_id} .gutenverse-input" );
+			$this->handle_border( 'inputBorderNormal', ".{$this->element_id} .gutenverse-input, .{$this->element_id} .main-wrapper .input-icon-wrapper " );
 		}
 
 		if ( isset( $this->attrs['inputBorderNormalResponsive'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input",
+					'selector'       => ".{$this->element_id} .gutenverse-input, .{$this->element_id} .main-wrapper .input-icon-wrapper ",
 					'property'       => function ( $value ) {
 						return $this->handle_border_responsive( $value );
 					},
@@ -351,7 +351,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputBgColorHover'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:hover",
+					'selector'       => ".{$this->element_id} .gutenverse-input:hover, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
@@ -362,13 +362,13 @@ class Form_Input_Text extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['inputBorderHover'] ) ) {
-			$this->handle_border( 'inputBorderHover', ".{$this->element_id} .gutenverse-input:hover" );
+			$this->handle_border( 'inputBorderHover', ".{$this->element_id} .gutenverse-input:hover, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover" );
 		}
 
 		if ( isset( $this->attrs['inputBorderHoverResponsive'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:hover",
+					'selector'       => ".{$this->element_id} .gutenverse-input:hover, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover",
 					'property'       => function ( $value ) {
 						return $this->handle_border_responsive( $value );
 					},
@@ -384,7 +384,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputColorFocus'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible",
+					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon i",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -397,7 +397,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputBgColorFocus'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible",
+					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
@@ -408,13 +408,13 @@ class Form_Input_Text extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['inputBorderFocus'] ) ) {
-			$this->handle_border( 'inputBorderFocus', ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible" );
+			$this->handle_border( 'inputBorderFocus', ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within" );
 		}
 
 		if ( isset( $this->attrs['inputBorderFocusResponsive'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible",
+					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within",
 					'property'       => function ( $value ) {
 						return $this->handle_border_responsive( $value );
 					},
@@ -430,7 +430,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputAreaBoxShadow'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input",
+					'selector'       => ".{$this->element_id} .gutenverse-input, .{$this->element_id} .main-wrapper .input-icon-wrapper ",
 					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
@@ -443,7 +443,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputAreaBoxShadowHover'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:hover",
+					'selector'       => ".{$this->element_id} .gutenverse-input:hover, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover",
 					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
@@ -459,9 +459,10 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['iconAlignment'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon",
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper",
 					'property'       => function ( $value ) {
-						return "justify-content: {$value};";
+						$direction = 'right' === $value ? 'row-reverse' : 'row';
+						return "flex-direction: {$direction};";
 					},
 					'value'          => $this->attrs['iconAlignment'],
 					'device_control' => true,
@@ -482,22 +483,6 @@ class Form_Input_Text extends Style_Abstract {
 					)
 				);
 			}
-
-			$this->inject_style(
-				array(
-					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .gutenverse-input-text",
-					'property'       => function ( $value ) {
-						if ( 'left' === $this->attrs['iconAlignment'] ) {
-							$padding_left = $value + 15;
-							return "padding-left: {$padding_left}px !important";
-						} else {
-							return 'padding: 8px !important;';
-						}
-					},
-					'value'          => $this->attrs['iconSize'],
-					'device_control' => true,
-				)
-			);
 		}
 
 		if ( isset( $this->attrs['iconType'] ) && 'image' === $this->attrs['iconType'] ) {
@@ -507,22 +492,6 @@ class Form_Input_Text extends Style_Abstract {
 						'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
 						'property'       => function ( $value ) {
 							return "width: {$value}px;";
-						},
-						'value'          => $this->attrs['imageWidth'],
-						'device_control' => true,
-					)
-				);
-
-				$this->inject_style(
-					array(
-						'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .gutenverse-input-text",
-						'property'       => function ( $value ) {
-							if ( 'left' === $this->attrs['iconAlignment'] ) {
-								$padding_left = $value + 20;
-								return "padding-left: {$padding_left}px !important";
-							} else {
-								return 'padding: 8px !important;';
-							}
 						},
 						'value'          => $this->attrs['imageWidth'],
 						'device_control' => true,
@@ -608,40 +577,15 @@ class Form_Input_Text extends Style_Abstract {
 			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover.style-gradient", $this->attrs['iconBackgroundHover'] );
 		}
 
-		if ( isset( $this->attrs['iconBorder'] ) && 'icon' === $this->attrs['iconType'] ) {
-			$this->handle_border( 'iconBorder', ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon" );
-		}
-		if ( isset( $this->attrs['iconBorder'] ) && 'image' === $this->attrs['iconType'] ) {
-			$this->handle_border( 'iconBorder', ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon" );
-		}
-
-		if ( isset( $this->attrs['iconBorderResponsive'] ) && 'icon' === $this->attrs['iconType'] ) {
+		if ( isset( $this->attrs['iconBorder'] ) ) {
 			$this->inject_style(
 				array(
 					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
 					'property'       => function ( $value ) {
 						return $this->handle_border_responsive( $value );
 					},
-					'value'          => $this->attrs['iconBorderResponsive'],
+					'value'          => $this->attrs['iconBorder'],
 					'device_control' => true,
-					'skip_device'    => array(
-						'Desktop',
-					),
-				)
-			);
-		}
-		if ( isset( $this->attrs['iconBorderResponsive'] ) && 'image' === $this->attrs['iconType'] ) {
-			$this->inject_style(
-				array(
-					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon",
-					'property'       => function ( $value ) {
-						return $this->handle_border_responsive( $value );
-					},
-					'value'          => $this->attrs['iconBorderResponsive'],
-					'device_control' => true,
-					'skip_device'    => array(
-						'Desktop',
-					),
 				)
 			);
 		}
