@@ -62,7 +62,7 @@ export const inputPanel = props => {
             },
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .choices__inner`,
+                    selector: `.${elementId} .main-wrapper .choices`,
                     render: value => handleDimension(value, 'margin')
                 }
             ]
