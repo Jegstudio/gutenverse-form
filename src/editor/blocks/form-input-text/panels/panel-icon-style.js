@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BackgroundControl, BorderResponsiveControl, BoxShadowControl, ColorControl, DimensionControl, RangeControl, SelectControl, SwitchControl } from 'gutenverse-core/controls';
+import { BackgroundControl, BorderResponsiveControl, BoxShadowControl, ColorControl, DimensionControl, RangeControl, SelectControl, SwitchControl, GradientControl } from 'gutenverse-core/controls';
 import { getDeviceType } from 'gutenverse-core/editor-helper';
 import { handleColor, handleDimension, handleBorderResponsive, elementVar, normalAppender, allowRenderBoxShadow } from 'gutenverse-core/styling';
 import { handleBoxShadow } from 'gutenverse-core/styling';
@@ -9,7 +9,9 @@ export const panelIconStyle = (props) => {
         elementId,
         switcher,
         setSwitcher,
-        iconStyleMode
+        iconStyleMode,
+        iconColorGradient,
+        iconColorGradientHover
     } = props;
 
     /**
@@ -45,164 +47,8 @@ export const panelIconStyle = (props) => {
 
     return [
         {
-            id: 'iconStyleMode',
-            label: __('Color Mode', 'gutenverse'),
-            component: SelectControl,
-            options: [
-                {
-                    value: 'color',
-                    label: 'Color'
-                },
-                {
-                    value: 'gradient',
-                    label: 'Gradient'
-                }
-            ],
-        },
-        {
-            id: '__iconHover',
-            component: SwitchControl,
-            options: [
-                {
-                    value: 'normal',
-                    label: 'Normal'
-                },
-                {
-                    value: 'hover',
-                    label: 'Hover'
-                }
-            ],
-            onChange: ({ __iconHover }) => setSwitcher({ ...switcher, icon: __iconHover })
-        },
-        {
-            id: 'iconColor',
-            show: (!switcher.icon || switcher.icon === 'normal') && (!iconStyleMode || iconStyleMode === 'color'),
-            label: __('Normal Color', 'gutenverse'),
-            component: ColorControl,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i`,
-                    render: value => handleColor(value, 'color')
-                }
-            ]
-        },
-        {
-            id: 'iconHoverColor',
-            show: switcher.icon === 'hover' && (!iconStyleMode || iconStyleMode === 'color'),
-            label: __('Hover Color', 'gutenverse'),
-            component: ColorControl,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover i`,
-                    render: value => handleColor(value, 'color')
-                }
-            ]
-        },
-        {
-            id: 'iconBgColor',
-            show: (!switcher.icon || switcher.icon === 'normal') && (!iconStyleMode || iconStyleMode === 'color'),
-            label: __('Normal Background Color', 'gutenverse'),
-            component: ColorControl,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
-                    render: value => handleColor(value, 'background-color')
-                }
-            ]
-        },
-        {
-            id: 'iconHoverBgColor',
-            show: switcher.icon === 'hover' && (!iconStyleMode || iconStyleMode === 'color'),
-            label: __('Hover Background Color', 'gutenverse'),
-            component: ColorControl,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover`,
-                    render: value => handleColor(value, 'background-color')
-                }
-            ]
-        },
-        {
-            id: 'iconBackground',
-            show: (!switcher.icon || switcher.icon === 'normal') && iconStyleMode === 'gradient',
-            component: BackgroundControl,
-            options: ['gradient'],
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient`,
-                    hasChild: true,
-                    render: value => customHandleBackground(value)
-                }
-            ]
-        },
-        {
-            id: 'iconBackgroundHover',
-            show: switcher.icon === 'hover' && iconStyleMode === 'gradient',
-            component: BackgroundControl,
-            options: ['gradient'],
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover.style-gradient`,
-                    hasChild: true,
-                    render: value => customHandleBackground(value)
-                }
-            ]
-        },
-        {
-            id: 'iconBorder',
-            show: (!switcher.icon || switcher.icon === 'normal'),
-            label: __('Border', 'gutenverse'),
-            component: BorderResponsiveControl,
-            allowDeviceControl: true,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
-                    render: value => handleBorderResponsive(value)
-                }
-            ]
-        },
-        {
-            id: 'iconBoxShadow',
-            show: !switcher.icon || switcher.icon === 'normal',
-            label: __('Box Shadow', 'gutenverse'),
-            component: BoxShadowControl,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
-                }
-            ]
-        },
-        {
-            id: 'iconBorderHover',
-            show: switcher.icon === 'hover',
-            label: __('Border', 'gutenverse'),
-            component: BorderResponsiveControl,
-            allowDeviceControl: true,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover`,
-                    render: value => handleBorderResponsive(value)
-                },
-            ]
-        },
-        {
-            id: 'iconBoxShadowHover',
-            show: switcher.icon === 'hover',
-            label: __('Box Shadow', 'gutenverse'),
-            component: BoxShadowControl,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
-                }
-            ]
-        },
-        {
             id: 'iconPadding',
-            label: __('Padding', 'gutenverse'),
+            label: __('Padding', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -229,7 +75,7 @@ export const panelIconStyle = (props) => {
         },
         {
             id: 'iconMargin',
-            label: __('Margin', 'gutenverse'),
+            label: __('Margin', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -256,7 +102,7 @@ export const panelIconStyle = (props) => {
         },
         {
             id: 'iconRotate',
-            label: __('Icon Rotate', 'gutenverse'),
+            label: __('Icon Rotate', 'gutenverse-form'),
             component: RangeControl,
             allowDeviceControl: true,
             min: 1,
@@ -269,5 +115,194 @@ export const panelIconStyle = (props) => {
                 }
             ]
         },
+        {
+            id: 'iconStyleMode',
+            label: __('Color Mode', 'gutenverse-form'),
+            component: SelectControl,
+            options: [
+                {
+                    value: 'color',
+                    label: 'Color'
+                },
+                {
+                    value: 'gradient',
+                    label: 'Gradient'
+                }
+            ],
+        },
+        {
+            id: '__iconHover',
+            component: SwitchControl,
+            options: [
+                {
+                    value: 'normal',
+                    label: 'Normal'
+                },
+                {
+                    value: 'hover',
+                    label: 'Hover'
+                },
+                {
+                    value: 'focus',
+                    label: 'Focus'
+                }
+            ],
+            onChange: ({ __iconHover }) => setSwitcher({ ...switcher, icon: __iconHover })
+        },
+        {
+            id: 'iconColor',
+            show: (!switcher.icon || switcher.icon === 'normal') && (!iconStyleMode || iconStyleMode === 'color'),
+            label: __('Normal Color', 'gutenverse-form'),
+            component: ColorControl,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i`,
+                    render: value => handleColor(value, 'color')
+                }
+            ]
+        },
+        {
+            id: 'iconBgColor',
+            show: (!switcher.icon || switcher.icon === 'normal') && (!iconStyleMode || iconStyleMode === 'color'),
+            label: __('Normal Background Color', 'gutenverse-form'),
+            component: ColorControl,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
+                    render: value => handleColor(value, 'background-color')
+                }
+            ]
+        },
+        {
+            id: 'iconColorGradient',
+            show: (!switcher.icon || switcher.icon === 'normal') && iconStyleMode === 'gradient',
+            type: __('Color Gradient', 'gutenverse-form'),
+            component: BackgroundControl,
+            options: ['gradient'],
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient i`,
+                    hasChild: true,
+                    render: value => customHandleBackground(value)
+                }
+            ]
+        },
+        {
+            id: 'iconBackground',
+            show: (!switcher.icon || switcher.icon === 'normal') && iconStyleMode === 'gradient',
+            type: __('Background Gradient', 'gutenverse-form'),
+            component: BackgroundControl,
+            options: ['gradient'],
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient`,
+                    hasChild: true,
+                    render: value => customHandleBackground(value)
+                }
+            ]
+        },
+        {
+            id: 'iconBorder',
+            show: (!switcher.icon || switcher.icon === 'normal'),
+            label: __('Border', 'gutenverse-form'),
+            component: BorderResponsiveControl,
+            allowDeviceControl: true,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
+                    render: value => handleBorderResponsive(value)
+                }
+            ]
+        },
+        {
+            id: 'iconBoxShadow',
+            show: !switcher.icon || switcher.icon === 'normal',
+            label: __('Box Shadow', 'gutenverse-form'),
+            component: BoxShadowControl,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
+                    allowRender: (value) => allowRenderBoxShadow(value),
+                    render: value => handleBoxShadow(value)
+                }
+            ]
+        },
+        {
+            id: 'iconHoverColor',
+            show: switcher.icon === 'hover' && (!iconStyleMode || iconStyleMode === 'color'),
+            label: __('Hover Color', 'gutenverse-form'),
+            component: ColorControl,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon i`,
+                    render: value => handleColor(value, 'color')
+                }
+            ]
+        },
+        {
+            id: 'iconHoverBgColor',
+            show: switcher.icon === 'hover' && (!iconStyleMode || iconStyleMode === 'color'),
+            label: __('Hover Background Color', 'gutenverse-form'),
+            component: ColorControl,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon`,
+                    render: value => handleColor(value, 'background-color')
+                }
+            ]
+        },
+        {
+            id: 'iconColorGradientHover',
+            show: switcher.icon === 'hover' && iconStyleMode === 'gradient',
+            type: __('Color Gradient', 'gutenverse-form'),
+            component: BackgroundControl,
+            options: ['gradient'],
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon.style-gradient i`,
+                    hasChild: true,
+                    render: value => iconColorGradientHover ? customHandleBackground(value) : customHandleBackground(iconColorGradient)
+                }
+            ]
+        },
+        {
+            id: 'iconBackgroundHover',
+            show: switcher.icon === 'hover' && iconStyleMode === 'gradient',
+            component: BackgroundControl,
+            options: ['gradient'],
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon.style-gradient`,
+                    hasChild: true,
+                    render: value => customHandleBackground(value)
+                }
+            ]
+        },
+        {
+            id: 'iconBorderHover',
+            show: switcher.icon === 'hover',
+            label: __('Border', 'gutenverse-form'),
+            component: BorderResponsiveControl,
+            allowDeviceControl: true,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon`,
+                    render: value => handleBorderResponsive(value)
+                },
+            ]
+        },
+        {
+            id: 'iconBoxShadowHover',
+            show: switcher.icon === 'hover',
+            label: __('Box Shadow', 'gutenverse-form'),
+            component: BoxShadowControl,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon`,
+                    allowRender: (value) => allowRenderBoxShadow(value),
+                    render: value => handleBoxShadow(value)
+                }
+            ]
+        }
     ];
 };

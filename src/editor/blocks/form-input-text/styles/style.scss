@@ -7,7 +7,9 @@
         margin: 0 8px;
 
         &.type-image {
-            overflow: hidden;
+            .icon {
+                overflow: hidden;
+            }
         }
 
         &.type-icon {
@@ -15,6 +17,15 @@
                 align-items: center;
                 display: flex;
                 overflow: hidden;
+            }
+        }
+
+        .icon.style-gradient {
+            i {
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                display: inline-block;
             }
         }
     }

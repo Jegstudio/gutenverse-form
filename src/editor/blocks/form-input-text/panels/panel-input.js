@@ -171,7 +171,7 @@ export const inputPanel = props => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .gutenverse-input:hover`,
+                    selector: `.${elementId} .gutenverse-input:hover, .${elementId} .main-wrapper .input-icon-wrapper:hover .gutenverse-input`,
                     render: value => handleColor(value, 'color')
                 }
             ]
@@ -184,7 +184,7 @@ export const inputPanel = props => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .gutenverse-input:hover, .${elementId} .main-wrapper .input-icon-wrapper:hover`,
+                    selector: `.${elementId} .gutenverse-input:hover, .${elementId} .main-wrapper .input-icon-wrapper:hover .gutenverse-input`,
                     render: value => handleColor(value, 'background-color')
                 }
             ]
@@ -304,7 +304,7 @@ export const inputPanel = props => {
             component: BoxShadowControl,
             style: [
                 {
-                    selector: `.${elementId} .gutenverse-input:hover, .${elementId} .main-wrapper .input-icon-wrapper:hover`,
+                    selector: `.${elementId} .gutenverse-input:hover, .${elementId} .main-wrapper .input-icon-wrapper:hover .gutenverse-input`,
                     allowRender: (value) => allowRenderBoxShadow(value),
                     render: value => handleBoxShadow(value)
                 }

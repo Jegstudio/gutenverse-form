@@ -39,7 +39,7 @@
 		},
 		"icon": {
 			"type": "string",
-			"default": "far fa-user"
+			"default": "gtn gtn-email-light"
 		},
 		"iconSize": {
 			"type": "object",
@@ -117,6 +117,31 @@
 			"copyStyle": true
 		},
 		"iconBackground": {
+			"type": "object",
+			"copyStyle": true
+		},
+        "iconColorGradient": {
+			"type": "object",
+			"copyStyle": true,
+            "default": {
+                "type": "gradient",
+                "gradientColor": [
+                    {
+                        "active": false,
+                        "color": "rgb(49, 207, 180)",
+                        "id": 1,
+                        "offset": "0.000"
+                    },
+                    {
+                        "active": true,
+                        "color": "rgb(126, 32, 207)",
+                        "id": 2,
+                        "offset": "1.000"
+                    }
+                ]
+            }
+		},
+        "iconColorGradientHover": {
 			"type": "object",
 			"copyStyle": true
 		},

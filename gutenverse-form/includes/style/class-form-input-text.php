@@ -338,7 +338,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputColorHover'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:hover",
+					'selector'       => ".{$this->element_id} .gutenverse-input:hover, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover .gutenverse-input",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -351,7 +351,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputBgColorHover'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:hover, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover",
+					'selector'       => ".{$this->element_id} .gutenverse-input:hover, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover .gutenverse-input",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
@@ -443,7 +443,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['inputAreaBoxShadowHover'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:hover, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover",
+					'selector'       => ".{$this->element_id} .gutenverse-input:hover, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover .gutenverse-input",
 					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
@@ -533,7 +533,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['iconHoverColor'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover i",
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon i",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -559,7 +559,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['iconHoverBgColor'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover",
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'background-color' );
 					},
@@ -569,12 +569,22 @@ class Form_Input_Text extends Style_Abstract {
 			);
 		}
 
+		if ( isset( $this->attrs['iconColorGradient'] ) ) {
+			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient i", $this->attrs['iconColorGradient'] );
+		}
+
+		if ( isset( $this->attrs['iconColorGradientHover'] ) ) {
+			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon.style-gradient i", $this->attrs['iconColorGradientHover'] );
+		} else {
+			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient i", $this->attrs['iconColorGradient'] );
+		}
+
 		if ( isset( $this->attrs['iconBackground'] ) ) {
 			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient", $this->attrs['iconBackground'] );
 		}
 
 		if ( isset( $this->attrs['iconBackgroundHover'] ) ) {
-			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover.style-gradient", $this->attrs['iconBackgroundHover'] );
+			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon.style-gradient", $this->attrs['iconBackgroundHover'] );
 		}
 
 		if ( isset( $this->attrs['iconBorder'] ) ) {
@@ -604,39 +614,26 @@ class Form_Input_Text extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['iconBorderHover'] ) && 'icon' === $this->attrs['iconType'] ) {
-			$this->handle_border( 'iconBorderHover', ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover" );
-		}
-		if ( isset( $this->attrs['iconBorderHover'] ) && 'image' === $this->attrs['iconType'] ) {
-			$this->handle_border( 'iconBorderHover', ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover" );
-		}
-
-		if ( isset( $this->attrs['iconBorderHoverResponsive'] ) && 'icon' === $this->attrs['iconType'] ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover",
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon",
 					'property'       => function ( $value ) {
 						return $this->handle_border_responsive( $value );
 					},
-					'value'          => $this->attrs['iconBorderHoverResponsive'],
+					'value'          => $this->attrs['iconBorderHover'],
 					'device_control' => true,
-					'skip_device'    => array(
-						'Desktop',
-					),
 				)
 			);
 		}
-		if ( isset( $this->attrs['iconBorderHoverResponsive'] ) && 'image' === $this->attrs['iconType'] ) {
+		if ( isset( $this->attrs['iconBorderHover'] ) && 'image' === $this->attrs['iconType'] ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover",
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon",
 					'property'       => function ( $value ) {
 						return $this->handle_border_responsive( $value );
 					},
-					'value'          => $this->attrs['iconBorderHoverResponsive'],
+					'value'          => $this->attrs['iconBorderHover'],
 					'device_control' => true,
-					'skip_device'    => array(
-						'Desktop',
-					),
 				)
 			);
 		}
@@ -644,7 +641,7 @@ class Form_Input_Text extends Style_Abstract {
 		if ( isset( $this->attrs['iconBoxShadowHover'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon:hover",
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon",
 					'property'       => function ( $value ) {
 						return $this->handle_box_shadow( $value );
 					},
