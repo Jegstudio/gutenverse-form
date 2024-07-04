@@ -11,7 +11,8 @@ export const panelIconStyle = (props) => {
         setSwitcher,
         iconStyleMode,
         iconColorGradient,
-        iconColorGradientHover
+        iconColorGradientHover,
+        iconType
     } = props;
 
     /**
@@ -175,7 +176,7 @@ export const panelIconStyle = (props) => {
         },
         {
             id: 'iconColorGradient',
-            show: (!switcher.icon || switcher.icon === 'normal') && iconStyleMode === 'gradient',
+            show: (!switcher.icon || switcher.icon === 'normal') && iconStyleMode === 'gradient' && iconType === 'icon',
             type: __('Color Gradient', 'gutenverse-form'),
             component: BackgroundControl,
             options: ['gradient'],
@@ -253,7 +254,7 @@ export const panelIconStyle = (props) => {
         },
         {
             id: 'iconColorGradientHover',
-            show: switcher.icon === 'hover' && iconStyleMode === 'gradient',
+            show: switcher.icon === 'hover' && iconStyleMode === 'gradient' && iconType === 'icon',
             type: __('Color Gradient', 'gutenverse-form'),
             component: BackgroundControl,
             options: ['gradient'],
@@ -299,6 +300,83 @@ export const panelIconStyle = (props) => {
             style: [
                 {
                     selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon`,
+                    allowRender: (value) => allowRenderBoxShadow(value),
+                    render: value => handleBoxShadow(value)
+                }
+            ]
+        },
+        {
+            id: 'iconFocusColor',
+            show: switcher.icon === 'focus' && iconStyleMode === 'color',
+            label: __('Focus Color', 'gutenverse-form'),
+            component: ColorControl,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon i`,
+                    render: value => handleColor(value, 'color')
+                }
+            ]
+        },
+        {
+            id: 'iconFocusBgColor',
+            show: switcher.icon === 'focus' && iconStyleMode === 'color',
+            label: __('Focus Background Color', 'gutenverse-form'),
+            component: ColorControl,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon`,
+                    render: value => handleColor(value, 'background-color')
+                }
+            ]
+        },
+        {
+            id: 'iconColorGradientFocus',
+            show: switcher.icon === 'focus' && iconStyleMode === 'gradient' && iconType === 'icon',
+            type: __('Color Gradient', 'gutenverse-form'),
+            component: BackgroundControl,
+            options: ['gradient'],
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon.style-gradient i`,
+                    hasChild: true,
+                    render: value => iconColorGradientHover ? customHandleBackground(value) : customHandleBackground(iconColorGradient)
+                }
+            ]
+        },
+        {
+            id: 'iconBackgroundFocus',
+            show: switcher.icon === 'focus' && iconStyleMode === 'gradient',
+            component: BackgroundControl,
+            options: ['gradient'],
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon.style-gradient`,
+                    hasChild: true,
+                    render: value => customHandleBackground(value)
+                }
+            ]
+        },
+        {
+            id: 'iconBorderFocus',
+            show: switcher.icon === 'focus',
+            label: __('Border', 'gutenverse-form'),
+            component: BorderResponsiveControl,
+            allowDeviceControl: true,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon`,
+                    render: value => handleBorderResponsive(value)
+                },
+            ]
+        },
+        {
+            id: 'iconBoxShadowFocus',
+            show: switcher.icon === 'focus',
+            label: __('Box Shadow', 'gutenverse-form'),
+            component: BoxShadowControl,
+            style: [
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon`,
                     allowRender: (value) => allowRenderBoxShadow(value),
                     render: value => handleBoxShadow(value)
                 }

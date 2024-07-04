@@ -224,7 +224,7 @@ export const inputPanel = props => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible, .${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper:focus-visible`,
+                    selector: `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible, .${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon`,
                     render: value => handleColor(value, 'color')
                 },
             ]
@@ -237,7 +237,7 @@ export const inputPanel = props => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible, .${elementId} .main-wrapper .input-icon-wrapper:focus-within, .${elementId} .main-wrapper .input-icon-wrapper:focus-visible`,
+                    selector: `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible, .${elementId} .main-wrapper .input-icon-wrapper:focus-within`,
                     render: value => handleColor(value, 'background-color')
                 }
             ]
@@ -249,7 +249,7 @@ export const inputPanel = props => {
             component: BorderControl,
             style: [
                 {
-                    selector: `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible, .${elementId} .main-wrapper .input-icon-wrapper:focus-within, .${elementId} .main-wrapper .input-icon-wrapper:focus-visible`,
+                    selector: `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible, .${elementId} .main-wrapper .input-icon-wrapper:focus-within`,
                     hasChild: true,
                     render: value => handleBorder(value)
                 }
@@ -263,7 +263,7 @@ export const inputPanel = props => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible, .${elementId} .main-wrapper .input-icon-wrapper:focus-within, .${elementId} .main-wrapper .input-icon-wrapper:focus-visible`,
+                    selector: `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible, .${elementId} .main-wrapper .input-icon-wrapper:focus-within`,
                     allowRender: () => device !== 'Desktop',
                     render: value => handleBorderResponsive(value)
                 }

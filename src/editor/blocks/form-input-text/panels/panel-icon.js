@@ -89,7 +89,17 @@ export const panelIcon = (props) => {
                     selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
                     allowRender: value => value === 'image',
                     render: () => `height: ${imageHeight[deviceType]}px;`
-                }
+                },
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper input`,
+                    allowRender: value => value === 'image',
+                    render: () => `height: ${imageHeight[deviceType]}px !important;`
+                },
+                {
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper input`,
+                    allowRender: value => value === 'icon',
+                    render: () => `height: ${iconSize[deviceType]}px !important;`
+                },
             ]
         },
         {

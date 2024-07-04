@@ -104,15 +104,7 @@
 			"type": "object",
 			"copyStyle": true
 		},
-		"iconHoverColor": {
-			"type": "object",
-			"copyStyle": true
-		},
 		"iconBgColor": {
-			"type": "object",
-			"copyStyle": true
-		},
-		"iconHoverBgColor": {
 			"type": "object",
 			"copyStyle": true
 		},
@@ -141,14 +133,6 @@
                 ]
             }
 		},
-        "iconColorGradientHover": {
-			"type": "object",
-			"copyStyle": true
-		},
-		"iconBackgroundHover": {
-			"type": "object",
-			"copyStyle": true
-		},
 		"iconBorder": {
 			"type": "object",
 			"copyStyle": true
@@ -157,11 +141,51 @@
 			"type": "object",
 			"copyStyle": true
 		},
+		"iconHoverColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconHoverBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+        "iconColorGradientHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBackgroundHover": {
+			"type": "object",
+			"copyStyle": true
+		},
 		"iconBorderHover": {
 			"type": "object",
 			"copyStyle": true
 		},
 		"iconBoxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconFocusColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconFocusBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+        "iconColorGradientFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBackgroundFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBorderFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBoxShadowFocus": {
 			"type": "object",
 			"copyStyle": true
 		},
