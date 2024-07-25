@@ -10,7 +10,6 @@ const path = require('path');
 const postcss = require('gulp-postcss');
 const concat = require('gulp-concat');
 const sass = require('gulp-sass')(require('sass'));
-const zip = require('gulp-zip');
 const del = require('del');
 const replace = require('gulp-string-replace');
 
@@ -101,7 +100,7 @@ gulp.task('clean', function () {
  */
 gulp.task('copy-plugin-folder', function () {
     return gulp
-        .src('./gutenverse-form/**/*')
+        .src(['./gutenverse-form/**/*', '!./gutenverse-form/lib/framework'])
         .pipe(gulp.dest('./release/gutenverse-form/'));
 });
 
@@ -124,7 +123,14 @@ gulp.task('release', gulp.series(
     'replace-text-domain'
 ));
 
-gulp.task('zip', function () {
+async function getZip() {
+    const zip = await import('gulp-zip');
+    return zip.default;
+};
+
+gulp.task('zip', async function () {
+    const zip = await getZip();
+
     return gulp
         .src('./release/gutenverse-form/**', {base: './release'})
         .pipe(zip('gutenverse-form.zip'))
