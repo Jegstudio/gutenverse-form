@@ -92,7 +92,7 @@ gulp.task('clean', function () {
         './gutenverse-form/assets/css/**',
         './gutenverse-form/languages/**',
         './gutenverse-form/lib/dependencies/**'
-    ], {force:true});
+    ], { force: true });
 });
 
 /**
@@ -100,13 +100,13 @@ gulp.task('clean', function () {
  */
 gulp.task('copy-plugin-folder', function () {
     return gulp
-        .src(['./gutenverse-form/**/*', '!./gutenverse-form/lib/framework'])
+        .src(['./gutenverse-form/**/*', '!./gutenverse-form/lib/framework/**'])
         .pipe(gulp.dest('./release/gutenverse-form/'));
 });
 
 gulp.task('copy-framework', function () {
     return gulp
-        .src('./gutenverse-core/framework/**/*')
+        .src('./gutenverse-core/framework/**/*', { encoding: false })
         .pipe(gulp.dest('./release/gutenverse-form/lib/framework/'));
 });
 
@@ -132,7 +132,7 @@ gulp.task('zip', async function () {
     const zip = await getZip();
 
     return gulp
-        .src('./release/gutenverse-form/**', {base: './release'})
+        .src('./release/gutenverse-form/**', { base: './release' })
         .pipe(zip('gutenverse-form.zip'))
         .pipe(gulp.dest('./release'));
 });
