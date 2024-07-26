@@ -100,7 +100,7 @@ gulp.task('clean', function () {
  */
 gulp.task('copy-plugin-folder', function () {
     return gulp
-        .src(['./gutenverse-form/**/*', '!./gutenverse-form/lib/framework/**'])
+        .src(['./gutenverse-form/**/*', '!./gutenverse-form/lib/framework/**'], { encoding: false })
         .pipe(gulp.dest('./release/gutenverse-form/'));
 });
 
@@ -132,7 +132,7 @@ gulp.task('zip', async function () {
     const zip = await getZip();
 
     return gulp
-        .src('./release/gutenverse-form/**', { base: './release' })
+        .src('./release/gutenverse-form/**', { base: './release', encoding: false })
         .pipe(zip('gutenverse-form.zip'))
         .pipe(gulp.dest('./release'));
 });
