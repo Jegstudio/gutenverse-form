@@ -10,12 +10,13 @@ export const labelPanel = props => {
     return [
         {
             id: 'labelWidth',
-            label: __('Label Width in Percent', 'gutenverse-form'),
+            label: __('Label Width', 'gutenverse-form'),
             component: RangeControl,
             min: 1,
             max: 100,
             step: 1,
             allowDeviceControl: true,
+            unit: '%',
             style: [
                 {
                     selector: `.${elementId} .label-wrapper`,

@@ -13,6 +13,7 @@ export const loadingPanel = (props) => {
             label: __('Loading Icon Size', 'gutenverse-form'),
             component: RangeControl,
             allowDeviceControl: true,
+            unit: 'px',
             min: 1,
             max: 200,
             step: 1,
