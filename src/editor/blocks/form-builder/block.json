@@ -1,249 +1,246 @@
 {
-    "apiVersion": 2,
-    "name": "gutenverse/form-builder",
-    "title": "Form Builder",
-    "description": "Build a flexible form with many field choices.",
-    "category": "gutenverse-structure",
-    "allowCopyStyle": true,
-    "attributes": {
-        "elementId": {
-            "type": "string"
-        },
-        "mouseMoveEffect": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "formId": {
-            "type": "object"
-        },
-        "hideAfterSubmit": {
-            "type": "boolean"
-        },
-        "redirectTo": {
-            "type": "string"
-        },
-        "successBgColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "successTextColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "successTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "successAlign": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "successPadding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "successBorder": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "successBorderResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "successBorder",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "successBoxShadow": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "errorBgColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "errorTextColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "errorTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "errorAlign": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "errorPadding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "errorBorder": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "errorBorderResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "errorBorder",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "errorBoxShadow": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "background": {
-            "type": "object",
-            "default": {},
-            "copyStyle": true
-        },
-        "backgroundHover": {
-            "type": "object",
-            "default": {},
-            "copyStyle": true
-        },
-        "border": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "borderResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "border",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "boxShadow": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "borderHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "borderHoverResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "borderHover",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "boxShadowHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "margin": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "padding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "zIndex": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "animation": {
-            "type": "object",
-            "default": {},
-            "copyStyle": true
-        },
-        "hideDesktop": {
-            "type": "boolean",
-            "copyStyle": true
-        },
-        "hideTablet": {
-            "type": "boolean",
-            "copyStyle": true
-        },
-        "hideMobile": {
-            "type": "boolean",
-            "copyStyle": true
-        },
-        "sticky": {
-            "type": "object",
-            "default": {
-                "Desktop": false
-            },
-            "copyStyle": true
-        },
-        "stickyShowOn": {
-            "type": "string",
-            "default": "both",
-            "copyStyle": true
-        },
-        "stickyEase": {
-            "type": "string",
-            "default": "none",
-            "copyStyle": true
-        },
-        "stickyPosition": {
-            "type": "string",
-            "default": "top",
-            "copyStyle": true
-        },
-        "stickyDuration": {
-            "type": "int",
-            "default": 0.25,
-            "copyStyle": true
-        },
-        "topSticky": {
-            "type": "object",
-            "default": {
-                "Desktop": {
-                    "point": "0",
-                    "unit": "px"
-                }
-            },
-            "copyStyle": true
-        },
-        "bottomSticky": {
-            "type": "object",
-            "default": {
-                "Desktop": {
-                    "point": "0",
-                    "unit": "px"
-                }
-            },
-            "copyStyle": true
-        },
-        "stickyIndex": {
-            "type": "int",
-            "default": 99,
-            "copyStyle": true
-        },
-        "stickyBackground": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "stickyBoxShadow": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "transform": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "mask": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "condition": {
-            "type": "object",
-            "default": {}
-        }
-    },
-    "supports": {
-        "className": false
-    },
-    "keywords": [
-        "form",
-        "entry",
-        "submit"
-    ]
+	"apiVersion": 2,
+	"name": "gutenverse/form-builder",
+	"title": "Form Builder",
+	"description": "Build a flexible form with many field choices.",
+	"category": "gutenverse-structure",
+	"allowCopyStyle": true,
+	"attributes": {
+		"elementId": {
+			"type": "string"
+		},
+		"mouseMoveEffect": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"formId": {
+			"type": "object"
+		},
+		"hideAfterSubmit": {
+			"type": "boolean"
+		},
+		"redirectTo": {
+			"type": "string"
+		},
+		"successBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"successTextColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"successTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"successAlign": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"successPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"successBorder": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"successBorderResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "successBorder",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"successBoxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"errorBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"errorTextColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"errorTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"errorAlign": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"errorPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"errorBorder": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"errorBorderResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "errorBorder",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"errorBoxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"background": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"backgroundHover": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"border": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "border",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"boxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderHoverResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "borderHover",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"boxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"margin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"padding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"zIndex": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"animation": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"hideDesktop": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"hideTablet": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"hideMobile": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"sticky": {
+			"type": "object",
+			"default": {
+				"Desktop": false
+			},
+			"copyStyle": true
+		},
+		"stickyShowOn": {
+			"type": "string",
+			"default": "both",
+			"copyStyle": true
+		},
+		"stickyEase": {
+			"type": "string",
+			"default": "none",
+			"copyStyle": true
+		},
+		"stickyPosition": {
+			"type": "string",
+			"default": "top",
+			"copyStyle": true
+		},
+		"stickyDuration": {
+			"type": "int",
+			"default": 0.25,
+			"copyStyle": true
+		},
+		"topSticky": {
+			"type": "object",
+			"default": {
+				"Desktop": {
+					"point": "0",
+					"unit": "px"
+				}
+			},
+			"copyStyle": true
+		},
+		"bottomSticky": {
+			"type": "object",
+			"default": {
+				"Desktop": {
+					"point": "0",
+					"unit": "px"
+				}
+			},
+			"copyStyle": true
+		},
+		"stickyIndex": {
+			"type": "int",
+			"default": 99,
+			"copyStyle": true
+		},
+		"stickyBackground": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"stickyBoxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"transform": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"mask": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"condition": {
+			"type": "object",
+			"default": {}
+		}
+	},
+	"supports": {
+		"className": false,
+		"anchor": true
+	},
+	"keywords": ["form", "entry", "submit"]
 }
