@@ -99,7 +99,17 @@ class GutenverseFormValidation extends Default {
         if (u(input).hasClass('gutenverse-input-mobile')) {
             const inputValue = u(input).find('.gutenverse-input-mobile-text').first().value;
             const countryCode = u(input).find('.gutenverse-input-prefix').first().innerText;
-            value = countryCode + inputValue;
+
+            if (validation) {
+                const valid = this.__validate(input, inputValue, validation);
+                if (valid) {
+                    value = countryCode + inputValue;
+                } else {
+                    value = '';
+                }
+            } else {
+                value = countryCode + inputValue;
+            }
         }
 
         return value;
