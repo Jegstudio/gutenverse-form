@@ -96,6 +96,12 @@ class GutenverseFormValidation extends Default {
             value = input.checked;
         }
 
+        if (u(input).hasClass('gutenverse-input-mobile')) {
+            const inputValue = u(input).find('.gutenverse-input-mobile-text').first().value;
+            const countryCode = u(input).find('.gutenverse-input-prefix').first().innerText;
+            value = countryCode + inputValue;
+        }
+
         return value;
     }
 
