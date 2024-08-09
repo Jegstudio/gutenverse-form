@@ -110,6 +110,33 @@ export const successNoticePanel = (props) => {
             ],
         },
         {
+            id: 'successMargin',
+            label: __('Success Margin', 'gutenverse-form'),
+            component: DimensionControl,
+            position: ['top', 'right', 'bottom', 'left'],
+            allowDeviceControl: true,
+            units: {
+                px: {
+                    text: 'px',
+                    unit: 'px'
+                },
+                em: {
+                    text: 'em',
+                    unit: 'em'
+                },
+                percent: {
+                    text: '%',
+                    unit: '%'
+                },
+            },
+            style: [
+                {
+                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
+                    render: value => handleDimension(value, 'margin')
+                }
+            ],
+        },
+        {
             id: 'successBorder',
             label: __('Border', 'gutenverse-form'),
             component: BorderControl,
