@@ -59,7 +59,6 @@ class Form_Validation extends Style_Generator {
 	 */
 	public function get_form_block_from_template() {
 		global $_wp_current_template_content;
-
 		if ( ! empty( $_wp_current_template_content ) ) {
 			$blocks = $this->parse_blocks( $_wp_current_template_content );
 			$blocks = $this->flatten_blocks( $blocks );
@@ -73,7 +72,6 @@ class Form_Validation extends Style_Generator {
 	 */
 	public function get_form_block_from_content() {
 		global $post;
-
 		if ( has_blocks( $post ) && isset( $post->post_content ) ) {
 			$blocks = $this->parse_blocks( $post->post_content );
 			$blocks = $this->flatten_blocks( $blocks );
@@ -112,9 +110,15 @@ class Form_Validation extends Style_Generator {
 					);
 					array_push( $this->form_validation_data, $result );
 				}
-				$unique_array               = array_unique( array_column( $this->form_validation_data, 'formId' ), SORT_REGULAR );
-				$final_array                = array_values( array_intersect_key( $this->form_validation_data, $unique_array ) );
-				$this->form_validation_data = $final_array;
+				$unique_array         = array_unique( array_column( $this->form_validation_data, 'formId' ), SORT_REGULAR );
+				$final_array          = array_values( array_intersect_key( $this->form_validation_data, $unique_array ) );
+				$final_filtered_array = array_filter(
+					$final_array,
+					function ( $el ) {
+						return ! empty( $el['formId'] );
+					}
+				);
+				$this->form_validation_data = $final_filtered_array;
 			}
 		}
 	}
@@ -130,6 +134,14 @@ class Form_Validation extends Style_Generator {
 		foreach ( $array as $item ) {
 			if ( 'gutenverse/form-builder' === $item['blockName'] ) {
 				$result[] = $item;
+			}
+			if ( 'core/template-part' === $item['blockName'] ) {
+				$parts = $this->get_template_part_content( $item['attrs'] );
+				$parts = $this->parse_blocks( $parts );
+				$parts = $this->flatten_blocks( $parts );
+				if ( $parts ) {
+					$result = array_merge( $result, $this->findFormBlock( $parts ) );
+				}
 			}
 			if ( ! empty( $item['innerBlock'] ) ) {
 				$result = array_merge( $result, $this->findFormBlock( $item['innerBlock'] ) );
