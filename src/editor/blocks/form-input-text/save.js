@@ -40,7 +40,7 @@ const save = compose(
         displayLogic,
         lazyLoad,
         image,
-        imageAltText,
+        imageAlt,
         iconType,
         iconStyleMode,
         icon,
@@ -64,6 +64,7 @@ const save = compose(
     const additionalProps = {
         ['data-display-rule']: !isEmpty(defaultLogic) && !isEmpty(displayLogic) ? JSON.stringify(displayRule) : undefined
     };
+    const imageAltText = imageAlt || null;
 
     const imageLazyLoad = () => {
         if(lazyLoad){

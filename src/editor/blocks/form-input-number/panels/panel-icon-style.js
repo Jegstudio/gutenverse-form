@@ -69,7 +69,7 @@ export const panelIconStyle = (props) => {
             },
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon`,
                     render: value => handleDimension(value, 'padding')
                 }
             ],
@@ -96,7 +96,7 @@ export const panelIconStyle = (props) => {
             },
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon`,
                     render: value => handleDimension(value, 'margin')
                 }
             ],
@@ -111,7 +111,7 @@ export const panelIconStyle = (props) => {
             step: 1,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon`,
                     render: value => `transform: rotate(${value}deg);`
                 }
             ]
@@ -157,7 +157,7 @@ export const panelIconStyle = (props) => {
             component: ColorControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon i`,
                     render: value => handleColor(value, 'color')
                 }
             ]
@@ -169,7 +169,7 @@ export const panelIconStyle = (props) => {
             component: ColorControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon`,
                     render: value => handleColor(value, 'background-color')
                 }
             ]
@@ -182,7 +182,7 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient i`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon.style-gradient i`,
                     hasChild: true,
                     render: value => customHandleBackground(value)
                 }
@@ -196,7 +196,7 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon.style-gradient`,
                     hasChild: true,
                     render: value => customHandleBackground(value)
                 }
@@ -210,7 +210,7 @@ export const panelIconStyle = (props) => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon`,
                     render: value => handleBorderResponsive(value)
                 }
             ]
@@ -222,7 +222,7 @@ export const panelIconStyle = (props) => {
             component: BoxShadowControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon`,
                     allowRender: (value) => allowRenderBoxShadow(value),
                     render: value => handleBoxShadow(value)
                 }
@@ -235,7 +235,7 @@ export const panelIconStyle = (props) => {
             component: ColorControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon i`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon i`,
                     render: value => handleColor(value, 'color')
                 }
             ]
@@ -247,7 +247,7 @@ export const panelIconStyle = (props) => {
             component: ColorControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon`,
                     render: value => handleColor(value, 'background-color')
                 }
             ]
@@ -260,7 +260,7 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon.style-gradient i`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon.style-gradient i`,
                     hasChild: true,
                     render: value => iconColorGradientHover ? customHandleBackground(value) : customHandleBackground(iconColorGradient)
                 }
@@ -273,7 +273,7 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon.style-gradient`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon.style-gradient`,
                     hasChild: true,
                     render: value => customHandleBackground(value)
                 }
@@ -287,7 +287,7 @@ export const panelIconStyle = (props) => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon`,
                     render: value => handleBorderResponsive(value)
                 },
             ]
@@ -299,7 +299,7 @@ export const panelIconStyle = (props) => {
             component: BoxShadowControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon`,
                     allowRender: (value) => allowRenderBoxShadow(value),
                     render: value => handleBoxShadow(value)
                 }
@@ -312,7 +312,7 @@ export const panelIconStyle = (props) => {
             component: ColorControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon i`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon i`,
                     render: value => handleColor(value, 'color')
                 }
             ]
@@ -324,7 +324,7 @@ export const panelIconStyle = (props) => {
             component: ColorControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon`,
                     render: value => handleColor(value, 'background-color')
                 }
             ]
@@ -337,7 +337,7 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon.style-gradient i`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon.style-gradient i`,
                     hasChild: true,
                     render: value => iconColorGradientHover ? customHandleBackground(value) : customHandleBackground(iconColorGradient)
                 }
@@ -350,7 +350,7 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon.style-gradient`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon.style-gradient`,
                     hasChild: true,
                     render: value => customHandleBackground(value)
                 }
@@ -364,7 +364,7 @@ export const panelIconStyle = (props) => {
             allowDeviceControl: true,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon`,
                     render: value => handleBorderResponsive(value)
                 },
             ]
@@ -376,7 +376,7 @@ export const panelIconStyle = (props) => {
             component: BoxShadowControl,
             style: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon`,
+                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon`,
                     allowRender: (value) => allowRenderBoxShadow(value),
                     render: value => handleBoxShadow(value)
                 }
