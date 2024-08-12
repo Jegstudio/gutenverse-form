@@ -23,6 +23,7 @@ export const inputPanel = props => {
             max: 300,
             step: 1,
             allowDeviceControl: true,
+            unit: 'px',
             style: [
                 {
                     selector: `.${elementId} .gutenverse-input`,

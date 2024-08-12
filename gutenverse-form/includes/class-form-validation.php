@@ -98,8 +98,10 @@ class Form_Validation extends Style_Generator {
 						'logged_in'     => is_user_logged_in(),
 					);
 					if ( 'gutenverse-form' === $post_type ) {
-						$data                    = get_post_meta( (int) $form_id, 'form-data', true );
-						$result['require_login'] = $data['require_login'] ? $data['require_login'] : false;
+						$data                          = get_post_meta( (int) $form_id, 'form-data', true );
+						$result['require_login']       = isset( $data['require_login'] ) ? $data['require_login'] : false;
+						$result['form_success_notice'] = isset( $data['form_success_notice'] ) ? $data['form_success_notice'] : false;
+						$result['form_error_notice']   = isset( $data['form_error_notice'] ) ? $data['form_error_notice'] : false;
 					}
 					array_push( $this->form_validation_data, $result );
 				} else {

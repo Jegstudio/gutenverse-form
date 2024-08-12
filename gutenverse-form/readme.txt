@@ -1,18 +1,18 @@
 === Gutenverse Form ===
 Contributors: Jegstudio
-Tags: contact, form, forms, feedback, email, subscribe, notification
-Tested up to: 6.2
+Tags: contact, form, forms, feedback, email
+Tested up to: 6.6
 Requires PHP: 7.4.30
 Stable tag: 1.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
+Streamline the process of creating and managing forms on your WordPress website.
 
 == DESCRIPTION ==
 
 Streamline the process of creating and managing forms on your WordPress website with our powerful and intuitive form builder plugin. 
 With more than 10 easy-to-use blocks, you can create your own customized forms effortlessly.
-
 
 == FEATURES ==
 
@@ -111,6 +111,8 @@ For more detailed instructions, refer to our comprehensive <a href="https://gute
 
 For additional information and assistance, please visit our extensive <a href="https://gutenverse.com/docs/" target="_blank" rel="">Documentation</a> section.
 
+== DOCUMENTATION ==
+We have some <a href="https://gutenverse.com/docs/" target="_blank" rel="">documentation articles here</a> that might help you start your journey with Gutenverse.
 
 == Frequently Asked Questions ==
 
@@ -139,10 +141,13 @@ If your blocks display unexpected or invalid content after an update, follow the
 
 Gutenverse Form is designed to be compatible with other Gutenberg plugins. We have thoroughly tested Gutenverse Form with popular Gutenberg plugins like Spectra, Otter, Essential Blocks, Stackable, and Gutenberg Blocks by Kadence Blocks. You can confidently use Gutenverse Form alongside these plugins to enhance your block editing experience.
 
-= 1.0.1 - 2023-XX-XX =
+= 1.0.0 - 2024-08-08 =
 ##### New
 * **Copy Style**, Add new ability to copy styles between blocks
 * **Flexible Wrapper block**, Add new block
+
+= 0.6.0 - 2024-07-17 =
+* Fix compatibility with WordPress version 6.6
 
 = 0.5.1 - 2023-10-09 =
 * Initial Release
