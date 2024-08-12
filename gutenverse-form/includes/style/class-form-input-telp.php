@@ -384,7 +384,7 @@ class Form_Input_Telp extends Style_Abstract {
 		if ( isset( $this->attrs['inputColorFocus'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon i",
+					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-telp-icon .icon i",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
