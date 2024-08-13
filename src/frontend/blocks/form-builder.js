@@ -1,5 +1,6 @@
 import { Default, u, apiFetch } from 'gutenverse-core-frontend';
 import isEmpty from 'lodash/isEmpty';
+import {__} from '@wordpress/i18n';
 
 class GutenverseFormValidation extends Default {
     /* public */
@@ -136,10 +137,20 @@ class GutenverseFormValidation extends Default {
                 const valid = instance.__validate(currentInput, value, validation);
                 const parent = currentInput.closest('.guten-form-input');
                 const type = instance._getInputType(validation, parent);
+                const wrapper = currentInput.closest('.main-wrapper');
+
                 if (valid) {
                     u(parent).removeClass('input-invalid');
+                    u(wrapper).removeClass('empty-value');
                 } else {
                     u(parent).addClass('input-invalid');
+                    u(currentInput).first().scrollIntoView({ behavior: 'smooth' });
+
+                    if (isEmpty(value)) {
+                        u(wrapper).addClass('empty-value');
+                    } else {
+                        u(wrapper).removeClass('empty-value');
+                    }
                 }
                 validFlag = validFlag && valid;
                 const rule = u(parent).data('guten-input-rule');
@@ -240,11 +251,13 @@ class GutenverseFormValidation extends Default {
 
         switch (notifClass) {
             case 'success':
-                message = formData['form_success_notice'];
-                notifclass = 'guten-success';
+                message = formData ? formData['form_success_notice'] :
+                    __('Empty Form Data! Please add Form Action to the Form Builder setting.', 'gutenverse-form');
+                notifclass = formData ? 'guten-success' : 'guten-error';
                 break;
             case 'error':
-                message = formData['form_error_notice'];
+                message = formData ? formData['form_error_notice'] :
+                    __('Empty Form Data! Please add Form Action to the Form Builder setting.', 'gutenverse-form');
                 notifclass = 'guten-error';
                 break;
             default:
@@ -270,8 +283,25 @@ class GutenverseFormValidation extends Default {
     }
 
     __validateEmail(email) {
+        if (email.trim() === "") {
+            return true;
+        }
         var re = /\S+@\S+\.\S+/;
         return re.test(email);
+    }
+
+    __handlePopup(currentInput){
+        //add popup on empty value
+        const emptyNotice = '<div class="empty-value-popup">This block is required!</div>';
+        u(currentInput).closest('.empty-value-popup').remove();
+        u(currentInput).after(emptyNotice);
+
+        //remove popup when clicked outside
+        u(document).on('click', function(event) {
+            if (!u(event.target).closest('.empty-value-popup').length) {
+                u('.empty-value-popup').remove();
+            }
+        });
     }
 
 
@@ -291,6 +321,7 @@ class GutenverseFormValidation extends Default {
                     return value.length !== 0;
                 }
                 if (value === '' || value.length === 0) {
+                    this.__handlePopup(currentInput);
                     return false;
                 }
             }

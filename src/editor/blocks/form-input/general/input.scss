@@ -87,6 +87,51 @@
     .validation-error {
       display: block;
     }
+    .empty-value {
+      .validation-error {
+        display: none;
+      }
+    }
+  }
+}
+
+.guten-form-input {
+  .main-wrapper {
+    position: relative;
+
+    .empty-value-popup {
+      position: absolute;
+      background-color: rgb(255, 255, 255);
+      border: 4px solid #00bfb6;
+      padding: 20px;
+      z-index: 9999;
+
+      &::before {
+        content: "";
+        width: 0px;
+        height: 0px;
+        position: absolute;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid #00bfb6;
+        right: 50%;
+        top: -23px;
+      }
+      
+      &::after {
+        content: "";
+        width: 0px;
+        height: 0px;
+        position: absolute;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid #fff;
+        right: 50%;
+        top: -18px;
+      }
+    }
   }
 }
 
