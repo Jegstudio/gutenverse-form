@@ -151,10 +151,14 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 == Changelog ==
 
 = 1.0.1 - 2024-08-13 =
+##### Improvements
+* **Framework**, Update core framework
+
 ##### Bug Fixes
 * **Form Builder**, Fix notice styling
 * **Form Builder**, Fix issue with Form Builder in template part
 * **Form Settings**, Fix exported CSV layout is broken in some cases
+* **Styling**, Fix issue with styling on frontend
 
 = 1.0.0 - 2024-08-08 =
 ##### New
