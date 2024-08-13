@@ -200,7 +200,7 @@ class Api {
 					echo '"';
 				} else {
 					echo '"';
-					echo esc_html( $data['value'] );
+					echo esc_html( str_replace( '"', '`', $data['value'] ) );
 					echo '"';
 				}
 
