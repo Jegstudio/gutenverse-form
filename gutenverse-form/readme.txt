@@ -2,7 +2,7 @@
 Contributors: Jegstudio
 Tags: contact, form, forms, feedback, email
 Tested up to: 6.6
-Requires PHP: 7.4.30
+Requires PHP: 7.0
 Stable tag: 1.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -12,13 +12,19 @@ Streamline the process of creating and managing forms on your WordPress website.
 == DESCRIPTION ==
 
 Streamline the process of creating and managing forms on your WordPress website with our powerful and intuitive form builder plugin. 
-With more than 10 easy-to-use blocks, you can create your own customized forms effortlessly.
+Featuring 15+ user-friendly blocks, you can create your own customized forms effortlessly.
+
+<a href="https://www.gutenverse.com/form" target="_blank" rel="">Check out Gutenverse Form in Action</a>
+
+To help you get started, we've also created a beautiful WordPress theme that works seamlessly with Gutenverse Form.
+
+<a href="https://gutenverse.com/theme-list/" target="_blank" rel="">Explore Gutenverse Pre-Built Template Websites</a>
 
 == FEATURES ==
 
 Unlock an enhanced Gutenberg/Block Editor experience with these amazing features:
 
-= 10+ CUSTOMIZABLE GUTENBERG FORM BLOCKS =
+= 15+ CUSTOMIZABLE GUTENBERG FORM BLOCKS =
 Choose from a wide range of fully customizable form blocks that offer advanced and flexible options, enhancing your WordPress block editor experience.
 
 = LIGHTWEIGHT & FAST USER EXPERIENCE =
@@ -140,6 +146,9 @@ If your blocks display unexpected or invalid content after an update, follow the
 **Is Gutenverse Form compatible with other Gutenberg plugins?**
 
 Gutenverse Form is designed to be compatible with other Gutenberg plugins. We have thoroughly tested Gutenverse Form with popular Gutenberg plugins like Spectra, Otter, Essential Blocks, Stackable, and Gutenberg Blocks by Kadence Blocks. You can confidently use Gutenverse Form alongside these plugins to enhance your block editing experience.
+
+
+== Changelog ==
 
 = 1.0.0 - 2024-08-08 =
 ##### New
