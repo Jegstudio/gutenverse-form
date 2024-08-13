@@ -150,6 +150,12 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 == Changelog ==
 
+= 1.0.1 - 2024-08-13 =
+##### Bug Fixes
+* **Form Builder**, Fix notice styling
+* **Form Builder**, Fix issue with Form Builder in template part
+* **Form Settings**, Fix exported CSV layout is broken in some cases
+
 = 1.0.0 - 2024-08-08 =
 ##### New
 * **Copy Style**, Add new ability to copy styles between blocks
