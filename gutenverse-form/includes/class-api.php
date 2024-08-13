@@ -199,7 +199,9 @@ class Api {
 					echo esc_html( implode( ',', $data['value'] ) );
 					echo '"';
 				} else {
-					echo esc_html( $data['value'] );
+					echo '"';
+					echo esc_html( str_replace( '"', '`', $data['value'] ) );
+					echo '"';
 				}
 
 				if ( count( $form ) > ( $id + 1 ) ) {

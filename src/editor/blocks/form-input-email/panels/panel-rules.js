@@ -48,7 +48,6 @@ export const panelRules = props => {
         },
         {
             id: 'validationWarning',
-            show: validationType !== 'none',
             label: __('Warning Message', 'gutenverse-form'),
             description: __('Validation message if the required input is incorrect', 'gutenverse-form'),
             component: TextControl,

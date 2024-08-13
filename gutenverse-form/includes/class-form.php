@@ -93,7 +93,7 @@ class Form {
 			$total_entries = Entries::get_total_entries( $post_id );
 			$form_link     = admin_url( 'edit.php?post_type=' . Entries::POST_TYPE ) . '&form_id=' . $post_id;
 			$export_link   = rest_url( '/gutenverse-form-client/v1/form-action/export/' . $post_id . '?_wpnonce=' . wp_create_nonce( 'wp_rest' ) );
-			$form_ref      = '<a class="total-entries" href="' . $form_link . '">' . $total_entries . '</a>';
+			$form_ref      = '<a class="total-entries" href="' . $form_link . '">' . $total_entries . '</a>   |  ';
 
 			if ( $total_entries > 0 ) {
 				$form_ref .= '<a class="export-entries" href="' . $export_link . '">' . esc_html__( 'Export CSV', 'gutenverse-form' ) . '</a>';
