@@ -177,7 +177,7 @@ export const panelIconStyle = (props) => {
         {
             id: 'iconColorGradient',
             show: (!switcher.icon || switcher.icon === 'normal') && iconStyleMode === 'gradient' && iconType === 'icon',
-            type: __('Color Gradient', 'gutenverse-form'),
+            type: __('Icon Color Gradient', 'gutenverse-form'),
             component: BackgroundControl,
             options: ['gradient'],
             style: [
@@ -191,7 +191,7 @@ export const panelIconStyle = (props) => {
         {
             id: 'iconBackground',
             show: (!switcher.icon || switcher.icon === 'normal') && iconStyleMode === 'gradient',
-            type: __('Background Gradient', 'gutenverse-form'),
+            type: __('Icon Background Gradient', 'gutenverse-form'),
             component: BackgroundControl,
             options: ['gradient'],
             style: [
@@ -255,7 +255,7 @@ export const panelIconStyle = (props) => {
         {
             id: 'iconColorGradientHover',
             show: switcher.icon === 'hover' && iconStyleMode === 'gradient' && iconType === 'icon',
-            type: __('Color Gradient', 'gutenverse-form'),
+            type: __('Icon Color Gradient', 'gutenverse-form'),
             component: BackgroundControl,
             options: ['gradient'],
             style: [
@@ -270,6 +270,7 @@ export const panelIconStyle = (props) => {
             id: 'iconBackgroundHover',
             show: switcher.icon === 'hover' && iconStyleMode === 'gradient',
             component: BackgroundControl,
+            type: __('Icon Background Gradient', 'gutenverse-form'),
             options: ['gradient'],
             style: [
                 {
@@ -332,7 +333,7 @@ export const panelIconStyle = (props) => {
         {
             id: 'iconColorGradientFocus',
             show: switcher.icon === 'focus' && iconStyleMode === 'gradient' && iconType === 'icon',
-            type: __('Color Gradient', 'gutenverse-form'),
+            type: __('Icon Color Gradient', 'gutenverse-form'),
             component: BackgroundControl,
             options: ['gradient'],
             style: [
@@ -347,6 +348,7 @@ export const panelIconStyle = (props) => {
             id: 'iconBackgroundFocus',
             show: switcher.icon === 'focus' && iconStyleMode === 'gradient',
             component: BackgroundControl,
+            type: __('Icon Background Gradient', 'gutenverse-form'),
             options: ['gradient'],
             style: [
                 {

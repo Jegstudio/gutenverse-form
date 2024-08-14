@@ -239,6 +239,19 @@ class Form_Input_Textarea extends Style_Abstract {
 			);
 		}
 
+		if ( isset( $this->attrs['inputHeight'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .gutenverse-input",
+					'property'       => function ( $value ) {
+						return "height: {$value}px;";
+					},
+					'value'          => $this->attrs['inputHeight'],
+					'device_control' => true,
+				)
+			);
+		}
+
 		if ( isset( $this->attrs['inputPadding'] ) ) {
 			$this->inject_style(
 				array(
