@@ -105,7 +105,7 @@ const FormInputNumberBlock = compose(
                 gutenverseRoot
             )}
             {useIcon ?
-                <div className="input-icon-wrapper">
+                <div className="input-icon-wrapper input-number">
                     {iconContent()}
                     <input data-validation={JSON.stringify(validation)}
                         placeholder={inputPlaceholder}

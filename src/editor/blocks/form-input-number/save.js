@@ -102,7 +102,7 @@ const save = compose(
     return (
         <SaveInputWrapper {...props} inputType={validation.type} defaultLogic={defaultLogic}>
             {useIcon ?
-                <div className="input-icon-wrapper">
+                <div className="input-icon-wrapper input-number">
                     {iconContent()}
                     <input
                         data-validation={JSON.stringify(validation)}

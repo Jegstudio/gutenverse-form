@@ -104,7 +104,7 @@ const FormInputTextBlock = compose(
                 gutenverseRoot
             )}
             {useIcon ?
-                <div className="input-icon-wrapper">
+                <div className="input-icon-wrapper input-text">
                     {iconContent()}
                     <input data-validation={JSON.stringify(validation)}
                         placeholder={inputPlaceholder}

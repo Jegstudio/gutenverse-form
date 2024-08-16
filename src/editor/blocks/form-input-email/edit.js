@@ -38,7 +38,6 @@ const FormInputEmailBlock = compose(
         image,
         imageAlt,
         lazyLoad
-
     } = attributes;
 
     const emailRef = useRef();
@@ -96,32 +95,32 @@ const FormInputEmailBlock = compose(
     return <>
         <InputWrapper {...inputData}>
         {openIconLibrary && createPortal(
-                <IconLibrary
-                    closeLibrary={() => setOpenIconLibrary(false)}
-                    value={icon}
-                    onChange={icon => setAttributes({ icon })}
-                />,
-                gutenverseRoot
-            )}
-            {useIcon ?
-                <div className="input-icon-wrapper">
-                    {iconContent()}
-                    <input data-validation={JSON.stringify(validation)}
-                        placeholder={inputPlaceholder}
-                        name={inputName}
-                        className="gutenverse-input gutenverse-input-email"
-                        type="text"
-                        ref={emailRef}
-                    />
-                </div>
-                :
+            <IconLibrary
+                closeLibrary={() => setOpenIconLibrary(false)}
+                value={icon}
+                onChange={icon => setAttributes({ icon })}
+            />,
+            gutenverseRoot
+        )}
+        {useIcon ?
+            <div className="input-icon-wrapper input-email">
+                {iconContent()}
                 <input data-validation={JSON.stringify(validation)}
                     placeholder={inputPlaceholder}
                     name={inputName}
                     className="gutenverse-input gutenverse-input-email"
                     type="text"
                     ref={emailRef}
-                />}
+                />
+            </div>
+            :
+            <input data-validation={JSON.stringify(validation)}
+                placeholder={inputPlaceholder}
+                name={inputName}
+                className="gutenverse-input gutenverse-input-email"
+                type="text"
+                ref={emailRef}
+            />}
         </InputWrapper>
     </>;
 });

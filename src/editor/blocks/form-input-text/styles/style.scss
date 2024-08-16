@@ -1,7 +1,8 @@
-.input-icon-wrapper {
+.input-icon-wrapper.input-text {
     display: flex;
     align-items: center;
     padding: 8px;
+    cursor: text;
 
     .form-input-text-icon {
         margin: 0 8px;
