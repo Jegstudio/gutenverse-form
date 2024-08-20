@@ -110,6 +110,33 @@ export const errorNoticePanel = (props) => {
             ],
         },
         {
+            id: 'errorMargin',
+            label: __('Error Margin', 'gutenverse-form'),
+            component: DimensionControl,
+            position: ['top', 'right', 'bottom', 'left'],
+            allowDeviceControl: true,
+            units: {
+                px: {
+                    text: 'px',
+                    unit: 'px'
+                },
+                em: {
+                    text: 'em',
+                    unit: 'em'
+                },
+                percent: {
+                    text: '%',
+                    unit: '%'
+                },
+            },
+            style: [
+                {
+                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
+                    render: value => handleDimension(value, 'margin')
+                }
+            ],
+        },
+        {
             id: 'errorBorder',
             show: device === 'Desktop',
             label: __('Border', 'gutenverse-form'),
