@@ -192,7 +192,7 @@
         },
         "inputPattern": {
             "type": "string",
-            "default": "\\+[0-9]+[0-9\\s-]*"
+            "default": "\\+[0-9]+[0-9\\s\\-]*"
         },
         "required": {
             "type": "boolean",
