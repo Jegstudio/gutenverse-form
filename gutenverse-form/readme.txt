@@ -7,95 +7,152 @@ Stable tag: 1.0.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Streamline the process of creating and managing forms on your WordPress website.
+Streamline the process of creating and managing forms on your WordPress website, in just a few clicks away.
 
-== DESCRIPTION ==
+## Description
 
-Streamline the process of creating and managing forms on your WordPress website with our powerful and intuitive form builder plugin. 
-Featuring 15+ user-friendly blocks, you can create your own customized forms effortlessly.
+**GUTENVERSE FORM – FORM BUILDER FOR GUTENBERG BLOCK EDITOR, MULTI-STEP FORMS, CONDITIONAL LOGIC, PAYMENT, CALCULATION, 15+ FREE USER-FRIENDLY FORM BLOCKS**
 
-<a href="https://www.gutenverse.com/form" target="_blank" rel="">Check out Gutenverse Form in Action</a>
+Elevate your form creation with [Gutenverse Form](https://gutenverse.com/form/), a lightweight plugin that enriches the Gutenberg Block Editor and the WordPress Full Site Editor. With over 15 FREE form block elements, animation effects, display management options, advanced styling capabilities, and more, Gutenverse Form makes designing the perfect forms effortlessly. It streamlines customization and enhances your overall experience while creating and managing forms on your WordPress website.
 
-To help you get started, we've also created a beautiful WordPress theme that works seamlessly with Gutenverse Form.
+To kickstart your project, we’ve crafted a stunning WordPress theme that integrates seamlessly with Gutenverse Form. This theme comes with pre-designed layouts, flexible settings, and intuitive controls, making website creation straightforward. It’s fully compatible with the Gutenberg Block Editor and Site Editor, ensuring it supports all Gutenverse and Gutenverse Form features for optimal performance.
 
-<a href="https://gutenverse.com/theme-list/" target="_blank" rel="">Explore Gutenverse Pre-Built Template Websites</a>
+[Explore The Gutenverse Theme Collection](https://gutenverse.com/theme-list/)
 
-== FEATURES ==
-
-Unlock an enhanced Gutenberg/Block Editor experience with these amazing features:
-
-= 15+ CUSTOMIZABLE GUTENBERG FORM BLOCKS =
-Choose from a wide range of fully customizable form blocks that offer advanced and flexible options, enhancing your WordPress block editor experience.
-
-= LIGHTWEIGHT & FAST USER EXPERIENCE =
-Experience the best performance with Gutenverse Form. Our streamlined code ensures optimal usage of the WordPress block editor, making your website lighter and faster for an improved user experience.
-
-= AMAZING PAIR WITH BLOCK THEMES =
-Leverage WordPress's latest Site Editing feature and unlock endless possibilities for customizing form templates using only Gutenberg blocks. Gutenverse Form's blocks will assist you in building your ideal form templates.
-
-= LIVE RESPONSIVE EDITING =
-Our deep integration with responsive editing allows you to perfect your website's appearance on every device.
-
-= GLOBAL COLOR & FONT VARIABLE =
-Effortlessly control the color and typography aspects of all form elements using Gutenverse's Global Style feature, ensuring consistency throughout your website.
-
-= TEMPLATE LIBRARY =
-Discover various layout and section options tailored to your needs. Install theme templates directly from our extensive library.
-
-= BLOCKS MANAGEMENT =
-Enable or disable blocks to personalize your editing experience and make it even smoother.
-
-= RESPONSIVE BREAKPOINTS =
-Customize breakpoints for tablet and mobile devices, ensuring optimal responsiveness for all screen sizes.
+Unlock all the features needed to create your website with [Gutenverse PRO](https://gutenverse.com/pro/).
 
 
-== GUTENBERG FORM BLOCKS ==
+## 🚀 Boost Productivity
 
-Purpose-built blocks designed for your forms. Add, rearrange, and style them to create the perfect form for your site.
+Your time is invaluable. Save countless hours by streamlining your workflow with Gutenverse Forms.
 
-= FORM BLOCKS =
+*   **Responsive Form Editing**
 
-- **Form Builder:** A versatile wrapper for building flexible forms with a wide array of field choices.
-- **Checkbox:** Create multiple checkable selections with checkboxes.
-- **Date:** Capture date information with a convenient date picker interface.
-- **Email:** Gather email information and validate its format to ensure valid submissions.
-- **Select:** Provide a predefined list of choices for users to select from (single option).
-- **Multi-select:** Offer a predefined list of choices for users to select from (multiple options).
-- **Number:** Capture numeric information and validate it to ensure accurate submissions.
-- **Radio:** Present predefined radio options for users to choose from.
-- **Switch:** Toggle control with binary options, perfect for binary questions.
-- **Telp:** Collect phone number information and validate its format for accuracy.
-- **Text:** Gather string information (excluding "Return" character).
-- **Text Area:** Obtain long strings of text, including the "Return" character.
+Ensure your forms look stunning on any device, providing a seamless and visually appealing experience for your users
 
+*   **Lightweight & Fast User Experience**
 
-== TEMPLATE LIBRARY ==
+Gutenverse optimizes code flow for a faster and smoother form creation process, resulting in a lighter website for your audience.
 
-Explore our collection of pre-built templates:
+*   **High-Speed Performance**
 
-= TEMPLATE COLLECTION =
+Boost your website’s performance with Gutenverse Forms, achieving loading speeds twice as fast as other form builders.
 
-- **Layout:** Import layouts for use on your pages or install theme packages directly.
-- **Section:** Mix and match imported sections with your current page or template content.
-- **Favorites:** Save your frequently used layouts or sections as favorites for easy access.
+*   **Built for Everyone**
 
-== 3RD PARTY DETAILS ==
+Whether you're a novice or an expert in form creation, Gutenverse Forms empowers you to design beautifully crafted forms that meet your business needs.
 
-- Gutenverse Newsletter
-In our Gutenverse Dashboard, we offer a form for subscribing to our newsletter. By subscribing, we will sent you recent updates about Gutenverse. The only information required and sent is the email address you manually input into the designated box. This data is securely sent to our server at <a href="https://gutenverse.com/" target="_blank" rel="">gutenverse.com</a>. Rest assured, no information is transmitted automatically without your explicit consent.
+  
 
-If you'd like more details about Gutenverse, you can check out the terms and conditions <a href="https://gutenverse.com/terms-and-conditions/" target="_blank" rel="">Here!</a>.
+## 🔑 Key Features
 
-== COMMUNITY ==
+**1\.** [**15+ Easy-to-Use Gutenberg Form Blocks**](https://gutenverse.com/form/)
 
-Join our communities and share your experiences with us.
+Explore a vast array of customizable form blocks, each packed with advanced features and flexibility. Unlock your creativity and design forms with limitless possibilities.
 
-= OUR COMMUNITIES =
+**2\.** [**Template Library**](https://gutenverse.com/#library)
 
-- <a href="https://www.facebook.com/groups/gutenversecommunity" target="_blank" rel="">Join the Facebook Group!</a>
-- <a href="https://twitter.com/gutenverse" target="_blank" rel="">Follow us on Twitter!</a> 
-- <a href="https://www.instagram.com/gutenverse/" target="_blank" rel="">Follow us on Instagram!</a>
-- <a href="https://www.tiktok.com/@gutenverse/" target="_blank" rel="">Check our TikTok!</a>
+Access a range of layouts and sections tailored to your needs with Gutenverse Form. Install theme templates directly from the library for quick and effortless form customization.
+
+**3\. Improved Publishing Experience**
+
+Experience live responsive editing with Gutenverse’s enhanced WordPress Block Editor for forms. The section block and customizable design of each block ensure a perfect fit with your site’s aesthetic.
+
+**4\. Live Responsive Editing**
+
+Gutenverse’s seamless integration of responsive editing empowers you to create forms that look flawless on any device.
+
+**5\. Global Color & Font Variables**
+
+Effortlessly control the color and typography of all Gutenverse form elements using the extended Global Style feature.
+
+**6\. Blocks Management**
+
+Customize your editing experience by enabling or disabling blocks for a smoother workflow.
+
+**7\. Responsive Breakpoints**
+
+Edit breakpoints for tablets and mobile devices to optimize the responsiveness of your forms.
+
+  
+
+## Form Blocks
+
+*   **Form Builder**: A versatile wrapper for building flexible forms with a wide array of field choices.
+*   **Checkbox**: Create multiple checkable selections with checkboxes.
+*   **Date Input**: Capture date information with a convenient date picker interface.
+*   **Email Input**: Gather email information and validate its format to ensure valid submissions.
+*   **Select**: Provide a predefined list of choices for users to select from (single option).
+*   **Multi-select**: Offer a predefined list of choices for users to select from (multiple options).
+*   **Number Input**: Capture numeric information and validate it to ensure accurate submissions.
+*   **Radio**: Present predefined radio options for users to choose from.
+*   **Switch**: Toggle control with binary options, perfect for binary questions.
+*   **Submit Button**: Toggle control with binary options, perfect for binary questions.
+*   **Telp Input**: Collect phone number information and validate its format for accuracy.
+*   **Text Input**: Gather string information (excluding the “Return” character).
+*   **Textarea**: Obtain long text strings, including the “Return” character.
+*   **\[PRO\] Calculation Input**: Add input fields that allow users to perform calculations directly within your forms. Customize formulas and display results dynamically to enhance user interaction and functionality.
+*   **\[PRO\] Image Radio**: Use image-based radio buttons in your forms to present choices visually. Allows users to select options by clicking on images rather than traditional text-based radio buttons, making your forms more engaging and interactive.
+*   **\[PRO\] Multi Group Select**: Enable users to choose multiple options from grouped selections in your forms. Allows for organized and flexible data input, making it easier for users to make several related choices simultaneously.
+*   **\[PRO\] Payment**: Integrate payment processing directly into your forms. Allows users to make transactions or submit payments seamlessly while completing their form, enhancing convenience and streamlining the payment process.
+*   **\[PRO\] Stepper Navigation Button**: Incorporate step-by-step navigation in your forms with intuitive stepper buttons. Guides users through a multi-step process, making complex forms more manageable and improving overall user experience.
+*   **\[PRO\] Form Stepper**: Create multi-step forms with a clear, organized layout using the Form Stepper. This feature divides lengthy forms into manageable sections, guiding users through each step with progress indicators and streamlined navigation.
+
+  
+
+## Form Blocks Feature
+
+*   **Form Setting**: Customize and configure form fields, design, and behavior to create a seamless and interactive user experience on your website.
+*   **\[PRO\] Sticky**: Stick an element in any position on the page viewport as visitors scroll.
+*   **Display**: Easily control the visibility of your website elements on any device.
+*   **Animation Effects**: Create dynamic transitions and interactive elements.
+*   **\[PRO\] Transform**: Easily rotate, scale, or skew elements on your website as you like.
+*   **\[PRO\] Mouse Move Effect**: Make an effect on the pointed object whenever the cursor moves.
+*   **Spacing**: Adjust margins, paddings, and gaps between elements.
+*   **\[PRO\] Condition**: Control which elements or content are displayed on the page using conditional filters.
+*   **\[PRO\] Logic**: Implement conditional logic in your forms to show or hide fields based on user input. This feature allows for dynamic, responsive forms that adapt to user responses, ensuring a more personalized and efficient data collection process.
+*   **Advanced ID & Classname**: Assign unique IDs, HTML anchor, and CSS class.
+*   **Notice Styling**: Customize the appearance of your notice messages with various styling options to ensure they stand out and align with your website's design.
+*   **Background**: Choose from a variety of background styles, including colors, gradients, images, and videos.
+*   **Border**: Define and enhance your design with versatile border options.
+*   **Masking**: Use masking to create unique shapes and effects.
+
+  
+
+## 🏆 **[PRO]** Advanced Features
+
+*   [**Advanced Form Builder**](https://gutenverse.com/form/): Design any type of forms that perform using advanced features to collect all types of data for your business in less time.
+*   **Custom Font**: Personalize your website with custom fonts to match your brand’s unique style.
+*   [**Premium Themes**](https://gutenverse.com/theme-list/): Access a selection of premium themes designed to elevate the look and functionality of your website.
+*   [**Premium Template Library**](https://gutenverse.com/#library): Explore a wide variety of beautifully designed templates to make building your website 
+*   [**Advanced Popup Builder**](https://gutenverse.com/popup/): Packed with premade templates and advanced triggering options, optimize user engagement and conversions on your WordPress websites without needing to code. 
+
+  
+
+## Use of 3rd-Party Services
+
+To improve the user experience, Gutenverse may use the following third-party services. Here are the details:
+
+*   **Gutenverse Newsletter**
+
+Our Gutenverse dashboard offers a form for subscribing to our newsletter. By subscribing, we will send you recent updates about Gutenverse. The only information required and sent is the email address you manually input into the designated box.
+
+This data is securely sent to our server at [gutenverse.com](https://gutenverse.com/). Rest assured, no information is transmitted automatically without your explicit consent.
+
+  
+
+If you’d like more details about Gutenverse, you can check out the terms and conditions [here!](https://gutenverse.com/terms-and-conditions/)
+
+  
+
+## ⭐️ Join Gutenverse Community
+
+Become part of our community, share your thoughts and experiences about Gutenberg, and let’s collaborate to achieve your goals!
+
+*   [**Facebook Community**](https://www.facebook.com/groups/gutenversecommunity) – Join hundreds of members (and still growing) for support, advice, bug reports, and feedback.
+*   [**Social Media**](https://gutenverse.com/links/) [](https://gutenverse.com/links/) – Gain valuable insights from our Instagram, Facebook Page, X (formerly Twitter), and TikTok.
+*   [**Documentation**](https://gutenverse.com/docs/) – Access guides, tutorials, and resources to answer your questions.
+*   [**Need Help?**](https://gutenverse.com/contact/) – Kindly visit the Gutenverse Forum for any inquiries and support.
 
 
 == Installation ==
