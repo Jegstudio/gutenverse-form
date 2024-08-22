@@ -153,6 +153,9 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 ##### Improvements
 * **Phone Input**, Better Phone Pattern
 
+##### Bug Fixes
+* **Phone Input**, Fix issue with default number pattern
+
 = 1.0.1 - 2024-08-13 =
 ##### Improvements
 * **Framework**, Update core framework
