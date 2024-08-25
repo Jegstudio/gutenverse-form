@@ -206,6 +206,10 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 
 == Changelog ==
+= 1.0.3 =
+##### Improvements
+* **Form Builder**, Fix issue if form builder is inside pattern
+
 = 1.0.2 =
 ##### Improvements
 * **Phone Input**, Better Phone Pattern
