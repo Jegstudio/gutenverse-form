@@ -9,6 +9,7 @@
 
 namespace Gutenverse_Form;
 
+use Gutenverse\Framework\Init;
 use Gutenverse\Framework\Style_Generator;
 
 /**
@@ -48,18 +49,29 @@ class Form_Validation extends Style_Generator {
 	 */
 	public function form_validation_scripts() {
 		wp_enqueue_script( 'gutenverse-frontend-event' );
-		wp_localize_script( 'gutenverse-frontend-event', 'GutenverseFormValidationData', $this->form_validation_data );
+
+		$validation_data = null;
+
+		if ( 'direct' === apply_filters( 'gutenverse_frontend_render_mechanism' ) ) {
+			$validation_data = $this->form_validation_data;
+		} else {
+			$cache = Init::instance()->style_cache;
+		}
+
+		$this->localize_validation_data( $validation_data );
 	}
 
+
 	/**
-	 * Loop Block.
+	 * Localize Validation Data;
 	 *
-	 *  @param array $block Block Array.
+	 * @param array $form_data Form Data.
 	 */
-	public function get_form_data( $block ) {
-		if ( 'gutenverse/form-builder' === $block['blockName'] ) {
-			if ( isset( $block['attrs']['formId'] ) ) {
-				$form_id   = $block['attrs']['formId']['value'];
+	public function localize_validation_data( $form_data ) {
+		if ( ! empty( $form_data ) ) {
+			$form_data = array();
+
+			foreach ( $form_data as $form_id ) {
 				$post_type = get_post_type( (int) $form_id );
 				$result    = array(
 					'formId'        => $form_id,
@@ -72,25 +84,29 @@ class Form_Validation extends Style_Generator {
 					$result['form_success_notice'] = isset( $data['form_success_notice'] ) ? $data['form_success_notice'] : false;
 					$result['form_error_notice']   = isset( $data['form_error_notice'] ) ? $data['form_error_notice'] : false;
 				}
-				array_push( $this->form_validation_data, $result );
-			} else {
-				$result = array(
-					'formId'        => '',
-					'require_login' => false,
-					'logged_in'     => false,
-				);
-				array_push( $this->form_validation_data, $result );
-			}
-			$unique_array         = array_unique( array_column( $this->form_validation_data, 'formId' ), SORT_REGULAR );
-			$final_array          = array_values( array_intersect_key( $this->form_validation_data, $unique_array ) );
-			$final_filtered_array = array_filter(
-				$final_array,
-				function ( $el ) {
-					return ! empty( $el['formId'] );
-				}
-			);
 
-			$this->form_validation_data = $final_filtered_array;
+				$form_data[] = $result;
+			}
+
+			wp_localize_script( 'gutenverse-frontend-event', 'GutenverseFormValidationData', $form_data );
+		}
+	}
+
+
+	/**
+	 * Loop Block.
+	 *
+	 *  @param array $block Block Array.
+	 */
+	public function get_form_data( $block ) {
+		if ( 'gutenverse/form-builder' === $block['blockName'] ) {
+			if ( isset( $block['attrs']['formId'] ) ) {
+				$form_id = $block['attrs']['formId']['value'];
+			}
+
+			if ( ! in_array( $form_id, $this->form_validation_data, true ) ) {
+				$this->form_validation_data[] = $form_id;
+			}
 		}
 	}
 }
