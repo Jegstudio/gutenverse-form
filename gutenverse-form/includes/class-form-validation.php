@@ -34,6 +34,13 @@ class Form_Validation extends Style_Generator {
 	protected $is_bypass = false;
 
 	/**
+	 * Get file name
+	 *
+	 * @var string
+	 */
+	protected $file_name = '';
+
+	/**
 	 * Form File Data
 	 *
 	 * @var array
@@ -46,7 +53,6 @@ class Form_Validation extends Style_Generator {
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'form_validation_scripts' ), 99999 );
 		add_filter( 'gutenverse_bypass_generate_style', array( $this, 'bypass_generate_css' ), 20, 3 );
-		add_filter( 'gutenverse_render_generated_style', array( $this, 'get_block_data' ), 20, 4 );
 		add_action( 'gutenverse_loop_blocks', array( $this, 'loop_blocks' ), null, 2 );
 	}
 
@@ -58,6 +64,16 @@ class Form_Validation extends Style_Generator {
 	 */
 	public function loop_blocks( $block, &$style ) {
 		$this->get_form_data( $block );
+		if ( $this->is_bypass ) {
+			$cache           = Init::instance()->style_cache;
+			$validation_data = $this->form_validation_data;
+			if ( $this->form_validation_data ) {
+				$cache->create_cache_file( $this->file_name, wp_json_encode( $validation_data, true ) );
+			}
+			$this->form_file[]          = $this->file_name;
+			$this->form_validation_data = array();
+			$this->is_bypass            = false;
+		}
 	}
 
 	/**
@@ -70,48 +86,21 @@ class Form_Validation extends Style_Generator {
 	 * @return bool
 	 */
 	public function bypass_generate_css( $flag, $name, $type ) {
-		if ( $flag ) {
-			$cache    = Init::instance()->style_cache;
-			$cache_id = $cache->get_style_cache_id();
-			$filename = $name . '-form-validation-' . $cache_id . '.json';
-
-			if ( ! $cache->is_file_exist( $filename ) ) {
-				$this->is_bypass            = true;
-				$this->form_validation_data = array();
-				return false;
-			} else {
-				$this->form_file[] = $filename;
-			}
-		}
-
-		return $flag;
-	}
-
-	/**
-	 * Get Block Data.
-	 *
-	 * @param string $flag render flag.
-	 * @param string $name Name of file.
-	 * @param string $style Generated Style.
-	 * @param string $source Source of content.
-	 *
-	 * @return boolean
-	 */
-	public function get_block_data( $flag, $name, $style, $source ) {
-		if ( $this->is_bypass ) {
-			$cache           = Init::instance()->style_cache;
-			$cache_id        = $cache->get_style_cache_id();
-			$filename        = $name . '-form-validation-' . $cache_id . '.json';
-			$validation_data = $this->form_validation_data;
-			if ( $this->form_validation_data ) {
-				$cache->create_cache_file( $filename, wp_json_encode( $validation_data, true ) );
-			}
-			$this->form_file[]          = $filename;
+		$cache    = Init::instance()->style_cache;
+		$cache_id = $cache->get_style_cache_id();
+		$filename = $name . '-form-validation-' . $cache_id . '.json';
+		if ( ! $cache->is_file_exist( $filename ) ) {
+			$this->file_name            = $filename;
+			$this->is_bypass            = true;
 			$this->form_validation_data = array();
-			$this->is_bypass            = false;
+			return false;
+		} else {
+			$this->form_file[] = $filename;
 		}
+
 		return $flag;
 	}
+
 
 	/**
 	 * Form Validation Scripts
@@ -182,7 +171,7 @@ class Form_Validation extends Style_Generator {
 			if ( isset( $block['attrs']['formId'] ) ) {
 				$form_id = $block['attrs']['formId']['value'];
 			}
-
+			error_log( $form_id );
 			if ( ! in_array( $form_id, $this->form_validation_data, true ) ) {
 				$this->form_validation_data[] = $form_id;
 			}
