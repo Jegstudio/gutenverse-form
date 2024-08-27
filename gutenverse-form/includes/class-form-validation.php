@@ -86,16 +86,18 @@ class Form_Validation extends Style_Generator {
 	 * @return bool
 	 */
 	public function bypass_generate_css( $flag, $name, $type ) {
-		$cache    = Init::instance()->style_cache;
-		$cache_id = $cache->get_style_cache_id();
-		$filename = $name . '-form-validation-' . $cache_id . '.json';
-		if ( ! $cache->is_file_exist( $filename ) ) {
-			$this->file_name            = $filename;
-			$this->is_bypass            = true;
-			$this->form_validation_data = array();
-			return false;
-		} else {
-			$this->form_file[] = $filename;
+		if ( 'direct' !== apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' ) ) {
+			$cache    = Init::instance()->style_cache;
+			$cache_id = $cache->get_style_cache_id();
+			$filename = $name . '-form-validation-' . $cache_id . '.json';
+			if ( ! $cache->is_file_exist( $filename ) ) {
+				$this->file_name            = $filename;
+				$this->is_bypass            = true;
+				$this->form_validation_data = array();
+				return false;
+			} else {
+				$this->form_file[] = $filename;
+			}
 		}
 
 		return $flag;
@@ -171,7 +173,6 @@ class Form_Validation extends Style_Generator {
 			if ( isset( $block['attrs']['formId'] ) ) {
 				$form_id = $block['attrs']['formId']['value'];
 			}
-			error_log( $form_id );
 			if ( ! in_array( $form_id, $this->form_validation_data, true ) ) {
 				$this->form_validation_data[] = $form_id;
 			}
