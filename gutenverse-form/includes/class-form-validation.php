@@ -27,11 +27,19 @@ class Form_Validation extends Style_Generator {
 	protected $form_validation_data = array();
 
 	/**
+	 * Form File Name
+	 *
+	 * @var string
+	 */
+	protected $file_name = '';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'form_validation_scripts' ), 99999 );
 		add_action( 'gutenverse_loop_blocks', array( $this, 'loop_blocks' ), null, 2 );
+		add_filter( 'gutenverse_bypass_generate_style', array( $this, 'get_loop_name' ), null, 3 );
 	}
 
 	/**
@@ -51,27 +59,56 @@ class Form_Validation extends Style_Generator {
 		wp_enqueue_script( 'gutenverse-frontend-event' );
 
 		$validation_data = null;
-
-		if ( 'direct' === apply_filters( 'gutenverse_frontend_render_mechanism' ) ) {
+		if ( 'direct' === apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' ) ) {
 			$validation_data = $this->form_validation_data;
 		} else {
-			$cache = Init::instance()->style_cache;
+			$cache    = Init::instance()->style_cache;
+			$cache_id = $cache->get_style_cache_id();
+			$filename = $this->file_name . '-form-validation-' . $cache_id . '.json';
+			if ( $cache->is_file_exist( $filename ) ) {
+				$validation_data = json_decode( $cache->read_cache_file( $filename ) );
+			} else {
+				$validation_data = $this->form_validation_data;
+				$cache->create_cache_file( $filename, wp_json_encode( $validation_data, true ) );
+			}
+		}
+		$this->localize_validation_data( $validation_data );
+	}
+
+	/**
+	 * Get Loop Name
+	 *
+	 * @param boolean $flag .
+	 * @param string  $name .
+	 * @param string  $type .
+	 *
+	 *  return array .
+	 */
+	public function get_loop_name( $flag, $name, $type ) {
+		$this->file_name = $name;
+		$cache           = Init::instance()->style_cache;
+		$cache->set_font_cache_name( $name, $type );
+		$mechanism = apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' );
+		$filename  = $cache->get_file_name( $name );
+
+		if ( 'file' === $mechanism && $cache->is_file_exist( $filename ) ) {
+			$cache->inject_to_header( $filename, $type );
+			return true;
 		}
 
-		$this->localize_validation_data( $validation_data );
+		return $flag;
 	}
 
 
 	/**
 	 * Localize Validation Data;
 	 *
-	 * @param array $form_data Form Data.
+	 * @param array $validation_data Validation Data.
 	 */
-	public function localize_validation_data( $form_data ) {
-		if ( ! empty( $form_data ) ) {
+	public function localize_validation_data( $validation_data ) {
+		if ( ! empty( $validation_data ) ) {
 			$form_data = array();
-
-			foreach ( $form_data as $form_id ) {
+			foreach ( $validation_data as $form_id ) {
 				$post_type = get_post_type( (int) $form_id );
 				$result    = array(
 					'formId'        => $form_id,
@@ -108,5 +145,6 @@ class Form_Validation extends Style_Generator {
 				$this->form_validation_data[] = $form_id;
 			}
 		}
+		gutenverse_rlog( 'loop form', $this->form_validation_data );
 	}
 }
