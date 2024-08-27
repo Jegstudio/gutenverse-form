@@ -27,10 +27,26 @@ class Form_Validation extends Style_Generator {
 	protected $form_validation_data = array();
 
 	/**
+	 * Check if Bypass
+	 *
+	 * @var boolean
+	 */
+	protected $is_bypass = false;
+
+	/**
+	 * Form File Data
+	 *
+	 * @var array
+	 */
+	protected $form_file = array();
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'form_validation_scripts' ), 99999 );
+		add_filter( 'gutenverse_bypass_generate_style', array( $this, 'bypass_generate_css' ), 20, 3 );
+		add_filter( 'gutenverse_render_generated_style', array( $this, 'get_block_data' ), 20, 4 );
 		add_action( 'gutenverse_loop_blocks', array( $this, 'loop_blocks' ), null, 2 );
 	}
 
@@ -45,6 +61,59 @@ class Form_Validation extends Style_Generator {
 	}
 
 	/**
+	 * Check if we going to by pass css generation.
+	 *
+	 * @param boolean $flag Flag.
+	 * @param string  $name Name of file.
+	 * @param string  $type Type of generated css.
+	 *
+	 * @return bool
+	 */
+	public function bypass_generate_css( $flag, $name, $type ) {
+		if ( $flag ) {
+			$cache    = Init::instance()->style_cache;
+			$cache_id = $cache->get_style_cache_id();
+			$filename = $name . '-form-validation-' . $cache_id . '.json';
+
+			if ( ! $cache->is_file_exist( $filename ) ) {
+				$this->is_bypass            = true;
+				$this->form_validation_data = array();
+				return false;
+			} else {
+				$this->form_file[] = $filename;
+			}
+		}
+
+		return $flag;
+	}
+
+	/**
+	 * Get Block Data.
+	 *
+	 * @param string $flag render flag.
+	 * @param string $name Name of file.
+	 * @param string $style Generated Style.
+	 * @param string $source Source of content.
+	 *
+	 * @return boolean
+	 */
+	public function get_block_data( $flag, $name, $style, $source ) {
+		if ( $this->is_bypass ) {
+			$cache           = Init::instance()->style_cache;
+			$cache_id        = $cache->get_style_cache_id();
+			$filename        = $name . '-form-validation-' . $cache_id . '.json';
+			$validation_data = $this->form_validation_data;
+			if ( $this->form_validation_data ) {
+				$cache->create_cache_file( $filename, wp_json_encode( $validation_data, true ) );
+			}
+			$this->form_file[]          = $filename;
+			$this->form_validation_data = array();
+			$this->is_bypass            = false;
+		}
+		return $flag;
+	}
+
+	/**
 	 * Form Validation Scripts
 	 */
 	public function form_validation_scripts() {
@@ -52,12 +121,22 @@ class Form_Validation extends Style_Generator {
 
 		$validation_data = null;
 
-		if ( 'direct' === apply_filters( 'gutenverse_frontend_render_mechanism' ) ) {
+		if ( 'direct' === apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' ) ) {
 			$validation_data = $this->form_validation_data;
 		} else {
-			$cache = Init::instance()->style_cache;
-		}
+			$cache        = Init::instance()->style_cache;
+			$merged_datas = array();
 
+			foreach ( $this->form_file as $filename ) {
+				$merged_data = json_decode( $cache->read_cache_file( $filename ), true );
+
+				if ( is_array( $merged_data ) ) {
+					$merged_datas = array_merge( $merged_data, $merged_datas );
+				}
+			}
+
+			$validation_data = $merged_datas;
+		}
 		$this->localize_validation_data( $validation_data );
 	}
 
@@ -69,7 +148,7 @@ class Form_Validation extends Style_Generator {
 	 */
 	public function localize_validation_data( $form_data ) {
 		if ( ! empty( $form_data ) ) {
-			$form_data = array();
+			$form_result = array();
 
 			foreach ( $form_data as $form_id ) {
 				$post_type = get_post_type( (int) $form_id );
@@ -85,10 +164,10 @@ class Form_Validation extends Style_Generator {
 					$result['form_error_notice']   = isset( $data['form_error_notice'] ) ? $data['form_error_notice'] : false;
 				}
 
-				$form_data[] = $result;
+				$form_result[] = $result;
 			}
 
-			wp_localize_script( 'gutenverse-frontend-event', 'GutenverseFormValidationData', $form_data );
+			wp_localize_script( 'gutenverse-frontend-event', 'GutenverseFormValidationData', $form_result );
 		}
 	}
 
