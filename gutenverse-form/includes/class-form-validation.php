@@ -39,7 +39,7 @@ class Form_Validation extends Style_Generator {
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'form_validation_scripts' ), 99999 );
 		add_action( 'gutenverse_loop_blocks', array( $this, 'loop_blocks' ), null, 2 );
-		add_filter( 'gutenverse_bypass_generate_style', array( $this, 'get_loop_name' ), null, 3 );
+		add_filter( 'gutenverse_bypass_generate_style', array( $this, 'get_loop_name' ), 99, 3 );
 	}
 
 	/**
@@ -57,7 +57,6 @@ class Form_Validation extends Style_Generator {
 	 */
 	public function form_validation_scripts() {
 		wp_enqueue_script( 'gutenverse-frontend-event' );
-
 		$validation_data = null;
 		if ( 'direct' === apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' ) ) {
 			$validation_data = $this->form_validation_data;
@@ -87,15 +86,11 @@ class Form_Validation extends Style_Generator {
 	public function get_loop_name( $flag, $name, $type ) {
 		$this->file_name = $name;
 		$cache           = Init::instance()->style_cache;
-		$cache->set_font_cache_name( $name, $type );
-		$mechanism = apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' );
-		$filename  = $cache->get_file_name( $name );
-
-		if ( 'file' === $mechanism && $cache->is_file_exist( $filename ) ) {
-			$cache->inject_to_header( $filename, $type );
-			return true;
+		$cache_id        = $cache->get_style_cache_id();
+		$filename        = $this->file_name . '-form-validation-' . $cache_id . '.json';
+		if ( ! $cache->is_file_exist( $filename ) ) {
+			return false;
 		}
-
 		return $flag;
 	}
 
@@ -124,7 +119,6 @@ class Form_Validation extends Style_Generator {
 
 				$form_data[] = $result;
 			}
-
 			wp_localize_script( 'gutenverse-frontend-event', 'GutenverseFormValidationData', $form_data );
 		}
 	}
@@ -145,6 +139,5 @@ class Form_Validation extends Style_Generator {
 				$this->form_validation_data[] = $form_id;
 			}
 		}
-		gutenverse_rlog( 'loop form', $this->form_validation_data );
 	}
 }
