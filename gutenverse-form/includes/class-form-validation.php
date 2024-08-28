@@ -133,6 +133,8 @@ class Form_Validation extends Style_Generator {
 				}
 			}
 
+			$merged_datas = array_unique( $merged_datas );
+
 			$validation_data = $merged_datas;
 		}
 		$this->localize_validation_data( $validation_data );
