@@ -52,7 +52,7 @@ class Form_Validation extends Style_Generator {
 	 */
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'form_validation_scripts' ), 99999 );
-		add_filter( 'gutenverse_bypass_generate_style', array( $this, 'bypass_generate_css' ), 20, 3 );
+		add_filter( 'gutenverse_bypass_generate_style', array( $this, 'bypass_generate_css' ), 20, 2 );
 		add_action( 'gutenverse_loop_blocks', array( $this, 'loop_blocks' ), null, 2 );
 		add_action( 'gutenverse_after_style_loop_blocks', array( $this, 'get_blocks' ), null );
 	}
@@ -88,11 +88,10 @@ class Form_Validation extends Style_Generator {
 	 *
 	 * @param boolean $flag Flag.
 	 * @param string  $name Name of file.
-	 * @param string  $type Type of generated css.
 	 *
 	 * @return bool
 	 */
-	public function bypass_generate_css( $flag, $name, $type ) {
+	public function bypass_generate_css( $flag, $name ) {
 		if ( 'direct' !== apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' ) ) {
 			$cache    = Init::instance()->style_cache;
 			$cache_id = $cache->get_style_cache_id();
