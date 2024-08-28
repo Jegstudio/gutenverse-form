@@ -54,26 +54,23 @@ class Form_Validation extends Style_Generator {
 		add_action( 'wp_enqueue_scripts', array( $this, 'form_validation_scripts' ), 99999 );
 		add_filter( 'gutenverse_bypass_generate_style', array( $this, 'bypass_generate_css' ), 20, 3 );
 		add_action( 'gutenverse_loop_blocks', array( $this, 'loop_blocks' ), null, 2 );
-		add_filter( 'gutenverse_global_fonts', array( $this, 'global_fonts' ), null, 2 );
+		add_action( 'gutenverse_after_style_loop_blocks', array( $this, 'get_blocks' ), null );
 	}
 
 	/**
-	 * By Pass Populate Font.
-	 *
-	 * @param array $fonts Array of fonts.
-	 *
-	 * @return array
+	 * Loop Block.
 	 */
-	public function global_fonts( $fonts ) {
+	public function get_blocks() {
 		if ( $this->is_bypass ) {
 			$cache           = Init::instance()->style_cache;
 			$validation_data = $this->form_validation_data;
 			if ( $this->form_validation_data ) {
 				$cache->create_cache_file( $this->file_name, wp_json_encode( $validation_data, true ) );
 			}
-			$this->form_file[] = $this->file_name;
+			$this->form_file[]          = $this->file_name;
+			$this->form_validation_data = array();
+			$this->is_bypass            = false;
 		}
-		return $fonts;
 	}
 
 	/**
@@ -96,22 +93,17 @@ class Form_Validation extends Style_Generator {
 	 * @return bool
 	 */
 	public function bypass_generate_css( $flag, $name, $type ) {
-		global $_wp_current_template_id, $post;
-		$cache    = Init::instance()->style_cache;
-		$cache_id = $cache->get_style_cache_id();
-		$template = '';
-		if ( $_wp_current_template_id ) {
-			$templates = explode( '//', $_wp_current_template_id );
-			$template  = '-' . $templates[1];
-		}
-		$this->file_name = 'gutenverse-form-validation' . $template . '-' . $post->ID . '-cache-' . $cache_id . '.json';
-
 		if ( 'direct' !== apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' ) ) {
-			if ( ! $cache->is_file_exist( $this->file_name ) ) {
-				$this->is_bypass = true;
+			$cache    = Init::instance()->style_cache;
+			$cache_id = $cache->get_style_cache_id();
+			$filename = $name . '-form-validation-' . $cache_id . '.json';
+			if ( ! $cache->is_file_exist( $filename ) ) {
+				$this->file_name            = $filename;
+				$this->is_bypass            = true;
+				$this->form_validation_data = array();
 				return false;
 			} else {
-				$this->form_file[] = $this->file_name;
+				$this->form_file[] = $filename;
 			}
 		}
 
