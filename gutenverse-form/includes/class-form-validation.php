@@ -180,9 +180,9 @@ class Form_Validation extends Style_Generator {
 		if ( 'gutenverse/form-builder' === $block['blockName'] ) {
 			if ( isset( $block['attrs']['formId'] ) ) {
 				$form_id = $block['attrs']['formId']['value'];
-			}
-			if ( ! in_array( $form_id, $this->form_validation_data, true ) ) {
-				$this->form_validation_data[] = $form_id;
+				if ( ! in_array( $form_id, $this->form_validation_data, true ) ) {
+					$this->form_validation_data[] = $form_id;
+				}
 			}
 		}
 	}
