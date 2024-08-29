@@ -5,7 +5,7 @@ export const panelInputSettings = () => {
     return [
         {
             id: 'inputPattern',
-            label: __('Telp Pattern', 'gutenverse-form'),
+            label: __('Phone Pattern', 'gutenverse-form'),
             description: __('Put your telephone number pattern to give clue to your user', 'gutenverse-form'),
             component: TextControl,
         },

@@ -365,6 +365,7 @@ class Api {
 					case 'text':
 					case 'select':
 					case 'telp':
+					case 'mobile':
 					case 'radio':
 					case 'date':
 					case 'image-radio':
