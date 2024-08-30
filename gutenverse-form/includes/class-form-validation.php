@@ -166,7 +166,14 @@ class Form_Validation extends Style_Generator {
 				$form_result[] = $result;
 			}
 		}
-		wp_localize_script( 'gutenverse-frontend-event', 'GutenverseFormValidationData', $form_result );
+		wp_localize_script(
+			'gutenverse-frontend-event',
+			'GutenverseFormValidationData',
+			array(
+				'data'         => $form_result,
+				'missingLabel' => esc_html__( 'Form action is missing, please assign form action into this form.', 'gutenverse-form' ),
+			)
+		);
 	}
 
 

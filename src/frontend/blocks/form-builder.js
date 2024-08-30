@@ -13,7 +13,7 @@ class GutenverseFormValidation extends Default {
     _init(element) {
         const formBuilder = u(element);
         const formId = formBuilder.data('form-id');
-        const data = window['GutenverseFormValidationData'];
+        const { data, missingLabel } = window['GutenverseFormValidationData'];
         const formData = data.filter(el => el.formId == formId);
         if(formData.length !== 0){
             if (formData[0]['require_login'] && !formData[0]['logged_in'] ) {
@@ -40,6 +40,9 @@ class GutenverseFormValidation extends Default {
                 button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
                 button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
             });
+            const notifclass = 'guten-error';
+            const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${missingLabel}</div></div>`;
+            formBuilder.prepend(notice);
         }
     }
 
