@@ -13,10 +13,10 @@ class GutenverseFormValidation extends Default {
     _init(element) {
         const formBuilder = u(element);
         const formId = formBuilder.data('form-id');
-        const { data, missingLabel } = window['GutenverseFormValidationData'];
+        const { data, missingLabel, isAdmin } = window['GutenverseFormValidationData'];
         const formData = data.filter(el => el.formId == formId);
-        if(formData.length !== 0){
-            if (formData[0]['require_login'] && !formData[0]['logged_in'] ) {
+        if (formData.length !== 0) {
+            if (formData[0]['require_login'] && !formData[0]['logged_in']) {
                 formBuilder.remove();
             } else {
                 formBuilder.attr('style', '');
@@ -30,9 +30,14 @@ class GutenverseFormValidation extends Default {
                 button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
                 button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
             });
-        }else{
+        } else {
             formBuilder.attr('style', '');
-            this._onSubmit(formBuilder, formData[0]);
+            formBuilder.on('submit', (e) => {
+                e.preventDefault();
+                const notifclass = 'guten-error';
+                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${missingLabel}</div></div>`;
+                formBuilder.prepend(notice);
+            });
             formBuilder.find('.guten-submit-wrapper').each(item => {
                 const button = u(item);
                 const buttonClass = button.find('.gutenverse-input-submit').attr('class');
@@ -40,9 +45,12 @@ class GutenverseFormValidation extends Default {
                 button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
                 button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
             });
-            const notifclass = 'guten-error';
-            const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${missingLabel}</div></div>`;
-            formBuilder.prepend(notice);
+
+            if (isAdmin) {
+                const notifclass = 'guten-error';
+                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${missingLabel}</div></div>`;
+                formBuilder.prepend(notice);
+            }
         }
     }
 
@@ -73,7 +81,7 @@ class GutenverseFormValidation extends Default {
                 case 'multiselect':
                     value = [];
                     currentFormBuilder.find(`select[name='${name}']`).filter('.gutenverse-input-multiselect').each(function (option) {
-                        u(option).find('option').each(function( opt ) {
+                        u(option).find('option').each(function (opt) {
                             if (u(opt).attr('value')) {
                                 value.push(u(opt).attr('value'));
                             }
@@ -83,7 +91,7 @@ class GutenverseFormValidation extends Default {
                 case 'multi-group-select':
                     value = [];
                     currentFormBuilder.find(`select[name='${name}']`).filter('.multi-group-select').each(function (option) {
-                        u(option).find('option').each(function( opt ) {
+                        u(option).find('option').each(function (opt) {
                             if (u(opt).attr('value')) {
                                 value.push(u(opt).attr('value'));
                             }
