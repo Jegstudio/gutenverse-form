@@ -146,8 +146,8 @@ class Form_Validation extends Style_Generator {
 	 * @param array $form_data Form Data.
 	 */
 	public function localize_validation_data( $form_data ) {
+		$form_result = array();
 		if ( ! empty( $form_data ) ) {
-			$form_result = array();
 
 			foreach ( $form_data as $form_id ) {
 				$post_type = get_post_type( (int) $form_id );
@@ -165,9 +165,15 @@ class Form_Validation extends Style_Generator {
 
 				$form_result[] = $result;
 			}
-
-			wp_localize_script( 'gutenverse-frontend-event', 'GutenverseFormValidationData', $form_result );
 		}
+		wp_localize_script(
+			'gutenverse-frontend-event',
+			'GutenverseFormValidationData',
+			array(
+				'data'         => $form_result,
+				'missingLabel' => esc_html__( 'Form action is missing, please assign form action into this form.', 'gutenverse-form' ),
+			)
+		);
 	}
 
 
@@ -180,9 +186,9 @@ class Form_Validation extends Style_Generator {
 		if ( 'gutenverse/form-builder' === $block['blockName'] ) {
 			if ( isset( $block['attrs']['formId'] ) ) {
 				$form_id = $block['attrs']['formId']['value'];
-			}
-			if ( ! in_array( $form_id, $this->form_validation_data, true ) ) {
-				$this->form_validation_data[] = $form_id;
+				if ( ! in_array( $form_id, $this->form_validation_data, true ) ) {
+					$this->form_validation_data[] = $form_id;
+				}
 			}
 		}
 	}

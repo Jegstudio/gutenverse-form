@@ -27,7 +27,7 @@ export const formPanel = () => {
     return [
         {
             id: 'formId',
-            label: __('Choose Form', 'gutenverse-form'),
+            label: __('Choose Form Action', 'gutenverse-form'),
             component: SelectSearchControl,
             onSearch: searchForms
         },
