@@ -151,19 +151,20 @@ class Form_Validation extends Style_Generator {
 
 			foreach ( $form_data as $form_id ) {
 				$post_type = get_post_type( (int) $form_id );
-				$result    = array(
-					'formId'        => $form_id,
-					'require_login' => false,
-					'logged_in'     => is_user_logged_in(),
-				);
+
 				if ( 'gutenverse-form' === $post_type ) {
+					$result = array(
+						'formId'        => $form_id,
+						'require_login' => false,
+						'logged_in'     => is_user_logged_in(),
+					);
+
 					$data                          = get_post_meta( (int) $form_id, 'form-data', true );
 					$result['require_login']       = isset( $data['require_login'] ) ? $data['require_login'] : false;
 					$result['form_success_notice'] = isset( $data['form_success_notice'] ) ? $data['form_success_notice'] : false;
 					$result['form_error_notice']   = isset( $data['form_error_notice'] ) ? $data['form_error_notice'] : false;
+					$form_result[]                 = $result;
 				}
-
-				$form_result[] = $result;
 			}
 		}
 		wp_localize_script(
