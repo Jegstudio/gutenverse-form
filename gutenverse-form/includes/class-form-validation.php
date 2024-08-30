@@ -146,8 +146,8 @@ class Form_Validation extends Style_Generator {
 	 * @param array $form_data Form Data.
 	 */
 	public function localize_validation_data( $form_data ) {
+		$form_result = array();
 		if ( ! empty( $form_data ) ) {
-			$form_result = array();
 
 			foreach ( $form_data as $form_id ) {
 				$post_type = get_post_type( (int) $form_id );
@@ -165,9 +165,8 @@ class Form_Validation extends Style_Generator {
 
 				$form_result[] = $result;
 			}
-
-			wp_localize_script( 'gutenverse-frontend-event', 'GutenverseFormValidationData', $form_result );
 		}
+		wp_localize_script( 'gutenverse-frontend-event', 'GutenverseFormValidationData', $form_result );
 	}
 
 
