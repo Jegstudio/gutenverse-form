@@ -3,7 +3,7 @@ Contributors: Jegstudio
 Tags: contact, form, forms, feedback, email
 Tested up to: 6.6
 Requires PHP: 7.0
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -206,6 +206,10 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 
 == Changelog ==
+= 1.0.4 =
+##### Bug Fixes
+* **Form Builder**, Fix issue if there is no form action assigned
+
 = 1.0.3 =
 ##### Improvements
 * **Form Builder**, Fix issue if form builder is inside pattern
