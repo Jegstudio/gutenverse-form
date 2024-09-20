@@ -3,7 +3,7 @@ Contributors: Jegstudio
 Tags: contact form, form builder, custom form, block form, WordPress form plugin
 Tested up to: 6.6
 Requires PHP: 7.0
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -206,38 +206,42 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 
 == Changelog ==
+= 1.0.5 =
+##### Improvements
+* Improve blocks loading inside editor
+
 = 1.0.4 =
 ##### Bug Fixes
-* **Form Builder**, Fix issue if there is no form action assigned
+* Fix issue if there is no form action assigned
 
 = 1.0.3 =
 ##### Improvements
-* **Form Builder**, Fix issue if form builder is inside pattern
+* Fix issue if form builder is inside pattern
 
 = 1.0.2 =
 ##### Improvements
-* **Phone Input**, Better Phone Pattern
+* Add better phone pattern
 
 ##### Bug Fixes
-* **Phone Input**, Fix issue with default number pattern
+* Fix issue with default number pattern
 
-= 1.0.1 - 2024-08-13 =
+= 1.0.1 =
 ##### Improvements
-* **Framework**, Update core framework
+* Update core framework
 
 ##### Bug Fixes
-* **Form Builder**, Fix notice styling
-* **Form Builder**, Fix issue with Form Builder in template part
-* **Form Settings**, Fix exported CSV layout is broken in some cases
-* **Styling**, Fix issue with styling on frontend
+* Fix form builder notice styling
+* Fix issue with form builder in template part
+* Fix exported form CSV for entry layout is broken in some cases
+* Fix issue with styling on frontend
 
-= 1.0.0 - 2024-08-08 =
+= 1.0.0 =
 ##### New
-* **Copy Style**, Add new ability to copy styles between blocks
-* **Flexible Wrapper block**, Add new block
+* Add new ability to copy styles between blocks
+* Add new block: Flexible Wrapper block
 
-= 0.6.0 - 2024-07-17 =
+= 0.6.0 =
 * Fix compatibility with WordPress version 6.6
 
-= 0.5.1 - 2023-10-09 =
+= 0.5.1 =
 * Initial Release
