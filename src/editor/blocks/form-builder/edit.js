@@ -1,6 +1,6 @@
 import { compose } from '@wordpress/compose';
 
-import { withCustomStyle, withMouseMoveEffect } from 'gutenverse-core/hoc';
+import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
 import { useBlockProps, InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import classnames from 'classnames';
 import { PanelController } from 'gutenverse-core/controls';
@@ -45,6 +45,7 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
 };
 
 const FormBuilderBlock = compose(
+    withPartialRender,
     withCustomStyle(panelList),
     withAnimationSticky(),
     withCopyElementToolbar(),
