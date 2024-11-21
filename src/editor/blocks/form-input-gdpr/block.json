@@ -1,0 +1,280 @@
+{
+    "apiVersion": 2,
+    "name": "gutenverse/form-input-gdpr",
+    "title": "GDPR gdpr",
+    "description": "Gutenverse Input GDPR gdpr",
+    "category": "gutenverse-form",
+    "allowCopyStyle": true,
+    "attributes": {
+        "elementId": {
+            "type": "string"
+        },
+        "mouseMoveEffect": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "showLabel": {
+            "type": "boolean",
+            "default": true
+        },
+        "inputPlaceholder": {
+            "type": "string",
+            "default": "Text Placeholder"
+        },
+        "showHelper": {
+            "type": "boolean",
+            "default": true
+        },
+        "inputHelper": {
+            "type": "string",
+            "default": "Input Helper"
+        },
+        "position": {
+            "type": "string",
+            "default": "top",
+            "copyStyle": true
+        },
+        "labelWidth": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "labelColor": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "labelTypography": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "defaultLogic": {
+            "type": "string"
+        },
+        "displayLogic": {
+            "type": "array"
+        },
+        "labelPadding": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "labelMargin": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "helperColor": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "helperTypography": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "helperPadding": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "warningColor": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "warningTypography": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "positioningType": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "positioningWidth": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "positioningAlign": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "positioningLocation": {
+            "type": "string",
+            "copyStyle": true
+        },
+        "positioningLeft": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "positioningRight": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "positioningTop": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "positioningBottom": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "background": {
+            "type": "object",
+            "default": {},
+            "copyStyle": true
+        },
+        "backgroundHover": {
+            "type": "object",
+            "default": {},
+            "copyStyle": true
+        },
+        "border": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "borderResponsive": {
+            "type": "object",
+            "migrate": {
+                "attr": "border",
+                "type": "border"
+            },
+            "copyStyle": true
+        },
+        "boxShadow": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "borderHover": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "borderHoverResponsive": {
+            "type": "object",
+            "migrate": {
+                "attr": "borderHover",
+                "type": "border"
+            },
+            "copyStyle": true
+        },
+        "boxShadowHover": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "margin": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "padding": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "zIndex": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "animation": {
+            "type": "object",
+            "default": {},
+            "copyStyle": true
+        },
+        "hideDesktop": {
+            "type": "boolean",
+            "copyStyle": true
+        },
+        "hideTablet": {
+            "type": "boolean",
+            "copyStyle": true
+        },
+        "hideMobile": {
+            "type": "boolean",
+            "copyStyle": true
+        },
+        "inputLabel": {
+            "type": "string",
+            "default": "GDPR Agreement"
+        },
+        "inputName": {
+            "type": "string",
+            "default": "input-gdpr"
+        },
+        "displayBlock": {
+            "type": "string",
+            "default": "default"
+        },
+        "wrapperMargin": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "gdprSize": {
+            "type": "string",
+            "copyStyle": true
+        },
+        "gdprSpace": {
+            "type": "string",
+            "copyStyle": true
+        },
+        "gdprLabelColor": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "gdprTypography": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "gdprLinkColor": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "gdprLinkTypography": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "gdprValue": {
+            "type": "boolean",
+            "default": false
+        },
+        "gdprLabel": {
+            "type": "string",
+            "default": "Yes, I Agree"
+        },
+        "gdprFormValue": {
+            "type": "string",
+            "default": "Yes, I Agree"
+        },
+        "gdprColor": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "gdprActiveColor": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "required": {
+            "type": "boolean",
+            "default": false
+        },
+        "labelRequireColor": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "validationWarning": {
+            "type": "string",
+            "default": "Input Invalid"
+        },
+        "transform": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "mask": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "condition": {
+            "type": "object",
+            "default": {}
+        }
+    },
+    "supports": {
+        "className": false
+    },
+    "keywords": [
+        "input",
+        "form",
+        "gutenverse"
+    ],
+    "example": {}
+}
