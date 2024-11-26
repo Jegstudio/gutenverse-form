@@ -112,7 +112,7 @@ const FormBuilderBlock = compose(
                     },
                     {
                         title: __('Selecting your form setting', 'gutenverse-form'),
-                        description: __('In the "Form Setting" below, you can click "Choose Form" and type your form\'s name to search it.', 'gutenverse-form')
+                        description: __('In the "Form Setting" below, you can click "Choose Form Action" and type your form\'s name to search it.', 'gutenverse-form')
                     }
                 ]}
             />
