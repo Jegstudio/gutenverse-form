@@ -6,6 +6,11 @@ import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
 import { useEffect } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
+import { IconLibrary } from 'gutenverse-core/controls';
+import { useState } from '@wordpress/element';
+import { createPortal } from 'react-dom';
+import { gutenverseRoot } from 'gutenverse-core/helper';
+import { getImageSrc } from 'gutenverse-core/editor-helper';
 
 const FormInputTextareaBlock = compose(
     withPartialRender,
@@ -15,7 +20,8 @@ const FormInputTextareaBlock = compose(
 )(props => {
     const {
         attributes,
-        setElementRef
+        setElementRef,
+        setAttributes,
     } = props;
 
     const {
@@ -25,10 +31,19 @@ const FormInputTextareaBlock = compose(
         validationType,
         validationMin,
         validationMax,
-        validationWarning
+        validationWarning,
+        useIcon,
+        iconType,
+        iconStyleMode,
+        icon,
+        image,
+        imageAlt,
+        lazyLoad
     } = attributes;
 
     const textareaRef = useRef();
+    const [openIconLibrary, setOpenIconLibrary] = useState(false);
+    const imageAltText = imageAlt || null;
 
     const inputData = {
         ...props,
@@ -45,6 +60,32 @@ const FormInputTextareaBlock = compose(
         validationWarning
     };
 
+    const imageLazyLoad = () => {
+        if(lazyLoad){
+            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy"/>;
+        }else{
+            return <img src={getImageSrc(image)} alt={imageAltText}/>;
+        }
+    };
+    const iconContent = () => {
+        switch (iconType) {
+            case 'icon':
+                return <div className="form-input-textarea-icon type-icon">
+                    <div className={`icon style-${iconStyleMode}`} onClick={() => setOpenIconLibrary(true)}>
+                        <i className={icon}></i>
+                    </div>
+                </div>;
+            case 'image':
+                return <div className="form-input-textarea-icon type-image">
+                    <div className={`icon style-${iconStyleMode}`}>
+                        {imageLazyLoad()}
+                    </div>
+                </div>;
+            default:
+                return null;
+        }
+    };
+
     useEffect(() => {
         if (textareaRef.current) {
             setElementRef(textareaRef.current);
@@ -54,12 +95,31 @@ const FormInputTextareaBlock = compose(
 
     return <>
         <InputWrapper {...inputData}>
-            <textarea data-validation={JSON.stringify(validation)}
-                placeholder={inputPlaceholder}
-                name={inputName}
-                className="gutenverse-input gutenverse-input-textarea"
-                ref={textareaRef}
-            />
+        {openIconLibrary && createPortal(
+                <IconLibrary
+                    closeLibrary={() => setOpenIconLibrary(false)}
+                    value={icon}
+                    onChange={icon => setAttributes({ icon })}
+                />,
+                gutenverseRoot
+            )}
+            {useIcon ?
+                <div className="input-icon-wrapper input-textarea">
+                    {iconContent()}
+                    <textarea data-validation={JSON.stringify(validation)}
+                        placeholder={inputPlaceholder}
+                        name={inputName}
+                        className="gutenverse-input gutenverse-input-textarea"
+                        ref={textareaRef}
+                    />
+                </div>
+                :
+                <textarea data-validation={JSON.stringify(validation)}
+                    placeholder={inputPlaceholder}
+                    name={inputName}
+                    className="gutenverse-input gutenverse-input-textarea"
+                    ref={textareaRef}
+                />}
         </InputWrapper>
     </>;
 });

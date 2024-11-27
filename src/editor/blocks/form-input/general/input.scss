@@ -60,6 +60,21 @@
     }
   }
 
+  .input-icon-wrapper {
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 2px;
+    border-color: var(--guten-form-border-color);
+
+    >.form-input-text-icon {
+      z-index: 0;
+    }
+    >.gutenverse-input {
+      border: none !important;
+      z-index: 1;
+    }
+  }
+
   &.hide-label {
     .label-wrapper {
       display: none;
