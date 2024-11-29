@@ -103,8 +103,11 @@ class GutenverseFormValidation extends Default {
             }
         }
 
-        if (input.type === 'checkbox' && u(input).hasClass('gutenverse-input-switch')) {
+        if (input.type === 'checkbox' && u(input).hasClass('gutenverse-input-switch') ) {
             value = input.checked;
+        }
+        if (input.type === 'checkbox' &&  u(input).hasClass('gutenverse-input-gdpr') ) {
+            value = u(input).data('value');
         }
 
         if (u(input).hasClass('gutenverse-input-mobile')) {
@@ -127,12 +130,15 @@ class GutenverseFormValidation extends Default {
     }
 
     _getInputType(data, parent) {
-        if (data && data.type && parent.hasClass(`guten-form-input-${data.type}`)) {
-            return data.type;
-        } else if (parent.hasClass('guten-form-input-switch')) {
+        if (parent.hasClass('guten-form-input-switch')) {
             return 'switch';
         }
-
+        if ( parent.hasClass('guten-form-input-gdpr') ) {
+            return 'gdpr';
+        }
+        if (data && data.type && parent.hasClass(`guten-form-input-${data.type}`)) {
+            return data.type;
+        }
         return null;
     }
 

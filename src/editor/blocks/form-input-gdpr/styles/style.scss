@@ -1,0 +1,55 @@
+.guten-form-input-gdpr {
+  .main-wrapper {
+    .gutenverse-inner-input {
+      &.default {
+        label {
+          display: inline-block;
+        }
+      }
+
+      &.block {
+        label {
+          display: block;
+        }
+      }
+      .guten-gdpr-wrapper{
+        display: flex;
+        .guten-gdpr-input-wrapper{
+          cursor: pointer;
+          input[type="checkbox"] {
+            display: none;
+          }
+          .check {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            cursor: pointer;
+            font-size: 15px;
+          }
+          .check:before {
+            content: "\f0c8";
+            font-family: "Font Awesome 5 Free", serif !important;
+            font-size: 16px;
+            margin-right: 10px;
+          }
+      
+          input:checked + .check:before {
+            content: "\f14a";
+            color: #5f7bff;
+          }
+        }
+        .gdpr-label {
+          display: flex;
+          align-self: center;
+          align-items: center;
+          position: relative;
+          font-size: 15px;
+          white-space: break-spaces;
+        }
+      }
+      
+    }
+
+    
+  }
+}
