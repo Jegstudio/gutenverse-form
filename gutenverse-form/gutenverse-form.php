@@ -4,7 +4,7 @@
  * Description: Powerful and intuitive form builder plugin designed to streamline the process of creating and managing forms on your WordPress website.
  * Plugin URI: https://gutenverse.com/
  * Author: Jegstudio
- * Version: 1.1.2
+ * Version: 1.1.3
  * Author URI: https://jegtheme.com/
  * License: GPLv3
  * Text Domain: gutenverse-form
@@ -15,7 +15,7 @@
 use Gutenverse_Form\Init;
 
 defined( 'GUTENVERSE_FORM' ) || define( 'GUTENVERSE_FORM', 'gutenverse-form' );
-defined( 'GUTENVERSE_FORM_VERSION' ) || define( 'GUTENVERSE_FORM_VERSION', '1.1.2' );
+defined( 'GUTENVERSE_FORM_VERSION' ) || define( 'GUTENVERSE_FORM_VERSION', '1.1.3' );
 defined( 'GUTENVERSE_FORM_NOTICE_VERSION' ) || define( 'GUTENVERSE_FORM_NOTICE_VERSION', '1.0.0' );
 defined( 'GUTENVERSE_FORM_NAME' ) || define( 'GUTENVERSE_FORM_NAME', 'Gutenverse Form' );
 defined( 'GUTENVERSE_FORM_URL' ) || define( 'GUTENVERSE_FORM_URL', plugins_url( GUTENVERSE_FORM ) );

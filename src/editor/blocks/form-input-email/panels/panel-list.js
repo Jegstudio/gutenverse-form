@@ -5,6 +5,8 @@ import { labelPanel } from '../../form-input/general/panels/panel-label';
 import { mainPanel } from '../../form-input/general/panels/panel-main';
 import { panelRules } from './panel-rules';
 import { inputPanel } from './panel-input';
+import { panelIcon } from './panel-icon';
+import { panelIconStyle } from './panel-icon-style';
 import { TabSetting, TabStyle } from 'gutenverse-core/controls';
 import { panelLogic } from '../../form-input/general/panels/panel-logic';
 
@@ -15,6 +17,12 @@ export const panelList = () => {
             panelArray: contentPanel,
             initialOpen: true,
             tabRole: TabSetting,
+        },
+        {
+            title: __('Icon', 'gutenverse'),
+            initialOpen: false,
+            panelArray: panelIcon,
+            tabRole: TabSetting
         },
         {
             title: __('Validation', 'gutenverse-form'),
@@ -45,6 +53,12 @@ export const panelList = () => {
             panelArray: inputPanel,
             initialOpen: false,
             tabRole: TabStyle,
+        },
+        {
+            title: __('Icon Style', 'gutenverse'),
+            initialOpen: false,
+            panelArray: panelIconStyle,
+            tabRole: TabStyle
         },
         {
             title: __('Background', 'gutenverse-form'),

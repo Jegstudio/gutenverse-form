@@ -1,1 +1,46 @@
 @import "flatpickr/dist/flatpickr.min";
+
+.input-icon-wrapper.input-date {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+
+    .form-input-date-icon {
+        margin: 0 8px;
+
+        &.type-image {
+            .icon {
+                overflow: hidden;
+            }
+        }
+
+        &.type-icon {
+            .icon {
+                align-items: center;
+                display: flex;
+                overflow: hidden;
+            }
+        }
+
+        .icon.style-gradient {
+            i {
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                display: inline-block;
+            }
+        }
+    }
+
+    .gutenverse-input-date {
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        border-radius: unset !important;
+        box-shadow: none !important;
+
+        &:focus, &:focus-visible {
+            outline: none !important;
+        }
+    }
+}

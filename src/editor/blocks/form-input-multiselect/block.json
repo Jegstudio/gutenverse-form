@@ -350,6 +350,166 @@
 		"condition": {
 			"type": "object",
 			"default": {}
+		},
+        "iconAlignment": {
+            "type": "string",
+            "default": "left"
+        },
+        "iconType": {
+			"type": "string",
+			"default": "icon"
+		},
+		"icon": {
+			"type": "string",
+			"default": "gtn gtn-email-light"
+		},
+		"iconSize": {
+			"type": "object",
+			"default": {
+				"Desktop": 20
+			},
+			"copyStyle": true
+		},
+        "imageHeight": {
+			"type" : "object",
+			"copyStyle": true,
+            "default": {
+                "Desktop": 20
+            }
+		},
+		"imageWidth": {
+			"type" : "object",
+			"copyStyle": true,
+            "default": {
+                "Desktop": 20
+            }
+		},
+		"image": {
+			"type": "object"
+		},
+		"imageAlt": {
+			"type": "string"
+		},
+		"imageFit": {
+			"type" : "string"
+		},
+        "lazyLoad": {
+			"type" : "boolean",
+			"copyStyle": true
+		},
+        "containerBoxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+        "useIcon": {
+            "type": "boolean",
+            "default": false,
+            "copyStyle": true
+        },
+		"iconPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconMargin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconRotate": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconStyleMode": {
+			"type": "string",
+			"copyStyle": true
+		},
+		"iconColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBackground": {
+			"type": "object",
+			"copyStyle": true
+		},
+        "iconColorGradient": {
+			"type": "object",
+			"copyStyle": true,
+            "default": {
+                "type": "gradient",
+                "gradientColor": [
+                    {
+                        "active": false,
+                        "color": "rgb(49, 207, 180)",
+                        "id": 1,
+                        "offset": "0.000"
+                    },
+                    {
+                        "active": true,
+                        "color": "rgb(126, 32, 207)",
+                        "id": 2,
+                        "offset": "1.000"
+                    }
+                ]
+            }
+		},
+		"iconBorder": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBoxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconHoverColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconHoverBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+        "iconColorGradientHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBackgroundHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBorderHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBoxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconFocusColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconFocusBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+        "iconColorGradientFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBackgroundFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBorderFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBoxShadowFocus": {
+			"type": "object",
+			"copyStyle": true
 		}
 	},
 	"supports": {
