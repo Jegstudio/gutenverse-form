@@ -207,6 +207,9 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 == Changelog ==
 = 1.1.3 =
+##### New
+* Add new GDPR input block
+
 ##### Bug Fixes
 * Fix animation effect on frontend
 * Fix section vertical-align when column position stretch
