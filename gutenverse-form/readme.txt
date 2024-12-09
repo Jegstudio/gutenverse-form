@@ -211,6 +211,9 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 * Improve Blocks Loading inside editor
 * Add option in dashboard to enable/disable lazy load blocks in editor
 
+##### Bug Fixes
+* Fix sticky & vertical align issue
+
 = 1.1.3 =
 ##### New
 * Add new GDPR input block
