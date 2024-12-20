@@ -37,6 +37,14 @@ export const inputPanel = props => {
                 {
                     selector: `.${elementId} .main-wrapper .choices__inner`,
                     render: value => handleDimension(value, 'padding')
+                },
+                {
+                    selector: `.${elementId} .main-wrapper .choices::after`,
+                    render: value => {
+                        const right = parseFloat(value.dimension.right) - 11.5;
+                        const rightMargin = right > 0 ? right : 0;
+                        return `margin-right: ${rightMargin}${value.unit};`;
+                    }
                 }
             ]
         },
