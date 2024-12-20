@@ -4,6 +4,8 @@ import { contentPanel } from '../../form-input/general/panels/panel-content';
 import { labelPanel } from '../../form-input/general/panels/panel-label';
 import { mainPanel } from '../../form-input/general/panels/panel-main';
 import { panelRules } from './panel-rules';
+import { panelIcon } from './panel-icon';
+import { panelIconStyle } from './panel-icon-style';
 import { inputPanel } from './panel-input';
 import { TabSetting, TabStyle } from 'gutenverse-core/controls';
 import { panelLogic } from '../../form-input/general/panels/panel-logic';
@@ -15,6 +17,12 @@ export const panelList = () => {
             title: __('Content', 'gutenverse-form'),
             panelArray: contentPanel,
             initialOpen: true,
+            tabRole: TabSetting
+        },
+        {
+            title: __('Icon', 'gutenverse'),
+            initialOpen: false,
+            panelArray: panelIcon,
             tabRole: TabSetting
         },
         {
@@ -45,6 +53,12 @@ export const panelList = () => {
             title: __('Input Style', 'gutenverse-form'),
             panelArray: inputPanel,
             initialOpen: false,
+            tabRole: TabStyle
+        },
+        {
+            title: __('Icon Style', 'gutenverse'),
+            initialOpen: false,
+            panelArray: panelIconStyle,
             tabRole: TabStyle
         },
         /* Put Your List Here */

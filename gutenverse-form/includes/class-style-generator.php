@@ -13,6 +13,7 @@ use Gutenverse_Form\Style\Form_Builder;
 use Gutenverse_Form\Style\Form_Input_Checkbox;
 use Gutenverse_Form\Style\Form_Input_Date;
 use Gutenverse_Form\Style\Form_Input_Email;
+use Gutenverse_Form\Style\Form_Input_Gdpr;
 use Gutenverse_Form\Style\Form_Input_Multiselect;
 use Gutenverse_Form\Style\Form_Input_Number;
 use Gutenverse_Form\Style\Form_Input_Radio;
@@ -96,6 +97,9 @@ class Style_Generator {
 				break;
 			case 'gutenverse/form-input-text':
 				$instance = new Form_Input_Text( $attrs );
+				break;
+			case 'gutenverse/form-input-gdpr':
+				$instance = new Form_Input_Gdpr( $attrs );
 				break;
 			case 'gutenverse/form-input-textarea':
 				$instance = new Form_Input_Textarea( $attrs );

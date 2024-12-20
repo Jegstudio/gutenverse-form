@@ -1,6 +1,6 @@
 import { compose } from '@wordpress/compose';
 
-import { withCustomStyle, withMouseMoveEffect } from 'gutenverse-core/hoc';
+import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
@@ -9,6 +9,7 @@ import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { u } from 'gutenverse-core/components';
 
 const FormInputSwitchBlock = compose(
+    withPartialRender,
     withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect

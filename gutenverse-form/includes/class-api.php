@@ -354,19 +354,20 @@ class Api {
 	private function filter_form_params( $entry_data ) {
 		$filtered_data = array();
 		$entry_data    = rest_sanitize_array( $entry_data );
-
 		if ( isset( $entry_data ) ) {
 			foreach ( $entry_data as $data ) {
 				if ( ! isset( $data['type'] ) ) {
 					return null;
 				}
-
+	
 				switch ( $data['type'] ) {
 					case 'text':
 					case 'select':
 					case 'telp':
+					case 'mobile':
 					case 'radio':
 					case 'date':
+					case 'gdpr':
 					case 'image-radio':
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),

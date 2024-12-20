@@ -9,6 +9,7 @@
 
 namespace Gutenverse_Form;
 
+use Gutenverse\Framework\Init;
 use Gutenverse\Framework\Style_Generator;
 
 /**
@@ -24,129 +25,173 @@ class Form_Validation extends Style_Generator {
 	 * @var array
 	 */
 	protected $form_validation_data = array();
+
+	/**
+	 * Check if Bypass
+	 *
+	 * @var boolean
+	 */
+	protected $is_bypass = false;
+
+	/**
+	 * Get file name
+	 *
+	 * @var string
+	 */
+	protected $file_name = '';
+
+	/**
+	 * Form File Data
+	 *
+	 * @var array
+	 */
+	protected $form_file = array();
+
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'get_form_block_from_template' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'get_form_block_from_content' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'get_form_block_from_widget' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'form_validation_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'form_validation_scripts' ), 99999 );
+		add_filter( 'gutenverse_bypass_generate_style', array( $this, 'bypass_generate_css' ), 20, 2 );
+		add_action( 'gutenverse_loop_blocks', array( $this, 'loop_blocks' ), null, 2 );
+		add_action( 'gutenverse_after_style_loop_blocks', array( $this, 'get_blocks' ), null );
 	}
+
+	/**
+	 * Loop Block.
+	 */
+	public function get_blocks() {
+		if ( $this->is_bypass ) {
+			$cache           = Init::instance()->style_cache;
+			$validation_data = $this->form_validation_data;
+			if ( $this->form_validation_data ) {
+				$cache->create_cache_file( $this->file_name, wp_json_encode( $validation_data, true ) );
+			}
+			$this->form_file[]          = $this->file_name;
+			$this->form_validation_data = array();
+			$this->is_bypass            = false;
+		}
+	}
+
+	/**
+	 * Loop Block.
+	 *
+	 * @param array  $block Array of Blocks.
+	 * @param string $style $style content.
+	 */
+	public function loop_blocks( $block, &$style ) {
+		$this->get_form_data( $block );
+	}
+
+	/**
+	 * Check if we going to by pass css generation.
+	 *
+	 * @param boolean $flag Flag.
+	 * @param string  $name Name of file.
+	 *
+	 * @return bool
+	 */
+	public function bypass_generate_css( $flag, $name ) {
+		if ( 'direct' !== apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' ) ) {
+			$cache    = Init::instance()->style_cache;
+			$cache_id = $cache->get_style_cache_id();
+			$filename = $name . '-form-validation-' . $cache_id . '.json';
+			if ( ! $cache->is_file_exist( $filename ) ) {
+				$this->file_name            = $filename;
+				$this->is_bypass            = true;
+				$this->form_validation_data = array();
+				return false;
+			} else {
+				$this->form_file[] = $filename;
+			}
+		}
+
+		return $flag;
+	}
+
+
 	/**
 	 * Form Validation Scripts
 	 */
 	public function form_validation_scripts() {
 		wp_enqueue_script( 'gutenverse-frontend-event' );
-		wp_localize_script( 'gutenverse-frontend-event', 'GutenverseFormValidationData', $this->form_validation_data );
-	}
-	/**
-	 * Get form Block from Widgets.
-	 */
-	public function get_form_block_from_widget() {
-		if ( current_theme_supports( 'widgets' ) ) {
-			$widget = get_option( 'widget_block' );
-			if ( isset( $widget['content'] ) ) {
-				$blocks = $this->parse_blocks( $widget['content'] );
-				$blocks = $this->flatten_blocks( $blocks );
-				$blocks = $this->findFormBlock( $blocks );
-				$this->loop_blocks_to_get_form_data( $blocks );
+
+		$validation_data = null;
+
+		if ( 'direct' === apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' ) ) {
+			$validation_data = $this->form_validation_data;
+		} else {
+			$cache        = Init::instance()->style_cache;
+			$merged_datas = array();
+
+			foreach ( $this->form_file as $filename ) {
+				$merged_data = json_decode( $cache->read_cache_file( $filename ), true );
+
+				if ( is_array( $merged_data ) ) {
+					$merged_datas = array_merge( $merged_data, $merged_datas );
+				}
 			}
+
+			$merged_datas = array_unique( $merged_datas );
+
+			$validation_data = $merged_datas;
 		}
-	}
-	/**
-	 * Get form Block from Template
-	 */
-	public function get_form_block_from_template() {
-		global $_wp_current_template_content;
-		if ( ! empty( $_wp_current_template_content ) ) {
-			$blocks = $this->parse_blocks( $_wp_current_template_content );
-			$blocks = $this->flatten_blocks( $blocks );
-			$blocks = $this->findFormBlock( $blocks );
-			$this->loop_blocks_to_get_form_data( $blocks );
-		}
+		$this->localize_validation_data( $validation_data );
 	}
 
+
 	/**
-	 * Get form Block from Content
-	 */
-	public function get_form_block_from_content() {
-		global $post;
-		if ( has_blocks( $post ) && isset( $post->post_content ) ) {
-			$blocks = $this->parse_blocks( $post->post_content );
-			$blocks = $this->flatten_blocks( $blocks );
-			$blocks = $this->findFormBlock( $blocks );
-			$this->loop_blocks_to_get_form_data( $blocks );
-		}
-	}
-	/**
-	 * Loop Block.
+	 * Localize Validation Data;
 	 *
-	 *  @param array $blocks .
+	 * @param array $form_data Form Data.
 	 */
-	public function loop_blocks_to_get_form_data( $blocks ) {
-		foreach ( $blocks as $block ) {
-			if ( 'gutenverse/form-builder' === $block['blockName'] ) {
-				if ( isset( $block['attrs']['formId'] ) ) {
-					$form_id   = $block['attrs']['formId']['value'];
-					$post_type = get_post_type( (int) $form_id );
-					$result    = array(
+	public function localize_validation_data( $form_data ) {
+		$form_result = array();
+		if ( ! empty( $form_data ) ) {
+
+			foreach ( $form_data as $form_id ) {
+				$post_type = get_post_type( (int) $form_id );
+
+				if ( 'gutenverse-form' === $post_type ) {
+					$result = array(
 						'formId'        => $form_id,
 						'require_login' => false,
 						'logged_in'     => is_user_logged_in(),
 					);
-					if ( 'gutenverse-form' === $post_type ) {
-						$data                          = get_post_meta( (int) $form_id, 'form-data', true );
-						$result['require_login']       = isset( $data['require_login'] ) ? $data['require_login'] : false;
-						$result['form_success_notice'] = isset( $data['form_success_notice'] ) ? $data['form_success_notice'] : false;
-						$result['form_error_notice']   = isset( $data['form_error_notice'] ) ? $data['form_error_notice'] : false;
-					}
-					array_push( $this->form_validation_data, $result );
-				} else {
-					$result = array(
-						'formId'        => '',
-						'require_login' => false,
-						'logged_in'     => false,
-					);
-					array_push( $this->form_validation_data, $result );
+
+					$data                          = get_post_meta( (int) $form_id, 'form-data', true );
+					$result['require_login']       = isset( $data['require_login'] ) ? $data['require_login'] : false;
+					$result['form_success_notice'] = isset( $data['form_success_notice'] ) ? $data['form_success_notice'] : false;
+					$result['form_error_notice']   = isset( $data['form_error_notice'] ) ? $data['form_error_notice'] : false;
+					$form_result[]                 = $result;
 				}
-				$unique_array         = array_unique( array_column( $this->form_validation_data, 'formId' ), SORT_REGULAR );
-				$final_array          = array_values( array_intersect_key( $this->form_validation_data, $unique_array ) );
-				$final_filtered_array = array_filter(
-					$final_array,
-					function ( $el ) {
-						return ! empty( $el['formId'] );
-					}
-				);
-				$this->form_validation_data = $final_filtered_array;
 			}
 		}
+		wp_localize_script(
+			'gutenverse-frontend-event',
+			'GutenverseFormValidationData',
+			array(
+				'data'         => $form_result,
+				'missingLabel' => esc_html__( 'Form action is missing, please assign form action into this form.', 'gutenverse-form' ),
+				'isAdmin'      => current_user_can( 'manage_options' ),
+			)
+		);
 	}
+
+
 	/**
-	 * Find Form Builder Block.
+	 * Loop Block.
 	 *
-	 * @param array $array .
-	 *
-	 * @return array $result .
+	 *  @param array $block Block Array.
 	 */
-	public function findFormBlock( $array ) {
-		$result = array();
-		foreach ( $array as $item ) {
-			if ( 'gutenverse/form-builder' === $item['blockName'] ) {
-				$result[] = $item;
-			}
-			if ( 'core/template-part' === $item['blockName'] ) {
-				$parts = $this->get_template_part_content( $item['attrs'] );
-				$parts = $this->parse_blocks( $parts );
-				$parts = $this->flatten_blocks( $parts );
-				if ( $parts ) {
-					$result = array_merge( $result, $this->findFormBlock( $parts ) );
+	public function get_form_data( $block ) {
+		if ( 'gutenverse/form-builder' === $block['blockName'] ) {
+			if ( isset( $block['attrs']['formId'] ) ) {
+				$form_id = $block['attrs']['formId']['value'];
+				if ( ! in_array( $form_id, $this->form_validation_data, true ) ) {
+					$this->form_validation_data[] = $form_id;
 				}
 			}
-			if ( ! empty( $item['innerBlock'] ) ) {
-				$result = array_merge( $result, $this->findFormBlock( $item['innerBlock'] ) );
-			}
 		}
-		return $result;
 	}
 }

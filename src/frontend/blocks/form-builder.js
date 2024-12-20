@@ -13,10 +13,10 @@ class GutenverseFormValidation extends Default {
     _init(element) {
         const formBuilder = u(element);
         const formId = formBuilder.data('form-id');
-        const data = window['GutenverseFormValidationData'];
+        const { data, missingLabel, isAdmin } = window['GutenverseFormValidationData'];
         const formData = data.filter(el => el.formId == formId);
-        if(formData.length !== 0){
-            if (formData[0]['require_login'] && !formData[0]['logged_in'] ) {
+        if (formData.length !== 0) {
+            if (formData[0]['require_login'] && !formData[0]['logged_in']) {
                 formBuilder.remove();
             } else {
                 formBuilder.attr('style', '');
@@ -30,9 +30,14 @@ class GutenverseFormValidation extends Default {
                 button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
                 button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
             });
-        }else{
+        } else {
             formBuilder.attr('style', '');
-            this._onSubmit(formBuilder, formData[0]);
+            formBuilder.on('submit', (e) => {
+                e.preventDefault();
+                const notifclass = 'guten-error';
+                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${missingLabel}</div></div>`;
+                formBuilder.prepend(notice);
+            });
             formBuilder.find('.guten-submit-wrapper').each(item => {
                 const button = u(item);
                 const buttonClass = button.find('.gutenverse-input-submit').attr('class');
@@ -40,6 +45,12 @@ class GutenverseFormValidation extends Default {
                 button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
                 button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
             });
+
+            if (isAdmin) {
+                const notifclass = 'guten-error';
+                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${missingLabel}</div></div>`;
+                formBuilder.prepend(notice);
+            }
         }
     }
 
@@ -70,7 +81,7 @@ class GutenverseFormValidation extends Default {
                 case 'multiselect':
                     value = [];
                     currentFormBuilder.find(`select[name='${name}']`).filter('.gutenverse-input-multiselect').each(function (option) {
-                        u(option).find('option').each(function( opt ) {
+                        u(option).find('option').each(function (opt) {
                             if (u(opt).attr('value')) {
                                 value.push(u(opt).attr('value'));
                             }
@@ -80,7 +91,7 @@ class GutenverseFormValidation extends Default {
                 case 'multi-group-select':
                     value = [];
                     currentFormBuilder.find(`select[name='${name}']`).filter('.multi-group-select').each(function (option) {
-                        u(option).find('option').each(function( opt ) {
+                        u(option).find('option').each(function (opt) {
                             if (u(opt).attr('value')) {
                                 value.push(u(opt).attr('value'));
                             }
@@ -92,20 +103,42 @@ class GutenverseFormValidation extends Default {
             }
         }
 
-        if (input.type === 'checkbox' && u(input).hasClass('gutenverse-input-switch')) {
+        if (input.type === 'checkbox' && u(input).hasClass('gutenverse-input-switch') ) {
             value = input.checked;
+        }
+        if (input.type === 'checkbox' &&  u(input).hasClass('gutenverse-input-gdpr') ) {
+            value = u(input).data('value');
+        }
+
+        if (u(input).hasClass('gutenverse-input-mobile')) {
+            const inputValue = u(input).find('.gutenverse-input-mobile-text').first().value;
+            const countryCode = u(input).find('.gutenverse-input-prefix').first().innerText;
+
+            if (validation) {
+                const valid = this.__validate(input, inputValue, validation);
+                if (valid) {
+                    value = countryCode + inputValue;
+                } else {
+                    value = '';
+                }
+            } else {
+                value = countryCode + inputValue;
+            }
         }
 
         return value;
     }
 
     _getInputType(data, parent) {
-        if (data && data.type && parent.hasClass(`guten-form-input-${data.type}`)) {
-            return data.type;
-        } else if (parent.hasClass('guten-form-input-switch')) {
+        if (parent.hasClass('guten-form-input-switch')) {
             return 'switch';
         }
-
+        if ( parent.hasClass('guten-form-input-gdpr') ) {
+            return 'gdpr';
+        }
+        if (data && data.type && parent.hasClass(`guten-form-input-${data.type}`)) {
+            return data.type;
+        }
         return null;
     }
 
