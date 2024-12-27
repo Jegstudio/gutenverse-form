@@ -206,6 +206,9 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 
 == Changelog ==
+= 1.1.7 =
+* fix issue with text based blocks
+
 = 1.1.6 =
 ##### Improvements
 * update Google Font list
