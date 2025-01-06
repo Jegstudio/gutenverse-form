@@ -206,7 +206,12 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 
 == Changelog ==
+= 1.1.8 =
+##### Bug Fixes
+* fix column horizontal and vertical alignment responsive in editor
+
 = 1.1.7 =
+##### Bug Fixes
 * fix issue with text based blocks
 
 = 1.1.6 =
