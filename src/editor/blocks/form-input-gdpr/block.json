@@ -1,7 +1,7 @@
 {
     "apiVersion": 2,
     "name": "gutenverse/form-input-gdpr",
-    "title": "GDPR gdpr",
+    "title": "GDPR Input",
     "description": "Gutenverse Input GDPR gdpr",
     "category": "gutenverse-form",
     "allowCopyStyle": true,
