@@ -11,6 +11,7 @@ import IconFormRadio from './icon-form-radio.svg';
 import IconFormSelect from './icon-form-select.svg';
 import IconFormSwitch from './icon-form-switch.svg';
 import IconFormTextarea from './icon-form-textarea.svg';
+import IconFormGDPR from './icon-form-gdpr.svg';
 
 /* PRO Form Icons */
 import IconFormCalculation from './icon-form-calculation.svg';
@@ -90,4 +91,8 @@ export const IconFormStepperNavigationButtonSVG = () => {
 
 export const IconFormStepperSectionItemSVG = () => {
     return <IconFormStepperSectionItem />;
+};
+
+export const IconFormGDPRSVG = () => {
+    return <IconFormGDPR />;
 };
