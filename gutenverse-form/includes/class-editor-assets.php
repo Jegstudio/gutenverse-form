@@ -21,12 +21,14 @@ class Editor_Assets {
 	public function __construct() {
 		add_filter( 'gutenverse_block_config', array( $this, 'block_config' ) );
 		add_action( 'gutenverse_include_block', array( $this, 'enqueue_scripts' ) );
+		add_action( 'enqueue_block_assets', array( $this, 'block_assets' ) );
 	}
 
 	/**
-	 * Enqueue scripts
+	 * Block Assets.
 	 */
-	public function enqueue_scripts() {
+	public function block_assets() {
+		// Register & Enqueue Style.
 		wp_enqueue_style(
 			'gutenverse-form-blocks',
 			GUTENVERSE_FORM_URL . '/assets/css/blocks.css',
@@ -40,7 +42,12 @@ class Editor_Assets {
 			array( 'gutenverse-iconlist', 'fontawesome-gutenverse' ),
 			GUTENVERSE_FORM_VERSION
 		);
+	}
 
+	/**
+	 * Enqueue scripts
+	 */
+	public function enqueue_scripts() {
 		wp_enqueue_script( 'gutenverse-frontend-event' );
 
 		$include   = ( include GUTENVERSE_FORM_DIR . '/lib/dependencies/blocks.asset.php' )['dependencies'];
