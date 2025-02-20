@@ -7,16 +7,16 @@ import classnames from 'classnames';
 import { useEffect } from '@wordpress/element';
 import { useRef } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputCheckboxBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
         attributes,
-        setElementRef
+        clientId
     } = props;
 
     const {
@@ -24,15 +24,19 @@ const FormInputCheckboxBlock = compose(
         required,
         validationWarning,
         checkboxOptions,
-        displayBlock
+        displayBlock,
+        elementId
     } = attributes;
 
-    const checkboxRef = useRef();
+    const elementRef = useRef();
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
 
     const inputData = {
         ...props,
         type: 'checkbox',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
 
     const innerClass = classnames(
@@ -46,15 +50,9 @@ const FormInputCheckboxBlock = compose(
         validationWarning
     };
 
-    useEffect(() => {
-        if (checkboxRef.current) {
-            setElementRef(checkboxRef.current);
-        }
-    }, [checkboxRef]);
-
     return <>
         <InputWrapper {...inputData}>
-            <div className={innerClass} ref={checkboxRef}>
+            <div className={innerClass} ref={elementRef}>
                 <div hidden
                     name={inputName}
                     className="gutenverse-input"

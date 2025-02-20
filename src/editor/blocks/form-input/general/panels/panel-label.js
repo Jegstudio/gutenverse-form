@@ -17,10 +17,25 @@ export const labelPanel = props => {
             step: 1,
             allowDeviceControl: true,
             unit: '%',
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .label-wrapper`,
-                    render: value => `width: ${value}%;`
+                    'type': 'plain',
+                    'id': 'labelWidth',
+                    'selector': `.${elementId} .label-wrapper`,
+                    'properties': [
+                        {
+                            'name': 'width',
+                            'valueType': 'pattern',
+                            'pattern': '{value}%',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+
+                            }
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -29,10 +44,18 @@ export const labelPanel = props => {
             label: __('Label Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .label-wrapper .input-label`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'labelColor',
+                    'selector': `.${elementId} .label-wrapper .input-label`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -40,13 +63,6 @@ export const labelPanel = props => {
             id: 'labelTypography',
             label: __('Title Typography', 'gutenverse-form'),
             component: TypographyControl,
-            style: [
-                {
-                    selector: `.${elementId} .label-wrapper .input-label`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
         },
         {
             id: 'labelPadding',
@@ -68,12 +84,6 @@ export const labelPanel = props => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .label-wrapper`,
-                    render: value => handleDimension(value, 'padding')
-                }
-            ]
         },
         {
             id: 'labelMargin',
@@ -95,22 +105,24 @@ export const labelPanel = props => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .label-wrapper`,
-                    render: value => handleDimension(value, 'margin')
-                }
-            ]
         },
         {
             id: 'labelRequireColor',
             label: __('Require Indicator Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .label-wrapper .required-badge`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'labelRequireColor',
+                    'selector': `.${elementId} .label-wrapper .required-badge`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },

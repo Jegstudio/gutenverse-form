@@ -7,6 +7,7 @@ import { RichText } from '@wordpress/block-editor';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import { useDisplayEditor } from 'gutenverse-core/hooks';
 import { select } from '@wordpress/data';
+import { BlockPanelController } from 'gutenverse-core/controls';
 
 const recursiveParentBlock = clientId => {
     const {
@@ -35,7 +36,8 @@ const InputWrapper = props => {
         clientId,
         panelList,
         type,
-        setAttributes
+        setAttributes,
+        elementRef
     } = props;
 
     const {
@@ -97,7 +99,7 @@ const InputWrapper = props => {
     const Required = required && <span className="required-badge">*</span>;
 
     return <>
-        <PanelController panelList={panelList} {...props} />
+        <BlockPanelController panelList={panelList} props={props} elementRef={elementRef}/>
         <div  {...blockProps}>
             {!validParent && <h1 className="input-warning">
                 {__('Please put input element inside Form Builder', 'gutenverse-form')}

@@ -45,12 +45,6 @@ export const inputPanel = props => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .gutenverse-inner-input label`,
-                    render: value => handleDimension(value, 'margin')
-                }
-            ]
         },
         {
             id: 'checkboxSize',
@@ -60,10 +54,24 @@ export const inputPanel = props => {
             min: 1,
             max: 200,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .gutenverse-inner-input label .check:before`,
-                    render: value => `font-size: ${value}px;`
+                    'type': 'plain',
+                    'id': 'checkboxSize',
+                    'selector': `.${elementId} .gutenverse-inner-input label .check:before`,
+                    'properties': [
+                        {
+                            'name': 'font-size',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+
+                            }
+                        }
+                    ],
                 }
             ]
         },
@@ -75,10 +83,24 @@ export const inputPanel = props => {
             min: 1,
             max: 200,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .gutenverse-inner-input label .check:before`,
-                    render: value => `margin-right: ${value}px;`
+                    'type': 'plain',
+                    'id': 'checkboxSpace',
+                    'selector': `.${elementId} .gutenverse-inner-input label .check:before`,
+                    'properties': [
+                        {
+                            'name': 'margin-right',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+
+                            }
+                        }
+                    ],
                 }
             ]
         },
@@ -86,10 +108,17 @@ export const inputPanel = props => {
             id: 'checkboxLabelColor',
             label: __('Checkbox Label Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .gutenverse-inner-input label`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'checkboxLabelColor',
+                    'selector': `.${elementId} .gutenverse-inner-input label`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -97,13 +126,6 @@ export const inputPanel = props => {
             id: 'checkboxTypography',
             label: __('Checkbox Label Typography', 'gutenverse-form'),
             component: TypographyControl,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper label .check`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
         },
         {
             id: '__itemState',
@@ -125,10 +147,17 @@ export const inputPanel = props => {
             show: !switcher.inputState || switcher.inputState === 'normal',
             label: __('Checkbox Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .gutenverse-inner-input label .check:before`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'checkboxColor',
+                    'selector': `.${elementId} .gutenverse-inner-input label .check:before`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -137,10 +166,17 @@ export const inputPanel = props => {
             show: switcher.inputState === 'active',
             label: __('Checkbox Active Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .gutenverse-inner-input label input:checked + .check:before`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'checkboxActiveColor',
+                    'selector': `.${elementId} .gutenverse-inner-input label input:checked + .check:before`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },

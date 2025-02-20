@@ -13,10 +13,18 @@ export const mainPanel = props => {
             label: __('Helper Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .input-helper`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'helperColor',
+                    'selector': `.${elementId} .input-helper`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -24,13 +32,6 @@ export const mainPanel = props => {
             id: 'helperTypography',
             label: __('Helper Typography', 'gutenverse-form'),
             component: TypographyControl,
-            style: [
-                {
-                    selector: `.${elementId} .input-helper`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
         },
         {
             id: 'helperPadding',
@@ -52,12 +53,6 @@ export const mainPanel = props => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .input-helper`,
-                    render: value => handleDimension(value, 'padding')
-                }
-            ]
         },
         {
             id: 'warningColor',
