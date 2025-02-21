@@ -4,7 +4,7 @@ import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenve
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import GutenverseInputDate from '../../../frontend/blocks/input-date';
-import { u } from'gutenverse-core/components';
+import { u } from 'gutenverse-core/components';
 import { useRef } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { IconLibrary } from 'gutenverse-core/controls';
@@ -12,17 +12,16 @@ import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
 import { gutenverseRoot } from 'gutenverse-core/helper';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputDateBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
         clientId,
         attributes,
-        setElementRef,
         setAttributes
     } = props;
 
@@ -44,17 +43,21 @@ const FormInputDateBlock = compose(
         icon,
         image,
         imageAlt,
-        lazyLoad
+        lazyLoad,
+        elementId
     } = attributes;
 
-    const dateRef = useRef();
+    const elementRef = useRef();
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;
 
     const inputData = {
         ...props,
         type: 'date',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
 
     const validation = {
@@ -67,10 +70,10 @@ const FormInputDateBlock = compose(
     };
 
     const imageLazyLoad = () => {
-        if(lazyLoad){
-            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy"/>;
-        }else{
-            return <img src={getImageSrc(image)} alt={imageAltText}/>;
+        if (lazyLoad) {
+            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy" />;
+        } else {
+            return <img src={getImageSrc(image)} alt={imageAltText} />;
         }
     };
     const iconContent = () => {
@@ -97,13 +100,6 @@ const FormInputDateBlock = compose(
         new GutenverseInputDate(root);
     }, [attributes]);
 
-    useEffect(() => {
-        if (dateRef.current) {
-            setElementRef(dateRef.current);
-        }
-    }, [dateRef]);
-
-
     let dateSetting = {
         dateFormat,
     };
@@ -114,35 +110,35 @@ const FormInputDateBlock = compose(
 
     return <>
         <InputWrapper {...inputData}>
-        {openIconLibrary && createPortal(
-            <IconLibrary
-                closeLibrary={() => setOpenIconLibrary(false)}
-                value={icon}
-                onChange={icon => setAttributes({ icon })}
-            />,
-            gutenverseRoot
-        )}
-        {useIcon ?
-            <div className="input-icon-wrapper input-date">
-                {iconContent()}
+            {openIconLibrary && createPortal(
+                <IconLibrary
+                    closeLibrary={() => setOpenIconLibrary(false)}
+                    value={icon}
+                    onChange={icon => setAttributes({ icon })}
+                />,
+                gutenverseRoot
+            )}
+            {useIcon ?
+                <div className="input-icon-wrapper input-date">
+                    {iconContent()}
+                    <input data-validation={JSON.stringify(validation)}
+                        data-date={JSON.stringify(dateSetting)}
+                        placeholder={inputPlaceholder}
+                        name={inputName}
+                        className="gutenverse-input gutenverse-input-date"
+                        type="text"
+                        ref={elementRef}
+                    />
+                </div>
+                :
                 <input data-validation={JSON.stringify(validation)}
                     data-date={JSON.stringify(dateSetting)}
                     placeholder={inputPlaceholder}
                     name={inputName}
                     className="gutenverse-input gutenverse-input-date"
                     type="text"
-                    ref={dateRef}
-                />
-            </div>
-            :
-            <input data-validation={JSON.stringify(validation)}
-                data-date={JSON.stringify(dateSetting)}
-                placeholder={inputPlaceholder}
-                name={inputName}
-                className="gutenverse-input gutenverse-input-date"
-                type="text"
-                ref={dateRef}
-            />}
+                    ref={elementRef}
+                />}
         </InputWrapper>
     </>;
 });
