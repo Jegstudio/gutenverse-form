@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { ColorControl, DimensionControl, RangeControl, SelectControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
+import { ColorControl, DimensionControl, RangeControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
 import { handleDimension, handleColor, handleTypography } from 'gutenverse-core/styling';
 
 export const inputPanel = props => {
@@ -29,12 +29,6 @@ export const inputPanel = props => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .gutenverse-inner-input .guten-gdpr-wrapper`,
-                    render: value => handleDimension(value, 'margin')
-                }
-            ]
         },
         {
             id: 'gdprSize',
@@ -44,10 +38,24 @@ export const inputPanel = props => {
             min: 1,
             max: 200,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .guten-gdpr-input-wrapper .check:before`,
-                    render: value => `font-size: ${value}px;`
+                    'type': 'plain',
+                    'id': 'gdprSize',
+                    'selector': `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .guten-gdpr-input-wrapper .check:before`,
+                    'properties': [
+                        {
+                            'name': 'font-size',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+
+                            }
+                        }
+                    ],
                 }
             ]
         },
@@ -59,10 +67,24 @@ export const inputPanel = props => {
             min: 1,
             max: 200,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .guten-gdpr-input-wrapper .check:before`,
-                    render: value => `margin-right: ${value}px;`
+                    'type': 'plain',
+                    'id': 'gdprSpace',
+                    'selector': `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .guten-gdpr-input-wrapper .check:before`,
+                    'properties': [
+                        {
+                            'name': 'margin-right',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+
+                            }
+                        }
+                    ],
                 }
             ]
         },
@@ -70,10 +92,17 @@ export const inputPanel = props => {
             id: 'gdprLabelColor',
             label: __('Checkbox Label Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .gdpr-label`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'gdprLabelColor',
+                    'selector': `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .gdpr-label`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -81,22 +110,22 @@ export const inputPanel = props => {
             id: 'gdprTypography',
             label: __('Checkbox Label Typography', 'gutenverse-form'),
             component: TypographyControl,
-            style: [
-                {
-                    selector: `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .gdpr-label`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
         },
         {
             id: 'gdprLinkColor',
             label: __('Checkbox Link Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .gdpr-label a`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'gdprLinkColor',
+                    'selector': `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .gdpr-label a`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -104,13 +133,6 @@ export const inputPanel = props => {
             id: 'gdprLinkTypography',
             label: __('Checkbox Link Typography', 'gutenverse-form'),
             component: TypographyControl,
-            style: [
-                {
-                    selector: `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .gdpr-label a`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
         },
         {
             id: '__itemState',
@@ -132,10 +154,17 @@ export const inputPanel = props => {
             show: !switcher.inputState || switcher.inputState === 'normal',
             label: __('Checkbox Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .guten-gdpr-input-wrapper .check:before`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'gdprColor',
+                    'selector': `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .guten-gdpr-input-wrapper .check:before`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -144,10 +173,17 @@ export const inputPanel = props => {
             show: switcher.inputState === 'active',
             label: __('Checkbox Active Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .guten-gdpr-input-wrapper input:checked + .check:before`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'gdprActiveColor',
+                    'selector': `.${elementId}.guten-form-input-gdpr .main-wrapper .gutenverse-inner-input .guten-gdpr-wrapper .guten-gdpr-input-wrapper input:checked + .check:before`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },

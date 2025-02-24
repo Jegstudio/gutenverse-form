@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { BorderControl, BorderResponsiveControl, BoxShadowControl, ColorControl, DimensionControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
-import { handleDimension, handleColor, handleTypography, handleBorderResponsive, handleBorder, allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
 import { getDeviceType } from 'gutenverse-core/editor-helper';
 
 export const inputPanel = props => {
@@ -212,7 +211,7 @@ export const inputPanel = props => {
             label: __('Input Color Focus', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
                     'type': 'color',
                     'id': 'inputColorFocus',
@@ -300,7 +299,7 @@ export const inputPanel = props => {
             show: switcher.inputAreaHover === 'hover',
             label: __('Hover Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
-            style: [
+            liveStylestyle: [
                 {
                     'type': 'boxShadow',
                     'id': 'inputAreaBoxShadowHover',

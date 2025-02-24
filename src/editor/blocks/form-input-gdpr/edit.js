@@ -9,9 +9,10 @@ import { useRef } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { RichTextComponent } from 'gutenverse-core/components';
 import { u } from 'gutenverse-core/components';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputGdprBlock = compose(
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
@@ -19,6 +20,7 @@ const FormInputGdprBlock = compose(
         attributes,
         setElementRef,
         setAttributes,
+        clientId
     } = props;
 
     const {
@@ -30,12 +32,15 @@ const FormInputGdprBlock = compose(
         elementId
     } = attributes;
 
-    const gdprRef = useRef();
+    const elementRef = useRef();
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
 
     const inputData = {
         ...props,
         type: 'gdpr',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
 
     const innerClass = classnames(
@@ -49,12 +54,6 @@ const FormInputGdprBlock = compose(
         validationWarning
     };
 
-    useEffect(() => {
-        if (gdprRef.current) {
-            setElementRef(gdprRef.current);
-        }
-    }, [gdprRef]);
-
     const handleOn = () => {
         const element = u(`.${elementId} .gutenverse-input-gdpr`);
         const elementStatus = element.is(':checked');
@@ -63,7 +62,7 @@ const FormInputGdprBlock = compose(
 
     return <>
         <InputWrapper {...inputData}>
-            <div className={innerClass} ref={gdprRef}>
+            <div className={innerClass} ref={elementRef}>
                 <div hidden
                     name={inputName}
                     className="gutenverse-input"

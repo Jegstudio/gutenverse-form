@@ -11,17 +11,17 @@ import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
 import { gutenverseRoot } from 'gutenverse-core/helper';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputEmailBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
         attributes,
-        setElementRef,
-        setAttributes
+        setAttributes,
+        clientId
     } = props;
 
     const {
@@ -38,17 +38,21 @@ const FormInputEmailBlock = compose(
         icon,
         image,
         imageAlt,
-        lazyLoad
+        lazyLoad,
+        elementId
     } = attributes;
 
-    const emailRef = useRef();
+    const elementRef = useRef();
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;
 
     const inputData = {
         ...props,
         type: 'email',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
 
     const validation = {
@@ -61,10 +65,10 @@ const FormInputEmailBlock = compose(
     };
 
     const imageLazyLoad = () => {
-        if(lazyLoad){
-            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy"/>;
-        }else{
-            return <img src={getImageSrc(image)} alt={imageAltText}/>;
+        if (lazyLoad) {
+            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy" />;
+        } else {
+            return <img src={getImageSrc(image)} alt={imageAltText} />;
         }
     };
     const iconContent = () => {
@@ -86,42 +90,36 @@ const FormInputEmailBlock = compose(
         }
     };
 
-    useEffect(() => {
-        if (emailRef.current) {
-            setElementRef(emailRef.current);
-        }
-    }, [emailRef]);
-
 
     return <>
         <InputWrapper {...inputData}>
-        {openIconLibrary && createPortal(
-            <IconLibrary
-                closeLibrary={() => setOpenIconLibrary(false)}
-                value={icon}
-                onChange={icon => setAttributes({ icon })}
-            />,
-            gutenverseRoot
-        )}
-        {useIcon ?
-            <div className="input-icon-wrapper input-email">
-                {iconContent()}
+            {openIconLibrary && createPortal(
+                <IconLibrary
+                    closeLibrary={() => setOpenIconLibrary(false)}
+                    value={icon}
+                    onChange={icon => setAttributes({ icon })}
+                />,
+                gutenverseRoot
+            )}
+            {useIcon ?
+                <div className="input-icon-wrapper input-email">
+                    {iconContent()}
+                    <input data-validation={JSON.stringify(validation)}
+                        placeholder={inputPlaceholder}
+                        name={inputName}
+                        className="gutenverse-input gutenverse-input-email"
+                        type="text"
+                        ref={elementRef}
+                    />
+                </div>
+                :
                 <input data-validation={JSON.stringify(validation)}
                     placeholder={inputPlaceholder}
                     name={inputName}
                     className="gutenverse-input gutenverse-input-email"
                     type="text"
-                    ref={emailRef}
-                />
-            </div>
-            :
-            <input data-validation={JSON.stringify(validation)}
-                placeholder={inputPlaceholder}
-                name={inputName}
-                className="gutenverse-input gutenverse-input-email"
-                type="text"
-                ref={emailRef}
-            />}
+                    ref={elementRef}
+                />}
         </InputWrapper>
     </>;
 });
