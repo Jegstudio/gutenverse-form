@@ -12,10 +12,17 @@ export const selectedPanel = props => {
             id: 'selectedColor',
             label: __('Selected Text Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices .choices__list--multiple .choices__item.choices__item--selectable`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'selectedColor',
+                    'selector': `.${elementId} .choices .choices__list--multiple .choices__item.choices__item--selectable`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -23,10 +30,17 @@ export const selectedPanel = props => {
             id: 'selectedBgColor',
             label: __('Selected Background Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices .choices__list--multiple .choices__item.choices__item--selectable`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'selectedBgColor',
+                    'selector': `.${elementId} .choices .choices__list--multiple .choices__item.choices__item--selectable`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -34,14 +48,28 @@ export const selectedPanel = props => {
             id: 'selectedBorderColor',
             label: __('Selected Border Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices .choices__list--multiple .choices__item.choices__item--selectable`,
-                    render: value => handleColor(value, 'border-color')
+                    'type': 'color',
+                    'id': 'selectedBorderColor',
+                    'selector': `.${elementId} .choices .choices__list--multiple .choices__item.choices__item--selectable`,
+                    'properties': [
+                        {
+                            'name': 'border-color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 },
                 {
-                    selector: `.${elementId} .choices .choices__list--multiple .choices__button`,
-                    render: value => handleColor(value, 'border-left-color')
+                    'type': 'color',
+                    'id': 'selectedBorderColor',
+                    'selector': `.${elementId} .choices .choices__list--multiple .choices__button`,
+                    'properties': [
+                        {
+                            'name': 'border-left-color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -65,12 +93,6 @@ export const selectedPanel = props => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .choices .choices__list--multiple .choices__item.choices__item--selectable`,
-                    render: value => handleDimension(value, 'border-radius', false)
-                }
-            ]
         },
     ];
 };
