@@ -1,10 +1,9 @@
 import { compose } from '@wordpress/compose';
 
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
-import { useEffect } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { IconLibrary } from 'gutenverse-core/controls';
 import { useState } from '@wordpress/element';
@@ -20,7 +19,6 @@ const FormInputTextareaBlock = compose(
 )(props => {
     const {
         attributes,
-        setElementRef,
         setAttributes,
         clientId
     } = props;

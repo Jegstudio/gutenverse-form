@@ -1,4 +1,3 @@
-import { PanelController } from 'gutenverse-core/controls';
 import classnames from 'classnames';
 import { useEffect, useState } from '@wordpress/element';
 import { useBlockProps } from '@wordpress/block-editor';
@@ -99,7 +98,8 @@ const InputWrapper = props => {
     const Required = required && <span className="required-badge">*</span>;
 
     return <>
-        <BlockPanelController panelList={panelList} props={props} elementRef={elementRef}/>
+        <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
+
         <div  {...blockProps}>
             {!validParent && <h1 className="input-warning">
                 {__('Please put input element inside Form Builder', 'gutenverse-form')}

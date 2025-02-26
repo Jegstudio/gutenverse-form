@@ -139,6 +139,7 @@ export const inputPanel = props => {
                 {
                     'type': 'color',
                     'id': 'inputColorNormal',
+                    'responsive' : true,
                     'selector': `.${elementId} .gutenverse-input`,
                     'properties': [
                         {
@@ -159,6 +160,7 @@ export const inputPanel = props => {
                 {
                     'type': 'color',
                     'id': 'inputBgColorNormal',
+                    'responsive' : true,
                     'selector': `.${elementId} .gutenverse-input, .${elementId} .main-wrapper .input-icon-wrapper`,
                     'properties': [
                         {

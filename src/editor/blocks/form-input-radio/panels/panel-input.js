@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { ColorControl, DimensionControl, RangeControl, SelectControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
-import { handleDimension, handleColor, handleTypography } from 'gutenverse-core/styling';
 
 export const inputPanel = props => {
     const {
@@ -45,12 +44,6 @@ export const inputPanel = props => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .gutenverse-inner-input label`,
-                    render: value => handleDimension(value, 'margin')
-                }
-            ]
         },
         {
             id: 'radioSize',
@@ -60,10 +53,23 @@ export const inputPanel = props => {
             min: 1,
             max: 200,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .gutenverse-inner-input label .radio:before`,
-                    render: value => `font-size: ${value}px;`
+                    'type': 'plain',
+                    'id': 'radioSize',
+                    'properties': [
+                        {
+                            'name': 'font-size',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct'
+                                }
+                            }
+                        }
+                    ],
+                    'selector': `.${elementId} .gutenverse-inner-input label .radio:before`,
                 }
             ]
         },
@@ -75,10 +81,23 @@ export const inputPanel = props => {
             min: 1,
             max: 200,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .gutenverse-inner-input label .radio:before`,
-                    render: value => `margin-right: ${value}px;`
+                    'type': 'plain',
+                    'id': 'radioSpace',
+                    'properties': [
+                        {
+                            'name': 'margin-right',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct'
+                                }
+                            }
+                        }
+                    ],
+                    'selector': `.${elementId} .gutenverse-inner-input label .radio:before`,
                 }
             ]
         },
@@ -86,10 +105,17 @@ export const inputPanel = props => {
             id: 'radioLabelColor',
             label: __('Radio Label Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .gutenverse-inner-input label`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'radioLabelColor',
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct',
+                        }
+                    ],
+                    'selector': `.${elementId} .gutenverse-inner-input label`,
                 }
             ]
         },
@@ -97,13 +123,6 @@ export const inputPanel = props => {
             id: 'radioTypography',
             label: __('Radio Typography', 'gutenverse-form'),
             component: TypographyControl,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper label .radio`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
         },
         {
             id: '__itemState',
@@ -125,10 +144,17 @@ export const inputPanel = props => {
             show: !switcher.inputState || switcher.inputState === 'normal',
             label: __('Radio Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .gutenverse-inner-input label .radio:before`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'radioColor',
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct',
+                        }
+                    ],
+                    'selector': `.${elementId} .gutenverse-inner-input label .radio:before`,
                 }
             ]
         },
@@ -137,10 +163,17 @@ export const inputPanel = props => {
             show: switcher.inputState === 'active',
             label: __('Radio Active Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .gutenverse-inner-input label input:checked + .radio:before`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'radioActiveColor',
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct',
+                        }
+                    ],
+                    'selector': `.${elementId} .gutenverse-inner-input label input:checked + .radio:before`,
                 }
             ]
         },

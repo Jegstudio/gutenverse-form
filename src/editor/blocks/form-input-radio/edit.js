@@ -1,22 +1,21 @@
 import { compose } from '@wordpress/compose';
 
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import classnames from 'classnames';
 import { useRef } from '@wordpress/element';
-import { useEffect } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputRadioBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
         attributes,
-        setElementRef
+        clientId
     } = props;
 
     const {
@@ -24,15 +23,20 @@ const FormInputRadioBlock = compose(
         required,
         validationWarning,
         radioOptions,
-        displayBlock
+        displayBlock,
+        elementId
     } = attributes;
 
-    const radioRef = useRef();
+    const elementRef = useRef();
+
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
 
     const inputData = {
         ...props,
         type: 'radio',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
 
     const innerClass = classnames(
@@ -46,16 +50,11 @@ const FormInputRadioBlock = compose(
         validationWarning
     };
 
-    useEffect(() => {
-        if (radioRef.current) {
-            setElementRef(radioRef.current);
-        }
-    }, [radioRef]);
-
     return <>
         <InputWrapper {...inputData}>
-            <div className={innerClass} ref={radioRef}>
+            <div className={innerClass}>
                 <div hidden
+                    ref={elementRef}
                     name={inputName}
                     className="gutenverse-input"
                     data-validation={JSON.stringify(validation)}
