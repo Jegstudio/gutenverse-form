@@ -11,10 +11,10 @@ import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
 import { gutenverseRoot } from 'gutenverse-core/helper';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputTextareaBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
@@ -22,6 +22,7 @@ const FormInputTextareaBlock = compose(
         attributes,
         setElementRef,
         setAttributes,
+        clientId
     } = props;
 
     const {
@@ -38,17 +39,21 @@ const FormInputTextareaBlock = compose(
         icon,
         image,
         imageAlt,
-        lazyLoad
+        lazyLoad,
+        elementId
     } = attributes;
 
-    const textareaRef = useRef();
+    const elementRef = useRef();
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;
 
     const inputData = {
         ...props,
         type: 'textarea',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
 
     const validation = {
@@ -61,10 +66,10 @@ const FormInputTextareaBlock = compose(
     };
 
     const imageLazyLoad = () => {
-        if(lazyLoad){
-            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy"/>;
-        }else{
-            return <img src={getImageSrc(image)} alt={imageAltText}/>;
+        if (lazyLoad) {
+            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy" />;
+        } else {
+            return <img src={getImageSrc(image)} alt={imageAltText} />;
         }
     };
     const iconContent = () => {
@@ -86,16 +91,9 @@ const FormInputTextareaBlock = compose(
         }
     };
 
-    useEffect(() => {
-        if (textareaRef.current) {
-            setElementRef(textareaRef.current);
-        }
-    }, [textareaRef]);
-
-
     return <>
         <InputWrapper {...inputData}>
-        {openIconLibrary && createPortal(
+            {openIconLibrary && createPortal(
                 <IconLibrary
                     closeLibrary={() => setOpenIconLibrary(false)}
                     value={icon}
@@ -110,7 +108,7 @@ const FormInputTextareaBlock = compose(
                         placeholder={inputPlaceholder}
                         name={inputName}
                         className="gutenverse-input gutenverse-input-textarea"
-                        ref={textareaRef}
+                        ref={elementRef}
                     />
                 </div>
                 :
@@ -118,7 +116,7 @@ const FormInputTextareaBlock = compose(
                     placeholder={inputPlaceholder}
                     name={inputName}
                     className="gutenverse-input gutenverse-input-textarea"
-                    ref={textareaRef}
+                    ref={elementRef}
                 />}
         </InputWrapper>
     </>;

@@ -1,8 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BackgroundControl, BorderResponsiveControl, BoxShadowControl, ColorControl, DimensionControl, RangeControl, SelectControl, SwitchControl, GradientControl } from 'gutenverse-core/controls';
-import { getDeviceType } from 'gutenverse-core/editor-helper';
-import { handleColor, handleDimension, handleBorderResponsive, elementVar, normalAppender, allowRenderBoxShadow } from 'gutenverse-core/styling';
-import { handleBoxShadow } from 'gutenverse-core/styling';
+import { BackgroundControl, BorderResponsiveControl, BoxShadowControl, ColorControl, DimensionControl, RangeControl, SelectControl, SwitchControl } from 'gutenverse-core/controls';
 
 export const panelIconStyle = (props) => {
     const {
@@ -10,41 +7,8 @@ export const panelIconStyle = (props) => {
         switcher,
         setSwitcher,
         iconStyleMode,
-        iconColorGradient,
-        iconColorGradientHover,
         iconType
     } = props;
-
-    /**
-     * This is custom to prevent older saved values causing errors because BackgroundControl is used instead of GradientControl
-     */
-    const customHandleBackground = (background) => {
-        const elementStyle = elementVar();
-        const {
-            gradientColor,
-            gradientType = 'linear',
-            gradientAngle = 180,
-            gradientRadial = 'center center'
-        } = background;
-
-        if (gradientColor !== undefined) {
-            const colors = gradientColor.map(gradient => `${gradient.color} ${gradient.offset * 100}%`);
-
-            if (gradientType === 'radial') {
-                normalAppender({
-                    style: `background-image: radial-gradient(at ${gradientRadial}, ${colors.join(',')});`,
-                    elementStyle
-                });
-            } else {
-                normalAppender({
-                    style: `background-image: linear-gradient(${gradientAngle}deg, ${colors.join(',')});`,
-                    elementStyle
-                });
-            }
-        }
-
-        return elementStyle;
-    };
 
     return [
         {
@@ -67,12 +31,6 @@ export const panelIconStyle = (props) => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
-                    render: value => handleDimension(value, 'padding')
-                }
-            ],
         },
         {
             id: 'iconMargin',
@@ -94,12 +52,6 @@ export const panelIconStyle = (props) => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
-                    render: value => handleDimension(value, 'margin')
-                }
-            ],
         },
         {
             id: 'iconRotate',
@@ -109,10 +61,25 @@ export const panelIconStyle = (props) => {
             min: 1,
             max: 360,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
-                    render: value => `transform: rotate(${value}deg);`
+                    'type': 'plain',
+                    'id': 'iconRotate',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+                    'properties': [
+                        {
+                            'name': 'transform',
+                            'valueType': 'pattern',
+                            'pattern': 'rotate({value}deg)',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+
+                            }
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -155,10 +122,18 @@ export const panelIconStyle = (props) => {
             show: (!switcher.icon || switcher.icon === 'normal') && (!iconStyleMode || iconStyleMode === 'color'),
             label: __('Normal Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon i`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'iconColor',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon i`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -167,10 +142,18 @@ export const panelIconStyle = (props) => {
             show: (!switcher.icon || switcher.icon === 'normal') && (!iconStyleMode || iconStyleMode === 'color'),
             label: __('Normal Background Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'iconBgColor',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -180,11 +163,18 @@ export const panelIconStyle = (props) => {
             type: __('Icon Color Gradient', 'gutenverse-form'),
             component: BackgroundControl,
             options: ['gradient'],
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon.style-gradient i`,
-                    hasChild: true,
-                    render: value => customHandleBackground(value)
+                    'type': 'plain',
+                    'id': 'iconColorGradient',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient i`,
+                    'properties': [
+                        {
+                            'name': 'background-image',
+                            'valueType': 'function',
+                            'funtionName': 'customHandleBackground'
+                        }
+                    ],
                 }
             ]
         },
@@ -194,11 +184,18 @@ export const panelIconStyle = (props) => {
             type: __('Icon Background Gradient', 'gutenverse-form'),
             component: BackgroundControl,
             options: ['gradient'],
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon.style-gradient`,
-                    hasChild: true,
-                    render: value => customHandleBackground(value)
+                    'type': 'plain',
+                    'id': 'iconBackground',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient`,
+                    'properties': [
+                        {
+                            'name': 'background-image',
+                            'valueType': 'function',
+                            'funtionName': 'customHandleBackground'
+                        }
+                    ],
                 }
             ]
         },
@@ -208,35 +205,29 @@ export const panelIconStyle = (props) => {
             label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
-                    render: value => handleBorderResponsive(value)
-                }
-            ]
         },
         {
             id: 'iconBoxShadow',
             show: !switcher.icon || switcher.icon === 'normal',
             label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
-                }
-            ]
         },
         {
             id: 'iconHoverColor',
             show: switcher.icon === 'hover' && (!iconStyleMode || iconStyleMode === 'color'),
             label: __('Hover Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon i`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'iconHoverColor',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon i`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -245,10 +236,17 @@ export const panelIconStyle = (props) => {
             show: switcher.icon === 'hover' && (!iconStyleMode || iconStyleMode === 'color'),
             label: __('Hover Background Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'iconHoverBgColor',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -258,11 +256,18 @@ export const panelIconStyle = (props) => {
             type: __('Icon Color Gradient', 'gutenverse-form'),
             component: BackgroundControl,
             options: ['gradient'],
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon.style-gradient i`,
-                    hasChild: true,
-                    render: value => iconColorGradientHover ? customHandleBackground(value) : customHandleBackground(iconColorGradient)
+                    'type': 'plain',
+                    'id': 'iconColorGradientHover',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient i`,
+                    'properties': [
+                        {
+                            'name': 'background-image',
+                            'valueType': 'function',
+                            'funtionName': 'customHandleBackground'
+                        }
+                    ],
                 }
             ]
         },
@@ -272,11 +277,18 @@ export const panelIconStyle = (props) => {
             component: BackgroundControl,
             type: __('Icon Background Gradient', 'gutenverse-form'),
             options: ['gradient'],
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon.style-gradient`,
-                    hasChild: true,
-                    render: value => customHandleBackground(value)
+                    'type': 'plain',
+                    'id': 'iconBackgroundHover',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient`,
+                    'properties': [
+                        {
+                            'name': 'background-image',
+                            'valueType': 'function',
+                            'funtionName': 'customHandleBackground'
+                        }
+                    ],
                 }
             ]
         },
@@ -286,23 +298,23 @@ export const panelIconStyle = (props) => {
             label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon`,
-                    render: value => handleBorderResponsive(value)
-                },
-            ]
         },
         {
             id: 'iconBoxShadowHover',
             show: switcher.icon === 'hover',
             label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
+                    'type': 'boxShadow',
+                    'id': 'iconBoxShadowHover',
+                    'properties': [
+                        {
+                            'name': 'box-shadow',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon`,
                 }
             ]
         },
@@ -311,10 +323,17 @@ export const panelIconStyle = (props) => {
             show: switcher.icon === 'focus' && (!iconStyleMode || iconStyleMode === 'color'),
             label: __('Focus Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon i`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'iconFocusColor',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon i`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -323,10 +342,17 @@ export const panelIconStyle = (props) => {
             show: switcher.icon === 'focus' && (!iconStyleMode || iconStyleMode === 'color'),
             label: __('Focus Background Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'iconFocusBgColor',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
             ]
         },
@@ -336,11 +362,18 @@ export const panelIconStyle = (props) => {
             type: __('Icon Color Gradient', 'gutenverse-form'),
             component: BackgroundControl,
             options: ['gradient'],
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon.style-gradient i`,
-                    hasChild: true,
-                    render: value => iconColorGradientHover ? customHandleBackground(value) : customHandleBackground(iconColorGradient)
+                    'type': 'plain',
+                    'id': 'iconColorGradientFocus',
+                    'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i`,
+                    'properties': [
+                        {
+                            'name': 'background-image',
+                            'valueType': 'function',
+                            'funtionName': 'customHandleBackground'
+                        }
+                    ],
                 }
             ]
         },
@@ -350,11 +383,18 @@ export const panelIconStyle = (props) => {
             component: BackgroundControl,
             type: __('Icon Background Gradient', 'gutenverse-form'),
             options: ['gradient'],
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon.style-gradient`,
-                    hasChild: true,
-                    render: value => customHandleBackground(value)
+                    'type': 'plain',
+                    'id': 'iconBackgroundFocus',
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient`,
+                    'properties': [
+                        {
+                            'name': 'background-image',
+                            'valueType': 'function',
+                            'funtionName': 'customHandleBackground'
+                        }
+                    ],
                 }
             ]
         },
@@ -364,25 +404,12 @@ export const panelIconStyle = (props) => {
             label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon`,
-                    render: value => handleBorderResponsive(value)
-                },
-            ]
         },
         {
             id: 'iconBoxShadowFocus',
             show: switcher.icon === 'focus',
             label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
-                }
-            ]
         }
     ];
 };

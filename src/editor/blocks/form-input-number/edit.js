@@ -11,10 +11,10 @@ import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
 import { gutenverseRoot } from 'gutenverse-core/helper';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputNumberBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
@@ -22,6 +22,7 @@ const FormInputNumberBlock = compose(
         attributes,
         setElementRef,
         setAttributes,
+        clientId
     } = props;
 
     const {
@@ -41,17 +42,21 @@ const FormInputNumberBlock = compose(
         icon,
         image,
         imageAlt,
-        lazyLoad
+        lazyLoad,
+        elementId
     } = attributes;
 
-    const numberRef = useRef();
+    const elementRef = useRef();
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;
 
     const inputData = {
         ...props,
         type: 'number',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
 
     const validation = {
@@ -64,10 +69,10 @@ const FormInputNumberBlock = compose(
     };
 
     const imageLazyLoad = () => {
-        if(lazyLoad){
-            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy"/>;
-        }else{
-            return <img src={getImageSrc(image)} alt={imageAltText}/>;
+        if (lazyLoad) {
+            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy" />;
+        } else {
+            return <img src={getImageSrc(image)} alt={imageAltText} />;
         }
     };
     const iconContent = () => {
@@ -89,15 +94,9 @@ const FormInputNumberBlock = compose(
         }
     };
 
-    useEffect(() => {
-        if (numberRef.current) {
-            setElementRef(numberRef.current);
-        }
-    }, [numberRef]);
-
     return <>
         <InputWrapper {...inputData}>
-        {openIconLibrary && createPortal(
+            {openIconLibrary && createPortal(
                 <IconLibrary
                     closeLibrary={() => setOpenIconLibrary(false)}
                     value={icon}
@@ -116,7 +115,7 @@ const FormInputNumberBlock = compose(
                         min={inputMin}
                         max={inputMax}
                         step={inputStep}
-                        ref={numberRef}
+                        ref={elementRef}
                     />
                 </div>
                 :
@@ -128,7 +127,7 @@ const FormInputNumberBlock = compose(
                     min={inputMin}
                     max={inputMax}
                     step={inputStep}
-                    ref={numberRef}
+                    ref={elementRef}
                 />}
         </InputWrapper>
     </>;

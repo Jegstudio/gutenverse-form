@@ -13,10 +13,10 @@ import classnames from 'classnames';
 import { gutenverseRoot } from 'gutenverse-core/helper';
 import { createPortal } from 'react-dom';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputTextBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
@@ -24,6 +24,7 @@ const FormInputTextBlock = compose(
         attributes,
         setElementRef,
         setAttributes,
+        clientId
     } = props;
 
     const {
@@ -41,17 +42,21 @@ const FormInputTextBlock = compose(
         imageAlt,
         iconStyleMode,
         useIcon,
+        elementId
     } = attributes;
 
     const animationClass = useAnimationEditor(attributes);
-    const textFieldRef = useRef();
+    const elementRef = useRef();
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;
 
     const inputData = {
         ...props,
         type: 'text',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
 
     const validation = {
@@ -88,11 +93,6 @@ const FormInputTextBlock = compose(
                 return null;
         }
     };
-    useEffect(() => {
-        if (textFieldRef.current) {
-            setElementRef(textFieldRef.current);
-        }
-    }, [textFieldRef]);
 
     return <>
         <InputWrapper {...inputData}>
@@ -116,7 +116,7 @@ const FormInputTextBlock = compose(
                             animationClass
                         )}
                         type="text"
-                        ref={textFieldRef}
+                        ref={elementRef}
                     />
                 </div>
                 :
@@ -129,7 +129,7 @@ const FormInputTextBlock = compose(
                         animationClass
                     )}
                     type="text"
-                    ref={textFieldRef}
+                    ref={elementRef}
                 />}
         </InputWrapper>
     </>;

@@ -11,10 +11,10 @@ import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
 import { gutenverseRoot } from 'gutenverse-core/helper';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputNumberTelp = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
@@ -22,6 +22,7 @@ const FormInputNumberTelp = compose(
         attributes,
         setElementRef,
         setAttributes,
+        clientId
     } = props;
 
     const {
@@ -39,17 +40,21 @@ const FormInputNumberTelp = compose(
         icon,
         image,
         imageAlt,
-        lazyLoad
+        lazyLoad,
+        elementId
     } = attributes;
 
-    const telpRef = useRef();
+    const elementRef = useRef();
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;
 
     const inputData = {
         ...props,
         type: 'telp',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
 
     const validation = {
@@ -87,12 +92,6 @@ const FormInputNumberTelp = compose(
         }
     };
 
-    useEffect(() => {
-        if (telpRef.current) {
-            setElementRef(telpRef.current);
-        }
-    }, [telpRef]);
-
     return <>
         <InputWrapper {...inputData}>
             {openIconLibrary && createPortal(
@@ -112,7 +111,7 @@ const FormInputNumberTelp = compose(
                         className="gutenverse-input gutenverse-input-telp"
                         type="tel"
                         pattern={inputPattern}
-                        ref={telpRef}
+                        ref={elementRef}
                     />
                 </div>
                 :
@@ -122,7 +121,7 @@ const FormInputNumberTelp = compose(
                 className="gutenverse-input gutenverse-input-telp"
                 type="tel"
                 pattern={inputPattern}
-                ref={telpRef}
+                ref={elementRef}
             />}
         </InputWrapper>
     </>;

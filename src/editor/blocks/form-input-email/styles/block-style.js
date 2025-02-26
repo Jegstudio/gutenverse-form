@@ -329,7 +329,7 @@ const getBlockStyle = (elementId, attributes) => {
         'selector': `.${elementId} .gutenverse-input, .${elementId} .main-wrapper .input-icon-wrapper`,
         'properties': [
             {
-                'name': 'color',
+                'name': 'background-color',
                 'valueType': 'direct'
             }
         ],

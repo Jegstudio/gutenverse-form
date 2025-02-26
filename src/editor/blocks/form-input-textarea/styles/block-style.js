@@ -4,6 +4,25 @@ const getBlockStyle = (elementId, attributes) => {
     let data = [];
 
     /* Panel Icon Style */
+    isNotEmpty(attributes['inputHeight']) && data.push({
+        'type': 'plain',
+        'id': 'inputHeight',
+        'selector': `.${elementId} .gutenverse-input`,
+        'properties': [
+            {
+                'name': 'height',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    },
+
+                }
+            }
+        ],
+        'responsive': true,
+    });
     isNotEmpty(attributes['iconPadding']) && data.push({
         'type': 'dimension',
         'id': 'iconPadding',
