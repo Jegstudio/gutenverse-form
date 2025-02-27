@@ -3,98 +3,186 @@ import { isNotEmpty } from 'gutenverse-core/helper';
 const getBlockStyle = (elementId, attributes) => {
     let data = [];
 
-    isNotEmpty(attributes['labelSpace']) && data.push({
-        'type': 'dimension',
-        'id': 'labelSpace',
+    /* Input Panel */
+    isNotEmpty(attributes['switcherWidth']) && data.push({
+        'type': 'plain',
+        'id': 'switcherWidth',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
         'properties': [
             {
-                'name': 'margin',
+                'name': 'width',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    },
+
+                }
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['switcherWidth']) && isNotEmpty(attributes['switcherHeight']) && data.push({
+        'type': 'plain',
+        'id': 'switcherWidth',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after`,
+        'otherAttribute' : {
+            'height' : attributes['switcherHeight'],
+            'width' : attributes['switcherWidth']
+        },
+        'properties': [
+            {
+                'name': 'transform',
+                'valueType': 'function',
+                'functionName': 'switcherWidthHeight'
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['switcherHeight']) && data.push({
+        'type': 'plain',
+        'id': 'switcherHeight',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
+        'properties': [
+            {
+                'name': 'height',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    },
+
+                }
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['switcherHeight']) && data.push({
+        'type': 'plain',
+        'id': 'switcherHeight',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after`,
+        'properties': [
+            {
+                'name': 'height',
+                'valueType': 'pattern',
+                'pattern': 'calc({value}px - 4px)',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    },
+
+                }
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['switcherHeight']) && data.push({
+        'type': 'plain',
+        'id': 'switcherHeight',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after`,
+        'properties': [
+            {
+                'name': 'width',
+                'valueType': 'pattern',
+                'pattern': 'calc({value}px - 4px)',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    },
+
+                }
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['switchTypography']) && data.push({
+        'type': 'typography',
+        'id': 'switchTypography',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::before`,
+    });
+
+    isNotEmpty(attributes['switchTypography']) && data.push({
+        'type': 'typography',
+        'id': 'switchTypography',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::before`,
+    });
+
+    isNotEmpty(attributes['offBackground']) && data.push({
+        'type': 'color',
+        'id': 'offBackground',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
+        'properties': [
+            {
+                'name': 'background-color',
                 'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .gutenverse-inner-input label`,
     });
 
-    isNotEmpty(attributes['radioSize']) && data.push({
-        'type': 'plain',
-        'id': 'radioSize',
-        'properties': [
-            {
-                'name': 'font-size',
-                'valueType': 'pattern',
-                'pattern' : '{value}px',
-                'patternValues' : {
-                    'value' : {
-                        'type' : 'direct'
-                    }
-                }
-            }
-        ],
-        'selector': `.${elementId} .gutenverse-inner-input label .radio:before`,
-    });
-
-    isNotEmpty(attributes['radioSpace']) && data.push({
-        'type': 'plain',
-        'id': 'radioSpace',
-        'properties': [
-            {
-                'name': 'margin-right',
-                'valueType': 'pattern',
-                'pattern' : '{value}px',
-                'patternValues' : {
-                    'value' : {
-                        'type' : 'direct'
-                    }
-                }
-            }
-        ],
-        'selector': `.${elementId} .gutenverse-inner-input label .radio:before`,
-    });
-
-    isNotEmpty(attributes['radioLabelColor']) && data.push({
+    isNotEmpty(attributes['offButton']) && data.push({
         'type': 'color',
-        'id': 'radioLabelColor',
+        'id': 'offButton',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after`,
+        'properties': [
+            {
+                'name': 'background-color',
+                'valueType': 'direct'
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['offTextColor']) && data.push({
+        'type': 'color',
+        'id': 'offTextColor',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
         'properties': [
             {
                 'name': 'color',
-                'valueType': 'direct',
+                'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .gutenverse-inner-input label`,
     });
 
-    isNotEmpty(attributes['radioTypography']) && data.push({
-        'type': 'typography',
-        'id': 'radioTypography',
-        'selector': `.${elementId} .main-wrapper label .radio`,
-    });
-
-    isNotEmpty(attributes['radioColor']) && data.push({
+    isNotEmpty(attributes['onBackground']) && data.push({
         'type': 'color',
-        'id': 'radioColor',
+        'id': 'onBackground',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch`,
+        'properties': [
+            {
+                'name': 'background-color',
+                'valueType': 'direct'
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['onButton']) && data.push({
+        'type': 'color',
+        'id': 'onButton',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after`,
+        'properties': [
+            {
+                'name': 'background-color',
+                'valueType': 'direct'
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['onTextColor']) && data.push({
+        'type': 'color',
+        'id': 'onTextColor',
+        'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::before`,
         'properties': [
             {
                 'name': 'color',
-                'valueType': 'direct',
+                'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .gutenverse-inner-input label .radio:before`,
     });
 
-    isNotEmpty(attributes['radioActiveColor']) && data.push({
-        'type': 'color',
-        'id': 'radioActiveColor',
-        'properties': [
-            {
-                'name': 'color',
-                'valueType': 'direct',
-            }
-        ],
-        'selector': `.${elementId} .gutenverse-inner-input label input:checked + .radio:before`,
-    });
-
-     /* Label Panel */
-     isNotEmpty(attributes['labelWidth']) && data.push({
+    /* Label Panel */
+    isNotEmpty(attributes['labelWidth']) && data.push({
         'type': 'plain',
         'id': 'labelWidth',
         'selector': `.${elementId} .label-wrapper`,
@@ -240,6 +328,7 @@ const getBlockStyle = (elementId, attributes) => {
             }
         ],
     });
+
     /* Panel List */
     isNotEmpty(attributes['background']) && data.push({
         'type': 'background',

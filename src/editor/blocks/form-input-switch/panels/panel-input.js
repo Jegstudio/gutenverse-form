@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { ColorControl, RangeControl, TextControl, TypographyControl } from 'gutenverse-core/controls';
-import { handleColor, handleTypography } from 'gutenverse-core/styling';
 
 export const inputPanel = props => {
     const {
@@ -28,18 +27,41 @@ export const inputPanel = props => {
             min: 1,
             max: 200,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
-                    render: value => `width: ${value}px;`
+                    'type': 'plain',
+                    'id': 'switcherWidth',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
+                    'properties': [
+                        {
+                            'name': 'width',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+
+                            }
+                        }
+                    ],
                 },
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after`,
-                    render: value => {
-                        const result = parseInt(value) - parseInt(switcherHeight) + 1 ;
-                        return `transform: translate3d(${result}px, -50%, 0);`;
-                    }
-                },
+                    'type': 'plain',
+                    'id': 'switcherWidth',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after`,
+                    'otherAttribute': {
+                        'height': switcherHeight,
+                        'width': switcherWidth
+                    },
+                    'properties': [
+                        {
+                            'name': 'transform',
+                            'valueType': 'function',
+                            'functionName': 'switcherWidthHeight'
+                        }
+                    ],
+                }
             ]
         },
         {
@@ -50,113 +72,191 @@ export const inputPanel = props => {
             min: 1,
             max: 200,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
-                    render: value => `height: ${value}px;`
+                    'type': 'plain',
+                    'id': 'switcherHeight',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after`,
+                    'properties': [
+                        {
+                            'name': 'width',
+                            'valueType': 'pattern',
+                            'pattern': 'calc({value}px - 4px)',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+
+                            }
+                        }
+                    ],
                 },
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after`,
-                    render: value => `height: ${value - 4}px;`
+                    'type': 'plain',
+                    'id': 'switcherHeight',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after`,
+                    'properties': [
+                        {
+                            'name': 'height',
+                            'valueType': 'pattern',
+                            'pattern': 'calc({value}px - 4px)',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+
+                            }
+                        }
+                    ],
                 },
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after`,
-                    render: value => `width: ${value - 4}px;`
+                    'type': 'plain',
+                    'id': 'switcherHeight',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
+                    'properties': [
+                        {
+                            'name': 'height',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+
+                            }
+                        }
+                    ],
                 },
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after`,
-                    updateID: 'switcherWidth-style-1',
-                    render: value => {
-                        const result = parseInt(switcherWidth) - parseInt(value);
-                        return `transform: translate3d(${result}px, -50%, 0);`;
-                    }
-                },
+                    'type': 'plain',
+                    'id': 'switcherWidth',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after`,
+                    'otherAttribute': {
+                        'height': switcherHeight,
+                        'width': switcherWidth
+                    },
+                    'properties': [
+                        {
+                            'name': 'transform',
+                            'valueType': 'function',
+                            'functionName': 'switcherWidthHeight'
+                        }
+                    ],
+                }
             ]
         },
         {
             id: 'switchTypography',
             label: __('Input Typography', 'gutenverse-form'),
             component: TypographyControl,
-            style: [
-                {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::before`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                },
-                {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::before`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
         },
-
-
         {
             id: 'offBackground',
             label: __('Off Background Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'offBackground',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
-            ],
+            ]
         },
         {
             id: 'offButton',
             label: __('Off Button Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'offButton',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch::after`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
-            ],
+            ]
         },
         {
             id: 'offTextColor',
             label: __('Off Text Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'offTextColor',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper .switch`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
-            ],
+            ]
         },
         {
             id: 'onBackground',
             label: __('On Background Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'onBackground',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
-            ],
+            ]
         },
         {
             id: 'onButton',
             label: __('On Button Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'onButton',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::after`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
-            ],
+            ]
         },
         {
             id: 'onTextColor',
             label: __('On Text Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::before`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'onTextColor',
+                    'selector': `.${elementId}.guten-form-input.guten-form-input-switch .switch-wrapper input:checked + .switch::before`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
                 }
-            ],
+            ]
         },
     ];
 };

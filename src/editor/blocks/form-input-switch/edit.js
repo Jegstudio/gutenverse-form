@@ -1,22 +1,21 @@
 import { compose } from '@wordpress/compose';
 
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
-import { useEffect } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { u } from 'gutenverse-core/components';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputSwitchBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
         attributes,
-        setElementRef
+        clientId
     } = props;
 
     const {
@@ -26,25 +25,24 @@ const FormInputSwitchBlock = compose(
         offText
     } = attributes;
 
-    const switchRef = useRef();
+    const elementRef = useRef();
 
     const inputData = {
         ...props,
         type: 'switch',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
-
-    useEffect(() => {
-        if (switchRef.current) {
-            setElementRef(switchRef.current);
-        }
-    }, [switchRef]);
 
     const handleSwitchOn = () => {
         const element = u(`.${elementId} .gutenverse-input-switch`);
         const elementStatus = element.is(':checked');
         element.attr('checked',!elementStatus);
     };
+
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
+
     return <>
         <InputWrapper {...inputData} inputType={inputData.type}>
             <label className="switch-wrapper" htmlFor={elementId}>
@@ -54,7 +52,7 @@ const FormInputSwitchBlock = compose(
                     className="gutenverse-input gutenverse-input-switch"
                     type="checkbox"
                     hidden
-                    ref={switchRef}
+                    ref={elementRef}
                 />
                 <span className="switch" data-on={onText} data-off={offText} onClick={handleSwitchOn} />
             </label>

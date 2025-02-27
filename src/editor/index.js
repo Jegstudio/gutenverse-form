@@ -3,6 +3,7 @@ import { isBlockActive } from 'gutenverse-core/helper';
 import { updateBlockList } from 'gutenverse-core/editor-helper';
 import { addFilter } from '@wordpress/hooks';
 import { IconFormCalculationSVG, IconFormImageRadioSVG, IconFormPaymentSVG, IconFormStepperNavigationButtonSVG, IconFormStepperSVG } from '../assets/icon';
+import { plainGeneratorFormFunction } from './styling/generate-css';
 
 addFilter(
     'gutenverse.blocklist.locked',
@@ -53,6 +54,12 @@ addFilter(
             ...list,
         ];
     }
+);
+
+addFilter(
+    'gutenverse-css-generator-plain-function',
+    'gutenverse/css/generator/plain/function',
+    (value, props) => plainGeneratorFormFunction(value, props)
 );
 
 const registerBlocks = () => {
