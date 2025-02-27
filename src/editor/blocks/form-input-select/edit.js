@@ -5,6 +5,8 @@ import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { ChoiceSelect } from 'gutenverse-core/components';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputSelectBlock = compose(
     withPartialRender,
@@ -12,35 +14,34 @@ const FormInputSelectBlock = compose(
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
-    const selectRef = useRef();
     const [selected, setSelected] = useState({ value: '' });
 
     const {
         attributes,
-        setElementRef
+        setElementRef,
+        clientId
     } = props;
 
     const {
         selectOptions,
-        inputPlaceholder
+        inputPlaceholder,
+        elementId
     } = attributes;
+
+    const elementRef = useRef();
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
 
     const inputData = {
         ...props,
         type: 'select',
-        panelList: panelList
+        panelList: panelList,
+        elementRef
     };
-
-
-    useEffect(() => {
-        if (selectRef.current) {
-            setElementRef(selectRef.current);
-        }
-    }, [selectRef]);
 
     return <>
         <InputWrapper {...inputData}>
-            <div className="select-wrapper" ref={selectRef}>
+            <div className="select-wrapper" ref={elementRef}>
                 <ChoiceSelect
                     placeholder={inputPlaceholder}
                     options={selectOptions}

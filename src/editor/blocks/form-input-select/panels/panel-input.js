@@ -33,20 +33,6 @@ export const inputPanel = props => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .choices__inner`,
-                    render: value => handleDimension(value, 'padding')
-                },
-                {
-                    selector: `.${elementId} .main-wrapper .choices::after`,
-                    render: value => {
-                        const right = parseFloat(value.dimension.right) - 11.5;
-                        const rightMargin = right > 0 ? right : 0;
-                        return `margin-right: ${rightMargin}${value.unit};`;
-                    }
-                }
-            ]
         },
         {
             id: 'inputMargin',
@@ -68,22 +54,24 @@ export const inputPanel = props => {
                     unit: '%'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .choices`,
-                    render: value => handleDimension(value, 'margin')
-                }
-            ]
         },
         {
             id: 'placeholderColor',
             label: __('Input Placeholder Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices__placeholder:not(.choices__item--choice)`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'placeholderColor',
+                    'selector': `.${elementId} .choices__placeholder:not(.choices__item--choice)`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -92,10 +80,18 @@ export const inputPanel = props => {
             label: __('Input Background Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices__inner, .${elementId} .choices .choices__input`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'placeholderBgColor',
+                    'selector': `.${elementId} .choices__inner, .${elementId} .choices .choices__input`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -103,13 +99,6 @@ export const inputPanel = props => {
             id: 'inputTypography',
             label: __('Input Typography', 'gutenverse-form'),
             component: TypographyControl,
-            style: [
-                {
-                    selector: `.${elementId} .choices__placeholder, .${elementId} .choices__item, .${elementId} .choices__input`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
         },
         {
             id: '__itemState',
@@ -132,10 +121,18 @@ export const inputPanel = props => {
             label: __('Input Text Color Normal', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices .choices__inner .choices__list .choices__item.choices__item--selectable:not(.choices__placeholder)`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'inputColorNormal',
+                    'selector': `.${elementId} .choices .choices__inner .choices__list .choices__item.choices__item--selectable:not(.choices__placeholder)`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -145,10 +142,18 @@ export const inputPanel = props => {
             label: __('Options Text Color Normal', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'choicesColorNormal',
+                    'selector': `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -170,13 +175,6 @@ export const inputPanel = props => {
             show: (!switcher.inputState || switcher.inputState === 'normal') && device == 'Desktop',
             label: __('Border', 'gutenverse-form'),
             component: BorderControl,
-            style: [
-                {
-                    selector: `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
-                    hasChild: true,
-                    render: value => handleBorder(value)
-                }
-            ]
         },
         {
             id: 'inputBorderNormalResponsive',
@@ -184,13 +182,6 @@ export const inputPanel = props => {
             label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
-            style: [
-                {
-                    selector: `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
-                    allowRender: () => device !== 'Desktop',
-                    render: value => handleBorderResponsive(value)
-                }
-            ]
         },
         {
             id: 'inputColorHover',
@@ -198,10 +189,18 @@ export const inputPanel = props => {
             label: __('Input Text Color Hover', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}:hover .choices .choices__inner .choices__list .choices__item.choices__item--selectable:not(.choices__placeholder)`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'inputColorHover',
+                    'selector': `.${elementId}:hover .choices .choices__inner .choices__list .choices__item.choices__item--selectable:not(.choices__placeholder)`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -211,10 +210,18 @@ export const inputPanel = props => {
             label: __('Options Text Color Hover', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item.is-highlighted`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'choicesColorHover',
+                    'selector': `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item.is-highlighted`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -224,10 +231,18 @@ export const inputPanel = props => {
             label: __('Selected Option Color Hover', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item.is-highlighted`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'choicesBgColorHover',
+                    'selector': `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item.is-highlighted`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -236,13 +251,6 @@ export const inputPanel = props => {
             show: switcher.inputState === 'hover' && device == 'Desktop',
             label: __('Border', 'gutenverse-form'),
             component: BorderControl,
-            style: [
-                {
-                    selector: `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
-                    hasChild: true,
-                    render: value => handleBorder(value)
-                }
-            ]
         },
         {
             id: 'inputBorderHoverResponsive',
@@ -250,13 +258,6 @@ export const inputPanel = props => {
             label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
-            style: [
-                {
-                    selector: `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
-                    allowRender: () => device !== 'Desktop',
-                    render: value => handleBorderResponsive(value)
-                }
-            ]
         },
         {
             id: '__inputAreaHover',
@@ -278,11 +279,17 @@ export const inputPanel = props => {
             show: !switcher.inputAreaHover || switcher.inputAreaHover === 'normal',
             label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
+                    'type': 'boxShadow',
+                    'id': 'inputAreaBoxShadow',
+                    'properties': [
+                        {
+                            'name': 'box-shadow',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'selector': `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
                 }
             ]
         },
@@ -291,11 +298,17 @@ export const inputPanel = props => {
             show: switcher.inputAreaHover === 'hover',
             label: __('Hover Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
+                    'type': 'boxShadow',
+                    'id': 'inputAreaBoxShadowHover',
+                    'properties': [
+                        {
+                            'name': 'box-shadow',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'selector': `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
                 }
             ]
         }
