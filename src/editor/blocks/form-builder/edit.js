@@ -1,12 +1,11 @@
 import { compose } from '@wordpress/compose';
 
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { useBlockProps, InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import classnames from 'classnames';
-import { PanelController } from 'gutenverse-core/controls';
+import { BlockPanelController } from 'gutenverse-core/controls';
 import { panelList } from './panels/panel-list';
 import { useRef } from '@wordpress/element';
-import { useEffect } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { withAnimationSticky } from 'gutenverse-core/hoc';
 import { isSticky } from 'gutenverse-core/helper';
@@ -15,6 +14,8 @@ import { useDisplayEditor } from 'gutenverse-core/hooks';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { PanelTutorial } from 'gutenverse-core/controls';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const NoticeMessages = ({ successExample = false, errorExample = false }) => {
     return <>
@@ -45,8 +46,6 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
 };
 
 const FormBuilderBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withAnimationSticky(),
     withCopyElementToolbar(),
     withMouseMoveEffect
@@ -61,7 +60,6 @@ const FormBuilderBlock = compose(
     const {
         clientId,
         attributes,
-        setElementRef
     } = props;
 
     const {
@@ -70,7 +68,7 @@ const FormBuilderBlock = compose(
         stickyPosition
     } = attributes;
 
-    const formBuilderRef = useRef();
+    const elementRef = useRef();
     const animationClass = useAnimationEditor(attributes);
     const displayClass = useDisplayEditor(attributes);
     const hasChildBlocks = getBlockOrder(clientId).length > 0;
@@ -87,16 +85,13 @@ const FormBuilderBlock = compose(
                 [`sticky-${stickyPosition}`]: isSticky(sticky),
             }
         ),
-        ref: formBuilderRef
+        ref: elementRef
     });
 
     const Component = hasChildBlocks ? FormWrapper : FormPlaceholder;
 
-    useEffect(() => {
-        if (formBuilderRef.current) {
-            setElementRef(formBuilderRef.current);
-        }
-    }, [formBuilderRef]);
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
 
     return <>
         <InspectorControls>
@@ -118,7 +113,7 @@ const FormBuilderBlock = compose(
                 ]}
             />
         </InspectorControls>
-        <PanelController panelList={panelList} {...props} />
+        <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
         <Component blockProps={blockProps} attributes={attributes} clientId={clientId} />
     </>;
 });

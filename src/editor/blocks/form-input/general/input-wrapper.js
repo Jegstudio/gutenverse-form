@@ -99,7 +99,6 @@ const InputWrapper = props => {
 
     return <>
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
-
         <div  {...blockProps}>
             {!validParent && <h1 className="input-warning">
                 {__('Please put input element inside Form Builder', 'gutenverse-form')}

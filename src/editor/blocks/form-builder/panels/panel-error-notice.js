@@ -1,7 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { handleBorderResponsive, handleBorder, handleColor, handleDimension, handleTypography } from 'gutenverse-core/styling';
 import { BorderControl, BorderResponsiveControl, BoxShadowControl, CheckboxControl, ColorControl, DimensionControl, IconRadioControl, TypographyControl } from 'gutenverse-core/controls';
-import { allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
 import { AlignCenter, AlignLeft, AlignRight } from 'gutenverse-core/components';
 import { getDeviceType } from 'gutenverse-core/editor-helper';
 
@@ -40,22 +38,23 @@ export const errorNoticePanel = (props) => {
                     value: 'right',
                     icon: <AlignRight />,
                 },
-            ],
-            style: [
-                {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-                    render: value => `text-align: ${value};`
-                }
             ]
         },
         {
             id: 'errorBgColor',
             label: __('Error Background Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'errorBgColor',
+                    'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ]
                 }
             ]
         },
@@ -63,24 +62,24 @@ export const errorNoticePanel = (props) => {
             id: 'errorTextColor',
             label: __('Error Text Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'errorTextColor',
+                    'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ]
                 }
             ]
         },
         {
             id: 'errorTypography',
             label: __('Error Typography', 'gutenverse-form'),
-            component: TypographyControl,
-            style: [
-                {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
+            component: TypographyControl
         },
         {
             id: 'errorPadding',
@@ -101,13 +100,7 @@ export const errorNoticePanel = (props) => {
                     text: '%',
                     unit: '%'
                 },
-            },
-            style: [
-                {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-                    render: value => handleDimension(value, 'padding')
-                }
-            ],
+            }
         },
         {
             id: 'errorMargin',
@@ -128,24 +121,18 @@ export const errorNoticePanel = (props) => {
                     text: '%',
                     unit: '%'
                 },
-            },
-            style: [
-                {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-                    render: value => handleDimension(value, 'margin')
-                }
-            ],
+            }
         },
         {
             id: 'errorBorder',
             show: device === 'Desktop',
             label: __('Border', 'gutenverse-form'),
             component: BorderControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-                    hasChild: true,
-                    render: value => handleBorder(value)
+                    'type': 'border',
+                    'id': 'errorBorder',
+                    'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
                 }
             ]
         },
@@ -155,11 +142,11 @@ export const errorNoticePanel = (props) => {
             label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-                    allowRender: () => device !== 'Desktop',
-                    render: value => handleBorderResponsive(value)
+                    'type': 'borderResponsive',
+                    'id': 'errorBorderResponsive',
+                    'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
                 }
             ]
         },
@@ -167,11 +154,17 @@ export const errorNoticePanel = (props) => {
             id: 'errorBoxShadow',
             label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
+                    'type': 'boxShadow',
+                    'id': 'errorBoxShadow',
+                    'properties': [
+                        {
+                            'name': 'box-shadow',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
                 }
             ]
         },

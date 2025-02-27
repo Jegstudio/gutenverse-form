@@ -1,7 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { handleBorderResponsive, handleBorder, handleColor, handleDimension, handleTypography } from 'gutenverse-core/styling';
 import { BorderControl, BorderResponsiveControl, BoxShadowControl, CheckboxControl, ColorControl, DimensionControl, IconRadioControl, TypographyControl } from 'gutenverse-core/controls';
-import { allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
 import { AlignCenter, AlignLeft, AlignRight } from 'gutenverse-core/components';
 import { getDeviceType } from 'gutenverse-core/editor-helper';
 
@@ -40,22 +38,23 @@ export const successNoticePanel = (props) => {
                     value: 'right',
                     icon: <AlignRight />,
                 },
-            ],
-            style: [
-                {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-                    render: value => `text-align: ${value};`
-                }
             ]
         },
         {
             id: 'successBgColor',
             label: __('Success Background Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'successBgColor',
+                    'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ]
                 }
             ]
         },
@@ -63,24 +62,24 @@ export const successNoticePanel = (props) => {
             id: 'successTextColor',
             label: __('Success Text Color', 'gutenverse-form'),
             component: ColorControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'successTextColor',
+                    'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ]
                 }
             ]
         },
         {
             id: 'successTypography',
             label: __('Success Typography', 'gutenverse-form'),
-            component: TypographyControl,
-            style: [
-                {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
+            component: TypographyControl
         },
         {
             id: 'successPadding',
@@ -101,13 +100,7 @@ export const successNoticePanel = (props) => {
                     text: '%',
                     unit: '%'
                 },
-            },
-            style: [
-                {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-                    render: value => handleDimension(value, 'padding')
-                }
-            ],
+            }
         },
         {
             id: 'successMargin',
@@ -128,23 +121,18 @@ export const successNoticePanel = (props) => {
                     text: '%',
                     unit: '%'
                 },
-            },
-            style: [
-                {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-                    render: value => handleDimension(value, 'margin')
-                }
-            ],
+            }
         },
         {
             id: 'successBorder',
             label: __('Border', 'gutenverse-form'),
             component: BorderControl,
-            style: [
+            show : device === 'Desktop',
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-                    hasChild: true,
-                    render: value => handleBorder(value)
+                    'type': 'border',
+                    'id': 'successBorder',
+                    'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
                 }
             ]
         },
@@ -153,11 +141,12 @@ export const successNoticePanel = (props) => {
             label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
-            style: [
+            show : device !== 'Desktop',
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-                    allowRender: () => device !== 'Desktop',
-                    render: value => handleBorderResponsive(value)
+                    'type': 'borderResponsive',
+                    'id': 'successBorderResponsive',
+                    'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
                 }
             ]
         },
@@ -165,11 +154,17 @@ export const successNoticePanel = (props) => {
             id: 'successBoxShadow',
             label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
+                    'type': 'boxShadow',
+                    'id': 'successBoxShadow',
+                    'properties': [
+                        {
+                            'name': 'box-shadow',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
                 }
             ]
         },
