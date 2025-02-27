@@ -24,7 +24,7 @@ export const buttonBackgroundPanel = (props) => {
                     label: 'Hover'
                 }
             ],
-            onChange: ({__buttonBgHover}) => setSwitcher({...switcher, buttonBg: __buttonBgHover})
+            onChange: ({ __buttonBgHover }) => setSwitcher({ ...switcher, buttonBg: __buttonBgHover })
         },
         {
             id: 'buttonBackground',
@@ -32,11 +32,11 @@ export const buttonBackgroundPanel = (props) => {
             component: BackgroundControl,
             allowDeviceControl: true,
             options: normalOptions,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-button-wrapper .guten-button`,
-                    hasChild: true,
-                    render: value => handleBackground(value)
+                    'type': 'background',
+                    'id': 'buttonBackground',
+                    'selector': `.${elementId}.guten-button-wrapper .guten-button`,
                 }
             ]
         },
@@ -46,11 +46,11 @@ export const buttonBackgroundPanel = (props) => {
             component: BackgroundControl,
             allowDeviceControl: true,
             options: hoverOptions,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId}.guten-button-wrapper .guten-button:hover`,
-                    hasChild: true,
-                    render: value => handleBackground(value)
+                    'type': 'background',
+                    'id': 'buttonBackgroundHover',
+                    'selector': `.${elementId}.guten-button-wrapper .guten-button:hover`,
                 }
             ]
         }

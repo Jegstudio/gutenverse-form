@@ -34,13 +34,6 @@ export const buttonBorderPanel = (props) => {
             show: (!switcher.buttonBorder || switcher.buttonBorder === 'normal') && device == 'Desktop',
             label: __('Border', 'gutenverse-form'),
             component: BorderControl,
-            style: [
-                {
-                    selector: `.${elementId}.guten-button-wrapper .guten-button`,
-                    hasChild: true,
-                    render: value => handleBorder(value)
-                }
-            ]
         },
         {
             id: 'buttonBorderResponsive',
@@ -48,26 +41,12 @@ export const buttonBorderPanel = (props) => {
             label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
-            style: [
-                {
-                    selector: `.${elementId}.guten-button-wrapper .guten-button`,
-                    allowRender: () => device !== 'Desktop',
-                    render: value => handleBorderResponsive(value)
-                }
-            ]
         },
         {
             id: 'buttonBorderHover',
             show: switcher.buttonBorder === 'hover' && device == 'Desktop',
             label: __('Border', 'gutenverse-form'),
             component: BorderControl,
-            style: [
-                {
-                    selector: `.${elementId}.guten-button-wrapper .guten-button:hover`,
-                    hasChild: true,
-                    render: value => handleBorder(value)
-                }
-            ]
         },
         {
             id: 'buttonBorderHoverResponsive',
@@ -75,24 +54,23 @@ export const buttonBorderPanel = (props) => {
             label: __('Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
-            style: [
-                {
-                    selector: `.${elementId}.guten-button-wrapper .guten-button:hover`,
-                    allowRender: () => device !== 'Desktop',
-                    render: value => handleBorderResponsive(value)
-                }
-            ]
         },
         {
             id: 'buttonBoxShadow',
             show: !switcher.buttonBorder || switcher.buttonBorder === 'normal',
             label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
+                    'type': 'boxShadow',
+                    'id': 'buttonBoxShadow',
+                    'properties': [
+                        {
+                            'name': 'box-shadow',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'selector': `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button`,
                 }
             ]
         },
@@ -101,11 +79,17 @@ export const buttonBorderPanel = (props) => {
             show: switcher.buttonBorder === 'hover',
             label: __('Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button:hover`,
-                    allowRender: (value) => allowRenderBoxShadow(value),
-                    render: value => handleBoxShadow(value)
+                    'type': 'boxShadow',
+                    'id': 'buttonBoxShadowHover',
+                    'properties': [
+                        {
+                            'name': 'box-shadow',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'selector': `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button:hover`,
                 }
             ]
         }
