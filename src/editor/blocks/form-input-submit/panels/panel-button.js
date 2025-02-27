@@ -5,6 +5,7 @@ import { CheckboxControl, DimensionControl, IconRadioControl, RangeControl, Sele
 import { deviceStyleValue, handleDimension, handleUnitPoint } from 'gutenverse-core/styling';
 import { getDeviceType } from 'gutenverse-core/editor-helper';
 import { isEmpty } from 'lodash';
+import { isNotEmpty } from 'gutenverse-core/helper';
 
 export const buttonPanel = (props) => {
     const {
@@ -39,12 +40,6 @@ export const buttonPanel = (props) => {
                     icon: <AlignRight />,
                 },
             ],
-            style: [
-                {
-                    selector: `.${elementId}`,
-                    render: value => `justify-content: ${value};`
-                }
-            ]
         },
         {
             id: 'buttonType',
@@ -109,12 +104,6 @@ export const buttonPanel = (props) => {
             min: 0,
             max: 100,
             step: 1,
-            style: [
-                {
-                    selector: `.${elementId} .guten-button`,
-                    render: value => `width: ${value}%;`
-                }
-            ]
         },
         {
             id: 'showIcon',
@@ -136,13 +125,6 @@ export const buttonPanel = (props) => {
                     value: 'after'
                 },
             ],
-            style: [
-                {
-                    selector: `.${elementId} .guten-button i`,
-                    updateID: 'iconSpacing-style-0',
-                    render: value => !isEmpty(iconSpacing) && value === 'after' ? `margin-left: ${deviceStyleValue(device, iconPosition)}px;` : `margin-right: ${deviceStyleValue(device, iconPosition)}px;`
-                }
-            ]
         },
         {
             id: 'iconSpacing',
@@ -154,10 +136,24 @@ export const buttonPanel = (props) => {
             min: 0,
             max: 50,
             step: 1,
-            style: [
-                {
-                    selector: `.${elementId} .guten-button i`,
-                    render: value => iconPosition === 'after' ? `margin-left: ${value}px;` : `margin-right: ${value}px;`
+            liveStyle: [
+                isNotEmpty(iconPosition) && isNotEmpty(iconSpacing) && {
+                    'type': 'plain',
+                    'id': 'iconSpacing',
+                    'responsive': true,
+                    'selector': `.${elementId} .guten-button i`,
+                    'properties': [
+                        {
+                            'name': iconPosition === 'after' ? 'margin-left' : 'margin-right',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                },
+                            }
+                        }
+                    ],
                 }
             ]
         },
@@ -181,10 +177,18 @@ export const buttonPanel = (props) => {
                     step: 0.1
                 },
             },
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .guten-button i`,
-                    render: value => handleUnitPoint(value, 'font-size')
+                    'type': 'unitPoint',
+                    'id': 'iconSize',
+                    'properties': [
+                        {
+                            'name': 'font-size',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'selector': `.${elementId} .guten-button i`,
+                    'responsive': true
                 }
             ]
         },
@@ -212,24 +216,11 @@ export const buttonPanel = (props) => {
                     unit: 'rem'
                 },
             },
-            style: [
-                {
-                    selector: `.${elementId} .guten-button`,
-                    render: value => handleDimension(value, 'padding')
-                }
-            ]
         },
         {
             id: 'iconLineHeight',
             label: __('Remove Icon Line Height', 'gutenverse'),
             component: CheckboxControl,
-            style: [
-                {
-                    selector: `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button i`,
-                    allowRender: value => value,
-                    render: () => 'line-height: normal',
-                }
-            ]
         },
     ];
 };

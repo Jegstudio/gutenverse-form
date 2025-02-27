@@ -6,7 +6,7 @@ import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
 import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import { displayShortcut } from '@wordpress/keycodes';
-import { IconLibrary } from 'gutenverse-core/controls';
+import { BlockPanelController, IconLibrary } from 'gutenverse-core/controls';
 import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
 import { PanelController } from 'gutenverse-core/controls';
 import { panelList } from './panels/panel-list';
@@ -15,10 +15,10 @@ import { LogoCircleColor24SVG } from 'gutenverse-core/icons';
 import { useEffect } from '@wordpress/element';
 import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
+import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import getBlockStyle from './styles/block-style';
 
 const FormInputSubmitBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )((props) => {
@@ -26,7 +26,8 @@ const FormInputSubmitBlock = compose(
         attributes,
         setAttributes,
         displayClass,
-        setElementRef
+        setElementRef,
+        clientId
     } = props;
 
     const {
@@ -39,7 +40,9 @@ const FormInputSubmitBlock = compose(
         iconPosition = 'before',
     } = attributes;
 
-    const submitRef = useRef();
+    const elementRef = useRef();
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     const textRef = useRef();
     const animationClass = useAnimationEditor(attributes);
     const root = document.getElementById('gutenverse-root');
@@ -54,7 +57,7 @@ const FormInputSubmitBlock = compose(
             elementId,
             displayClass
         ),
-        ref: submitRef
+        ref: elementRef
     });
 
     const buttonProps = {
@@ -69,14 +72,8 @@ const FormInputSubmitBlock = compose(
         ),
     };
 
-    useEffect(() => {
-        if (submitRef.current) {
-            setElementRef(submitRef.current);
-        }
-    }, [submitRef]);
-
     return <>
-        <PanelController panelList={panelList} {...props} />
+        <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
         {openIconLibrary && createPortal(
             <IconLibrary
                 closeLibrary={() => setOpenIconLibrary(false)}

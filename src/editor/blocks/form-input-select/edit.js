@@ -9,8 +9,6 @@ import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
 
 const FormInputSelectBlock = compose(
-    withPartialRender,
-    withCustomStyle(panelList),
     withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
@@ -18,7 +16,6 @@ const FormInputSelectBlock = compose(
 
     const {
         attributes,
-        setElementRef,
         clientId
     } = props;
 
