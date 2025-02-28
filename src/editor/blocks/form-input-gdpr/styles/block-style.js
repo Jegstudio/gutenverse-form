@@ -406,7 +406,7 @@ const getBlockStyle = (elementId, attributes) => {
         {
             'type': 'positioning',
             'id': 'positioningType',
-            'selector': `.wp-block-gutenverse-heading.${elementId}`,
+            'selector': `.${elementId}.guten-element`,
             'skipDeviceType': 'first',
             'attributeType': 'type',
             'multiAttr': {
@@ -419,7 +419,7 @@ const getBlockStyle = (elementId, attributes) => {
         {
             'type': 'positioning',
             'id': 'positioningType',
-            'selector': `.wp-block-gutenverse-heading.${elementId}`,
+            'selector': `.${elementId}.guten-element`,
             'skipDeviceType': 'second',
             'attributeType': 'type',
             'multiAttr': {
@@ -432,7 +432,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['positioningWidth']) && isNotEmpty(attributes['positioningType']) && data.push({
         'type': 'positioning',
         'id': 'positioningWidth',
-        'selector': `.wp-block-gutenverse-heading.${elementId}`,
+        'selector': `.${elementId}.guten-element`,
         'skipDeviceType': 'first',
         'attributeType': 'width',
         'multiAttr': {
@@ -441,25 +441,27 @@ const getBlockStyle = (elementId, attributes) => {
             'inBlock': attributes['inBlock']
         }
     });
-    isNotEmpty(attributes['positioningAlign']) && data.push({
-        'type': 'plain',
-        'id': 'positioningAlign',
-        'responsive': true,
-        'properties': [
-            {
-                'name': 'align-self',
-                'valueType': 'direct'
-            }
-        ],
-        'selector': `.wp-block-gutenverse-heading.${elementId}`,
-    },
+    isNotEmpty(attributes['positioningAlign']) && data.push(
+        {
+            'type': 'plain',
+            'id': 'positioningAlign',
+            'responsive': true,
+            'properties': [
+                {
+                    'name': 'align-self',
+                    'valueType': 'direct'
+                }
+            ],
+            'selector': `.${elementId}.guten-element`,
+        },
         {
             'type': 'positioning',
             'id': 'positioningAlign',
             'property': ['vertical-align'],
             'attributeType': 'align',
-            'selector': `.wp-block-gutenverse-heading.${elementId}`,
-        });
+            'selector': `.${elementId}.guten-element`,
+        }
+    );
     isNotEmpty(attributes['positioningLocation']) && attributes['positioningLocation'] !== 'default' && data.push({
         'type': 'plain',
         'id': 'positioningLocation',
@@ -469,14 +471,14 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
-        'selector': `.wp-block-gutenverse-heading.${elementId}`,
+        'selector': `.${elementId}.guten-element`,
     });
     isNotEmpty(attributes['positioningLeft']) && isNotEmpty(attributes['positioningLocation']) && attributes['positioningLocation'] !== 'default' && data.push({
         'type': 'positioning',
         'id': 'positioningLeft',
         'property': ['left'],
         'responsive': true,
-        'selector': `.wp-block-gutenverse-heading.${elementId}`,
+        'selector': `.${elementId}.guten-element`,
         'attributeType': 'custom',
     });
     isNotEmpty(attributes['positioningRight']) && isNotEmpty(attributes['positioningLocation']) && attributes['positioningLocation'] !== 'default' && data.push({
@@ -484,7 +486,7 @@ const getBlockStyle = (elementId, attributes) => {
         'id': 'positioningRight',
         'property': ['right'],
         'responsive': true,
-        'selector': `.wp-block-gutenverse-heading.${elementId}`,
+        'selector': `.${elementId}.guten-element`,
         'attributeType': 'custom',
     });
     isNotEmpty(attributes['positioningTop']) && isNotEmpty(attributes['positioningLocation']) && attributes['positioningLocation'] !== 'default' && data.push({
@@ -492,7 +494,7 @@ const getBlockStyle = (elementId, attributes) => {
         'id': 'positioningTop',
         'property': ['top'],
         'responsive': true,
-        'selector': `.wp-block-gutenverse-heading.${elementId}`,
+        'selector': `.${elementId}.guten-element`,
         'attributeType': 'custom',
     });
     isNotEmpty(attributes['positioningBottom']) && isNotEmpty(attributes['positioningLocation']) && attributes['positioningLocation'] !== 'default' && data.push({
@@ -500,7 +502,7 @@ const getBlockStyle = (elementId, attributes) => {
         'id': 'positioningBottom',
         'property': ['bottom'],
         'responsive': true,
-        'selector': `.wp-block-gutenverse-heading.${elementId}`,
+        'selector': `.${elementId}.guten-element`,
         'attributeType': 'custom',
     });
 
