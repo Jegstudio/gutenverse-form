@@ -1,16 +1,14 @@
 import { compose } from '@wordpress/compose';
-
 import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import classnames from 'classnames';
 import { useRef } from '@wordpress/element';
-import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
+import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputRadioBlock = compose(
-    withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
@@ -51,6 +49,7 @@ const FormInputRadioBlock = compose(
     };
 
     return <>
+        <CopyElementToolbar {...props}/>
         <InputWrapper {...inputData}>
             <div className={innerClass}>
                 <div hidden

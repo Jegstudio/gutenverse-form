@@ -1,16 +1,14 @@
 import { compose } from '@wordpress/compose';
-
 import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
-import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { u } from 'gutenverse-core/components';
 import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
+import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputSwitchBlock = compose(
-    withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
@@ -44,6 +42,7 @@ const FormInputSwitchBlock = compose(
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
 
     return <>
+        <CopyElementToolbar {...props}/>
         <InputWrapper {...inputData} inputType={inputData.type}>
             <label className="switch-wrapper" htmlFor={elementId}>
                 <input

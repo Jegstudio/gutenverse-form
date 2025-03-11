@@ -13,13 +13,12 @@ import { panelList } from './panels/panel-list';
 import { __ } from '@wordpress/i18n';
 import { LogoCircleColor24SVG } from 'gutenverse-core/icons';
 import { useEffect } from '@wordpress/element';
-import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
+import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputSubmitBlock = compose(
-    withCopyElementToolbar(),
     withMouseMoveEffect
 )((props) => {
     const {
@@ -73,6 +72,7 @@ const FormInputSubmitBlock = compose(
     };
 
     return <>
+        <CopyElementToolbar {...props}/>
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
         {openIconLibrary && createPortal(
             <IconLibrary

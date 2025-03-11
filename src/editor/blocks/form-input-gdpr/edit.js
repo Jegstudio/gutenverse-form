@@ -6,14 +6,13 @@ import InputWrapper from '../form-input/general/input-wrapper';
 import classnames from 'classnames';
 import { useEffect } from '@wordpress/element';
 import { useRef } from '@wordpress/element';
-import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { RichTextComponent } from 'gutenverse-core/components';
 import { u } from 'gutenverse-core/components';
 import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
+import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputGdprBlock = compose(
-    withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
@@ -61,6 +60,7 @@ const FormInputGdprBlock = compose(
     };
 
     return <>
+        <CopyElementToolbar {...props}/>
         <InputWrapper {...inputData}>
             <div className={innerClass} ref={elementRef}>
                 <div hidden

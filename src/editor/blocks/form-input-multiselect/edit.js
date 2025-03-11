@@ -4,14 +4,13 @@ import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenve
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { ChoiceSelect } from 'gutenverse-core/components';
-import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
+import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputMultiSelectBlock = compose(
     withPartialRender,
     withCustomStyle(panelList),
-    withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
@@ -40,6 +39,7 @@ const FormInputMultiSelectBlock = compose(
     },[selectedOption]);
 
     return <>
+        <CopyElementToolbar {...props}/>
         <InputWrapper {...inputData}>
             <div className="select-wrapper" ref={elementRef}>
                 <ChoiceSelect
