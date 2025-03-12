@@ -1,21 +1,19 @@
 import { compose } from '@wordpress/compose';
-
-import { withMouseMoveEffect } from 'gutenverse-core/hoc';
+import { withAnimationStickyV2, withMouseMoveEffect, withPassRef } from 'gutenverse-core/hoc';
 import { useBlockProps, InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import classnames from 'classnames';
 import { BlockPanelController } from 'gutenverse-core/controls';
 import { panelList } from './panels/panel-list';
-import { useRef } from '@wordpress/element';
-import { withCopyElementToolbar } from 'gutenverse-core/hoc';
-import { withAnimationSticky } from 'gutenverse-core/hoc';
+import { useEffect, useRef } from '@wordpress/element';
 import { isSticky } from 'gutenverse-core/helper';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import { useDisplayEditor } from 'gutenverse-core/hooks';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { PanelTutorial } from 'gutenverse-core/controls';
-import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
+import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const NoticeMessages = ({ successExample = false, errorExample = false }) => {
     return <>
@@ -46,8 +44,8 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
 };
 
 const FormBuilderBlock = compose(
-    withAnimationSticky(),
-    withCopyElementToolbar(),
+    withPassRef,
+    withAnimationStickyV2(),
     withMouseMoveEffect
 )((props) => {
     const {
@@ -60,6 +58,7 @@ const FormBuilderBlock = compose(
     const {
         clientId,
         attributes,
+        setBlockRef,
     } = props;
 
     const {
@@ -92,8 +91,16 @@ const FormBuilderBlock = compose(
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
+    useDynamicScript(elementRef);
+
+    useEffect(() => {
+        if (elementRef) {
+            setBlockRef(elementRef);
+        }
+    }, [elementRef]);
 
     return <>
+        <CopyElementToolbar {...props}/>
         <InspectorControls>
             <PanelTutorial
                 title={__('How to use form builder', 'gutenverse-form')}

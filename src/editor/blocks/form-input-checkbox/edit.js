@@ -1,17 +1,15 @@
 import { compose } from '@wordpress/compose';
 
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import classnames from 'classnames';
-import { useEffect } from '@wordpress/element';
 import { useRef } from '@wordpress/element';
-import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
+import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputCheckboxBlock = compose(
-    withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
@@ -51,6 +49,7 @@ const FormInputCheckboxBlock = compose(
     };
 
     return <>
+        <CopyElementToolbar {...props}/>
         <InputWrapper {...inputData}>
             <div className={innerClass} ref={elementRef}>
                 <div hidden

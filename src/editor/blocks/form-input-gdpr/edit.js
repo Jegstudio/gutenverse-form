@@ -1,24 +1,21 @@
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { withCustomStyle, withMouseMoveEffect } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import classnames from 'classnames';
-import { useEffect } from '@wordpress/element';
 import { useRef } from '@wordpress/element';
-import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { RichTextComponent } from 'gutenverse-core/components';
 import { u } from 'gutenverse-core/components';
 import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
+import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputGdprBlock = compose(
-    withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
         attributes,
-        setElementRef,
         setAttributes,
         clientId
     } = props;
@@ -27,7 +24,6 @@ const FormInputGdprBlock = compose(
         inputName,
         required,
         validationWarning,
-        gdprValue,
         displayBlock,
         elementId
     } = attributes;
@@ -61,6 +57,7 @@ const FormInputGdprBlock = compose(
     };
 
     return <>
+        <CopyElementToolbar {...props}/>
         <InputWrapper {...inputData}>
             <div className={innerClass} ref={elementRef}>
                 <div hidden

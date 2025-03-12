@@ -1,11 +1,8 @@
 import { compose } from '@wordpress/compose';
-
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
-import { useEffect } from '@wordpress/element';
-import { withCopyElementToolbar } from 'gutenverse-core/hoc';
 import { IconLibrary } from 'gutenverse-core/controls';
 import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
@@ -13,14 +10,13 @@ import { gutenverseRoot } from 'gutenverse-core/helper';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
 import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
+import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputNumberTelp = compose(
-    withCopyElementToolbar(),
     withMouseMoveEffect
 )(props => {
     const {
         attributes,
-        setElementRef,
         setAttributes,
         clientId
     } = props;
@@ -45,10 +41,11 @@ const FormInputNumberTelp = compose(
     } = attributes;
 
     const elementRef = useRef();
-    useGenerateElementId(clientId, elementId, elementRef);
-    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;
+
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
 
     const inputData = {
         ...props,
@@ -67,10 +64,10 @@ const FormInputNumberTelp = compose(
     };
 
     const imageLazyLoad = () => {
-        if(lazyLoad){
-            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy"/>;
-        }else{
-            return <img src={getImageSrc(image)} alt={imageAltText}/>;
+        if (lazyLoad) {
+            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy" />;
+        } else {
+            return <img src={getImageSrc(image)} alt={imageAltText} />;
         }
     };
     const iconContent = () => {
@@ -93,6 +90,7 @@ const FormInputNumberTelp = compose(
     };
 
     return <>
+        <CopyElementToolbar {...props} />
         <InputWrapper {...inputData}>
             {openIconLibrary && createPortal(
                 <IconLibrary
@@ -116,13 +114,13 @@ const FormInputNumberTelp = compose(
                 </div>
                 :
                 <input data-validation={JSON.stringify(validation)}
-                placeholder={inputPlaceholder}
-                name={inputName}
-                className="gutenverse-input gutenverse-input-telp"
-                type="tel"
-                pattern={inputPattern}
-                ref={elementRef}
-            />}
+                    placeholder={inputPlaceholder}
+                    name={inputName}
+                    className="gutenverse-input gutenverse-input-telp"
+                    type="tel"
+                    pattern={inputPattern}
+                    ref={elementRef}
+                />}
         </InputWrapper>
     </>;
 });
