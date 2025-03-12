@@ -1,6 +1,6 @@
 import { compose } from '@wordpress/compose';
-import { useEffect, useRef, useState } from '@wordpress/element';
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
+import { useRef, useState } from '@wordpress/element';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { ChoiceSelect } from 'gutenverse-core/components';

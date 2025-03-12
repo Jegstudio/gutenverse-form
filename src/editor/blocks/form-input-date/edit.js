@@ -1,6 +1,6 @@
 import { compose } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import GutenverseInputDate from '../../../frontend/blocks/input-date';

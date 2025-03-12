@@ -1,9 +1,8 @@
 import { compose } from '@wordpress/compose';
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
-import { useEffect } from '@wordpress/element';
 import { IconLibrary } from 'gutenverse-core/controls';
 import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
@@ -18,7 +17,6 @@ const FormInputNumberTelp = compose(
 )(props => {
     const {
         attributes,
-        setElementRef,
         setAttributes,
         clientId
     } = props;
@@ -43,10 +41,11 @@ const FormInputNumberTelp = compose(
     } = attributes;
 
     const elementRef = useRef();
-    useGenerateElementId(clientId, elementId, elementRef);
-    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;
+
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
 
     const inputData = {
         ...props,

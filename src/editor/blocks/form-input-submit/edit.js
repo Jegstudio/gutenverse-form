@@ -7,12 +7,10 @@ import { createPortal } from 'react-dom';
 import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import { displayShortcut } from '@wordpress/keycodes';
 import { BlockPanelController, IconLibrary } from 'gutenverse-core/controls';
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
-import { PanelController } from 'gutenverse-core/controls';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import { __ } from '@wordpress/i18n';
 import { LogoCircleColor24SVG } from 'gutenverse-core/icons';
-import { useEffect } from '@wordpress/element';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
@@ -25,7 +23,6 @@ const FormInputSubmitBlock = compose(
         attributes,
         setAttributes,
         displayClass,
-        setElementRef,
         clientId
     } = props;
 

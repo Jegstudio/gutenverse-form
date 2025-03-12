@@ -1,5 +1,5 @@
 import { compose } from '@wordpress/compose';
-import { withCustomStyle, withMouseMoveEffect, withPartialRender } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
@@ -19,7 +19,6 @@ const FormInputTextBlock = compose(
 )(props => {
     const {
         attributes,
-        setElementRef,
         setAttributes,
         clientId
     } = props;
