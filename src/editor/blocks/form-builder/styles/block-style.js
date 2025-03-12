@@ -1,4 +1,5 @@
 import { isNotEmpty } from 'gutenverse-core/helper';
+import { applyFilters } from '@wordpress/hooks';
 
 const getBlockStyle = (elementId, attributes) => {
     let data = [];
@@ -7,12 +8,12 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['errorAlign']) && data.push({
         'type': 'plain',
         'id': 'errorAlign',
-        'responsive' : true,
+        'responsive': true,
         'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-        'properties' : [
+        'properties': [
             {
-                'name' : 'text-align',
-                'valueType' : 'direct'
+                'name': 'text-align',
+                'valueType': 'direct'
             }
         ]
     });
@@ -21,10 +22,10 @@ const getBlockStyle = (elementId, attributes) => {
         'type': 'color',
         'id': 'errorBgColor',
         'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-        'properties' : [
+        'properties': [
             {
-                'name' : 'background-color',
-                'valueType' : 'direct'
+                'name': 'background-color',
+                'valueType': 'direct'
             }
         ]
     });
@@ -33,10 +34,10 @@ const getBlockStyle = (elementId, attributes) => {
         'type': 'color',
         'id': 'errorTextColor',
         'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-error`,
-        'properties' : [
+        'properties': [
             {
-                'name' : 'color',
-                'valueType' : 'direct'
+                'name': 'color',
+                'valueType': 'direct'
             }
         ]
     });
@@ -102,12 +103,12 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['successAlign']) && data.push({
         'type': 'plain',
         'id': 'successAlign',
-        'responsive' : true,
+        'responsive': true,
         'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-        'properties' : [
+        'properties': [
             {
-                'name' : 'text-align',
-                'valueType' : 'direct'
+                'name': 'text-align',
+                'valueType': 'direct'
             }
         ]
     });
@@ -116,10 +117,10 @@ const getBlockStyle = (elementId, attributes) => {
         'type': 'color',
         'id': 'successBgColor',
         'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-        'properties' : [
+        'properties': [
             {
-                'name' : 'background-color',
-                'valueType' : 'direct'
+                'name': 'background-color',
+                'valueType': 'direct'
             }
         ]
     });
@@ -128,10 +129,10 @@ const getBlockStyle = (elementId, attributes) => {
         'type': 'color',
         'id': 'successTextColor',
         'selector': `.editor-styles-wrapper .${elementId} .form-notification .notification-body.guten-success`,
-        'properties' : [
+        'properties': [
             {
-                'name' : 'color',
-                'valueType' : 'direct'
+                'name': 'color',
+                'valueType': 'direct'
             }
         ]
     });
@@ -333,6 +334,7 @@ const getBlockStyle = (elementId, attributes) => {
             }
         },
     );
+
     isNotEmpty(attributes['positioningType']) && isNotEmpty(attributes['positioningWidth']) && data.push(
         {
             'type': 'positioning',
@@ -347,6 +349,7 @@ const getBlockStyle = (elementId, attributes) => {
             }
         }
     );
+
     isNotEmpty(attributes['positioningWidth']) && isNotEmpty(attributes['positioningType']) && data.push({
         'type': 'positioning',
         'id': 'positioningWidth',
@@ -359,6 +362,7 @@ const getBlockStyle = (elementId, attributes) => {
             'inBlock': attributes['inBlock']
         }
     });
+
     isNotEmpty(attributes['positioningAlign']) && data.push(
         {
             'type': 'plain',
@@ -385,6 +389,7 @@ const getBlockStyle = (elementId, attributes) => {
             'selector': `.${elementId}.guten-element`,
         }
     );
+
     isNotEmpty(attributes['positioningLocation']) && attributes['positioningLocation'] !== 'default' && data.push({
         'type': 'plain',
         'id': 'positioningLocation',
@@ -396,6 +401,7 @@ const getBlockStyle = (elementId, attributes) => {
         ],
         'selector': `.${elementId}.guten-element`,
     });
+
     isNotEmpty(attributes['positioningLeft']) && isNotEmpty(attributes['positioningLocation']) && attributes['positioningLocation'] !== 'default' && data.push({
         'type': 'positioning',
         'id': 'positioningLeft',
@@ -409,6 +415,7 @@ const getBlockStyle = (elementId, attributes) => {
         'selector': `.${elementId}.guten-element`,
         'attributeType': 'custom',
     });
+
     isNotEmpty(attributes['positioningRight']) && isNotEmpty(attributes['positioningLocation']) && attributes['positioningLocation'] !== 'default' && data.push({
         'type': 'positioning',
         'id': 'positioningRight',
@@ -422,6 +429,7 @@ const getBlockStyle = (elementId, attributes) => {
         'selector': `.${elementId}.guten-element`,
         'attributeType': 'custom',
     });
+
     isNotEmpty(attributes['positioningTop']) && isNotEmpty(attributes['positioningLocation']) && attributes['positioningLocation'] !== 'default' && data.push({
         'type': 'positioning',
         'id': 'positioningTop',
@@ -435,6 +443,7 @@ const getBlockStyle = (elementId, attributes) => {
         'selector': `.${elementId}.guten-element`,
         'attributeType': 'custom',
     });
+
     isNotEmpty(attributes['positioningBottom']) && isNotEmpty(attributes['positioningLocation']) && attributes['positioningLocation'] !== 'default' && data.push({
         'type': 'positioning',
         'id': 'positioningBottom',
@@ -449,7 +458,17 @@ const getBlockStyle = (elementId, attributes) => {
         'attributeType': 'custom',
     });
 
-    return data;
+    return [
+        ...data,
+        ...applyFilters(
+            'gutenverse.form-builder.blockStyle',
+            [],
+            {
+                elementId,
+                attributes
+            }
+        )
+    ];
 };
 
 export default getBlockStyle;
