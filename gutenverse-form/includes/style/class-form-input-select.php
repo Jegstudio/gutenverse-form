@@ -209,12 +209,10 @@ class Form_Input_Select extends Style_Abstract {
 				array(
 					'selector'       => ".{$this->element_id} .main-wrapper .choices::after",
 					'property'       => function ( $value ) {
-						if ( isset( $value['dimension']['right'] ) ) {
-							$right        = floatval( $value['dimension']['right'] ) - 11.5;
-							$right_margin = $right > 0 ? $right : 0;
-							$unit         = $value['unit'];
-							return "margin-right: {$right_margin}{$unit};";
-						}
+						$right        = floatval( isset( $value['dimension']['right'] ) ? $value['dimension']['right'] : 0 ) - 11.5;
+						$right_margin = $right > 0 ? $right : 0;
+						$unit         = $value['unit'];
+						return "margin-right: {$right_margin}{$unit};";
 					},
 					'value'          => $this->attrs['inputPadding'],
 					'device_control' => true,
