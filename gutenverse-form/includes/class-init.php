@@ -258,6 +258,11 @@ class Init {
 	 * Only load when framework already loaded.
 	 */
 	public function framework_loaded() {
+
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		$plugins = \get_plugins();
 		$checks  = array(
 			'gutenverse/gutenverse.php',
