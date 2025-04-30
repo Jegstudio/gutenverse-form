@@ -216,7 +216,49 @@ class Init {
 		require_once GUTENVERSE_FORM_DIR . 'lib/framework/init.php';
 		$init = \Gutenverse_Initialize_Framework::instance();
 
-		$plugins = get_plugins();
+		$framework_file    = GUTENVERSE_FORM_DIR . 'lib/framework/bootstrap.php';
+		$framework_version = $init->get_framework_version( $framework_file );
+		$init->register_version( GUTENVERSE_FORM, $framework_version );
+		$init->register_pro_version( GUTENVERSE_FORM, GUTENVERSE_FORM_REQUIRED_PRO_VERSION );
+	}
+
+	/**
+	 * Check if we can load framework.
+	 *
+	 * @return boolean
+	 */
+	public function can_load_framework() {
+		require_once GUTENVERSE_FORM_DIR . 'lib/framework/init.php';
+		$init = \Gutenverse_Initialize_Framework::instance();
+
+		return $init->can_load_version( GUTENVERSE_FORM );
+	}
+
+	/**
+	 * Load text domain
+	 */
+	public function load_textdomain() {
+		add_action( 'rest_api_init', array( $this, 'init_api' ) );
+		load_plugin_textdomain( 'gutenverse-form', false, GUTENVERSE_FORM_LANG_DIR );
+	}
+
+	/**
+	 * Plugin Loaded.
+	 */
+	public function plugin_loaded() {
+		require_once GUTENVERSE_FORM_DIR . 'lib/framework/init.php';
+		$init = \Gutenverse_Initialize_Framework::instance();
+
+		if ( $init->check_compatibility() ) {
+			$this->init_framework();
+		}
+	}
+
+	/**
+	 * Only load when framework already loaded.
+	 */
+	public function framework_loaded() {
+		$plugins = \get_plugins();
 		$checks  = array(
 			'gutenverse/gutenverse.php',
 			'gutenverse-news/gutenverse-news.php',
@@ -264,48 +306,6 @@ class Init {
 			}
 		}
 
-		$framework_file    = GUTENVERSE_FORM_DIR . 'lib/framework/bootstrap.php';
-		$framework_version = $init->get_framework_version( $framework_file );
-		$init->register_version( GUTENVERSE_FORM, $framework_version );
-		$init->register_pro_version( GUTENVERSE_FORM, GUTENVERSE_FORM_REQUIRED_PRO_VERSION );
-	}
-
-	/**
-	 * Check if we can load framework.
-	 *
-	 * @return boolean
-	 */
-	public function can_load_framework() {
-		require_once GUTENVERSE_FORM_DIR . 'lib/framework/init.php';
-		$init = \Gutenverse_Initialize_Framework::instance();
-
-		return $init->can_load_version( GUTENVERSE_FORM );
-	}
-
-	/**
-	 * Load text domain
-	 */
-	public function load_textdomain() {
-		add_action( 'rest_api_init', array( $this, 'init_api' ) );
-		load_plugin_textdomain( 'gutenverse-form', false, GUTENVERSE_FORM_LANG_DIR );
-	}
-
-	/**
-	 * Plugin Loaded.
-	 */
-	public function plugin_loaded() {
-		require_once GUTENVERSE_FORM_DIR . 'lib/framework/init.php';
-		$init = \Gutenverse_Initialize_Framework::instance();
-
-		if ( $init->check_compatibility() ) {
-			$this->init_framework();
-		}
-	}
-
-	/**
-	 * Only load when framework already loaded.
-	 */
-	public function framework_loaded() {
 		$this->init_instance();
 		$this->init_post_type();
 		$this->load_textdomain();
