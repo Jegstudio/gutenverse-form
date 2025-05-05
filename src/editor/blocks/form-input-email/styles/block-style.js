@@ -5,6 +5,75 @@ const getBlockStyle = (elementId, attributes) => {
     let data = [];
 
     /* Panel Icon Style */
+    isNotEmpty(attributes['iconSize']) && data.push({
+        'type': 'plain',
+        'id': 'iconSize',
+        'responsive': true,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-email-icon .icon i`,
+        'properties': [
+            {
+                'name': 'font-size',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    }
+                }
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['imageWidth']) && data.push({
+        'type': 'plain',
+        'id': 'imageWidth',
+        'responsive': true,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-email-icon .icon`,
+        'properties': [
+            {
+                'name': 'width',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    }
+                }
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['imageHeight']) && data.push({
+        'type': 'plain',
+        'id': 'imageHeight',
+        'responsive': true,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-email-icon .icon`,
+        'properties': [
+            {
+                'name': 'height',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    }
+                }
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['iconAlignment']) && data.push({
+        'type': 'plain',
+        'id': 'iconAlignment',
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper`,
+        'properties': [
+            {
+                'name': 'flex-direction',
+                'valueType': 'pattern',
+                'pattern': attributes['iconAlignment'] === 'right' ? 'row-reverse' : 'row',
+            }
+        ],
+    });
     isNotEmpty(attributes['iconPadding']) && data.push({
         'type': 'dimension',
         'id': 'iconPadding',

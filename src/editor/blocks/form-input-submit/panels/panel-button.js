@@ -2,9 +2,6 @@ import { __ } from '@wordpress/i18n';
 
 import { AlignCenter, AlignLeft, AlignRight } from 'gutenverse-core/components';
 import { CheckboxControl, DimensionControl, IconRadioControl, RangeControl, SelectControl, SizeControl } from 'gutenverse-core/controls';
-import { deviceStyleValue, handleDimension, handleUnitPoint } from 'gutenverse-core/styling';
-import { getDeviceType } from 'gutenverse-core/editor-helper';
-import { isEmpty } from 'lodash';
 import { isNotEmpty } from 'gutenverse-core/helper';
 
 export const buttonPanel = (props) => {
@@ -15,7 +12,6 @@ export const buttonPanel = (props) => {
         iconSpacing,
     } = props;
 
-    const device = getDeviceType();
 
     return [
         {

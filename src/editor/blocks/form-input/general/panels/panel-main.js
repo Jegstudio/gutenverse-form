@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { ColorControl, DimensionControl, TypographyControl } from 'gutenverse-core/controls';
-import { handleColor, handleTypography, handleDimension } from 'gutenverse-core/styling';
 
 export const mainPanel = props => {
     const {
@@ -59,10 +58,18 @@ export const mainPanel = props => {
             label: __('Warning Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .validation-error`,
-                    render: value => handleColor(value, 'color')
+                    'type': 'color',
+                    'id': 'helperColor',
+                    'selector': `.${elementId} .validation-error`,
+                    'properties': [
+                        {
+                            'name': 'color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },
@@ -70,13 +77,6 @@ export const mainPanel = props => {
             id: 'warningTypography',
             label: __('Warning Typography', 'gutenverse-form'),
             component: TypographyControl,
-            style: [
-                {
-                    selector: `.${elementId} .validation-error`,
-                    hasChild: true,
-                    render: (value, id) => handleTypography(value, props, id)
-                }
-            ],
         },
     ];
 };

@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { ColorControl, DimensionControl } from 'gutenverse-core/controls';
-import { handleColor, handleDimension } from 'gutenverse-core/styling';
 
 export const selectedPanel = props => {
     const {

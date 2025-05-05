@@ -1,5 +1,5 @@
 import { compose } from '@wordpress/compose';
-import { withAnimationStickyV2, withMouseMoveEffect, withPassRef } from 'gutenverse-core/hoc';
+import { withAnimationStickyV2, withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { useBlockProps, InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import classnames from 'classnames';
 import { BlockPanelController } from 'gutenverse-core/controls';
@@ -46,7 +46,8 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
 const FormBuilderBlock = compose(
     withPassRef,
     withAnimationStickyV2(),
-    withMouseMoveEffect
+    withMouseMoveEffect,
+    withPartialRender,
 )((props) => {
     const {
         getBlockOrder

@@ -1,15 +1,17 @@
 import { compose } from '@wordpress/compose';
 import { useEffect, useRef, useState } from '@wordpress/element';
-import { withMouseMoveEffect } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { ChoiceSelect } from 'gutenverse-core/components';
-import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputMultiSelectBlock = compose(
-    withMouseMoveEffect
+    withMouseMoveEffect,
+    withPartialRender,
+    withPassRef,
 )(props => {
     const {
         attributes,
@@ -27,6 +29,7 @@ const FormInputMultiSelectBlock = compose(
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
+    useDynamicScript(elementRef);
 
     const [selected, setSelected] = useState(selectedOption);
     const inputData = {
@@ -38,10 +41,10 @@ const FormInputMultiSelectBlock = compose(
 
     useEffect(() => {
         setSelected(selectedOption);
-    },[selectedOption]);
+    }, [selectedOption]);
 
     return <>
-        <CopyElementToolbar {...props}/>
+        <CopyElementToolbar {...props} />
         <InputWrapper {...inputData}>
             <div className="select-wrapper" ref={elementRef}>
                 <ChoiceSelect

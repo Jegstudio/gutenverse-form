@@ -1,19 +1,12 @@
 import { __ } from '@wordpress/i18n';
-import { getDeviceType } from 'gutenverse-core/editor-helper';
 import { CheckboxControl, ImageControl, RangeControl, SelectControl, TextControl } from 'gutenverse-core/controls';
 
 export const panelIcon = (props) => {
     const {
         elementId,
         iconType,
-        removeStyle,
-        iconSize,
-        imageWidth,
-        imageHeight,
         useIcon,
-        iconAlignment
     } = props;
-    const deviceType = getDeviceType();
 
     return [
         {
@@ -36,12 +29,6 @@ export const panelIcon = (props) => {
                     label: 'Right'
                 },
             ],
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper`,
-                    render: (value) => `flex-direction: ${value === 'right' ? 'row-reverse' : 'row'};`
-                }
-            ]
         },
         {
             id: 'iconType',
@@ -62,45 +49,6 @@ export const panelIcon = (props) => {
                     label: 'Image'
                 },
             ],
-            onChange: ({ iconShape }) => {
-                if ('icon' !== iconShape) {
-                    removeStyle('iconSize-style-0');
-                }
-
-                if ('image' !== iconShape) {
-                    removeStyle('imageWidth-style-0');
-                    removeStyle('imageHeight-style-0');
-                }
-            },
-            style: [
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon i`,
-                    allowRender: value => value === 'icon',
-                    render: () => `font-size: ${iconSize[deviceType]}px;`
-                },
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon`,
-                    allowRender: value => value === 'image',
-                    render: () => {
-                        return `width: ${imageWidth[deviceType]}px;`;
-                    }
-                },
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon`,
-                    allowRender: value => value === 'image',
-                    render: () => `height: ${imageHeight[deviceType]}px;`
-                },
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper input`,
-                    allowRender: value => value === 'image',
-                    render: () => `height: ${imageHeight[deviceType]}px !important;`
-                },
-                {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper input`,
-                    allowRender: value => value === 'icon',
-                    render: () => `height: ${iconSize[deviceType]}px !important;`
-                },
-            ]
         },
         {
             id: 'iconSize',
@@ -111,12 +59,25 @@ export const panelIcon = (props) => {
             min: 1,
             max: 200,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon i`,
-                    allowRender: () => iconType && iconType === 'icon',
-                    render: value => `font-size: ${value}px;`
-                },
+                    'type': 'plain',
+                    'id': 'iconSize',
+                    'responsive': true,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon i`,
+                    'properties': [
+                        {
+                            'name': 'font-size',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                }
+                            }
+                        }
+                    ],
+                }
             ]
         },
         {
@@ -146,12 +107,25 @@ export const panelIcon = (props) => {
             min: 1,
             max: 400,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon`,
-                    allowRender: () => iconType && iconType === 'image',
-                    render: value => `width: ${value}px;`
-                },
+                    'type': 'plain',
+                    'id': 'imageWidth',
+                    'responsive': true,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon`,
+                    'properties': [
+                        {
+                            'name': 'width',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                }
+                            }
+                        }
+                    ],
+                }
             ]
         },
         {
@@ -163,11 +137,24 @@ export const panelIcon = (props) => {
             min: 1,
             max: 400,
             step: 1,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon`,
-                    allowRender: () => iconType && iconType === 'image',
-                    render: value => `height: ${value}px;`
+                    'type': 'plain',
+                    'id': 'imageHeight',
+                    'responsive': true,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon`,
+                    'properties': [
+                        {
+                            'name': 'height',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                }
+                            }
+                        }
+                    ],
                 }
             ]
         },

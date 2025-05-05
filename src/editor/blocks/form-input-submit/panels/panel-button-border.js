@@ -1,7 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { handleBorderResponsive, handleBorder } from 'gutenverse-core/styling';
 import { BorderControl, BorderResponsiveControl, BoxShadowControl, SwitchControl } from 'gutenverse-core/controls';
-import { allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
 import { getDeviceType } from 'gutenverse-core/editor-helper';
 
 export const buttonBorderPanel = (props) => {

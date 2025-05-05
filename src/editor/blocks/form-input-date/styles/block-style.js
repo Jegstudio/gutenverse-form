@@ -259,6 +259,77 @@ const getBlockStyle = (elementId, attributes) => {
         'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon`,
     });
 
+    isNotEmpty(attributes['iconSize']) && data.push({
+        'type': 'plain',
+        'id': 'iconSize',
+        'responsive': true,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon i`,
+        'properties': [
+            {
+                'name': 'font-size',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    }
+                }
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['imageWidth']) && data.push({
+        'type': 'plain',
+        'id': 'imageWidth',
+        'responsive': true,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+        'properties': [
+            {
+                'name': 'width',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    }
+                }
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['imageHeight']) && data.push({
+        'type': 'plain',
+        'id': 'imageHeight',
+        'responsive': true,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+        'properties': [
+            {
+                'name': 'height',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    }
+                }
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['iconAlignment']) && data.push({
+        'type': 'plain',
+        'id': 'iconAlignment',
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper`,
+        'properties': [
+            {
+                'name': 'flex-direction',
+                'valueType': 'pattern',
+                'pattern': attributes['iconAlignment'] === 'right' ? 'row-reverse' : 'row',
+            }
+        ],
+    });
+
+
     /* Panel Input */
     isNotEmpty(attributes['inputPadding']) && data.push({
         'type': 'dimension',

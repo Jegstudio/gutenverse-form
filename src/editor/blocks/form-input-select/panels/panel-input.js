@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { BorderControl, BorderResponsiveControl, BoxShadowControl, ColorControl, DimensionControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
-import { handleDimension, handleColor, handleTypography, handleBorderResponsive, handleBorder, allowRenderBoxShadow, handleBoxShadow } from 'gutenverse-core/styling';
 import { getDeviceType } from 'gutenverse-core/editor-helper';
 
 export const inputPanel = props => {
@@ -163,10 +162,18 @@ export const inputPanel = props => {
             label: __('Options Background Color Normal', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
-            style: [
+            liveStyle: [
                 {
-                    selector: `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item`,
-                    render: value => handleColor(value, 'background-color')
+                    'type': 'color',
+                    'id': 'choicesBgColorNormal',
+                    'selector': `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                    'responsive': true,
                 }
             ]
         },

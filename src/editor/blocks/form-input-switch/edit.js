@@ -1,15 +1,17 @@
 import { compose } from '@wordpress/compose';
-import { withMouseMoveEffect } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
 import { u } from 'gutenverse-core/components';
-import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputSwitchBlock = compose(
-    withMouseMoveEffect
+    withMouseMoveEffect,
+    withPartialRender,
+    withPassRef,
 )(props => {
     const {
         attributes,
@@ -35,14 +37,15 @@ const FormInputSwitchBlock = compose(
     const handleSwitchOn = () => {
         const element = u(`.${elementId} .gutenverse-input-switch`);
         const elementStatus = element.is(':checked');
-        element.attr('checked',!elementStatus);
+        element.attr('checked', !elementStatus);
     };
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
+    useDynamicScript(elementRef);
 
     return <>
-        <CopyElementToolbar {...props}/>
+        <CopyElementToolbar {...props} />
         <InputWrapper {...inputData} inputType={inputData.type}>
             <label className="switch-wrapper" htmlFor={elementId}>
                 <input

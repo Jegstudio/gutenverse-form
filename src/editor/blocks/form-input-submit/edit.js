@@ -7,17 +7,19 @@ import { createPortal } from 'react-dom';
 import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import { displayShortcut } from '@wordpress/keycodes';
 import { BlockPanelController, IconLibrary } from 'gutenverse-core/controls';
-import { withMouseMoveEffect } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import { __ } from '@wordpress/i18n';
 import { LogoCircleColor24SVG } from 'gutenverse-core/icons';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
-import { useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputSubmitBlock = compose(
-    withMouseMoveEffect
+    withMouseMoveEffect,
+    withPartialRender,
+    withPassRef,
 )((props) => {
     const {
         attributes,
@@ -39,6 +41,8 @@ const FormInputSubmitBlock = compose(
     const elementRef = useRef();
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
+    useDynamicScript(elementRef);
+
     const textRef = useRef();
     const animationClass = useAnimationEditor(attributes);
     const root = document.getElementById('gutenverse-root');
@@ -69,7 +73,7 @@ const FormInputSubmitBlock = compose(
     };
 
     return <>
-        <CopyElementToolbar {...props}/>
+        <CopyElementToolbar {...props} />
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
         {openIconLibrary && createPortal(
             <IconLibrary
