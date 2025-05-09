@@ -1,7 +1,7 @@
 === Gutenverse Form – Contact Form Builder, Booking, Reservation, Subscribe for Block Editor ===
 Contributors: Jegstudio
 Tags: contact form, form builder, custom form, block form, WordPress form plugin
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.0
 Stable tag: 2.0.1
 License: GPLv3
@@ -210,6 +210,25 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 = 2.0.1 =
 ##### New & Improvements
 * update core version
+
+##### Bug Fixes
+* fix responsive style in editor - some block back to default style
+* fix library section preview when theres block hides on desktop
+* fix border control UI
+* fix save state issue
+* fix flexible wrapper width and height issue
+* fix restores the previous range control for gradient
+* fix transform switch normal/hover
+* fix transform reset button
+* fix border color issue
+* fix issue library button disappear in editor
+* fix library layout thumbnail height
+* fix the option use featured image is missing in background section and column
+* fix input global style
+* fix control with slider and unit
+* fix cursor when typing inside text control
+* fix featured background image not showing in frontend
+* fix flexible wrapper animation effect
 
 = 2.0.0 =
 ##### New & Improvements
