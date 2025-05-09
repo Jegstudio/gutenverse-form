@@ -18,6 +18,23 @@ const getBlockStyle = (elementId, attributes) => {
         'responsive': true,
     });
 
+    data.push({
+        'type': 'plain',
+        'id': 'excludePlaceholder',
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.choices__placeholder`,
+        'properties': [
+            {
+                'name': 'display',
+                'valueType': 'function',
+                'functionName': 'handleSimpleCondition',
+                'functionProps' : {
+                    'valueTrue' : 'none',
+                    'valueFalse' : 'block'
+                }
+            }
+        ],
+    });
+
     isNotEmpty(attributes['inputMargin']) && data.push({
         'type': 'dimension',
         'id': 'inputMargin',
@@ -34,7 +51,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['placeholderColor']) && data.push({
         'type': 'color',
         'id': 'placeholderColor',
-        'selector': `.${elementId} .choices__placeholder:not(.choices__item--choice)`,
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.choices__placeholder, .${elementId} .main-wrapper .choices__inner .choices__placeholder:not(.choices__item--choice)`,
         'properties': [
             {
                 'name': 'color',
@@ -47,7 +64,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['placeholderBgColor']) && data.push({
         'type': 'color',
         'id': 'placeholderBgColor',
-        'selector': `.${elementId} .choices__inner, .${elementId} .choices .choices__input`,
+        'selector': `.${elementId} .choices__inner`,
         'properties': [
             {
                 'name': 'background-color',
@@ -115,7 +132,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['inputBorderNormalResponsive']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'inputBorderNormal',
         'selector': `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
         'responsive': true,
@@ -168,7 +185,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['inputBorderNormalResponsive']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'inputBorderNormal',
         'selector': `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
         'responsive': true,
@@ -344,6 +361,126 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
+    });
+
+    /* Panel Opition Style */
+    isNotEmpty(attributes['choicesPadding']) && data.push({
+        'type': 'dimension',
+        'id': 'choicesPadding',
+        'properties': [
+            {
+                'name': 'padding',
+                'valueType': 'direct'
+            }
+        ],
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable`,
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesMargin']) && data.push({
+        'type': 'dimension',
+        'id': 'choicesMargin',
+        'properties': [
+            {
+                'name': 'margin',
+                'valueType': 'direct'
+            }
+        ],
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable`,
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesTypography']) && data.push({
+        'type': 'typography',
+        'id': 'choicesTypography',
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable`,
+        'properties': [
+            {
+                'name': 'typography',
+                'valueType': 'direct'
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['choicesColorNormal']) && data.push({
+        'type': 'color',
+        'id': 'choicesColorNormal',
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable`,
+        'properties': [
+            {
+                'name': 'color',
+                'valueType': 'direct'
+            }
+        ],
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesBackgroundNormal']) && data.push({
+        'id': 'choicesBackgroundNormal',
+        'type': 'background',
+        'responsive': true,
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable`,
+    });
+
+    isNotEmpty(attributes['choicesBorderNormal']) && data.push({
+        'type': 'borderResponsive',
+        'id': 'choicesBorderNormal',
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable`,
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesColorHover']) && data.push({
+        'type': 'color',
+        'id': 'choicesColorHover',
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-highlighted`,
+        'properties': [
+            {
+                'name': 'color',
+                'valueType': 'direct'
+            }
+        ],
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesBackgroundHover']) && data.push({
+        'id': 'choicesBackgroundHover',
+        'type': 'background',
+        'responsive': true,
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-highlighted`,
+    });
+
+    isNotEmpty(attributes['choicesBorderHover']) && data.push({
+        'type': 'borderResponsive',
+        'id': 'choicesBorderHover',
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-highlighted`,
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesColorSelected']) && data.push({
+        'type': 'color',
+        'id': 'choicesColorSelected',
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-selected`,
+        'properties': [
+            {
+                'name': 'color',
+                'valueType': 'direct'
+            }
+        ],
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesBackgroundSelected']) && data.push({
+        'id': 'choicesBackgroundSelected',
+        'type': 'background',
+        'responsive': true,
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-selected`,
+    });
+
+    isNotEmpty(attributes['choicesBorderSelected']) && data.push({
+        'type': 'borderResponsive',
+        'id': 'choicesBorderSelected',
+        'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-selected`,
+        'responsive': true,
     });
 
     /* Panel List */

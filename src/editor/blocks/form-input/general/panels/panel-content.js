@@ -3,7 +3,8 @@ import { CheckboxControl, SelectControl, TextControl } from 'gutenverse-core/con
 
 export const contentPanel = props => {
     const {
-        showLabel
+        showLabel,
+        excludePlaceholder = false
     } = props;
 
     return [
@@ -38,6 +39,13 @@ export const contentPanel = props => {
             id: 'inputPlaceholder',
             label: __('Input Placeholder', 'gutenverse-form'),
             component: TextControl,
+        },
+        {
+            id: 'excludePlaceholder',
+            show: excludePlaceholder,
+            label: __('Exclude Placeholder', 'gutenverse-form'),
+            description: __('Prevent the placeholder from appearing in the dropdown list of select options.', 'gutenverse-form'),
+            component: CheckboxControl,
         },
         {
             id: 'inputName',

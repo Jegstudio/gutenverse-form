@@ -25,6 +25,10 @@
             "type": "boolean",
             "default": true
         },
+        "excludePlaceholder": {
+            "type": "boolean",
+            "default": false
+        },
         "inputHelper": {
             "type": "string",
             "default": "Input Helper"
@@ -300,7 +304,27 @@
             "type": "object",
             "copyStyle": true
         },
+        "choicesPadding": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesMargin": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesTypography": {
+            "type": "object",
+            "copyStyle": true
+        },
         "choicesColorNormal": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesBackgroundNormal": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesBorderNormal": {
             "type": "object",
             "copyStyle": true
         },
@@ -308,11 +332,23 @@
             "type": "object",
             "copyStyle": true
         },
-        "choicesBgColorNormal": {
+        "choicesBackgroundHover": {
             "type": "object",
             "copyStyle": true
         },
-        "choicesBgColorHover": {
+        "choicesBorderHover": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesColorSelected": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesBackgroundSelected": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesBorderSelected": {
             "type": "object",
             "copyStyle": true
         },

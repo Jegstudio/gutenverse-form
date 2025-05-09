@@ -63,30 +63,10 @@ export const inputPanel = props => {
                 {
                     'type': 'color',
                     'id': 'placeholderColor',
-                    'selector': `.${elementId} .choices__placeholder:not(.choices__item--choice)`,
+                    'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.choices__placeholder, .${elementId} .main-wrapper .choices__inner .choices__placeholder:not(.choices__item--choice)`,
                     'properties': [
                         {
                             'name': 'color',
-                            'valueType': 'direct'
-                        }
-                    ],
-                    'responsive': true,
-                }
-            ]
-        },
-        {
-            id: 'placeholderBgColor',
-            label: __('Input Background Color', 'gutenverse-form'),
-            component: ColorControl,
-            allowDeviceControl: true,
-            liveStyle: [
-                {
-                    'type': 'color',
-                    'id': 'placeholderBgColor',
-                    'selector': `.${elementId} .choices__inner, .${elementId} .choices .choices__input`,
-                    'properties': [
-                        {
-                            'name': 'background-color',
                             'valueType': 'direct'
                         }
                     ],
@@ -136,37 +116,16 @@ export const inputPanel = props => {
             ]
         },
         {
-            id: 'choicesColorNormal',
+            id: 'placeholderBgColor',
             show: !switcher.inputState || switcher.inputState === 'normal',
-            label: __('Options Text Color Normal', 'gutenverse-form'),
+            label: __('Input Background Color', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             liveStyle: [
                 {
                     'type': 'color',
-                    'id': 'choicesColorNormal',
-                    'selector': `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item`,
-                    'properties': [
-                        {
-                            'name': 'color',
-                            'valueType': 'direct'
-                        }
-                    ],
-                    'responsive': true,
-                }
-            ]
-        },
-        {
-            id: 'choicesBgColorNormal',
-            show: !switcher.inputState || switcher.inputState === 'normal',
-            label: __('Options Background Color Normal', 'gutenverse-form'),
-            component: ColorControl,
-            allowDeviceControl: true,
-            liveStyle: [
-                {
-                    'type': 'color',
-                    'id': 'choicesBgColorNormal',
-                    'selector': `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item`,
+                    'id': 'placeholderBgColor',
+                    'selector': `.${elementId} .choices__inner`,
                     'properties': [
                         {
                             'name': 'background-color',
@@ -212,37 +171,16 @@ export const inputPanel = props => {
             ]
         },
         {
-            id: 'choicesColorHover',
+            id: 'placeholderBgColorHover',
             show: switcher.inputState === 'hover',
-            label: __('Options Text Color Hover', 'gutenverse-form'),
+            label: __('Input Background Color Hover', 'gutenverse-form'),
             component: ColorControl,
             allowDeviceControl: true,
             liveStyle: [
                 {
                     'type': 'color',
-                    'id': 'choicesColorHover',
-                    'selector': `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item.is-highlighted`,
-                    'properties': [
-                        {
-                            'name': 'color',
-                            'valueType': 'direct'
-                        }
-                    ],
-                    'responsive': true,
-                }
-            ]
-        },
-        {
-            id: 'choicesBgColorHover',
-            show: switcher.inputState === 'hover',
-            label: __('Selected Option Color Hover', 'gutenverse-form'),
-            component: ColorControl,
-            allowDeviceControl: true,
-            liveStyle: [
-                {
-                    'type': 'color',
-                    'id': 'choicesBgColorHover',
-                    'selector': `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item.is-highlighted`,
+                    'id': 'placeholderBgColor',
+                    'selector': `.${elementId} .choices__inner, .${elementId} .choices .choices__input`,
                     'properties': [
                         {
                             'name': 'background-color',

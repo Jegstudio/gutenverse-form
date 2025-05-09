@@ -8,12 +8,16 @@ import { inputPanel } from './panel-input';
 import { selectContentPanel } from './panel-select-content';
 import { TabSetting, TabStyle } from 'gutenverse-core/controls';
 import { panelLogic } from '../../form-input/general/panels/panel-logic';
+import { optionPanel } from './panel-option';
 
 export const panelList = () => {
     return [
         {
             title: __('Content', 'gutenverse-form'),
-            panelArray: contentPanel,
+            panelArray: (props) => contentPanel({
+                ...props,
+                excludePlaceholder: true,
+            }),
             initialOpen: true,
             tabRole: TabSetting,
         },
@@ -50,6 +54,12 @@ export const panelList = () => {
         {
             title: __('Input Style', 'gutenverse-form'),
             panelArray: inputPanel,
+            initialOpen: false,
+            tabRole: TabStyle,
+        },
+        {
+            title: __('Options Style', 'gutenverse-form'),
+            panelArray: optionPanel,
             initialOpen: false,
             tabRole: TabStyle,
         },
