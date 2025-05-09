@@ -414,7 +414,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['inputBorderNormalResponsive']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'inputBorderNormalResponsive',
         'selector': `.${elementId} .gutenverse-input, .${elementId} .main-wrapper .input-icon-wrapper`,
         'responsive': true,
@@ -453,7 +453,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['inputBorderHoverResponsive']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'inputBorderHoverResponsive',
         'selector': `.${elementId} .gutenverse-input:hover, .${elementId} .main-wrapper .input-icon-wrapper:hover`,
         'responsive': true,
@@ -492,7 +492,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['inputBorderFocusResponsive']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'inputBorderFocusResponsive',
         'selector': `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible, .${elementId} .main-wrapper .input-icon-wrapper:focus-within`,
         'responsive': true,
