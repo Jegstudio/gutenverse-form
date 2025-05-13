@@ -65,7 +65,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'plain',
                     'id': 'iconRotate',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
                     'properties': [
                         {
                             'name': 'transform',
@@ -126,14 +126,13 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'color',
                     'id': 'iconColor',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon i`,
                     'properties': [
                         {
                             'name': 'color',
                             'valueType': 'direct'
                         }
-                    ],
-                    'responsive': true,
+                    ]
                 }
             ]
         },
@@ -146,14 +145,13 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'color',
                     'id': 'iconBgColor',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
                     'properties': [
                         {
                             'name': 'background-color',
                             'valueType': 'direct'
                         }
                     ],
-                    'responsive': true,
                 }
             ]
         },
@@ -167,7 +165,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'plain',
                     'id': 'iconColorGradient',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon.style-gradient i`,
                     'properties': [
                         {
                             'name': 'background-image',
@@ -188,7 +186,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'plain',
                     'id': 'iconBackground',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon.style-gradient`,
                     'properties': [
                         {
                             'name': 'background-image',
@@ -221,7 +219,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'color',
                     'id': 'iconHoverColor',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon i`,
                     'properties': [
                         {
                             'name': 'color',
@@ -240,7 +238,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'color',
                     'id': 'iconHoverBgColor',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon`,
                     'properties': [
                         {
                             'name': 'background-color',
@@ -260,7 +258,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'plain',
                     'id': 'iconColorGradientHover',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon.style-gradient i`,
                     'properties': [
                         {
                             'name': 'background-image',
@@ -281,7 +279,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'plain',
                     'id': 'iconBackgroundHover',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon.style-gradient`,
                     'properties': [
                         {
                             'name': 'background-image',
@@ -314,7 +312,7 @@ export const panelIconStyle = (props) => {
                             'valueType': 'direct'
                         }
                     ],
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon`,
                 }
             ]
         },
@@ -327,7 +325,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'color',
                     'id': 'iconFocusColor',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon i`,
                     'properties': [
                         {
                             'name': 'color',
@@ -346,7 +344,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'color',
                     'id': 'iconFocusBgColor',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon`,
                     'properties': [
                         {
                             'name': 'background-color',
@@ -366,7 +364,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'plain',
                     'id': 'iconColorGradientFocus',
-                    'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i`,
+                    'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon.style-gradient i`,
                     'properties': [
                         {
                             'name': 'background-image',
@@ -387,7 +385,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'plain',
                     'id': 'iconBackgroundFocus',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon.style-gradient`,
                     'properties': [
                         {
                             'name': 'background-image',

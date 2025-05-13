@@ -44,7 +44,7 @@ const getBlockStyle = (elementId, attributes) => {
         ],
     });
 
-    isNotEmpty(attributes['imageWidth']) && data.push({
+    isNotEmpty(attributes['imageWidth']) && attributes['iconType'] === 'image' &&  data.push({
         'type': 'plain',
         'id': 'imageWidth',
         'responsive': true,
@@ -63,7 +63,7 @@ const getBlockStyle = (elementId, attributes) => {
         ],
     });
 
-    isNotEmpty(attributes['imageHeight']) && data.push({
+    isNotEmpty(attributes['imageHeight']) && attributes['iconType'] === 'image' && data.push({
         'type': 'plain',
         'id': 'imageHeight',
         'responsive': true,
@@ -104,7 +104,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+        'selector': `.${elementId}.main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
         'responsive': true,
     });
 
@@ -117,14 +117,14 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
         'responsive': true,
     });
 
     isNotEmpty(attributes['iconRotate']) && data.push({
         'type': 'plain',
         'id': 'iconRotate',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
         'properties': [
             {
                 'name': 'transform',
@@ -144,33 +144,31 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconColor']) && data.push({
         'type': 'color',
         'id': 'iconColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon i`,
         'properties': [
             {
                 'name': 'color',
                 'valueType': 'direct'
             }
         ],
-        'responsive': true,
     });
 
     isNotEmpty(attributes['iconBgColor']) && data.push({
         'type': 'color',
         'id': 'iconBgColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
         'properties': [
             {
                 'name': 'background-color',
                 'valueType': 'direct'
             }
         ],
-        'responsive': true,
     });
 
     isNotEmpty(attributes['iconColorGradient']) && data.push({
         'type': 'plain',
         'id': 'iconColorGradient',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon.style-gradient i`,
         'properties': [
             {
                 'name': 'background-image',
@@ -183,7 +181,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconBackground']) && data.push({
         'type': 'plain',
         'id': 'iconBackground',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon.style-gradient`,
         'properties': [
             {
                 'name': 'background-image',
@@ -196,7 +194,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconBorder']) && data.push({
         'type': 'border',
         'id': 'iconBorder',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
         'responsive': true,
     });
 
@@ -209,13 +207,13 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
     });
 
     isNotEmpty(attributes['iconHoverColor']) && data.push({
         'type': 'color',
         'id': 'iconHoverColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon i`,
         'properties': [
             {
                 'name': 'color',
@@ -227,7 +225,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconHoverBgColor']) && data.push({
         'type': 'color',
         'id': 'iconHoverBgColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon`,
         'properties': [
             {
                 'name': 'background-color',
@@ -239,7 +237,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconColorGradientHover']) && data.push({
         'type': 'plain',
         'id': 'iconColorGradientHover',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon.style-gradient i`,
         'properties': [
             {
                 'name': 'background-image',
@@ -252,7 +250,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconBackgroundHover']) && data.push({
         'type': 'plain',
         'id': 'iconBackgroundHover',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon.style-gradient`,
         'properties': [
             {
                 'name': 'background-image',
@@ -265,7 +263,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconBorderHover']) && data.push({
         'type': 'border',
         'id': 'iconBorderHover',
-        'selector': `${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon`,
+        'selector': `${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon`,
     });
 
     isNotEmpty(attributes['iconBoxShadowHover']) && data.push({
@@ -277,13 +275,13 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon`,
     });
 
     isNotEmpty(attributes['iconFocusColor']) && data.push({
         'type': 'color',
         'id': 'iconFocusColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon i`,
         'properties': [
             {
                 'name': 'color',
@@ -296,7 +294,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconFocusBgColor']) && data.push({
         'type': 'color',
         'id': 'iconFocusBgColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon`,
         'properties': [
             {
                 'name': 'background-color',
@@ -308,7 +306,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconColorGradientFocus']) && data.push({
         'type': 'plain',
         'id': 'iconColorGradientFocus',
-        'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i`,
+        'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon.style-gradient i`,
         'properties': [
             {
                 'name': 'background-image',
@@ -321,7 +319,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconBackgroundFocus']) && data.push({
         'type': 'plain',
         'id': 'iconBackgroundFocus',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon.style-gradient`,
         'properties': [
             {
                 'name': 'background-image',
@@ -334,7 +332,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconBorderFocus']) && data.push({
         'type': 'border',
         'id': 'iconBorderFocus',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon`,
     });
 
     isNotEmpty(attributes['iconBoxShadowFocus']) && data.push({
@@ -346,7 +344,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon`,
     });
 
     /* Panel Input */
