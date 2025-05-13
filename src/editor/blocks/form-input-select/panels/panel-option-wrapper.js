@@ -14,7 +14,7 @@ export const optionPanelWrapper = props => {
     return [
         {
             id: 'choicesWrapperPadding',
-            label: __('Options Padding', 'gutenverse-form'),
+            label: __('Options Wrapper Padding', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -35,7 +35,7 @@ export const optionPanelWrapper = props => {
         },
         {
             id: 'choicesWrapperMargin',
-            label: __('Options Margin', 'gutenverse-form'),
+            label: __('Options Wrapper Margin', 'gutenverse-form'),
             component: DimensionControl,
             position: ['top', 'right', 'bottom', 'left'],
             allowDeviceControl: true,
@@ -73,6 +73,7 @@ export const optionPanelWrapper = props => {
         {
             id: 'choicesWrapperBackgroundNormal',
             show: (!switcher.choicesWrapperState || switcher.choicesWrapperState === 'normal'),
+            label: __('Wrapper Background', 'gutenverse-form'),
             component: BackgroundControl,
             allowDeviceControl: true,
             options: ['default', 'gradient'],
@@ -88,14 +89,14 @@ export const optionPanelWrapper = props => {
         {
             id: 'choicesWrapperBorderNormal',
             show: (!switcher.choicesWrapperState || switcher.choicesWrapperState === 'normal'),
-            label: __('Border', 'gutenverse-form'),
+            label: __('Wrapper Border', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
         },
         {
             id: 'choicesWrapperShadowNormal',
             show: (!switcher.choicesWrapperState || switcher.choicesWrapperState === 'normal'),
-            label: __('Box Shadow', 'gutenverse-form'),
+            label: __('Wrapper Box Shadow', 'gutenverse-form'),
             component: BoxShadowControl,
             liveStyle: [
                 {
@@ -107,7 +108,7 @@ export const optionPanelWrapper = props => {
                             'valueType': 'direct'
                         }
                     ],
-                    'selector': `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
+                    'selector': `.${elementId} .choices .choices__list.choices__list--dropdown`,
                 }
             ]
         },
@@ -115,6 +116,7 @@ export const optionPanelWrapper = props => {
         {
             id: 'choicesWrapperBackgroundHover',
             show: switcher.choicesWrapperState === 'hover',
+            label: __('Wrapper Background Hover', 'gutenverse-form'),
             component: BackgroundControl,
             allowDeviceControl: true,
             options: ['default', 'gradient'],
@@ -130,14 +132,14 @@ export const optionPanelWrapper = props => {
         {
             id: 'choicesWrapperBorderHover',
             show: switcher.choicesWrapperState === 'hover',
-            label: __('Border', 'gutenverse-form'),
+            label: __('Wrapper Border Hover', 'gutenverse-form'),
             component: BorderResponsiveControl,
             allowDeviceControl: true,
         },
         {
             id: 'choicesWrapperShadowHover',
             show: switcher.choicesWrapperState === 'hover',
-            label: __('Box Shadow', 'gutenverse-form'),
+            label: __('Wrapper Box Shadow Hover', 'gutenverse-form'),
             component: BoxShadowControl,
             liveStyle: [
                 {
@@ -149,7 +151,7 @@ export const optionPanelWrapper = props => {
                             'valueType': 'direct'
                         }
                     ],
-                    'selector': `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
+                    'selector': `.${elementId} .choices .choices__list.choices__list--dropdown`,
                 }
             ]
         },

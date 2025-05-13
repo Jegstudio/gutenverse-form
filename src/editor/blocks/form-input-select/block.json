@@ -375,6 +375,38 @@
         "condition": {
             "type": "object",
             "default": {}
+        },
+        "choicesWrapperPadding": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesWrapperMargin": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesWrapperBackgroundNormal": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesWrapperBorderNormal": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesWrapperShadowNormal": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesWrapperBackgroundHover": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesWrapperBorderHover": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "choicesWrapperShadowHover": {
+            "type": "object",
+            "copyStyle": true
         }
     },
     "supports": {
