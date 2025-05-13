@@ -167,16 +167,16 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'plain',
                     'id': 'iconColorGradient',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient i`,
                     'properties': [
                         {
                             'name': 'background-image',
                             'valueType': 'function',
-                            'funtionName': 'customHandleBackground'
+                            'functionName' : 'customHandleBackground'
                         }
                     ],
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient i`,
                 }
-            ]
+            ],
         },
         {
             id: 'iconBackground',
@@ -186,16 +186,9 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             liveStyle: [
                 {
-                    'type': 'plain',
+                    'type': 'background',
                     'id': 'iconBackground',
                     'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient`,
-                    'properties': [
-                        {
-                            'name': 'background-image',
-                            'valueType': 'function',
-                            'funtionName': 'customHandleBackground'
-                        }
-                    ],
                 }
             ]
         },
@@ -260,16 +253,16 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'plain',
                     'id': 'iconColorGradientHover',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient i`,
                     'properties': [
                         {
                             'name': 'background-image',
                             'valueType': 'function',
-                            'funtionName': 'customHandleBackground'
+                            'functionName' : 'customHandleBackground'
                         }
                     ],
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient i`,
                 }
-            ]
+            ],
         },
         {
             id: 'iconBackgroundHover',
@@ -279,16 +272,9 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             liveStyle: [
                 {
-                    'type': 'plain',
+                    'type': 'background',
                     'id': 'iconBackgroundHover',
                     'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient`,
-                    'properties': [
-                        {
-                            'name': 'background-image',
-                            'valueType': 'function',
-                            'funtionName': 'customHandleBackground'
-                        }
-                    ],
                 }
             ]
         },
@@ -366,16 +352,16 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'plain',
                     'id': 'iconColorGradientFocus',
-                    'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i`,
                     'properties': [
                         {
                             'name': 'background-image',
                             'valueType': 'function',
-                            'funtionName': 'customHandleBackground'
+                            'functionName' : 'customHandleBackground'
                         }
                     ],
+                    'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i`,
                 }
-            ]
+            ],
         },
         {
             id: 'iconBackgroundFocus',
@@ -385,16 +371,9 @@ export const panelIconStyle = (props) => {
             options: ['gradient'],
             liveStyle: [
                 {
-                    'type': 'plain',
+                    'type': 'background',
                     'id': 'iconBackgroundFocus',
                     'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient`,
-                    'properties': [
-                        {
-                            'name': 'background-image',
-                            'valueType': 'function',
-                            'funtionName': 'customHandleBackground'
-                        }
-                    ],
                 }
             ]
         },

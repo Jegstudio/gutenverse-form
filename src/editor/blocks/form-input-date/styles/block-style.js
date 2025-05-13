@@ -80,27 +80,20 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconColorGradient']) && data.push({
         'type': 'plain',
         'id': 'iconColorGradient',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient i`,
         'properties': [
             {
                 'name': 'background-image',
                 'valueType': 'function',
-                'funtionName': 'customHandleBackground'
+                'functionName' : 'customHandleBackground'
             }
         ],
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient i`,
     });
 
     isNotEmpty(attributes['iconBackground']) && data.push({
-        'type': 'plain',
+        'type': 'background',
         'id': 'iconBackground',
         'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient`,
-        'properties': [
-            {
-                'name': 'background-image',
-                'valueType': 'function',
-                'funtionName': 'customHandleBackground'
-            }
-        ],
     });
 
     isNotEmpty(attributes['iconBorder']) && data.push({
@@ -149,27 +142,20 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconColorGradientHover']) && data.push({
         'type': 'plain',
         'id': 'iconColorGradientHover',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient i`,
         'properties': [
             {
                 'name': 'background-image',
                 'valueType': 'function',
-                'funtionName': 'customHandleBackground'
+                'functionName' : 'customHandleBackground'
             }
         ],
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient i`,
     });
 
     isNotEmpty(attributes['iconBackgroundHover']) && data.push({
-        'type': 'plain',
+        'type': 'background',
         'id': 'iconBackgroundHover',
         'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient`,
-        'properties': [
-            {
-                'name': 'background-image',
-                'valueType': 'function',
-                'funtionName': 'customHandleBackground'
-            }
-        ],
     });
 
     isNotEmpty(attributes['iconBorderHover']) && data.push({
@@ -218,27 +204,20 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconColorGradientFocus']) && data.push({
         'type': 'plain',
         'id': 'iconColorGradientFocus',
-        'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i`,
         'properties': [
             {
                 'name': 'background-image',
                 'valueType': 'function',
-                'funtionName': 'customHandleBackground'
+                'functionName' : 'customHandleBackground'
             }
         ],
+        'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i`,
     });
 
     isNotEmpty(attributes['iconBackgroundFocus']) && data.push({
-        'type': 'plain',
+        'type': 'background',
         'id': 'iconBackgroundFocus',
         'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient`,
-        'properties': [
-            {
-                'name': 'background-image',
-                'valueType': 'function',
-                'funtionName': 'customHandleBackground'
-            }
-        ],
     });
 
     isNotEmpty(attributes['iconBorderFocus']) && data.push({
