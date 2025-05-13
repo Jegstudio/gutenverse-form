@@ -171,7 +171,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['iconBorder']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'iconBorder',
         'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon`,
         'responsive': true,
@@ -240,7 +240,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['iconBorderHover']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'iconBorderHover',
         'selector': `${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-telp-icon .icon`,
     });
@@ -309,7 +309,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['iconBorderFocus']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'iconBorderFocus',
         'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-telp-icon .icon`,
     });
@@ -411,7 +411,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['inputBorderNormalResponsive']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'inputBorderNormalResponsive',
         'selector': `.${elementId} .gutenverse-input, .${elementId} .main-wrapper .input-icon-wrapper`,
         'responsive': true,
@@ -450,7 +450,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['inputBorderHoverResponsive']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'inputBorderHoverResponsive',
         'selector': `.${elementId} .gutenverse-input:hover, .${elementId} .main-wrapper .input-icon-wrapper:hover`,
         'responsive': true,
@@ -489,7 +489,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['inputBorderFocusResponsive']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'inputBorderFocusResponsive',
         'selector': `.${elementId} .gutenverse-input:focus, .${elementId} .gutenverse-input:focus-visible, .${elementId} .main-wrapper .input-icon-wrapper:focus-within`,
         'responsive': true,

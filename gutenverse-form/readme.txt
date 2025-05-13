@@ -211,6 +211,9 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 ##### New & Improvements
 * update core version
 
+##### Bug Fixes
+* fix form input border
+
 = 2.0.1 =
 ##### New & Improvements
 * update core version

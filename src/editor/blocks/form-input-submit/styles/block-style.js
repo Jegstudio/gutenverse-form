@@ -208,7 +208,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['buttonBorderResponsive']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'buttonBorderResponsive',
         'selector': `.${elementId}.guten-button-wrapper .guten-button`,
         'responsive': true,
