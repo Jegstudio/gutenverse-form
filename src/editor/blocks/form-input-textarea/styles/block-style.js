@@ -44,7 +44,7 @@ const getBlockStyle = (elementId, attributes) => {
         ],
     });
 
-    isNotEmpty(attributes['imageWidth']) && attributes['iconType'] === 'image' &&  data.push({
+    isNotEmpty(attributes['imageWidth']) && attributes['iconType'] === 'image' && data.push({
         'type': 'plain',
         'id': 'imageWidth',
         'responsive': true,
