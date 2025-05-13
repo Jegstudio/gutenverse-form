@@ -179,7 +179,7 @@ const getBlockStyle = (elementId, attributes) => {
 
     isNotEmpty(attributes['inputBorderNormalResponsive']) && data.push({
         'type': 'borderResponsive',
-        'id': 'inputBorderNormal',
+        'id': 'inputBorderNormalResponsive',
         'selector': `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
         'responsive': true,
     });

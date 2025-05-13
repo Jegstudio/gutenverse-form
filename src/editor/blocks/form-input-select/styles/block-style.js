@@ -115,8 +115,8 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['inputBorderNormalResponsive']) && data.push({
-        'type': 'border',
-        'id': 'inputBorderNormal',
+        'type': 'borderResponsive',
+        'id': 'inputBorderNormalResponsive',
         'selector': `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
         'responsive': true,
     });
@@ -167,9 +167,9 @@ const getBlockStyle = (elementId, attributes) => {
         'selector': `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
     });
 
-    isNotEmpty(attributes['inputBorderNormalResponsive']) && data.push({
-        'type': 'border',
-        'id': 'inputBorderNormal',
+    isNotEmpty(attributes['inputBorderHoverResponsive']) && data.push({
+        'type': 'borderResponsive',
+        'id': 'inputBorderHoverResponsive',
         'selector': `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
         'responsive': true,
     });
