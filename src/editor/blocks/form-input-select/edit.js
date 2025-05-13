@@ -23,7 +23,8 @@ const FormInputSelectBlock = compose(
     const {
         selectOptions,
         inputPlaceholder,
-        elementId
+        elementId,
+        excludePlaceholder
     } = attributes;
 
     const elementRef = useRef();
@@ -48,6 +49,7 @@ const FormInputSelectBlock = compose(
                     selected={selected}
                     setSelected={setSelected}
                     multi={false}
+                    excludePlaceholder={excludePlaceholder}
                 />
             </div>
         </InputWrapper>

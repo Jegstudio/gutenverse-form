@@ -99,19 +99,6 @@ const getBlockStyle = (elementId, attributes) => {
         'responsive': true,
     });
 
-    isNotEmpty(attributes['choicesColorNormal']) && data.push({
-        'type': 'color',
-        'id': 'choicesColorNormal',
-        'selector': `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item`,
-        'properties': [
-            {
-                'name': 'color',
-                'valueType': 'direct'
-            }
-        ],
-        'responsive': true,
-    });
-
     isNotEmpty(attributes['choicesBgColorNormal']) && data.push({
         'type': 'color',
         'id': 'choicesBgColorNormal',
@@ -128,13 +115,13 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['inputBorderNormal']) && data.push({
         'type': 'border',
         'id': 'inputBorderNormal',
-        'selector': `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
+        'selector': `.${elementId} .choices .choices__inner`,
     });
 
     isNotEmpty(attributes['inputBorderNormalResponsive']) && data.push({
         'type': 'borderResponsive',
         'id': 'inputBorderNormal',
-        'selector': `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
+        'selector': `.${elementId} .choices .choices__inner`,
         'responsive': true,
     });
 
@@ -143,19 +130,6 @@ const getBlockStyle = (elementId, attributes) => {
         'type': 'color',
         'id': 'inputColorHover',
         'selector': `.${elementId}:hover .choices .choices__inner .choices__list .choices__item.choices__item--selectable:not(.choices__placeholder)`,
-        'properties': [
-            {
-                'name': 'color',
-                'valueType': 'direct'
-            }
-        ],
-        'responsive': true,
-    });
-
-    isNotEmpty(attributes['choicesColorHover']) && data.push({
-        'type': 'color',
-        'id': 'choicesColorHover',
-        'selector': `.${elementId} .choices .choices__list.choices__list--dropdown .choices__item.is-highlighted`,
         'properties': [
             {
                 'name': 'color',
@@ -181,13 +155,13 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['inputBorderHover']) && data.push({
         'type': 'border',
         'id': 'inputBorderHover',
-        'selector': `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
+        'selector': `.${elementId} .choices .choices__inner:hover`,
     });
 
     isNotEmpty(attributes['inputBorderNormalResponsive']) && data.push({
         'type': 'borderResponsive',
         'id': 'inputBorderNormal',
-        'selector': `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
+        'selector': `.${elementId} .choices .choices__inner:hover`,
         'responsive': true,
     });
 
@@ -200,7 +174,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .choices .choices__inner, .${elementId} .choices .choices__list.choices__list--dropdown`,
+        'selector': `.${elementId} .choices .choices__inner`,
     });
 
     isNotEmpty(attributes['inputAreaBoxShadowHover']) && data.push({
@@ -212,7 +186,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .choices .choices__inner:hover, .${elementId} .choices .choices__list.choices__list--dropdown:hover`,
+        'selector': `.${elementId} .choices .choices__inner:hover`,
     });
 
     /* Label Panel */
@@ -481,6 +455,85 @@ const getBlockStyle = (elementId, attributes) => {
         'id': 'choicesBorderSelected',
         'selector': `.${elementId} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-selected`,
         'responsive': true,
+    });
+
+    /* Panel Opition Wrapper Style */
+    isNotEmpty(attributes['choicesWrapperPadding']) && data.push({
+        'type': 'dimension',
+        'id': 'choicesWrapperPadding',
+        'properties': [
+            {
+                'name': 'padding',
+                'valueType': 'direct'
+            }
+        ],
+        'selector': `.${elementId} .choices .choices__list.choices__list--dropdown`,
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesWrapperMargin']) && data.push({
+        'type': 'dimension',
+        'id': 'choicesWrapperMargin',
+        'properties': [
+            {
+                'name': 'margin',
+                'valueType': 'direct'
+            }
+        ],
+        'selector': `.${elementId} .choices .choices__list.choices__list--dropdown`,
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesWrapperBackgroundNormal']) && data.push({
+        'id': 'choicesWrapperBackgroundNormal',
+        'type': 'background',
+        'responsive': true,
+        'selector': `.${elementId} .choices .choices__list.choices__list--dropdown`,
+    });
+
+    isNotEmpty(attributes['choicesWrapperBorderNormal']) && data.push({
+        'type': 'borderResponsive',
+        'id': 'choicesWrapperBorderNormal',
+        'selector': `.${elementId} .choices .choices__list.choices__list--dropdown`,
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesWrapperShadowNormal']) && data.push({
+        'type': 'boxShadow',
+        'id': 'choicesWrapperShadowNormal',
+        'properties': [
+            {
+                'name': 'box-shadow',
+                'valueType': 'direct'
+            }
+        ],
+        'selector': `.${elementId} .choices .choices__list.choices__list--dropdown`,
+    });
+
+    isNotEmpty(attributes['choicesWrapperBackgroundHover']) && data.push({
+        'id': 'choicesWrapperBackgroundHover',
+        'type': 'background',
+        'responsive': true,
+        'selector': `.${elementId} .choices .choices__list.choices__list--dropdown:hover`,
+    });
+
+    isNotEmpty(attributes['choicesWrapperBorderHover']) && data.push({
+        'type': 'borderResponsive',
+        'id': 'choicesWrapperBorderHover',
+        'selector': `.${elementId} .choices .choices__list.choices__list--dropdown:hover`,
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['choicesWrapperShadowHover']) && data.push({
+        'type': 'boxShadow',
+        'id': 'choicesWrapperShadowHover',
+        'properties': [
+            {
+                'name': 'box-shadow',
+                'valueType': 'direct'
+            }
+        ],
+        'selector': `.${elementId} .choices .choices__list.choices__list--dropdown:hover`,
     });
 
     /* Panel List */

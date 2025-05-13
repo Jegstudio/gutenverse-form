@@ -9,6 +9,7 @@ import { selectContentPanel } from './panel-select-content';
 import { TabSetting, TabStyle } from 'gutenverse-core/controls';
 import { panelLogic } from '../../form-input/general/panels/panel-logic';
 import { optionPanel } from './panel-option';
+import { optionPanelWrapper } from './panel-option-wrapper';
 
 export const panelList = () => {
     return [
@@ -60,6 +61,12 @@ export const panelList = () => {
         {
             title: __('Options Style', 'gutenverse-form'),
             panelArray: optionPanel,
+            initialOpen: false,
+            tabRole: TabStyle,
+        },
+        {
+            title: __('Options Wrapper Style', 'gutenverse-form'),
+            panelArray: optionPanelWrapper,
             initialOpen: false,
             tabRole: TabStyle,
         },

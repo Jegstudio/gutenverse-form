@@ -283,19 +283,6 @@ class Form_Input_Select extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['choicesColorNormal'] ) ) {
-			$this->inject_style(
-				array(
-					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown .choices__item",
-					'property'       => function ( $value ) {
-						return $this->handle_color( $value, 'color' );
-					},
-					'value'          => $this->attrs['choicesColorNormal'],
-					'device_control' => true,
-				)
-			);
-		}
-
 		if ( isset( $this->attrs['choicesBgColorNormal'] ) ) {
 			$this->inject_style(
 				array(
@@ -337,19 +324,6 @@ class Form_Input_Select extends Style_Abstract {
 						return $this->handle_color( $value, 'color' );
 					},
 					'value'          => $this->attrs['inputColorHover'],
-					'device_control' => true,
-				)
-			);
-		}
-
-		if ( isset( $this->attrs['choicesColorHover'] ) ) {
-			$this->inject_style(
-				array(
-					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown .choices__item.is-highlighted",
-					'property'       => function ( $value ) {
-						return $this->handle_color( $value, 'color' );
-					},
-					'value'          => $this->attrs['choicesColorHover'],
 					'device_control' => true,
 				)
 			);
@@ -409,6 +383,233 @@ class Form_Input_Select extends Style_Abstract {
 						return $this->handle_box_shadow( $value );
 					},
 					'value'          => $this->attrs['inputAreaBoxShadowHover'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['excludePlaceholder'] ) ) {
+			$this->inject_style(
+				array(
+					'selector' => ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.choices__placeholder",
+					'property' => function ( $value ) {
+						if ( $value ) {
+							return 'display: none;';
+						}
+					},
+					'value'    => $this->attrs['excludePlaceholder'],
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesPadding'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable",
+					'property'       => function ( $value ) {
+						return $this->handle_dimension( $value, 'padding' );
+					},
+					'value'          => $this->attrs['choicesPadding'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesMargin'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable",
+					'property'       => function ( $value ) {
+						return $this->handle_dimension( $value, 'margin' );
+					},
+					'value'          => $this->attrs['choicesMargin'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesTypography'] ) ) {
+			$this->inject_typography(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable",
+					'property'       => function ( $value ) {},
+					'value'          => $this->attrs['choicesTypography'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesColorNormal'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'color' );
+					},
+					'value'          => $this->attrs['choicesColorNormal'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesBackgroundNormal'] ) ) {
+			$this->handle_background( ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable", $this->attrs['choicesBackgroundNormal'] );
+		}
+
+		if ( isset( $this->attrs['choicesBorderNormal'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable",
+					'property'       => function ( $value ) {
+						return $this->handle_border_responsive( $value );
+					},
+					'value'          => $this->attrs['choicesBorderNormal'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesColorHover'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-highlighted",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'color' );
+					},
+					'value'          => $this->attrs['choicesColorHover'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesBackgroundHover'] ) ) {
+			$this->handle_background( ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-highlighted", $this->attrs['choicesBackgroundHover'] );
+		}
+
+		if ( isset( $this->attrs['choicesBorderHover'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-highlighted",
+					'property'       => function ( $value ) {
+						return $this->handle_border_responsive( $value );
+					},
+					'value'          => $this->attrs['choicesBorderHover'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesColorSelected'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-selected",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'color' );
+					},
+					'value'          => $this->attrs['choicesColorSelected'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesBackgroundSelected'] ) ) {
+			$this->handle_background( ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-selected", $this->attrs['choicesBackgroundSelected'] );
+		}
+
+		if ( isset( $this->attrs['choicesBorderSelected'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .main-wrapper .choices__list.choices__list--dropdown .choices__item.choices__item--selectable.is-selected",
+					'property'       => function ( $value ) {
+						return $this->handle_border_responsive( $value );
+					},
+					'value'          => $this->attrs['choicesBorderSelected'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesWrapperPadding'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown",
+					'property'       => function ( $value ) {
+						return $this->handle_dimension( $value, 'padding' );
+					},
+					'value'          => $this->attrs['choicesWrapperPadding'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesWrapperMargin'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown",
+					'property'       => function ( $value ) {
+						return $this->handle_dimension( $value, 'margin' );
+					},
+					'value'          => $this->attrs['choicesWrapperMargin'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesWrapperBackgroundNormal'] ) ) {
+			$this->handle_background( ".{$this->element_id} .choices .choices__list.choices__list--dropdown", $this->attrs['choicesWrapperBackgroundNormal'] );
+		}
+
+		if ( isset( $this->attrs['choicesWrapperBorderNormal'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown",
+					'property'       => function ( $value ) {
+						return $this->handle_border_responsive( $value );
+					},
+					'value'          => $this->attrs['choicesWrapperBorderNormal'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesWrapperShadowNormal'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown",
+					'property'       => function ( $value ) {
+						return $this->handle_box_shadow( $value );
+					},
+					'value'          => $this->attrs['choicesWrapperShadowNormal'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesWrapperBackgroundHover'] ) ) {
+			$this->handle_background( ".{$this->element_id} .choices .choices__list.choices__list--dropdown:hover", $this->attrs['choicesWrapperBackgroundHover'] );
+		}
+
+		if ( isset( $this->attrs['choicesWrapperBorderHover'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown:hover",
+					'property'       => function ( $value ) {
+						return $this->handle_border_responsive( $value );
+					},
+					'value'          => $this->attrs['choicesWrapperBorderHover'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['choicesWrapperShadowHover'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices .choices__list.choices__list--dropdown:hover",
+					'property'       => function ( $value ) {
+						return $this->handle_box_shadow( $value );
+					},
+					'value'          => $this->attrs['choicesWrapperShadowHover'],
 					'device_control' => false,
 				)
 			);
