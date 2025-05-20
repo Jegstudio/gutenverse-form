@@ -16,7 +16,8 @@
 		"production": "gulp clean && npm run production --prefix gutenverse-core && npm run build && gulp release && npm run pot && gulp zip",
 		"fix": "npx eslint --fix ./src || echo \"Formatting done! Please fix the remaining warnings and errors\"",
 		"pot": "wp i18n make-pot ./release/gutenverse-form ./release/gutenverse-form/languages/gutenverse-form.pot --domain=gutenverse-form",
-		"fix:php": "npm run fix:php --prefix gutenverse-core && phpcbf --standard=WordPress ./gutenverse-form/includes"
+		"fix:php": "npm run fix:php --prefix gutenverse-core && phpcbf --standard=WordPress ./gutenverse-form/includes",
+    "clean:package": "rm -rf node_modules package-lock.json gutenverse-core/node_modules gutenverse-core/package-lock.json"
 	},
 	"repository": {
 		"type": "git",
