@@ -4,20 +4,21 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "npm run start --prefix gutenverse-core & npm run start:js & npm run start:css",
-		"dev": "npm run dev --prefix gutenverse-core && npm run start:dev && npm run build:css",
-		"build": "npm run build --prefix gutenverse-core && npm run build:js && npm run build:css",
+		"start": "pnpm --filter gutenverse-core start & pnpm start:js & pnpm start:css",
+		"dev": "pnpm --filter gutenverse-core dev && pnpm start:dev && pnpm build:css",
+		"build": "pnpm --filter gutenverse-core build && pnpm build:js && pnpm build:css",
 		"start:js": "cross-env NODE_ENV=development webpack --config .config/webpack.config.dev.js --watch",
 		"start:dev": "cross-env NODE_ENV=development webpack --config .config/webpack.config.dev.js",
 		"build:js": "cross-env NODE_ENV=production webpack --config .config/webpack.config.prod.js",
 		"start:css": "cross-env NODE_ENV=development gulp watch",
 		"build:css": "cross-env NODE_ENV=production gulp build",
-		"development": "gulp clean && npm run development --prefix gutenverse-core && npm run dev && gulp release && npm run pot && gulp zip",
-		"production": "gulp clean && npm run production --prefix gutenverse-core && npm run build && gulp release && npm run pot && gulp zip",
+		"development": "gulp clean && pnpm --filter gutenverse-core development && pnpm dev && gulp release && pnpm pot && gulp zip",
+		"production": "gulp clean && pnpm --filter gutenverse-core production && pnpm build && gulp release && pnpm pot && gulp zip",
 		"fix": "npx eslint --fix ./src || echo \"Formatting done! Please fix the remaining warnings and errors\"",
 		"pot": "wp i18n make-pot ./release/gutenverse-form ./release/gutenverse-form/languages/gutenverse-form.pot --domain=gutenverse-form",
-		"fix:php": "npm run fix:php --prefix gutenverse-core && phpcbf --standard=WordPress ./gutenverse-form/includes",
-    "clean:package": "rm -rf node_modules package-lock.json gutenverse-core/node_modules gutenverse-core/package-lock.json"
+		"fix:php": "pnpm fix --filter gutenverse-core php && phpcbf --standard=WordPress ./gutenverse-form/includes",
+		"clean:package": "rm -rf node_modules package-lock.json pnpm-lock.yaml gutenverse-core/node_modules gutenverse-core/package-lock.json gutenverse-core/pnpm-lock.yaml",
+		"preinstall": "pnpm --filter gutenverse-core install --ignore-scripts"
 	},
 	"repository": {
 		"type": "git",
@@ -34,9 +35,18 @@
 		"react-dom": "^18.0.0",
 		"webpack": "^5.93.0"
 	},
-	"devDependencies": {},
+	"devDependencies": {
+		"@babel/runtime": "^7.27.1",
+		"babel-loader": "^9.2.1",
+		"cross-env": "^7.0.3",
+		"gulp": "^5.0.0",
+		"gulp-zip": "^6.1.0"
+	},
 	"dependencies": {
+		"@svgr/webpack": "^7.0.0",
+		"classnames": "^2.5.1",
 		"flatpickr": "^4.6.13",
-		"gutenverse-core": "file:gutenverse-core"
+		"gutenverse-core": "file:gutenverse-core",
+		"lodash": "^4.17.21"
 	}
 }
