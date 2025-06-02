@@ -8,7 +8,7 @@ const DependencyExtractionWebpackPlugin = require('@wordpress/dependency-extract
 
 const form = {
     mode: "development",
-    devtool: "cheap-module-source-map",
+    devtool: "source-map",
     entry: {
         form: {
             import: path.resolve(__dirname, "../../src/backend/form/index.js"),
