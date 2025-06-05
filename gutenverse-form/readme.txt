@@ -206,6 +206,9 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 
 == Changelog ==
+= 2.0.5 =
+##### Bug Fixes
+* fix global color bug
 
 = 2.0.4 =
 ##### Bug Fixes
