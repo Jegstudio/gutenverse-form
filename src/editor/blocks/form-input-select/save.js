@@ -3,6 +3,7 @@ import SaveInputWrapper from '../form-input/general/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
 import { compose } from '@wordpress/compose';
+import { drop } from 'lodash';
 
 const save = compose(
     withMouseMoveEffectScript
@@ -21,7 +22,10 @@ const save = compose(
         validationWarning,
         defaultLogic,
         displayLogic,
-        selectOptions
+        selectOptions,
+        useCustomDropdown,
+        dropDownIconOpen,
+        dropDownIconClose
     } = attributes;
 
     const validation = {
@@ -38,8 +42,15 @@ const save = compose(
         rule: displayLogic
     };
 
+    const dropdownVariable = {
+        iconClose : dropDownIconClose,
+        iconOpen  : dropDownIconOpen,
+        useCustomDropdown : useCustomDropdown
+    };
+
     const additionalProps = {
-        ['data-display-rule']: !isEmpty(defaultLogic) && !isEmpty(displayLogic) ? JSON.stringify(displayRule) : undefined
+        ['data-display-rule']: !isEmpty(defaultLogic) && !isEmpty(displayLogic) ? JSON.stringify(displayRule) : undefined,
+        ['data-dropdown'] : useCustomDropdown ? JSON.stringify(dropdownVariable) : undefined
     };
 
     return (

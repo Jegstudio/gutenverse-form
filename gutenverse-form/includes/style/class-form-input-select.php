@@ -614,5 +614,57 @@ class Form_Input_Select extends Style_Abstract {
 				)
 			);
 		}
+
+		if ( isset( $this->attrs['dropDownIconOpenColor'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices.custom-dropdown .choices__inner i",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'color' );
+					},
+					'value'          => $this->attrs['dropDownIconOpenColor'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['dropDownIconOpenSize'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices.custom-dropdown .choices__inner i",
+					'property'       => function ( $value ) {
+						return "font-size: {$value}px;";
+					},
+					'value'          => $this->attrs['dropDownIconOpenSize'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['dropDownIconCloseColor'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices.custom-dropdown.is-open .choices__inner i",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'color' );
+					},
+					'value'          => $this->attrs['dropDownIconCloseColor'],
+					'device_control' => false,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['dropDownIconCloseSize'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices.custom-dropdown.is-open .choices__inner i",
+					'property'       => function ( $value ) {
+						return "font-size: {$value}px;";
+					},
+					'value'          => $this->attrs['dropDownIconCloseSize'],
+					'device_control' => true,
+				)
+			);
+		}
 	}
 }

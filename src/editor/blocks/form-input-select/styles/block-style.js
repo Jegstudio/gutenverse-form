@@ -6,6 +6,71 @@ const getBlockStyle = (elementId, attributes) => {
     let data = [];
     data = backgroundStyle({ attributes, data, elementId });
 
+    /** Panel Dropdown */
+    isNotEmpty(attributes['dropDownIconOpenColor']) && data.push({
+        'type': 'color',
+        'id': 'dropDownIconOpenColor',
+        'selector': `.${elementId} .choices.custom-dropdown .choices__inner i`,
+        'properties': [
+            {
+                'name': 'color',
+                'valueType': 'direct'
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['dropDownIconOpenSize']) && data.push({
+        'type': 'plain',
+        'id': 'dropDownIconOpenSize',
+        'selector': `.${elementId} .choices.custom-dropdown .choices__inner i`,
+        'properties': [
+            {
+                'name': 'font-size',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    },
+
+                }
+            }
+        ],
+        'responsive': true,
+    });
+
+    isNotEmpty(attributes['dropDownIconCloseColor']) && data.push({
+        'type': 'color',
+        'id': 'dropDownIconCloseColor',
+        'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i`,
+        'properties': [
+            {
+                'name': 'color',
+                'valueType': 'direct'
+            }
+        ],
+    });
+
+    isNotEmpty(attributes['dropDownIconCloseSize']) && data.push({
+        'type': 'plain',
+        'id': 'dropDownIconCloseSize',
+        'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i`,
+        'properties': [
+            {
+                'name': 'font-size',
+                'valueType': 'pattern',
+                'pattern': '{value}px',
+                'patternValues': {
+                    'value': {
+                        'type': 'direct',
+                    },
+
+                }
+            }
+        ],
+        'responsive': true,
+    });
+
     /* Panel Input */
     isNotEmpty(attributes['inputPadding']) && data.push({
         'type': 'dimension',

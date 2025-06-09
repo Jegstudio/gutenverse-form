@@ -1,3 +1,21 @@
 .choices__item.choices__list--single{
     padding: 6px 0px;
 }
+
+.choices.custom-dropdown{
+    .choices__inner{
+        position: relative;
+        i{
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #555;
+            transition: color 0s;
+        }
+    }
+    &::after {
+        display: none;
+    }
+}

@@ -10,6 +10,7 @@ import { TabSetting, TabStyle } from 'gutenverse-core/controls';
 import { panelLogic } from '../../form-input/general/panels/panel-logic';
 import { optionPanel } from './panel-option';
 import { optionPanelWrapper } from './panel-option-wrapper';
+import { panelDropdown } from './panel-dropdown';
 
 export const panelList = () => {
     return [
@@ -57,6 +58,12 @@ export const panelList = () => {
             panelArray: inputPanel,
             initialOpen: false,
             tabRole: TabStyle,
+        },
+        {
+            title: __('Dropdown', 'gutenverse-form'),
+            initialOpen: false,
+            panelArray: panelDropdown,
+            tabRole: TabStyle
         },
         {
             title: __('Options Style', 'gutenverse-form'),

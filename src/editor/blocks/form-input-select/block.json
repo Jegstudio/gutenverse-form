@@ -412,6 +412,36 @@
         "choicesWrapperShadowHover": {
             "type": "object",
             "copyStyle": true
+        },
+        "useCustomDropdown": {
+            "type": "boolean",
+            "default": false
+        },
+        "dropDownIconOpen": {
+            "type": "string",
+            "default": "gtn gtn-down-arrow1-light",
+            "copyStyle": true
+        },
+        "dropDownIconClose": {
+            "type": "string",
+            "default": "gtn gtn-up-arrow1-light",
+            "copyStyle": true
+        },
+        "dropDownIconOpenColor": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "dropDownIconOpenSize":{
+            "type": "object",
+            "copyStyle": true
+        },
+        "dropDownIconCloseColor": {
+            "type": "object",
+            "copyStyle": true
+        },
+        "dropDownIconCloseSize":{
+            "type": "object",
+            "copyStyle": true
         }
     },
     "supports": {

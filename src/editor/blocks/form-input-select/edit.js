@@ -24,7 +24,10 @@ const FormInputSelectBlock = compose(
         selectOptions,
         inputPlaceholder,
         elementId,
-        excludePlaceholder
+        excludePlaceholder,
+        useCustomDropdown,
+        dropDownIconOpen,
+        dropDownIconClose
     } = attributes;
 
     const elementRef = useRef();
@@ -49,7 +52,13 @@ const FormInputSelectBlock = compose(
                     selected={selected}
                     setSelected={setSelected}
                     multi={false}
+                    customDropdown={() => {
+                        return <span className="select-dropdown-icon" />;
+                    }}
                     excludePlaceholder={excludePlaceholder}
+                    useCustomDropdown={useCustomDropdown}
+                    dropDownIconOpen={dropDownIconOpen}
+                    dropDownIconClose={dropDownIconClose}
                 />
             </div>
         </InputWrapper>
