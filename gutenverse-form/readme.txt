@@ -206,6 +206,13 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 
 == Changelog ==
+= 2.0.6 =
+##### New & Improvements
+* add change icon and icon styling to form select input
+
+##### Bug Fixes
+* fix border color issue
+
 = 2.0.5 =
 ##### Bug Fixes
 * fix global color bug
