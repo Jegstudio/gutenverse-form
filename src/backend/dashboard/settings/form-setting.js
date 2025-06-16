@@ -70,7 +70,7 @@ const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData
         <div className="actions">
             {saving ? <div className="gutenverse-button">
                 {__('Saving...', 'gutenverse-form')}
-            </div> : <div className="gutenverse-button" onClick={() => saveData(['form_confirmation', 'form_notification', 'form_paypal_payment', 'form_stripe_payment'])}>
+            </div> : <div className="gutenverse-button" onClick={() => saveData(['form_confirmation', 'form_notification', 'form_paypal_payment', 'form_stripe_payment', 'form_captcha_settings'])}>
                 {__('Save Changes', 'gutenverse-form')}
             </div>}
         </div>
@@ -136,12 +136,48 @@ const FormNotification = ({ settingValues, updateSettingValues, saving, saveData
         <div className="actions">
             {saving ? <div className="gutenverse-button">
                 {__('Saving...', 'gutenverse-form')}
-            </div> : <div className="gutenverse-button" onClick={() => saveData(['form_confirmation', 'form_notification', 'form_paypal_payment', 'form_stripe_payment'])}>
+            </div> : <div className="gutenverse-button" onClick={() => saveData(['form_confirmation', 'form_notification', 'form_paypal_payment', 'form_stripe_payment', 'form_captcha_settings'])}>
                 {__('Save Changes', 'gutenverse-form')}
             </div>}
         </div>
     </div>;
 };
+
+const FormReCaptcha = ({ settingValues, updateSettingValues, saving, saveData }) => {
+    const {
+        form_captcha_settings = {}
+    } = settingValues;
+
+    const updateValue = (id, value) => {
+        updateSettingValues('form_captcha_settings', id, value);
+    };
+
+    return <div className="form-captcha">
+        <h2>{__('Form Captcha Settings', 'gutenverse-form')}</h2>
+        <span>{__('This setting will be used in form reCaptcha feature', 'gutenverse-form')}</span>
+        <ControlCheckbox
+            id={'use_captcha'}
+            title={__('Use Captcha', 'gutenverse-form')}
+            description={__('Check this if you want to use captcha.', 'gutenverse-form')}
+            value={form_captcha_settings.use_captcha}
+            updateValue={updateValue}
+        />
+        <ControlText
+            id={'captcha_key'}
+            title={__('Captcha Secret Key', 'gutenverse-form')}
+            description={__('Enter your captcha secret here.', 'gutenverse-form')}
+            value={form_captcha_settings.captcha_key}
+            updateValue={updateValue}
+        />
+        <div className="actions">
+            {saving ? <div className="gutenverse-button">
+                {__('Saving...', 'gutenverse-form')}
+            </div> : <div className="gutenverse-button" onClick={() => saveData(['form_confirmation', 'form_notification', 'form_paypal_payment', 'form_stripe_payment', 'form_captcha_settings'])}>
+                {__('Save Changes', 'gutenverse-form')}
+            </div>}
+        </div>
+    </div>;
+}
 
 const FormSetting = (props) => {
     const [formActive, setFormActive] = useState('confirmation');
@@ -163,6 +199,7 @@ const FormSetting = (props) => {
     const additionalMenu = [];
 
     return <>
+        <FormReCaptcha {...props} />
         <div className="form-setting">
             <div className={`${formActive === 'confirmation' ? 'active' : ''}`} onClick={() => setFormActive('confirmation')}>{__('User Confirmation', 'gutenverse-form')}</div>
             <div className={`${formActive === 'notification' ? 'active' : ''}`} onClick={() => setFormActive('notification')}>{__('Admin Notification', 'gutenverse-form')}</div>

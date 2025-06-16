@@ -15,6 +15,7 @@ class GutenverseFormValidation extends Default {
         const formId = formBuilder.data('form-id');
         const { data, missingLabel, isAdmin } = window['GutenverseFormValidationData'];
         const formData = data.filter(el => el.formId == formId);
+        this.__captchaJS(formBuilder);
         if (formData.length !== 0) {
             if (formData[0]['require_login'] && !formData[0]['logged_in']) {
                 formBuilder.remove();
@@ -51,6 +52,21 @@ class GutenverseFormValidation extends Default {
                 const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${missingLabel}</div></div>`;
                 formBuilder.prepend(notice);
             }
+        }
+    }
+
+    __captchaJS(formBuilder) {
+        const captcha = formBuilder.find('.gutenverse-recaptcha');
+        if (captcha.nodes.length > 0) {
+            if (document.getElementById('gutenverse-recaptcha-script')) return; // Prevent duplicate
+
+            const script = document.createElement('script');
+            script.id = 'gutenverse-recaptcha-script';
+            script.src = 'https://www.google.com/recaptcha/api.js';
+            script.async = true;
+            script.defer = true;
+
+            document.head.appendChild(script);
         }
     }
 
@@ -103,10 +119,10 @@ class GutenverseFormValidation extends Default {
             }
         }
 
-        if (input.type === 'checkbox' && u(input).hasClass('gutenverse-input-switch') ) {
+        if (input.type === 'checkbox' && u(input).hasClass('gutenverse-input-switch')) {
             value = input.checked;
         }
-        if (input.type === 'checkbox' &&  u(input).hasClass('gutenverse-input-gdpr') ) {
+        if (input.type === 'checkbox' && u(input).hasClass('gutenverse-input-gdpr')) {
             value = u(input).data('value');
         }
 
@@ -133,7 +149,7 @@ class GutenverseFormValidation extends Default {
         if (parent.hasClass('guten-form-input-switch')) {
             return 'switch';
         }
-        if ( parent.hasClass('guten-form-input-gdpr') ) {
+        if (parent.hasClass('guten-form-input-gdpr')) {
             return 'gdpr';
         }
         if (data && data.type && parent.hasClass(`guten-form-input-${data.type}`)) {
@@ -151,6 +167,17 @@ class GutenverseFormValidation extends Default {
 
         formBuilder.on('submit', (e) => {
             e.preventDefault();
+            let recaptchaResponse = null;
+            let useCaptcha = false;
+            const captcha = formBuilder.find('.gutenverse-recaptcha');
+            if (captcha.nodes.length > 0) {
+                useCaptcha = true;
+                const sitekey = u(captcha.nodes[0]).data('sitekey');
+                if (sitekey) {
+                    recaptchaResponse = grecaptcha.getResponse();
+                }
+            }
+
             const element = e.target;
             const currentFormBuilder = u(element);
             const values = [];
@@ -208,7 +235,8 @@ class GutenverseFormValidation extends Default {
                             formId,
                             postId,
                             data: values
-                        }
+                        },
+                        'g-recaptcha-response': recaptchaResponse,
                     },
                 }).then(({ entry_id }) => {
                     if (isPayment) {
@@ -256,6 +284,9 @@ class GutenverseFormValidation extends Default {
                     currentFormBuilder.removeClass('loading');
                     this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit);
                 }).finally(() => {
+                    if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length > 0) {
+                        grecaptcha.reset();
+                    }
                     if (!isPayment) {
                         currentFormBuilder.removeClass('loading');
                     }

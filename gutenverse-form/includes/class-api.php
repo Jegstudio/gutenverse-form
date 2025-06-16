@@ -359,7 +359,7 @@ class Api {
 				if ( ! isset( $data['type'] ) ) {
 					return null;
 				}
-	
+
 				switch ( $data['type'] ) {
 					case 'text':
 					case 'select':
@@ -423,6 +423,35 @@ class Api {
 	 * @return WP_Response
 	 */
 	public function submit_form( $request ) {
+		$recaptcha     = $request['g-recaptcha-response'];
+		$settings_data = get_option( 'gutenverse-settings', array() );
+		if ( isset( $settings_data['form_captcha_settings'] ) && isset( $settings_data['form_captcha_settings']['use_captcha'] ) ) {
+			if ( $settings_data['form_captcha_settings']['use_captcha'] ) {
+				$secret = $settings_data['form_captcha_settings']['captcha_key'];
+				$verify = wp_remote_post(
+					'https://www.google.com/recaptcha/api/siteverify',
+					array(
+						'body' => array(
+							'secret'   => $secret,
+							'response' => $recaptcha,
+							'remoteip' => $_SERVER['REMOTE_ADDR'],
+						),
+					)
+				);
+
+				$result = json_decode( wp_remote_retrieve_body( $verify ), true );
+				if ( empty( $result['success'] ) ) {
+					$response = rest_ensure_response(
+						array(
+							'error'   => 'Bad Request',
+							'message' => 'CAPTCHA failed! Please Try Again!',
+						)
+					);
+					$response->set_status( 400 );
+					return $response;
+				}
+			}
+		}
 		$form_entry   = $request['form-entry'];
 		$form_data    = $this->filter_form_params( $form_entry['data'] );
 		$form_id      = $form_entry['formId'];
@@ -463,9 +492,8 @@ class Api {
 			$result = array( 'entry_id' => Entries::submit_form_data( $params ) );
 
 			if ( (int) $result['entry_id'] > 0 ) {
-				$settings_data = get_option( 'gutenverse-settings', array() );
-				$form_data     = get_post_meta( $form_id, 'form-data', true );
-				$entry_id      = $result['entry_id'];
+				$form_data = get_post_meta( $form_id, 'form-data', true );
+				$entry_id  = $result['entry_id'];
 
 				if ( isset( $settings_data['form'] ) ) {
 					if ( isset( $settings['form']['confirmation'] ) && true !== $form_data['overwrite_default_confirmation'] ) {
