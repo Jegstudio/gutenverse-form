@@ -155,13 +155,6 @@ const FormReCaptcha = ({ settingValues, updateSettingValues, saving, saveData })
     return <div className="form-captcha">
         <h2>{__('Form Captcha Settings', 'gutenverse-form')}</h2>
         <span>{__('This setting will be used in form reCaptcha feature', 'gutenverse-form')}</span>
-        <ControlCheckbox
-            id={'use_captcha'}
-            title={__('Use Captcha', 'gutenverse-form')}
-            description={__('Check this if you want to use captcha.', 'gutenverse-form')}
-            value={form_captcha_settings.use_captcha}
-            updateValue={updateValue}
-        />
         <ControlText
             id={'captcha_key'}
             title={__('Captcha Secret Key', 'gutenverse-form')}

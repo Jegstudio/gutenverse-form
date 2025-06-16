@@ -269,6 +269,7 @@ class Api {
 				'title'         => '',
 				'require_login' => '',
 				'user_browser'  => '',
+				'use_cache'     => '',
 			)
 		);
 
@@ -425,38 +426,37 @@ class Api {
 	public function submit_form( $request ) {
 		$recaptcha     = $request['g-recaptcha-response'];
 		$settings_data = get_option( 'gutenverse-settings', array() );
-		if ( isset( $settings_data['form_captcha_settings'] ) && isset( $settings_data['form_captcha_settings']['use_captcha'] ) ) {
-			if ( $settings_data['form_captcha_settings']['use_captcha'] ) {
-				$secret = $settings_data['form_captcha_settings']['captcha_key'];
-				$verify = wp_remote_post(
-					'https://www.google.com/recaptcha/api/siteverify',
+		$form_entry    = $request['form-entry'];
+		$form_id       = $form_entry['formId'];
+		$form_setting  = get_post_meta( (int) $form_id, 'form-data', true );
+		gutenverse_rlog( $form_setting );
+		if ( $form_setting['use_captcha'] ) {
+			$secret = $settings_data['form_captcha_settings']['captcha_key'];
+			$verify = wp_remote_post(
+				'https://www.google.com/recaptcha/api/siteverify',
+				array(
+					'body' => array(
+						'secret'   => $secret,
+						'response' => $recaptcha,
+						'remoteip' => $_SERVER['REMOTE_ADDR'],
+					),
+				)
+			);
+
+			$result = json_decode( wp_remote_retrieve_body( $verify ), true );
+			if ( empty( $result['success'] ) ) {
+				$response = rest_ensure_response(
 					array(
-						'body' => array(
-							'secret'   => $secret,
-							'response' => $recaptcha,
-							'remoteip' => $_SERVER['REMOTE_ADDR'],
-						),
+						'error'   => 'Bad Request',
+						'message' => 'CAPTCHA failed! Please Try Again!',
 					)
 				);
-
-				$result = json_decode( wp_remote_retrieve_body( $verify ), true );
-				if ( empty( $result['success'] ) ) {
-					$response = rest_ensure_response(
-						array(
-							'error'   => 'Bad Request',
-							'message' => 'CAPTCHA failed! Please Try Again!',
-						)
-					);
-					$response->set_status( 400 );
-					return $response;
-				}
+				$response->set_status( 400 );
+				return $response;
 			}
 		}
-		$form_entry   = $request['form-entry'];
-		$form_data    = $this->filter_form_params( $form_entry['data'] );
-		$form_id      = $form_entry['formId'];
-		$is_login     = is_user_logged_in();
-		$form_setting = get_post_meta( (int) $form_id, 'form-data', true );
+		$form_data = $this->filter_form_params( $form_entry['data'] );
+		$is_login  = is_user_logged_in();
 		if ( $form_setting['require_login'] ) {
 			if ( ! $is_login ) {
 				$response = rest_ensure_response(
