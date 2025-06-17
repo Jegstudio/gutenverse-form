@@ -10,7 +10,7 @@ export const panelDropdown = props => {
     return [
         {
             id: 'useCustomDropdown',
-            label: __('Use Custom Dropdown Icon', 'gutenverse-form'),
+            label: __('Custom Dropdown Icon', 'gutenverse-form'),
             component: CheckboxControl,
             description: __('Check this to change dropdown icon', 'gutenverse-form'),
         },
