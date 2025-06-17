@@ -1,7 +1,7 @@
 {
     "apiVersion": 2,
     "name": "gutenverse/form-input-recaptcha",
-    "title": "Text Input reCAPTCHA",
+    "title": "reCAPTCHA",
     "description": "Gutenverse Input reCAPTCHA",
     "category": "gutenverse-form",
     "allowCopyStyle": true,
