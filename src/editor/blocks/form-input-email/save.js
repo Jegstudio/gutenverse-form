@@ -3,6 +3,7 @@ import SaveInputWrapper from '../form-input/general/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
 import { compose } from '@wordpress/compose';
+import { getImageSrc } from 'gutenverse-core/editor-helper';
 
 const WrapAHref = ({ attributes, children }) => {
     const {
@@ -41,7 +42,8 @@ const save = compose(
         image,
         iconStyleMode,
         iconType,
-        icon
+        icon,
+        lazyLoad
     } = attributes;
 
     const validation = {
