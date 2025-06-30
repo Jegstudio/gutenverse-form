@@ -207,6 +207,9 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 == Changelog ==
 = 2.0.8 =
+##### New & Improvements
+* New block: form captcha
+
 ##### Bug Fixes
 * fix some undefined attributes
 
