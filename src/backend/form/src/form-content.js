@@ -49,6 +49,13 @@ const TabGeneral = (props) => {
             value={values.form_error_notice}
             updateValue={updateValue}
         />
+        <ControlCheckbox
+            id={'use_captcha'}
+            title={__('Use Captcha', 'gutenverse-form')}
+            description={__('Check this if you want to use captcha.', 'gutenverse-form')}
+            value={values.use_captcha}
+            updateValue={updateValue}
+        />
     </div>;
 };
 

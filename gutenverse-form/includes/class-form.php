@@ -274,6 +274,7 @@ class Form {
 				'admin_note'                     => $params['admin_note'],
 				'overwrite_default_confirmation' => $params['overwrite_default_confirmation'],
 				'overwrite_default_notification' => $params['overwrite_default_notification'],
+				'use_captcha'                    => $params['use_captcha'],
 			)
 		);
 

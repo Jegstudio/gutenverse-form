@@ -8,7 +8,7 @@ import { useDisplayEditor } from 'gutenverse-core/hooks';
 import { select } from '@wordpress/data';
 import { BlockPanelController } from 'gutenverse-core/controls';
 
-const recursiveParentBlock = clientId => {
+export const recursiveParentBlock = clientId => {
     const {
         getBlock,
         getBlockRootClientId
