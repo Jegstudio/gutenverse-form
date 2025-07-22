@@ -5,8 +5,8 @@ import FormSetting from './form-setting';
 
 export const loadSettings = () => {
     addFilter(
-        'gutenverse.dashboard.settings.navigation',
-        'gutenverse/dashboard/settings/navigation',
+        'gutenverse.dashboard.plugin-settings.navigation',
+        'gutenverse/dashboard/plugin-settings/navigation',
         (nav) => ({
             ...nav,
             form: {
