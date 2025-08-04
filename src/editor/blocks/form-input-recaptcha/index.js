@@ -2,14 +2,14 @@
 import edit from './edit';
 import save from './save';
 import metadata from './block.json';
-import { IconFormInputSVG } from '../../../assets/icon/index';
+import { IconFormRecaptchaSVG } from '../../../assets/icon/index';
 
 const { name } = metadata;
 
 export { metadata, name };
 
 export const settings = {
-    icon: <IconFormInputSVG />,
+    icon: <IconFormRecaptchaSVG />,
     edit,
     save,
 };

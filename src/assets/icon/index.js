@@ -12,6 +12,7 @@ import IconFormSelect from './icon-form-select.svg';
 import IconFormSwitch from './icon-form-switch.svg';
 import IconFormTextarea from './icon-form-textarea.svg';
 import IconFormGDPR from './icon-form-gdpr.svg';
+import IconFormRecaptcha from './icon-form-recaptcha.svg';
 
 /* PRO Form Icons */
 import IconFormCalculation from './icon-form-calculation.svg';
@@ -43,6 +44,10 @@ export const IconFormInputTelpSVG = () => {
 
 export const IconFormInputSVG = () => {
     return <IconFormInput />;
+};
+
+export const IconFormRecaptchaSVG = () => {
+    return <IconFormRecaptcha/>;
 };
 
 export const IconFormSubmitSVG = () => {
