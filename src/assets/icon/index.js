@@ -21,6 +21,8 @@ import IconFormImageRadio from './icon-form-image-radio.svg';
 import IconFormPayment from './icon-form-payment.svg';
 import IconFormStepperNavigationButton from './icon-form-stepper-navigation-button.svg';
 import IconFormStepperSectionItem from './icon-form-stepper-section-item.svg';
+import IconFormMobile from './icon-form-mobile.svg';
+import IconMultiGroupSelect from './icon-multi-group-select.svg';
 
 export const IconFormBuilderSVG = () => {
     return <IconFormBuilder />;
@@ -100,4 +102,12 @@ export const IconFormStepperSectionItemSVG = () => {
 
 export const IconFormGDPRSVG = () => {
     return <IconFormGDPR />;
+};
+
+export const IconFormMobileSVG = () => {
+    return <IconFormMobile />;
+};
+
+export const IconMultiGroupSelectSVG = () => {
+    return <IconMultiGroupSelect />;
 };
