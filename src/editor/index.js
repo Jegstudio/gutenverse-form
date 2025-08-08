@@ -2,7 +2,7 @@ import { getBlockType, registerBlockType } from '@wordpress/blocks';
 import { isBlockActive } from 'gutenverse-core/helper';
 import { updateBlockList } from 'gutenverse-core/editor-helper';
 import { addFilter } from '@wordpress/hooks';
-import { IconFormCalculationSVG, IconFormImageRadioSVG, IconFormPaymentSVG, IconFormStepperNavigationButtonSVG, IconFormStepperSVG } from '../assets/icon';
+import { IconFormCalculationSVG, IconFormImageRadioSVG, IconFormMobileSVG, IconFormPaymentSVG, IconFormStepperNavigationButtonSVG, IconFormStepperSVG, IconMultiGroupSelectSVG } from '../assets/icon';
 import { plainGeneratorFormFunction } from './styling/generate-css';
 
 addFilter(
@@ -37,7 +37,7 @@ addFilter(
             },
             {
                 name: 'gutenverse/form-stepper-navigation',
-                title: 'Stepper Navigation',
+                title: 'Stepper Navigation Button',
                 category: 'gutenverse-form',
                 icon: <IconFormStepperNavigationButtonSVG />,
                 pro: true,
@@ -45,9 +45,25 @@ addFilter(
             },
             {
                 name: 'gutenverse/form-stepper',
-                title: 'Stepper',
+                title: 'Form Stepper',
                 category: 'gutenverse-form',
                 icon: <IconFormStepperSVG />,
+                pro: true,
+                locked: true,
+            },
+            {
+                name: 'gutenverse/form-input-multi-group-select',
+                title: 'Multi Group Select',
+                category: 'gutenverse-form',
+                icon: <IconMultiGroupSelectSVG />,
+                pro: true,
+                locked: true,
+            },
+            {
+                name: 'gutenverse/form-input-mobile',
+                title: 'Mobile Input',
+                category: 'gutenverse-form',
+                icon: <IconFormMobileSVG />,
                 pro: true,
                 locked: true,
             },

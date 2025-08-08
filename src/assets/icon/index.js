@@ -12,6 +12,7 @@ import IconFormSelect from './icon-form-select.svg';
 import IconFormSwitch from './icon-form-switch.svg';
 import IconFormTextarea from './icon-form-textarea.svg';
 import IconFormGDPR from './icon-form-gdpr.svg';
+import IconFormRecaptcha from './icon-form-recaptcha.svg';
 
 /* PRO Form Icons */
 import IconFormCalculation from './icon-form-calculation.svg';
@@ -20,6 +21,8 @@ import IconFormImageRadio from './icon-form-image-radio.svg';
 import IconFormPayment from './icon-form-payment.svg';
 import IconFormStepperNavigationButton from './icon-form-stepper-navigation-button.svg';
 import IconFormStepperSectionItem from './icon-form-stepper-section-item.svg';
+import IconFormMobile from './icon-form-mobile.svg';
+import IconMultiGroupSelect from './icon-multi-group-select.svg';
 
 export const IconFormBuilderSVG = () => {
     return <IconFormBuilder />;
@@ -43,6 +46,10 @@ export const IconFormInputTelpSVG = () => {
 
 export const IconFormInputSVG = () => {
     return <IconFormInput />;
+};
+
+export const IconFormRecaptchaSVG = () => {
+    return <IconFormRecaptcha/>;
 };
 
 export const IconFormSubmitSVG = () => {
@@ -95,4 +102,12 @@ export const IconFormStepperSectionItemSVG = () => {
 
 export const IconFormGDPRSVG = () => {
     return <IconFormGDPR />;
+};
+
+export const IconFormMobileSVG = () => {
+    return <IconFormMobile />;
+};
+
+export const IconMultiGroupSelectSVG = () => {
+    return <IconMultiGroupSelect />;
 };
