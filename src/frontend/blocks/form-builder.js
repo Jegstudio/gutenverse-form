@@ -66,7 +66,9 @@ class GutenverseFormValidation extends Default {
             script.async = true;
             script.defer = true;
 
-            document.head.appendChild(script);
+            setTimeout(() => {
+                document.head.appendChild(script);
+            }, 300);
         }
     }
 
