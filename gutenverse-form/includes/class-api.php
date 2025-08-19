@@ -72,6 +72,16 @@ class Api {
 
 		register_rest_route(
 			self::ENDPOINT,
+			'form/get-allowed-mimes',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_allowed_mimes' ),
+				'permission_callback' => 'gutenverse_permission_check_author',
+			)
+		);
+
+		register_rest_route(
+			self::ENDPOINT,
 			'form-action/edit',
 			array(
 				'methods'             => 'POST',
@@ -152,6 +162,34 @@ class Api {
 				'permission_callback' => '__return_true',
 			)
 		);
+	}
+
+	/**
+	 * Get Allowed Mimes
+	 *
+	 * @param object $request object .
+	 */
+	public function get_allowed_mimes( $request ) {
+		$allowed_mimes = get_allowed_mime_types();
+		$image_exts    = array();
+
+		foreach ( $allowed_mimes as $exts => $mime ) {
+			if ( strpos( $mime, 'image/' ) === 0 ) {
+				foreach ( explode( '|', $exts ) as $ext ) {
+					$ext = strtolower( trim( $ext ) ); // 🔹 filter/clean key
+					array_push( $image_exts, $ext );
+				}
+			}
+		}
+		$user_input = strtolower( trim( $request->get_param( 'search' ) ) );
+		$filtered = array_filter(
+			$image_exts,
+			function ( $ext ) use ( $user_input ) {
+				return strpos( $ext, $user_input ) !== false;
+			},
+			ARRAY_FILTER_USE_BOTH
+		);
+		return rest_ensure_response( $filtered );
 	}
 
 	/**

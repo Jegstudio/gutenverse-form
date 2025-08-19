@@ -1,0 +1,337 @@
+{
+	"apiVersion": 2,
+	"name": "gutenverse/form-input-file",
+	"title": "File",
+	"description": "Gutenverse Input File",
+	"category": "gutenverse-form",
+	"allowCopyStyle": true,
+	"attributes": {
+		"elementId": {
+			"type": "string"
+		},
+		"mouseMoveEffect": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"alignment":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"allowedExtention": {
+			"type": "array",
+			"copyStyle": true
+		},
+		"sizeLimit": {
+			"type": "number",
+			"copyStyle": true
+		},
+		"showLabel": {
+			"type": "boolean",
+			"default": true
+		},
+		"inputPlaceholder": {
+			"type": "string",
+			"default": "No File Selected"
+		},
+		"buttonText": {
+			"type": "string",
+			"default": "Choose File"
+		},
+		"buttonTypography":{
+			"type": "object",
+			"copyStyle":true
+		},
+		"placeholderTypography":{
+			"type": "object",
+			"copyStyle":true
+		},
+		"showIcon": {
+			"type": "boolean",
+			"default": false,
+			"copyStyle":true
+		},
+		"icon":{
+			"type": "string",
+			"default": "fab fa-wordpress",
+			"copyStyle":true
+		},
+		"iconPosition":{
+			"type": "string",
+			"default": "before",
+			"copyStyle":true
+		},
+		"iconSpacing":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconSize":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"paddingButton":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"placeholderColor":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"buttonTextColor":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"buttonTextColorHover":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"backgroundButton":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"backgroundButtonHover":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderButton":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderButtonHover":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"boxShadowButton":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"boxShadowButtonHover":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconColor":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconColorHover":{
+			"type": "object",
+			"copyStyle": true
+		},
+		"showHelper": {
+			"type": "boolean",
+			"default": true
+		},
+		"inputHelper": {
+			"type": "string",
+			"default": "Input Helper"
+		},
+		"position": {
+			"type": "string",
+			"default": "top"
+		},
+		"labelWidth": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"defaultLogic": {
+			"type": "string"
+		},
+		"displayLogic": {
+			"type": "array"
+		},
+		"labelPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelMargin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"helperColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"helperTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"helperPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"warningColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"warningTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningType": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningWidth": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningAlign": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningLocation": {
+			"type": "string",
+			"copyStyle": true
+		},
+		"positioningLeft": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningRight": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningTop": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningBottom": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"background": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"backgroundHover": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"backgroundTransition": {
+			"type": "object",
+			"copyStyle": true,
+			"default": {}
+		},
+		"border": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "border",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"boxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderHoverResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "borderHover",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"boxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"margin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"padding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"zIndex": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"animation": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"hideDesktop": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"hideTablet": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"hideMobile": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"inputLabel": {
+			"type": "string",
+			"default": "File Input"
+		},
+		"inputName": {
+			"type": "string",
+			"default": "input-file"
+		},
+		"displayBlock": {
+			"type": "string",
+			"default": "default",
+			"copyStyle": true
+		},
+		"labelSpace": {
+			"type": "object",
+			"copyStyle": true
+		},
+		
+		"required": {
+			"type": "boolean",
+			"default": false
+		},
+		"validationWarning": {
+			"type": "string",
+			"default": "Input Invalid"
+		},
+		"labelRequireColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"transform": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"mask": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"condition": {
+			"type": "object",
+			"default": {}
+		}
+	},
+	"supports": {
+		"className": false
+	},
+	"keywords": [
+		"input",
+		"form",
+		"gutenverse"
+	],
+	"example": {}
+}
