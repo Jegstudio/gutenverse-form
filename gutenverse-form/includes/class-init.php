@@ -119,8 +119,8 @@ class Init {
 		$flag = $this->register_framework();
 		if ( $flag ) {
 			add_action( 'plugins_loaded', array( $this, 'plugin_loaded' ) );
-			add_action( 'plugins_loaded', array( $this, 'framework_loaded' ), 99 );
 		}
+		add_action( 'plugins_loaded', array( $this, 'framework_loaded' ), 99 );
 		add_filter( 'gutenverse_companion_plugin_list', array( $this, 'plugin_name' ) );
 		register_activation_hook( GUTENVERSE_FORM_FILE, array( $this, 'set_activation_transient' ) );
 	}
