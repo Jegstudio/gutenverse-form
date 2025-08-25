@@ -289,7 +289,6 @@ class Init {
 		if ( $is_using_other_framework ) {
 			return false;
 		}
-		error_log('using form');
 		$framework_file    = GUTENVERSE_FORM_DIR . 'lib/framework/bootstrap.php';
 		$framework_version = $init->get_framework_version( $framework_file );
 		$init->register_version( GUTENVERSE_FORM, $framework_version );
