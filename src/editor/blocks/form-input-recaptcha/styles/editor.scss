@@ -12,3 +12,25 @@
         justify-content: center;
     }
 }
+
+.is-editing-disabled {
+    .gutenverse-recaptcha {
+        background: none;
+
+        .indicator {
+            display: none;
+        }
+    }
+}
+
+.guten-post-content.guten-element {
+    .components-disabled {
+        .gutenverse-recaptcha {
+            background: none;
+
+            .indicator {
+                display: none;
+            }
+        }
+    }
+}
