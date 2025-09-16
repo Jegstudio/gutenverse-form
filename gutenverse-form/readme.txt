@@ -208,12 +208,12 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 == Changelog ==
 = 2.2.0 =
 ##### New & Improvements
-* Add notification center for Gutenverse notices
-* Add Custom Page CSS & JS
-* Add new library option when Companion theme is installed
+* add notification center for Gutenverse notices
+* add Custom Page CSS & JS
+* add new library option when Companion theme is installed
 
 ##### Bug Fixes
-* Fix frontend inline style
+* fix frontend inline style
 
 = 2.1.2 =
 ##### Bug Fixes
