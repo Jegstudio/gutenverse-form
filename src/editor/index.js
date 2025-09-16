@@ -18,6 +18,8 @@ addFilter(
                 icon: <IconFormCalculationSVG />,
                 pro: true,
                 locked: true,
+                tier: ['professional', 'personal'],
+                min_tier: 'professional'
             },
             {
                 name: 'gutenverse/form-input-image-radio',
@@ -26,6 +28,8 @@ addFilter(
                 icon: <IconFormImageRadioSVG />,
                 pro: true,
                 locked: true,
+                tier: ['professional', 'personal'],
+                min_tier: 'professional'
             },
             {
                 name: 'gutenverse/form-input-payment',
@@ -34,6 +38,8 @@ addFilter(
                 icon: <IconFormPaymentSVG />,
                 pro: true,
                 locked: true,
+                tier: ['professional', 'personal'],
+                min_tier: 'professional'
             },
             {
                 name: 'gutenverse/form-stepper-navigation',
@@ -42,6 +48,8 @@ addFilter(
                 icon: <IconFormStepperNavigationButtonSVG />,
                 pro: true,
                 locked: true,
+                tier: ['professional', 'personal'],
+                min_tier: 'professional'
             },
             {
                 name: 'gutenverse/form-stepper',
@@ -50,6 +58,8 @@ addFilter(
                 icon: <IconFormStepperSVG />,
                 pro: true,
                 locked: true,
+                tier: ['professional', 'personal'],
+                min_tier: 'professional'
             },
             {
                 name: 'gutenverse/form-input-multi-group-select',
@@ -58,6 +68,8 @@ addFilter(
                 icon: <IconMultiGroupSelectSVG />,
                 pro: true,
                 locked: true,
+                tier: ['professional', 'personal', 'basic'],
+                min_tier: 'basic'
             },
             {
                 name: 'gutenverse/form-input-mobile',
@@ -66,6 +78,8 @@ addFilter(
                 icon: <IconFormMobileSVG />,
                 pro: true,
                 locked: true,
+                tier: ['professional', 'personal', 'basic'],
+                min_tier: 'basic'
             },
             ...list,
         ];
