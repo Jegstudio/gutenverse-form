@@ -5,3 +5,17 @@
   padding: 10px;
   display: inline-block;
 }
+
+.is-editing-disabled {
+  .input-warning {
+    display: none;
+  }
+}
+
+.guten-post-content.guten-element {
+    .components-disabled {
+        .input-warning {
+          display: none;
+        }
+    }
+}
