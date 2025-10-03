@@ -81,6 +81,16 @@ addFilter(
                 tier: ['professional', 'personal', 'basic'],
                 min_tier: 'basic'
             },
+            {
+                name: 'gutenverse/form-input-file',
+                title: 'File Input',
+                category: 'gutenverse-form',
+                icon: <IconFormMobileSVG />,
+                pro: true,
+                locked: true,
+                tier: ['basic'],
+                min_tier: 'basic'
+            },
             ...list,
         ];
     }
