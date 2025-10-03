@@ -94,7 +94,6 @@ addFilter(
 
 const registerBlocks = () => {
     const r = require.context('./blocks', true, /index\.js$/);
-    console.log(r)
     r.keys().forEach(key => {
         const { settings, metadata, name } = r(key);
 

@@ -55,6 +55,5 @@ class Blocks {
 		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-text/block.json' );
 		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-textarea/block.json' );
 		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-gdpr/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-file/block.json' );
 	}
 }
