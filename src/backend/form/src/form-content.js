@@ -12,50 +12,67 @@ import { CardBannerPro } from 'gutenverse-core/components';
 
 const TabGeneral = (props) => {
     const { values, updateValue } = props;
-
+    const defaultSettings = [
+        {
+            Component: <ControlText
+                id={'title'}
+                title={__('Form Title', 'gutenverse-form')}
+                description={__('This title will be searchable in Gutenverse Form Builder Block.', 'gutenverse-form')}
+                value={values.title}
+                {...props}
+            />
+        },
+        {
+            Component: <ControlCheckbox
+                id={'require_login'}
+                title={__('Require Login', 'gutenverse-form')}
+                description={__('Hide form if the user is not logged in.', 'gutenverse-form')}
+                value={values.require_login}
+                updateValue={updateValue}
+            />,
+        },
+        {
+            Component: <ControlCheckbox
+                id={'user_browser'}
+                title={__('Capture User Browser Data', 'gutenverse-form')}
+                description={__('Store user\'s browser data such as ip, browser name, etc. (If you served website for countries with GDPR law, please make sure you\'ve setup notice for your user regarding the datas you collect.)', 'gutenverse-form')}
+                value={values.user_browser}
+                updateValue={updateValue}
+            />,
+        },
+        {
+            Component: <ControlText
+                id={'form_success_notice'}
+                title={__('Success Notice on Submit', 'gutenverse-form')}
+                description={__('This will be your success notice when form is successfully submitted. (If empty, notice will not be showed).', 'gutenverse-form')}
+                value={values.form_success_notice}
+                updateValue={updateValue}
+            />,
+        },
+        {
+            Component: <ControlText
+                id={'form_error_notice'}
+                title={__('Error Notice on Submit', 'gutenverse-form')}
+                description={__('This will be your error notice when form is failed on submit. (If empty, notice will not be showed).', 'gutenverse-form')}
+                value={values.form_error_notice}
+                updateValue={updateValue}
+            />,
+        },
+        {
+            Component: <ControlCheckbox
+                id={'use_captcha'}
+                title={__('Use Captcha', 'gutenverse-form')}
+                description={__('Check this if you want to use captcha.', 'gutenverse-form')}
+                value={values.use_captcha}
+                updateValue={updateValue}
+            />
+        }
+    ];
+    let formSettings = applyFilters('gutenverse-form.general-form-action-settings', defaultSettings);
     return <div className="form-tab-body">
-        <ControlText
-            id={'title'}
-            title={__('Form Title', 'gutenverse-form')}
-            description={__('This title will be searchable in Gutenverse Form Builder Block.', 'gutenverse-form')}
-            value={values.title}
-            {...props}
-        />
-        <ControlCheckbox
-            id={'require_login'}
-            title={__('Require Login', 'gutenverse-form')}
-            description={__('Hide form if the user is not logged in.', 'gutenverse-form')}
-            value={values.require_login}
-            updateValue={updateValue}
-        />
-        <ControlCheckbox
-            id={'user_browser'}
-            title={__('Capture User Browser Data', 'gutenverse-form')}
-            description={__('Store user\'s browser data such as ip, browser name, etc. (If you served website for countries with GDPR law, please make sure you\'ve setup notice for your user regarding the datas you collect.)', 'gutenverse-form')}
-            value={values.user_browser}
-            updateValue={updateValue}
-        />
-        <ControlText
-            id={'form_success_notice'}
-            title={__('Success Notice on Submit', 'gutenverse-form')}
-            description={__('This will be your success notice when form is successfully submitted. (If empty, notice will not be showed).', 'gutenverse-form')}
-            value={values.form_success_notice}
-            updateValue={updateValue}
-        />
-        <ControlText
-            id={'form_error_notice'}
-            title={__('Error Notice on Submit', 'gutenverse-form')}
-            description={__('This will be your error notice when form is failed on submit. (If empty, notice will not be showed).', 'gutenverse-form')}
-            value={values.form_error_notice}
-            updateValue={updateValue}
-        />
-        <ControlCheckbox
-            id={'use_captcha'}
-            title={__('Use Captcha', 'gutenverse-form')}
-            description={__('Check this if you want to use captcha.', 'gutenverse-form')}
-            value={values.use_captcha}
-            updateValue={updateValue}
-        />
+        {formSettings.map((el, index) => (
+            <div key={index}>{el.Component}</div>
+        ))}
     </div>;
 };
 
@@ -174,9 +191,19 @@ export const FormContent = (props) => {
     const [hideFormNotice, setHideFormNotice] = !isEmpty(window['GutenverseConfig']) ? useState(window['GutenverseConfig']['hideFormNotice']) : useState(false);
 
     const tabs = {
-        general: __('General', 'gutenverse-form'),
-        confirmation: __('Confirmation', 'gutenverse-form'),
-        notification: __('Notification', 'gutenverse-form'),
+        general: {
+            label: __('General', 'gutenverse-form'),
+        },
+        confirmation: {
+            label: __('Confirmation', 'gutenverse-form'),
+        },
+        notification: {
+            label: __('Notification', 'gutenverse-form'),
+        },
+        pro: {
+            label: __('Pro', 'gutenverse-form' ),
+            pro: true
+        },
     };
 
     const changeActive = key => {
@@ -223,7 +250,7 @@ export const FormContent = (props) => {
             </AlertControl>
         </div>}
         <div className="form-notice-wrapper">
-            <CardBannerPro title={__('Upgrade to Gutenverse Pro', 'gutenverse-form')} description={__('Explore the full potential of Gutenverse Form', 'gutenverse-form')} backgroundImg = "card-banner-bg-form.png"/>
+            <CardBannerPro title={__('Upgrade to Gutenverse Pro', 'gutenverse-form')} description={__('Explore the full potential of Gutenverse Form', 'gutenverse-form')} backgroundImg="card-banner-bg-form.png" />
         </div>
         <div className="form-tab-header">
             {Object.keys(tabs).map(key => {
@@ -232,13 +259,14 @@ export const FormContent = (props) => {
                     active: key === tab
                 });
                 return <div className={classes} key={key} onClick={() => changeActive(key)}>
-                    {item}
+                    {item.label}
                 </div>;
             })}
         </div>
         {tab === 'general' && <TabGeneral {...props} />}
         {tab === 'confirmation' && ConfirmationTab}
         {tab === 'notification' && NotificationTab}
+        {tab === 'pro' && <div>Ini Pro </div>}
     </div>;
 };
 

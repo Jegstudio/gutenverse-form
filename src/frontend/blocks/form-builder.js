@@ -116,6 +116,11 @@ class GutenverseFormValidation extends Default {
                         });
                     });
                     break;
+                case 'file':
+                    currentFormBuilder.find(`input[name='${name}'][type='file']`).each(function (value) {
+                        
+                    });
+                    break;
                 default:
                     break;
             }
@@ -182,7 +187,7 @@ class GutenverseFormValidation extends Default {
 
             const element = e.target;
             const currentFormBuilder = u(element);
-            const values = [];
+            const values = new FormData();
             let validFlag = true;
             let value = null;
             let isPayment = false;
@@ -206,6 +211,7 @@ class GutenverseFormValidation extends Default {
                 validFlag = validFlag && valid;
                 const rule = u(parent).data('guten-input-rule');
                 if (!(rule && 'hide' === rule)) {
+                    
                     values.push({
                         id: name,
                         value,
@@ -238,7 +244,7 @@ class GutenverseFormValidation extends Default {
                             postId,
                             data: values
                         },
-                        'g-recaptcha-response': recaptchaResponse,
+                        'g-recaptcha-response': captcha ? recaptchaResponse : null,
                     },
                 }).then(({ entry_id }) => {
                     if (isPayment) {
@@ -286,15 +292,18 @@ class GutenverseFormValidation extends Default {
                     currentFormBuilder.removeClass('loading');
                     this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit);
                 }).finally(() => {
-                    if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length > 0) {
-                        grecaptcha.reset();
+                    if (captcha) {
+                        if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length > 0) {
+                            grecaptcha.reset();
+                        }
+                        if (!isPayment) {
+                            currentFormBuilder.removeClass('loading');
+                        }
+                        if (redirectTo && !isPayment) {
+                            window.location = redirectTo;
+                        }
                     }
-                    if (!isPayment) {
-                        currentFormBuilder.removeClass('loading');
-                    }
-                    if (redirectTo && !isPayment) {
-                        window.location = redirectTo;
-                    }
+
                 });
             }
         });
