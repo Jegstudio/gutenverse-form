@@ -7,7 +7,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'lodash';
-import { CardBannerPro } from 'gutenverse-core/components';
+import { CardBannerPro, PopupInsufficientTier, PopupPro } from 'gutenverse-core/components';
 
 
 const TabGeneral = (props) => {
@@ -189,6 +189,9 @@ const TabNotification = (props) => {
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
     const [hideFormNotice, setHideFormNotice] = !isEmpty(window['GutenverseConfig']) ? useState(window['GutenverseConfig']['hideFormNotice']) : useState(false);
+    const [popupActive, setPopupActive] = useState(false);
+    const [popupInsufficientTier, setPopupInsufficientTier] = useState(false);
+    const [insufficientTierDesc, setInsufficientTierDesc] = useState('');
 
     const tabs = {
         general: {
@@ -201,7 +204,7 @@ export const FormContent = (props) => {
             label: __('Notification', 'gutenverse-form'),
         },
         pro: {
-            label: __('Pro', 'gutenverse-form' ),
+            label: __('Pro', 'gutenverse-form'),
             pro: true
         },
     };
@@ -230,6 +233,11 @@ export const FormContent = (props) => {
             }
         }).then(() => { });
     };
+
+    const proPopupProps = {
+        setPopupInsufficientTier,
+        setInsufficientTierDesc
+    }
     return <div>
         {!hideFormNotice && <div className="form-notice-wrapper">
             <AlertControl>
@@ -249,6 +257,16 @@ export const FormContent = (props) => {
                 </>
             </AlertControl>
         </div>}
+        <PopupPro
+            active={popupActive}
+            setActive={setPopupActive}
+            description={<>{__('Upgrade ', '--gctd--')}<span>{__(' Gutenverse PRO ', '--gctd--')}</span>{__(' version to ', '--gctd--')}<br />{__(' unlock these premium features', '--gctd--')}</>}
+        />
+        <PopupInsufficientTier
+            active={popupInsufficientTier}
+            setActive={setPopupInsufficientTier}
+            description={insufficientTierDesc}
+        />
         <div className="form-notice-wrapper">
             <CardBannerPro title={__('Upgrade to Gutenverse Pro', 'gutenverse-form')} description={__('Explore the full potential of Gutenverse Form', 'gutenverse-form')} backgroundImg="card-banner-bg-form.png" />
         </div>
@@ -258,15 +276,26 @@ export const FormContent = (props) => {
                 const classes = classnames('header-item', {
                     active: key === tab
                 });
-                return <div className={classes} key={key} onClick={() => changeActive(key)}>
-                    {item.label}
-                </div>;
+
+                return item.pro
+                    ? applyFilters(
+                        'gutenverse-form.tab-pro-button',
+                        <div className={classes} key={key} onClick={() => setPopupActive(true)}>
+                            {item.label}
+                        </div>,
+                        proPopupProps
+                    )
+                    : (
+                        <div className={classes} key={key} onClick={() => changeActive(key)}>
+                            {item.label}
+                        </div>
+                    );
             })}
         </div>
         {tab === 'general' && <TabGeneral {...props} />}
         {tab === 'confirmation' && ConfirmationTab}
         {tab === 'notification' && NotificationTab}
-        {tab === 'pro' && <div>Ini Pro </div>}
+        {tab === 'pro' && applyFilters('gutenverse-form.pro-form-action-settings', '', props)}
     </div>;
 };
 
