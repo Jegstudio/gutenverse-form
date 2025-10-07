@@ -465,7 +465,6 @@ class Api {
 		$recaptcha     = $request['g-recaptcha-response'];
 		$settings_data = get_option( 'gutenverse-settings', array() );
 		$form_entry    = $request['form-entry'];
-		gutenverse_rlog($form_entry);
 		$form_id       = $form_entry['formId'];
 		$form_setting  = get_post_meta( (int) $form_id, 'form-data', true );
 		if ( $form_setting['use_captcha'] && $recaptcha ) {

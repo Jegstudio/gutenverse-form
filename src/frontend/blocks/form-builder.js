@@ -1,4 +1,4 @@
-import { Default, u, apiFetch } from 'gutenverse-core-frontend';
+import { Default, u, apiFetch, applyFilters } from 'gutenverse-core-frontend';
 import isEmpty from 'lodash/isEmpty';
 
 class GutenverseFormValidation extends Default {
@@ -209,9 +209,9 @@ class GutenverseFormValidation extends Default {
                     u(parent).addClass('input-invalid');
                 }
                 validFlag = validFlag && valid;
+                validFlag = applyFilters('gutenverse-form.form-builder-submit', validFlag);
                 const rule = u(parent).data('guten-input-rule');
                 if (!(rule && 'hide' === rule)) {
-                    
                     values.push({
                         id: name,
                         value,
@@ -226,7 +226,6 @@ class GutenverseFormValidation extends Default {
                         paymentMethod = false;
                         paymentOption = false;
                     }
-
                 }
             });
 

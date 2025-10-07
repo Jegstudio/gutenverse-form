@@ -9,7 +9,6 @@ import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'lodash';
 import { CardBannerPro, PopupInsufficientTier, PopupPro } from 'gutenverse-core/components';
 
-
 const TabGeneral = (props) => {
     const { values, updateValue } = props;
     const defaultSettings = [
@@ -224,6 +223,12 @@ export const FormContent = (props) => {
         props
     );
 
+    const ProTab = applyFilters(
+        'gutenverse-form.pro-form-action-settings',
+        <></>,
+        props
+    );
+
     const closeNotice = (id) => {
         apiFetch({
             path: 'gutenverse-client/v1/notice/close',
@@ -236,7 +241,8 @@ export const FormContent = (props) => {
 
     const proPopupProps = {
         setPopupInsufficientTier,
-        setInsufficientTierDesc
+        setInsufficientTierDesc,
+        changeActive,
     }
     return <div>
         {!hideFormNotice && <div className="form-notice-wrapper">
@@ -283,7 +289,7 @@ export const FormContent = (props) => {
                         <div className={classes} key={key} onClick={() => setPopupActive(true)}>
                             {item.label}
                         </div>,
-                        proPopupProps
+                        { ...proPopupProps, item, classes, key }
                     )
                     : (
                         <div className={classes} key={key} onClick={() => changeActive(key)}>
@@ -295,7 +301,7 @@ export const FormContent = (props) => {
         {tab === 'general' && <TabGeneral {...props} />}
         {tab === 'confirmation' && ConfirmationTab}
         {tab === 'notification' && NotificationTab}
-        {tab === 'pro' && applyFilters('gutenverse-form.pro-form-action-settings', '', props)}
+        {tab === 'pro' && ProTab}
     </div>;
 };
 

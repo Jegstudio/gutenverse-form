@@ -45,7 +45,7 @@
             position: relative;
         }
 
-        .banner-image-mockup { 
+        .banner-image-mockup {
             position: absolute;
             border-radius: inherit;
             right: 0;
@@ -116,6 +116,7 @@
 
 .form-tab-body {
     padding: 0 25px 50px;
+    height: 100%;
 
     .control-wrapper {
         text-align: left;
@@ -136,7 +137,7 @@
             display: block;
         }
 
-        &.control-text {
+        &.control-text, &.control-number, &.control-search-select  {
             input {
                 border: 1px solid #e6e6ef;
                 border-radius: 3px;
@@ -219,6 +220,30 @@
 
             input:checked+.switch::after {
                 transform: translate3d(27px, -50%, 0);
+            }
+        }
+
+        &.control-number {
+            input{
+                width: 150px;
+            }
+            .control-title {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        &.control-search-select{
+            .async-select__control{
+                border: 1px solid #e6e6ef;
+                border-radius: 3px;
+            }
+            .select-search{
+                margin-top: 10px;
+            }
+            .async-select__menu-list{
+                height: 150px;
             }
         }
     }
