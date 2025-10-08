@@ -481,7 +481,7 @@ class Api {
 									array_push( $error, $file_info['name'] . '\'s extensions not allowed. Allowed: ' . implode( ', ', $allowed_ext ) );
 								}
 							}
-							if(count( $error ) > 0){
+							if ( count( $error ) > 0 ) {
 								break;
 							}
 							$uploaded = wp_handle_upload( $file_info, array( 'test_form' => false ) );
