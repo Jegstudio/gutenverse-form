@@ -276,7 +276,7 @@ class Form {
 				'overwrite_default_notification' => $params['overwrite_default_notification'],
 				'use_captcha'                    => $params['use_captcha'],
 				'max_size_file'                  => $params['max_size_file'],
-				'allowed_extentions'             => $params['allowed_extentions'],
+				'allowed_extensions'             => $params['allowed_extensions'],
 			)
 		);
 

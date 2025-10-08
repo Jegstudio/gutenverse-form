@@ -10,6 +10,7 @@
 namespace Gutenverse_Form;
 
 use Gutenverse_Form\Form;
+use WP_REST_Response;
 
 /**
  * Class Api
@@ -182,7 +183,7 @@ class Api {
 			}
 		}
 		$user_input = strtolower( trim( $request->get_param( 'search' ) ) );
-		$filtered = array_filter(
+		$filtered   = array_filter(
 			$image_exts,
 			function ( $ext ) use ( $user_input ) {
 				return strpos( $ext, $user_input ) !== false;
@@ -386,15 +387,25 @@ class Api {
 	/**
 	 * Filter Form Params
 	 *
-	 * @param array $entry_data .
+	 * @param array     $entry_data .
+	 * @param WP_Object $request .
 	 *
 	 * @return array|null
 	 */
-	private function filter_form_params( $entry_data ) {
+	private function filter_form_params( $entry_data, $request ) {
 		$filtered_data = array();
 		$entry_data    = rest_sanitize_array( $entry_data );
+		$error         = array();
+		$form_entry    = $request->get_param( 'form-entry' );
+		$form_id       = $form_entry['formId'];
+		$form_options  = get_post_meta( (int) $form_id, 'form-data', true );
+		$file_rules    = array(
+			'max_size'           => isset( $form_options['max_size_file'] ) ? $form_options['max_size_file'] : false,
+			'allowed_extensions' => isset( $form_options['allowed_extensions'] ) ? $form_options['allowed_extensions'] : false,
+		);
 		if ( isset( $entry_data ) ) {
-			foreach ( $entry_data as $data ) {
+			foreach ( $entry_data as $key => $data ) {
+				$value_key = $data['id'] . '-' . $key . '-value';
 				if ( ! isset( $data['type'] ) ) {
 					return null;
 				}
@@ -410,31 +421,31 @@ class Api {
 					case 'image-radio':
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),
-							'value' => sanitize_text_field( $data['value'] ),
+							'value' => sanitize_text_field( $data[ $value_key ] ),
 						);
 						break;
 					case 'email':
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),
-							'value' => sanitize_email( $data['value'] ),
+							'value' => sanitize_email( $data[ $value_key ] ),
 						);
 						break;
 					case 'textarea':
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),
-							'value' => sanitize_textarea_field( $data['value'] ),
+							'value' => sanitize_textarea_field( $data[ $value_key ] ),
 						);
 						break;
 					case 'number':
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),
-							'value' => floatval( $data['value'] ),
+							'value' => floatval( $data[ $value_key ] ),
 						);
 						break;
 					case 'switch':
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),
-							'value' => rest_sanitize_boolean( $data['value'] ),
+							'value' => rest_sanitize_boolean( $data[ $value_key ] ),
 						);
 						break;
 					case 'multiselect':
@@ -442,16 +453,70 @@ class Api {
 					case 'checkbox':
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),
-							'value' => rest_sanitize_array( $data['value'] ),
+							'value' => rest_sanitize_array( $data[ $value_key ] ),
 						);
+						break;
+					case 'file':
+						$id         = sanitize_key( $data['id'] );
+						$files      = $request->get_file_params();
+						$file_names = $files['form-entry']['name']['data'][ $key ][ $value_key ];
+						if ( ! empty( $file_names ) ) {
+							$file_info = array(
+								'name'      => $files['form-entry']['name']['data'][ $key ][ $value_key ],
+								'type'      => $files['form-entry']['type']['data'][ $key ][ $value_key ],
+								'tmp_name'  => $files['form-entry']['tmp_name']['data'][ $key ][ $value_key ],
+								'error'     => $files['form-entry']['error']['data'][ $key ][ $value_key ],
+								'size'      => $files['form-entry']['size']['data'][ $key ][ $value_key ],
+								'full_path' => $files['form-entry']['full_path']['data'][ $key ][ $value_key ],
+							);
+
+							if ( $file_rules['max_size'] && intval( $file_info['size'] ) > intval( $file_rules['max_size'] ) * 1024 ) {
+								array_push( $error, $file_info['name'] . ' exceeds max size of ' . $file_rules['max_size'] . 'KB.' );
+							}
+
+							if ( $file_rules['allowed_extensions'] && 0 < count( $file_rules['allowed_extensions'] ) ) {
+								$file_ext    = strtolower( pathinfo( $file_info['name'], PATHINFO_EXTENSION ) );
+								$allowed_ext = array_column( $file_rules['allowed_extensions'], 'value' );
+								if ( ! in_array( $file_ext, $allowed_ext, true ) ) {
+									array_push( $error, $file_info['name'] . '\'s extensions not allowed. Allowed: ' . implode( ', ', $allowed_ext ) );
+								}
+							}
+							if(count( $error ) > 0){
+								break;
+							}
+							$uploaded = wp_handle_upload( $file_info, array( 'test_form' => false ) );
+							if ( ! isset( $uploaded['error'] ) ) {
+								$file_url = $uploaded['url'];   // ✅ public URL
+
+								// Keep a list of uploaded files
+								$filtered_data[] = array(
+									'id'    => $id,
+									'value' => $file_url,
+								);
+							} else {
+								$filtered_data[] = array(
+									'id'    => $id,
+									'value' => null,
+								);
+							}
+						}
 						break;
 					default:
 						break;
 				}
 			}
 		}
-
-		return $filtered_data;
+		if ( count( $error ) > 0 ) {
+			return array(
+				'status'  => false,
+				'message' => implode( ', ', $error ),
+			);
+		} else {
+			return array(
+				'status' => true,
+				'data'   => $filtered_data,
+			);
+		}
 	}
 
 	/**
@@ -462,12 +527,12 @@ class Api {
 	 * @return WP_Response
 	 */
 	public function submit_form( $request ) {
-		$recaptcha     = $request['g-recaptcha-response'];
+		$recaptcha     = $request->get_param( 'g-recaptcha-response' ) ? $request->get_param( 'g-recaptcha-response' ) : false;
 		$settings_data = get_option( 'gutenverse-settings', array() );
-		$form_entry    = $request['form-entry'];
+		$form_entry    = $request->get_param( 'form-entry' );
 		$form_id       = $form_entry['formId'];
 		$form_setting  = get_post_meta( (int) $form_id, 'form-data', true );
-		if ( $form_setting['use_captcha'] && $recaptcha ) {
+		if ( $form_setting['use_captcha'] && ! empty( $recaptcha ) ) {
 			$secret = $settings_data['form_captcha_settings']['captcha_key'];
 			$verify = wp_remote_post(
 				'https://www.google.com/recaptcha/api/siteverify',
@@ -492,7 +557,17 @@ class Api {
 				return $response;
 			}
 		}
-		$form_data = $this->filter_form_params( $form_entry['data'] );
+		$form_data_check = $this->filter_form_params( $form_entry['data'], $request );
+		if ( ! $form_data_check['status'] ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'failed',
+					'message' => $form_data_check['message'],
+				),
+				400
+			);
+		}
+		$form_data = $form_data_check['data'];
 		$is_login  = is_user_logged_in();
 		if ( $form_setting['require_login'] ) {
 			if ( ! $is_login ) {

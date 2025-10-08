@@ -163,6 +163,10 @@ class Form_Validation extends Style_Generator {
 					$result['require_login']       = isset( $data['require_login'] ) ? $data['require_login'] : false;
 					$result['form_success_notice'] = isset( $data['form_success_notice'] ) ? $data['form_success_notice'] : false;
 					$result['form_error_notice']   = isset( $data['form_error_notice'] ) ? $data['form_error_notice'] : false;
+					$result['file_rule']           = array(
+						'max_size'           => isset( $data['max_size_file'] ) ? $data['max_size_file'] : false,
+						'allowed_extensions' => isset( $data['allowed_extensions'] ) ? $data['allowed_extensions'] : false,
+					);
 					$form_result[]                 = $result;
 				}
 			}

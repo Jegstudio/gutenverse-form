@@ -15,6 +15,7 @@ class GutenverseFormValidation extends Default {
         const formId = formBuilder.data('form-id');
         const { data, missingLabel, isAdmin } = window['GutenverseFormValidationData'];
         const formData = data.filter(el => el.formId == formId);
+
         this.__captchaJS(formBuilder);
         if (formData.length !== 0) {
             if (formData[0]['require_login'] && !formData[0]['logged_in']) {
@@ -116,12 +117,12 @@ class GutenverseFormValidation extends Default {
                         });
                     });
                     break;
-                case 'file':
-                    currentFormBuilder.find(`input[name='${name}'][type='file']`).each(function (value) {
-                        
-                    });
-                    break;
                 default:
+                    value = applyFilters('gutenverse-form.form-builder-get-value',
+                        value,
+                        input,
+                        validation,
+                    );
                     break;
             }
         }
@@ -175,10 +176,8 @@ class GutenverseFormValidation extends Default {
         formBuilder.on('submit', (e) => {
             e.preventDefault();
             let recaptchaResponse = null;
-            let useCaptcha = false;
             const captcha = formBuilder.find('.gutenverse-recaptcha');
             if (captcha.nodes.length > 0) {
-                useCaptcha = true;
                 const sitekey = u(captcha.nodes[0]).data('sitekey');
                 if (sitekey) {
                     recaptchaResponse = grecaptcha.getResponse();
@@ -187,7 +186,7 @@ class GutenverseFormValidation extends Default {
 
             const element = e.target;
             const currentFormBuilder = u(element);
-            const values = new FormData();
+            const values = [];
             let validFlag = true;
             let value = null;
             let isPayment = false;
@@ -199,9 +198,9 @@ class GutenverseFormValidation extends Default {
                 const currentInput = u(input);
                 const validation = JSON.parse(currentInput.data('validation'));
                 const name = currentInput.attr('name');
-                value = instance._getInputValue(currentFormBuilder, input, validation);
-                const valid = instance.__validate(currentInput, value, validation);
                 const parent = currentInput.closest('.guten-form-input');
+                value = instance._getInputValue(currentFormBuilder, input, validation);
+                const valid = instance.__validate(currentInput, value, validation, formData);
                 const type = instance._getInputType(validation, parent);
                 if (valid) {
                     u(parent).removeClass('input-invalid');
@@ -209,12 +208,11 @@ class GutenverseFormValidation extends Default {
                     u(parent).addClass('input-invalid');
                 }
                 validFlag = validFlag && valid;
-                validFlag = applyFilters('gutenverse-form.form-builder-submit', validFlag);
                 const rule = u(parent).data('guten-input-rule');
                 if (!(rule && 'hide' === rule)) {
                     values.push({
                         id: name,
-                        value,
+                        value: value,
                         type
                     });
                     if (validation) {
@@ -228,23 +226,30 @@ class GutenverseFormValidation extends Default {
                     }
                 }
             });
-
+            //uncomment this when done debugging
             if (validFlag) {
                 currentFormBuilder.addClass('loading');
+                const requestBody = new FormData();
+                requestBody.append('form-entry[formId]', formId);
+                requestBody.append('form-entry[postId]', postId);
 
+                // append each value field
+                values.forEach(({ id, value, type }, idx) => {
+                    requestBody.append(`form-entry[data][${idx}][id]`, id);
+                    requestBody.append(`form-entry[data][${idx}][${id}-${idx}-value]`, value);
+                    requestBody.append(`form-entry[data][${idx}][type]`, type);
+                });
+
+                // add captcha if exists
+                if(captcha.nodes.length > 0){
+                    requestBody.append('g-recaptcha-response', recaptchaResponse);
+                }
                 // remove existing notification on another submit
                 currentFormBuilder.find('.form-notification').remove();
                 apiFetch({
                     path: 'gutenverse-form-client/v1/form/submit',
                     method: 'POST',
-                    data: {
-                        ['form-entry']: {
-                            formId,
-                            postId,
-                            data: values
-                        },
-                        'g-recaptcha-response': captcha ? recaptchaResponse : null,
-                    },
+                    body: requestBody
                 }).then(({ entry_id }) => {
                     if (isPayment) {
                         const amountId = paymentOption.amountInput;
@@ -291,18 +296,16 @@ class GutenverseFormValidation extends Default {
                     currentFormBuilder.removeClass('loading');
                     this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit);
                 }).finally(() => {
-                    if (captcha) {
+                    if (captcha.nodes.length > 0) {
                         if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length > 0) {
                             grecaptcha.reset();
                         }
-                        if (!isPayment) {
-                            currentFormBuilder.removeClass('loading');
-                        }
-                        if (redirectTo && !isPayment) {
-                            window.location = redirectTo;
-                        }
                     }
+                    currentFormBuilder.removeClass('loading');
 
+                    if (redirectTo && !isPayment) {
+                        window.location = redirectTo;
+                    }
                 });
             }
         });
@@ -349,13 +352,12 @@ class GutenverseFormValidation extends Default {
     }
 
 
-    __validate(currentInput, value, validation) {
+    __validate(currentInput, value, validation, formData) {
         const parent = currentInput.closest('.guten-form-input');
         const rule = u(parent).data('guten-input-rule');
         if (rule && 'hide' === rule) {
             return true;
         }
-
         if (validation) {
             if (validation.required === true) {
                 if ('radio' === validation.type || 'image-radio' === validation.type || 'payment' === validation.type) {
@@ -382,6 +384,10 @@ class GutenverseFormValidation extends Default {
             if ('email' === validation.type) {
                 return this.__validateEmail(value);
             }
+
+            let valid = true;
+            valid = applyFilters('gutenverse-form.form-builder-validation', valid, value, formData, validation, parent);
+            return valid;
         }
 
         return true;
