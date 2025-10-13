@@ -273,10 +273,6 @@
 	"supports": {
 		"className": false
 	},
-	"keywords": [
-		"input",
-		"form",
-		"gutenverse"
-	],
+	"keywords": ["input", "form", "radio", "dot"],
 	"example": {}
 }

@@ -1,330 +1,330 @@
 {
-    "apiVersion": 2,
-    "name": "gutenverse/form-input-textarea",
-    "title": "Textarea",
-    "description": "Gutenverse Input Textarea",
-    "category": "gutenverse-form",
-    "allowCopyStyle": true,
-    "attributes": {
-        "elementId": {
-            "type": "string"
-        },
-        "mouseMoveEffect": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "showLabel": {
-            "type": "boolean",
-            "default": true
-        },
-        "showHelper": {
-            "type": "boolean",
-            "default": true
-        },
-        "inputHelper": {
-            "type": "string",
-            "default": "Input Helper"
-        },
-        "position": {
-            "type": "string",
-            "default": "top"
-        },
-        "labelWidth": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "labelColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "labelTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "defaultLogic": {
-            "type": "string"
-        },
-        "displayLogic": {
-            "type": "array"
-        },
-        "labelPadding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "labelMargin": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "helperColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "helperTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "helperPadding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "warningColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "warningTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningType": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningWidth": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningAlign": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningLocation": {
-            "type": "string",
-            "copyStyle": true
-        },
-        "positioningLeft": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningRight": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningTop": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningBottom": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "background": {
-            "type": "object",
-            "default": {},
-            "copyStyle": true
-        },
-        "backgroundHover": {
-            "type": "object",
-            "default": {},
-            "copyStyle": true
-        },
-        "backgroundTransition": {
+	"apiVersion": 2,
+	"name": "gutenverse/form-input-textarea",
+	"title": "Textarea",
+	"description": "Gutenverse Input Textarea",
+	"category": "gutenverse-form",
+	"allowCopyStyle": true,
+	"attributes": {
+		"elementId": {
+			"type": "string"
+		},
+		"mouseMoveEffect": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"showLabel": {
+			"type": "boolean",
+			"default": true
+		},
+		"showHelper": {
+			"type": "boolean",
+			"default": true
+		},
+		"inputHelper": {
+			"type": "string",
+			"default": "Input Helper"
+		},
+		"position": {
+			"type": "string",
+			"default": "top"
+		},
+		"labelWidth": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"defaultLogic": {
+			"type": "string"
+		},
+		"displayLogic": {
+			"type": "array"
+		},
+		"labelPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelMargin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"helperColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"helperTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"helperPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"warningColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"warningTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningType": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningWidth": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningAlign": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningLocation": {
+			"type": "string",
+			"copyStyle": true
+		},
+		"positioningLeft": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningRight": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningTop": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningBottom": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"background": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"backgroundHover": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"backgroundTransition": {
 			"type": "object",
 			"copyStyle": true,
 			"default": {}
 		},
-        "border": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "borderResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "border",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "boxShadow": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "borderHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "borderHoverResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "borderHover",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "boxShadowHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "margin": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "padding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "zIndex": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "animation": {
-            "type": "object",
-            "default": {},
-            "copyStyle": true
-        },
-        "hideDesktop": {
-            "type": "boolean",
-            "copyStyle": true
-        },
-        "hideTablet": {
-            "type": "boolean",
-            "copyStyle": true
-        },
-        "hideMobile": {
-            "type": "boolean",
-            "copyStyle": true
-        },
-        "inputHeight": {
-            "type": "object"
-        },
-        "inputLabel": {
-            "type": "string",
-            "default": "Textarea"
-        },
-        "inputPlaceholder": {
-            "type": "string",
-            "default": "Textarea Placeholder"
-        },
-        "inputName": {
-            "type": "string",
-            "default": "input-textarea"
-        },
-        "required": {
-            "type": "boolean",
-            "default": false
-        },
-        "validationType": {
-            "type": "string",
-            "default": "none"
-        },
-        "validationMin": {
-            "type": "number"
-        },
-        "validationMax": {
-            "type": "number"
-        },
-        "validationWarning": {
-            "type": "string",
-            "default": "Input Invalid"
-        },
-        "inputPadding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputMargin": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "placeholderColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputColorNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderNormalResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "inputBorderNormal",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "inputColorHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderHoverResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "inputBorderHover",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "inputColorFocus": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderFocus": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderFocusResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "inputBorderFocus",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "inputBgColorNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBgColorHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBgColorFocus": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "labelRequireColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "transform": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "mask": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputAreaBoxShadow": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputAreaBoxShadowHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "condition": {
-            "type": "object",
-            "default": {}
-        },
-        "iconAlignment": {
-            "type": "string",
-            "default": "left"
-        },
-        "iconType": {
+		"border": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "border",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"boxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderHoverResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "borderHover",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"boxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"margin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"padding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"zIndex": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"animation": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"hideDesktop": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"hideTablet": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"hideMobile": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"inputHeight": {
+			"type": "object"
+		},
+		"inputLabel": {
+			"type": "string",
+			"default": "Textarea"
+		},
+		"inputPlaceholder": {
+			"type": "string",
+			"default": "Textarea Placeholder"
+		},
+		"inputName": {
+			"type": "string",
+			"default": "input-textarea"
+		},
+		"required": {
+			"type": "boolean",
+			"default": false
+		},
+		"validationType": {
+			"type": "string",
+			"default": "none"
+		},
+		"validationMin": {
+			"type": "number"
+		},
+		"validationMax": {
+			"type": "number"
+		},
+		"validationWarning": {
+			"type": "string",
+			"default": "Input Invalid"
+		},
+		"inputPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputMargin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"placeholderColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputColorNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderNormalResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "inputBorderNormal",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"inputColorHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderHoverResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "inputBorderHover",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"inputColorFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderFocusResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "inputBorderFocus",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"inputBgColorNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBgColorHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBgColorFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelRequireColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"transform": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"mask": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputAreaBoxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputAreaBoxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"condition": {
+			"type": "object",
+			"default": {}
+		},
+		"iconAlignment": {
+			"type": "string",
+			"default": "left"
+		},
+		"iconType": {
 			"type": "string",
 			"default": "icon"
 		},
@@ -339,19 +339,19 @@
 			},
 			"copyStyle": true
 		},
-        "imageHeight": {
-			"type" : "object",
+		"imageHeight": {
+			"type": "object",
 			"copyStyle": true,
-            "default": {
-                "Desktop": 20
-            }
+			"default": {
+				"Desktop": 20
+			}
 		},
 		"imageWidth": {
-			"type" : "object",
+			"type": "object",
 			"copyStyle": true,
-            "default": {
-                "Desktop": 20
-            }
+			"default": {
+				"Desktop": 20
+			}
 		},
 		"image": {
 			"type": "object"
@@ -360,21 +360,21 @@
 			"type": "string"
 		},
 		"imageFit": {
-			"type" : "string"
+			"type": "string"
 		},
-        "lazyLoad": {
-			"type" : "boolean",
+		"lazyLoad": {
+			"type": "boolean",
 			"copyStyle": true
 		},
-        "containerBoxShadowHover": {
+		"containerBoxShadowHover": {
 			"type": "object",
 			"copyStyle": true
 		},
-        "useIcon": {
-            "type": "boolean",
-            "default": false,
-            "copyStyle": true
-        },
+		"useIcon": {
+			"type": "boolean",
+			"default": false,
+			"copyStyle": true
+		},
 		"iconPadding": {
 			"type": "object",
 			"copyStyle": true
@@ -403,26 +403,26 @@
 			"type": "object",
 			"copyStyle": true
 		},
-        "iconColorGradient": {
+		"iconColorGradient": {
 			"type": "object",
 			"copyStyle": true,
-            "default": {
-                "type": "gradient",
-                "gradientColor": [
-                    {
-                        "active": false,
-                        "color": "rgb(49, 207, 180)",
-                        "id": 1,
-                        "offset": "0.000"
-                    },
-                    {
-                        "active": true,
-                        "color": "rgb(126, 32, 207)",
-                        "id": 2,
-                        "offset": "1.000"
-                    }
-                ]
-            }
+			"default": {
+				"type": "gradient",
+				"gradientColor": [
+					{
+						"active": false,
+						"color": "rgb(49, 207, 180)",
+						"id": 1,
+						"offset": "0.000"
+					},
+					{
+						"active": true,
+						"color": "rgb(126, 32, 207)",
+						"id": 2,
+						"offset": "1.000"
+					}
+				]
+			}
 		},
 		"iconBorder": {
 			"type": "object",
@@ -440,7 +440,7 @@
 			"type": "object",
 			"copyStyle": true
 		},
-        "iconColorGradientHover": {
+		"iconColorGradientHover": {
 			"type": "object",
 			"copyStyle": true
 		},
@@ -464,7 +464,7 @@
 			"type": "object",
 			"copyStyle": true
 		},
-        "iconColorGradientFocus": {
+		"iconColorGradientFocus": {
 			"type": "object",
 			"copyStyle": true
 		},
@@ -480,14 +480,10 @@
 			"type": "object",
 			"copyStyle": true
 		}
-    },
-    "supports": {
-        "className": false
-    },
-    "keywords": [
-        "input",
-        "form",
-        "gutenverse"
-    ],
-    "example": {}
+	},
+	"supports": {
+		"className": false
+	},
+	"keywords": ["input", "form", "textarea"],
+	"example": {}
 }

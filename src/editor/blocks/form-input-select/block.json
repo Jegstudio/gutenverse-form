@@ -1,455 +1,451 @@
 {
-    "apiVersion": 2,
-    "name": "gutenverse/form-input-select",
-    "title": "Select",
-    "description": "Gutenverse Select",
-    "category": "gutenverse-form",
-    "allowCopyStyle": true,
-    "attributes": {
-        "elementId": {
-            "type": "string"
-        },
-        "mouseMoveEffect": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "showLabel": {
-            "type": "boolean",
-            "default": true
-        },
-        "inputPlaceholder": {
-            "type": "string",
-            "default": "Text Placeholder"
-        },
-        "showHelper": {
-            "type": "boolean",
-            "default": true
-        },
-        "excludePlaceholder": {
-            "type": "boolean",
-            "default": false
-        },
-        "inputHelper": {
-            "type": "string",
-            "default": "Input Helper"
-        },
-        "position": {
-            "type": "string",
-            "default": "top"
-        },
-        "labelWidth": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "labelColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "labelTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "defaultLogic": {
-            "type": "string"
-        },
-        "displayLogic": {
-            "type": "array"
-        },
-        "labelPadding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "labelMargin": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "helperColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "helperTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "helperPadding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "warningColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "warningTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningType": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningWidth": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningAlign": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningLocation": {
-            "type": "string",
-            "copyStyle": true
-        },
-        "positioningLeft": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningRight": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningTop": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "positioningBottom": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "background": {
-            "type": "object",
-            "default": {},
-            "copyStyle": true
-        },
-        "backgroundHover": {
-            "type": "object",
-            "default": {},
-            "copyStyle": true
-        },
-        "backgroundTransition": {
+	"apiVersion": 2,
+	"name": "gutenverse/form-input-select",
+	"title": "Select",
+	"description": "Gutenverse Select",
+	"category": "gutenverse-form",
+	"allowCopyStyle": true,
+	"attributes": {
+		"elementId": {
+			"type": "string"
+		},
+		"mouseMoveEffect": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"showLabel": {
+			"type": "boolean",
+			"default": true
+		},
+		"inputPlaceholder": {
+			"type": "string",
+			"default": "Text Placeholder"
+		},
+		"showHelper": {
+			"type": "boolean",
+			"default": true
+		},
+		"excludePlaceholder": {
+			"type": "boolean",
+			"default": false
+		},
+		"inputHelper": {
+			"type": "string",
+			"default": "Input Helper"
+		},
+		"position": {
+			"type": "string",
+			"default": "top"
+		},
+		"labelWidth": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"defaultLogic": {
+			"type": "string"
+		},
+		"displayLogic": {
+			"type": "array"
+		},
+		"labelPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelMargin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"helperColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"helperTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"helperPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"warningColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"warningTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningType": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningWidth": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningAlign": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningLocation": {
+			"type": "string",
+			"copyStyle": true
+		},
+		"positioningLeft": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningRight": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningTop": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningBottom": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"background": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"backgroundHover": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"backgroundTransition": {
 			"type": "object",
 			"copyStyle": true,
 			"default": {}
 		},
-        "border": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "borderResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "border",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "boxShadow": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "borderHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "borderHoverResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "borderHover",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "boxShadowHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "margin": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "padding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "zIndex": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "animation": {
-            "type": "object",
-            "default": {},
-            "copyStyle": true
-        },
-        "hideDesktop": {
-            "type": "boolean",
-            "copyStyle": true
-        },
-        "hideTablet": {
-            "type": "boolean",
-            "copyStyle": true
-        },
-        "hideMobile": {
-            "type": "boolean",
-            "copyStyle": true
-        },
-        "inputLabel": {
-            "type": "string",
-            "default": "Select"
-        },
-        "inputName": {
-            "type": "string",
-            "default": "input-select"
-        },
-        "selectOptions": {
-            "type": "array",
-            "default": [
-                {
-                    "value": "option-1",
-                    "label": "Option 1"
-                },
-                {
-                    "value": "option-2",
-                    "label": "Option 2"
-                },
-                {
-                    "value": "option-3",
-                    "label": "Option 3"
-                }
-            ]
-        },
-        "required": {
-            "type": "boolean",
-            "default": false
-        },
-        "validationType": {
-            "type": "string"
-        },
-        "validationMin": {
-            "type": "number"
-        },
-        "validationMax": {
-            "type": "number"
-        },
-        "validationWarning": {
-            "type": "string",
-            "default": "Input Invalid"
-        },
-        "inputPadding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputMargin": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "placeholderColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "placeholderBgColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputColorNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderNormalResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "inputBorderNormal",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "inputColorHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderHoverResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "inputBorderHover",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "inputColorFocus": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderFocus": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputBorderFocusResponsive": {
-            "type": "object",
-            "migrate": {
-                "attr": "inputBorderFocus",
-                "type": "border"
-            },
-            "copyStyle": true
-        },
-        "inputBgColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesPadding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesMargin": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesTypography": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesColorNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesBackgroundNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesBorderNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesColorHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesBackgroundHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesBorderHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesColorSelected": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesBackgroundSelected": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesBorderSelected": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "labelRequireColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "transform": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "mask": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputAreaBoxShadow": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "inputAreaBoxShadowHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "condition": {
-            "type": "object",
-            "default": {}
-        },
-        "choicesWrapperPadding": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesWrapperMargin": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesWrapperBackgroundNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesWrapperBorderNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesWrapperShadowNormal": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesWrapperBackgroundHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesWrapperBorderHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "choicesWrapperShadowHover": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "useCustomDropdown": {
-            "type": "boolean",
-            "default": false
-        },
-        "dropDownIconOpen": {
-            "type": "string",
-            "default": "gtn gtn-down-arrow1-light",
-            "copyStyle": true
-        },
-        "dropDownIconClose": {
-            "type": "string",
-            "default": "gtn gtn-up-arrow1-light",
-            "copyStyle": true
-        },
-        "dropDownIconOpenColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "dropDownIconOpenSize":{
-            "type": "object",
-            "copyStyle": true
-        },
-        "dropDownIconCloseColor": {
-            "type": "object",
-            "copyStyle": true
-        },
-        "dropDownIconCloseSize":{
-            "type": "object",
-            "copyStyle": true
-        }
-    },
-    "supports": {
-        "className": false
-    },
-    "keywords": [
-        "input",
-        "form",
-        "gutenverse"
-    ]
+		"border": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "border",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"boxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderHoverResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "borderHover",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"boxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"margin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"padding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"zIndex": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"animation": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"hideDesktop": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"hideTablet": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"hideMobile": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"inputLabel": {
+			"type": "string",
+			"default": "Select"
+		},
+		"inputName": {
+			"type": "string",
+			"default": "input-select"
+		},
+		"selectOptions": {
+			"type": "array",
+			"default": [
+				{
+					"value": "option-1",
+					"label": "Option 1"
+				},
+				{
+					"value": "option-2",
+					"label": "Option 2"
+				},
+				{
+					"value": "option-3",
+					"label": "Option 3"
+				}
+			]
+		},
+		"required": {
+			"type": "boolean",
+			"default": false
+		},
+		"validationType": {
+			"type": "string"
+		},
+		"validationMin": {
+			"type": "number"
+		},
+		"validationMax": {
+			"type": "number"
+		},
+		"validationWarning": {
+			"type": "string",
+			"default": "Input Invalid"
+		},
+		"inputPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputMargin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"placeholderColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"placeholderBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputColorNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderNormalResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "inputBorderNormal",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"inputColorHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderHoverResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "inputBorderHover",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"inputColorFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderFocus": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputBorderFocusResponsive": {
+			"type": "object",
+			"migrate": {
+				"attr": "inputBorderFocus",
+				"type": "border"
+			},
+			"copyStyle": true
+		},
+		"inputBgColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesMargin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesTypography": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesColorNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesBackgroundNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesBorderNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesColorHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesBackgroundHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesBorderHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesColorSelected": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesBackgroundSelected": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesBorderSelected": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"labelRequireColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"transform": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"mask": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputAreaBoxShadow": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"inputAreaBoxShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"condition": {
+			"type": "object",
+			"default": {}
+		},
+		"choicesWrapperPadding": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesWrapperMargin": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesWrapperBackgroundNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesWrapperBorderNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesWrapperShadowNormal": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesWrapperBackgroundHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesWrapperBorderHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"choicesWrapperShadowHover": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"useCustomDropdown": {
+			"type": "boolean",
+			"default": false
+		},
+		"dropDownIconOpen": {
+			"type": "string",
+			"default": "gtn gtn-down-arrow1-light",
+			"copyStyle": true
+		},
+		"dropDownIconClose": {
+			"type": "string",
+			"default": "gtn gtn-up-arrow1-light",
+			"copyStyle": true
+		},
+		"dropDownIconOpenColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"dropDownIconOpenSize": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"dropDownIconCloseColor": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"dropDownIconCloseSize": {
+			"type": "object",
+			"copyStyle": true
+		}
+	},
+	"supports": {
+		"className": false
+	},
+	"keywords": ["input", "form", "selection", "options"]
 }

@@ -132,7 +132,6 @@ export default {
     keywords: [
         __('input', 'gutenverse-form'),
         __('form', 'gutenverse-form'),
-        __('gutenverse', 'gutenverse-form'),
     ],
     example: {
     }

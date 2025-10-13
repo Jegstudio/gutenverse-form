@@ -356,11 +356,11 @@
 			"type": "object",
 			"default": {}
 		},
-        "iconAlignment": {
-            "type": "string",
-            "default": "left"
-        },
-        "iconType": {
+		"iconAlignment": {
+			"type": "string",
+			"default": "left"
+		},
+		"iconType": {
 			"type": "string",
 			"default": "icon"
 		},
@@ -375,19 +375,19 @@
 			},
 			"copyStyle": true
 		},
-        "imageHeight": {
-			"type" : "object",
+		"imageHeight": {
+			"type": "object",
 			"copyStyle": true,
-            "default": {
-                "Desktop": 20
-            }
+			"default": {
+				"Desktop": 20
+			}
 		},
 		"imageWidth": {
-			"type" : "object",
+			"type": "object",
 			"copyStyle": true,
-            "default": {
-                "Desktop": 20
-            }
+			"default": {
+				"Desktop": 20
+			}
 		},
 		"image": {
 			"type": "object"
@@ -396,21 +396,21 @@
 			"type": "string"
 		},
 		"imageFit": {
-			"type" : "string"
+			"type": "string"
 		},
-        "lazyLoad": {
-			"type" : "boolean",
+		"lazyLoad": {
+			"type": "boolean",
 			"copyStyle": true
 		},
-        "containerBoxShadowHover": {
+		"containerBoxShadowHover": {
 			"type": "object",
 			"copyStyle": true
 		},
-        "useIcon": {
-            "type": "boolean",
-            "default": false,
-            "copyStyle": true
-        },
+		"useIcon": {
+			"type": "boolean",
+			"default": false,
+			"copyStyle": true
+		},
 		"iconPadding": {
 			"type": "object",
 			"copyStyle": true
@@ -439,26 +439,26 @@
 			"type": "object",
 			"copyStyle": true
 		},
-        "iconColorGradient": {
+		"iconColorGradient": {
 			"type": "object",
 			"copyStyle": true,
-            "default": {
-                "type": "gradient",
-                "gradientColor": [
-                    {
-                        "active": false,
-                        "color": "rgb(49, 207, 180)",
-                        "id": 1,
-                        "offset": "0.000"
-                    },
-                    {
-                        "active": true,
-                        "color": "rgb(126, 32, 207)",
-                        "id": 2,
-                        "offset": "1.000"
-                    }
-                ]
-            }
+			"default": {
+				"type": "gradient",
+				"gradientColor": [
+					{
+						"active": false,
+						"color": "rgb(49, 207, 180)",
+						"id": 1,
+						"offset": "0.000"
+					},
+					{
+						"active": true,
+						"color": "rgb(126, 32, 207)",
+						"id": 2,
+						"offset": "1.000"
+					}
+				]
+			}
 		},
 		"iconBorder": {
 			"type": "object",
@@ -476,7 +476,7 @@
 			"type": "object",
 			"copyStyle": true
 		},
-        "iconColorGradientHover": {
+		"iconColorGradientHover": {
 			"type": "object",
 			"copyStyle": true
 		},
@@ -500,7 +500,7 @@
 			"type": "object",
 			"copyStyle": true
 		},
-        "iconColorGradientFocus": {
+		"iconColorGradientFocus": {
 			"type": "object",
 			"copyStyle": true
 		},
@@ -520,9 +520,5 @@
 	"supports": {
 		"className": false
 	},
-	"keywords": [
-		"input",
-		"form",
-		"gutenverse"
-	]
+	"keywords": ["input", "form", "multiple", "selections", "options"]
 }
