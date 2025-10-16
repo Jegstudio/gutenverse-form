@@ -1,5 +1,5 @@
 import { Default, u } from 'gutenverse-core-frontend';
-import { Choices } from 'gutenverse-core-frontend';
+import Choices from 'choices.js';
 
 class GutenverseInputSelect extends Default {
     /* public */
@@ -74,4 +74,8 @@ class GutenverseInputSelect extends Default {
     }
 }
 
-export default GutenverseInputSelect;
+const selected = u('.guten-form-input-select');
+
+if (selected) {
+    new GutenverseInputSelect(selected);
+}

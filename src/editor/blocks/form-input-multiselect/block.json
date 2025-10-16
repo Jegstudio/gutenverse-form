@@ -5,6 +5,7 @@
 	"description": "Gutenverse Input Multi Select",
 	"category": "gutenverse-form",
 	"allowCopyStyle": true,
+	"viewScript": ["gutenverse-form-frontend-input-multiselect-script"],
 	"attributes": {
 		"elementId": {
 			"type": "string"

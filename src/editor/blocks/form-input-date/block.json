@@ -5,6 +5,7 @@
 	"description": "Gutenverse Input Date",
 	"category": "gutenverse-form",
 	"allowCopyStyle": true,
+	"viewScript": ["gutenverse-form-frontend-input-date-script"],
 	"attributes": {
 		"elementId": {
 			"type": "string"

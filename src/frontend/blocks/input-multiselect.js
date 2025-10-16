@@ -1,6 +1,5 @@
-import { Default } from 'gutenverse-core-frontend';
-import { u } from 'gutenverse-core-frontend';
-import { Choices } from 'gutenverse-core-frontend';
+import { Default, u } from 'gutenverse-core-frontend';
+import Choices from 'choices.js';
 
 class GutenverseMultiInputSelect extends Default {
     /* public */
@@ -22,8 +21,8 @@ class GutenverseMultiInputSelect extends Default {
             });
             select.addEventListener(
                 'change',
-                function(event) {
-                    if( event.target.length > 0 ){
+                function (event) {
+                    if (event.target.length > 0) {
                         let placeholderInput = u(element).find('.choices__input.choices__input--cloned');
                         this.placeholder = placeholderInput.nodes[0].placeholder;
                         placeholderInput.nodes[0].placeholder = '';
@@ -38,4 +37,8 @@ class GutenverseMultiInputSelect extends Default {
     }
 }
 
-export default GutenverseMultiInputSelect;
+const selected = u('.guten-form-input-multiselect');
+
+if (selected) {
+    new GutenverseMultiInputSelect(selected);
+}

@@ -5,6 +5,7 @@
 	"description": "Gutenverse Select",
 	"category": "gutenverse-form",
 	"allowCopyStyle": true,
+	"viewScript": ["gutenverse-form-frontend-input-select-script"],
 	"attributes": {
 		"elementId": {
 			"type": "string"

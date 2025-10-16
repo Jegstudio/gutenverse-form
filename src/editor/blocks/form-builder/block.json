@@ -5,6 +5,7 @@
 	"description": "Build a flexible form with many field choices.",
 	"category": "gutenverse-structure",
 	"allowCopyStyle": true,
+	"viewScript": ["gutenverse-form-frontend-form-builder-script"],
 	"attributes": {
 		"elementId": {
 			"type": "string"

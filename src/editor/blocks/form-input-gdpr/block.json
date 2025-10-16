@@ -5,6 +5,7 @@
 	"description": "Gutenverse Input GDPR gdpr",
 	"category": "gutenverse-form",
 	"allowCopyStyle": true,
+	"viewScript": ["gutenverse-form-frontend-input-gdpr-script"],
 	"attributes": {
 		"elementId": {
 			"type": "string"

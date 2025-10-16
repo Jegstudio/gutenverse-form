@@ -53,6 +53,7 @@
 	},
 	"dependencies": {
 		"@svgr/webpack": "^7.0.0",
+		"choices.js": "^9.1.0",
 		"classnames": "^2.5.1",
 		"flatpickr": "^4.6.13",
 		"gutenverse-core": "file:gutenverse-core",

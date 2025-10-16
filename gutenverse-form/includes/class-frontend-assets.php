@@ -26,16 +26,16 @@ class Frontend_Assets {
 	 * Frontend Script
 	 */
 	public function enqueue_scripts() {
-		$include   = ( include GUTENVERSE_FORM_DIR . '/lib/dependencies/frontend.asset.php' )['dependencies'];
-		$include[] = 'gutenverse-frontend-event';
+		// $include   = ( include GUTENVERSE_FORM_DIR . '/lib/dependencies/frontend.asset.php' )['dependencies'];
+		// $include[] = 'gutenverse-frontend-event';
 
-		wp_enqueue_script(
-			'gutenverse-form-frontend',
-			GUTENVERSE_FORM_URL . '/assets/js/frontend.js',
-			$include,
-			GUTENVERSE_FORM_VERSION,
-			true
-		);
+		// wp_enqueue_script(
+		// 	'gutenverse-form-frontend',
+		// 	GUTENVERSE_FORM_URL . '/assets/js/frontend.js',
+		// 	$include,
+		// 	GUTENVERSE_FORM_VERSION,
+		// 	true
+		// );
 
 		wp_enqueue_style(
 			'gutenverse-form-frontend',
@@ -43,5 +43,26 @@ class Frontend_Assets {
 			array( 'fontawesome-gutenverse', 'gutenverse-iconlist' ),
 			GUTENVERSE_FORM_VERSION
 		);
+
+		$blocks = array(
+			'form-builder',
+			'input-date',
+			'input-gdpr',
+			'input-multiselect',
+			'input-select'
+		);
+
+		foreach ( $blocks as $block ) {
+			$include   = ( include GUTENVERSE_FORM_DIR . '/lib/dependencies/frontend/' . $block . '.asset.php' )['dependencies'];
+			$include[] = 'gutenverse-frontend-event';
+
+			wp_register_script(
+				'gutenverse-form-frontend-' . $block . '-script',
+				GUTENVERSE_FORM_URL . '/assets/js/frontend/' . $block . '.js',
+				$include,
+				GUTENVERSE_FORM_VERSION,
+				true
+			);
+		}
 	}
 }

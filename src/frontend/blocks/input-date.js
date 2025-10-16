@@ -1,6 +1,5 @@
-import { Default } from 'gutenverse-core-frontend';
+import { Default, u } from 'gutenverse-core-frontend';
 import flatpickr from 'flatpickr';
-import { u } from 'gutenverse-core-frontend';
 
 class GutenverseInputDate extends Default {
     /* public */
@@ -22,5 +21,12 @@ class GutenverseInputDate extends Default {
         flatpickr(element, setting);
     }
 }
+
+const selected = u('.guten-form-input-date');
+
+if (selected) {
+    new GutenverseInputDate(selected);
+}
+
 
 export default GutenverseInputDate;

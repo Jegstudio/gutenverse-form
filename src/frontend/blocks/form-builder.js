@@ -180,7 +180,7 @@ class GutenverseFormValidation extends Default {
             if (captcha.nodes.length > 0) {
                 const sitekey = u(captcha.nodes[0]).data('sitekey');
                 if (sitekey) {
-                    recaptchaResponse = grecaptcha.getResponse();
+                    recaptchaResponse = grecaptcha.getResponse(); // eslint-disable-line
                 }
             }
 
@@ -241,7 +241,7 @@ class GutenverseFormValidation extends Default {
                 });
 
                 // add captcha if exists
-                if(captcha.nodes.length > 0){
+                if (captcha.nodes.length > 0) {
                     requestBody.append('g-recaptcha-response', recaptchaResponse);
                 }
                 // remove existing notification on another submit
@@ -297,8 +297,8 @@ class GutenverseFormValidation extends Default {
                     this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit);
                 }).finally(() => {
                     if (captcha.nodes.length > 0) {
-                        if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length > 0) {
-                            grecaptcha.reset();
+                        if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length > 0) { // eslint-disable-line
+                            grecaptcha.reset(); // eslint-disable-line
                         }
                     }
                     currentFormBuilder.removeClass('loading');
@@ -394,4 +394,8 @@ class GutenverseFormValidation extends Default {
     }
 }
 
-export default GutenverseFormValidation;
+const selected = u('.guten-form-builder');
+
+if (selected) {
+    new GutenverseFormValidation(selected);
+}
