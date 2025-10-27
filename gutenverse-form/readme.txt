@@ -211,9 +211,11 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 * add notification center for Gutenverse notices
 * add Custom Page CSS & JS
 * add new library option when Companion theme is installed
+* blocks now use API v3 for faster editing experience
 
 ##### Bug Fixes
 * fix frontend inline style
+* fix more block recovery issues
 
 = 2.1.2 =
 ##### Bug Fixes
