@@ -241,72 +241,75 @@ class GutenverseFormValidation extends Default {
                 });
 
                 // add captcha if exists
-                if(captcha.nodes.length > 0){
+                if (captcha.nodes.length > 0) {
                     requestBody.append('g-recaptcha-response', recaptchaResponse);
                 }
                 // remove existing notification on another submit
                 currentFormBuilder.find('.form-notification').remove();
-                apiFetch({
-                    path: 'gutenverse-form-client/v1/form/submit',
-                    method: 'POST',
-                    body: requestBody
-                }).then(({ entry_id }) => {
-                    if (isPayment) {
-                        const amountId = paymentOption.amountInput;
-                        const price = values.find(item => item.id === amountId);
-                        paymentPrice = price.value;
-                        const message = 'Please wait you are being redirected';
-                        const notifclass = 'guten-loading';
-                        const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
-                        currentFormBuilder.prepend(notice);
-
-                        apiFetch({
-                            path: 'gutenverse-pro/v1/form-payment',
-                            method: 'POST',
-                            data: {
-                                payment: {
-                                    paymentMethod,
-                                    paymentPrice,
-                                    paymentOption,
-                                    paymentItemName,
-                                    redirectTo,
-                                    id: entry_id,
-                                    currentUrl: window.location.href
-                                }
-                            },
-                        }).then((data) => {
-                            window.location = data.url;
-                        }).catch((e) => {
-                            currentFormBuilder.find('.form-notification').remove();
-                            const message = (e.data && e.data.error) ? e.data.error : e.message;
-                            const notifclass = 'guten-error';
+                setTimeout(() => {
+                    apiFetch({
+                        path: 'gutenverse-form-client/v1/form/submit',
+                        method: 'POST',
+                        body: requestBody
+                    }).then(({ entry_id }) => {
+                        if (isPayment) {
+                            const amountId = paymentOption.amountInput;
+                            const price = values.find(item => item.id === amountId);
+                            paymentPrice = price.value;
+                            const message = 'Please wait you are being redirected';
+                            const notifclass = 'guten-loading';
                             const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
                             currentFormBuilder.prepend(notice);
-                            currentFormBuilder.removeClass('loading');
-                        });
-                    } else {
-                        this._requestMessage(currentFormBuilder, formData, 'success', hideAfterSubmit);
-                    }
-                }).catch((e) => {
-                    currentFormBuilder.find('.form-notification').remove();
-                    const message = (e.data && e.data.error) ? e.data.error : e.message;
-                    const notifclass = 'guten-error';
-                    const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
-                    currentFormBuilder.prepend(notice);
-                    currentFormBuilder.removeClass('loading');
-                    this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit);
-                }).finally(() => {
-                    if (captcha.nodes.length > 0) {
-                        if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length > 0) {
-                            grecaptcha.reset();
-                        }
-                    }
-                    currentFormBuilder.removeClass('loading');
 
-                    if (redirectTo && !isPayment) {
-                        window.location = redirectTo;
-                    }
-                });
+                            apiFetch({
+                                path: 'gutenverse-pro/v1/form-payment',
+                                method: 'POST',
+                                data: {
+                                    payment: {
+                                        paymentMethod,
+                                        paymentPrice,
+                                        paymentOption,
+                                        paymentItemName,
+                                        redirectTo,
+                                        id: entry_id,
+                                        currentUrl: window.location.href
+                                    }
+                                },
+                            }).then((data) => {
+                                window.location = data.url;
+                            }).catch((e) => {
+                                currentFormBuilder.find('.form-notification').remove();
+                                const message = (e.data && e.data.error) ? e.data.error : e.message;
+                                const notifclass = 'guten-error';
+                                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
+                                currentFormBuilder.prepend(notice);
+                                currentFormBuilder.removeClass('loading');
+                            });
+                        } else {
+                            this._requestMessage(currentFormBuilder, formData, 'success', hideAfterSubmit);
+                        }
+                    }).catch((e) => {
+                        currentFormBuilder.find('.form-notification').remove();
+                        const message = (e.data && e.data.error) ? e.data.error : e.message;
+                        const notifclass = 'guten-error';
+                        const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
+                        currentFormBuilder.prepend(notice);
+                        currentFormBuilder.removeClass('loading');
+                        this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit);
+                    }).finally(() => {
+                        if (captcha.nodes.length > 0) {
+                            if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length > 0) {
+                                grecaptcha.reset();
+                            }
+                        }
+                        currentFormBuilder.removeClass('loading');
+
+                        if (redirectTo && !isPayment) {
+                            window.location = redirectTo;
+                        }
+                    });
+                }, 500);
+
             }
         });
     }
