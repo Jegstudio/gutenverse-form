@@ -6,7 +6,7 @@ import { useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'gutenverse-core/helper';
 import { CardBannerPro, PopupInsufficientTier, PopupPro } from 'gutenverse-core/components';
 
 const TabGeneral = (props) => {
