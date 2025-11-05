@@ -482,5 +482,9 @@
 		"className": false
 	},
 	"keywords": ["input", "form", "email", "message"],
-	"example": {}
+	"example": {},
+	"style": [
+		"gutenverse-form-frontend-form-input-general-style",
+		"gutenverse-form-frontend-form-input-email-style"
+	]
 }

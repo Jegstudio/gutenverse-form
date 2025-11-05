@@ -486,5 +486,9 @@
 		"className": false
 	},
 	"keywords": ["input", "form", "telephone", "number"],
-	"example": {}
+	"example": {},
+	"style": [
+		"gutenverse-form-frontend-form-input-general-style",
+		"gutenverse-form-frontend-form-input-telp-style"
+	]
 }

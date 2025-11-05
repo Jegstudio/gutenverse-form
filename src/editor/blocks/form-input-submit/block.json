@@ -258,5 +258,9 @@
 	"supports": {
 		"className": false
 	},
-	"keywords": ["button", "url", "action", "confirm", "send"]
+	"keywords": ["button", "url", "action", "confirm", "send"],
+	"style": [
+		"gutenverse-form-frontend-form-input-general-style",
+		"gutenverse-form-frontend-form-input-submit-style"
+	]
 }

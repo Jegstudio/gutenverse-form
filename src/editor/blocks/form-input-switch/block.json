@@ -266,5 +266,9 @@
 		"className": false
 	},
 	"keywords": ["input", "form", "switch", "toggle"],
-	"example": {}
+	"example": {},
+	"style": [
+		"gutenverse-form-frontend-form-input-general-style",
+		"gutenverse-form-frontend-form-input-switch-style"
+	]
 }

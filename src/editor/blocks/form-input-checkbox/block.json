@@ -274,5 +274,9 @@
 		"className": false
 	},
 	"keywords": ["input", "form", "checkbox", "checkmark"],
-	"example": {}
+	"example": {},
+	"style": [
+		"gutenverse-form-frontend-form-input-general-style",
+		"gutenverse-form-frontend-form-input-checkbox-style"
+	]
 }

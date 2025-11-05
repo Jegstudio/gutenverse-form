@@ -1,7 +1,7 @@
 @import "gutenverse-core/src/assets/mixin";
 @import "gutenverse-core/src/assets/wp-fix";
 
-// Element
+// Block Editor
 @import "../editor/blocks/form-builder/styles/editor";
 @import "../editor/blocks/form-input-text/styles/editor";
 @import "../editor/blocks/form-input-email/styles/editor";
@@ -18,4 +18,19 @@
 @import "../editor/blocks/form-input-gdpr/styles/editor";
 @import "../editor/blocks/form-input-recaptcha/styles/editor";
 
-/* reserved line for script, don't delete */
+// Block Frontend
+@import "../editor/blocks/form-builder/styles/style";
+@import "../editor/blocks/form-input-text/styles/style";
+@import "../editor/blocks/form-input-email/styles/style";
+@import "../editor/blocks/form-input-number/styles/style";
+@import "../editor/blocks/form-input-telp/styles/style";
+@import "../editor/blocks/form-input-date/styles/style";
+@import "../editor/blocks/form-input-select/styles/style";
+@import "../editor/blocks/form-input-multiselect/styles/style";
+@import "../editor/blocks/form-input-textarea/styles/style";
+@import "../editor/blocks/form-input-switch/styles/style";
+@import "../editor/blocks/form-input-checkbox/styles/style";
+@import "../editor/blocks/form-input-radio/styles/style";
+@import "../editor/blocks/form-input-submit/styles/style";
+@import "../editor/blocks/form-input-gdpr/styles/style";
+@import "../editor/blocks/form-input/general/input";

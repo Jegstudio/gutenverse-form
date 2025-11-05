@@ -19,31 +19,16 @@ class Frontend_Assets {
 	 * Init constructor.
 	 */
 	public function __construct() {
-		add_filter( 'gutenverse_include_frontend', array( $this, 'enqueue_scripts' ) );
+		add_filter( 'gutenverse_include_frontend', array( $this, 'load_conditional_scripts' ) );
+		add_filter( 'gutenverse_include_frontend', array( $this, 'load_conditional_styles' ) );
 	}
 
 	/**
-	 * Frontend Script
+	 * Load Conditional Scripts
+	 *
+	 * @since 2.3.0-dev
 	 */
-	public function enqueue_scripts() {
-		// $include   = ( include GUTENVERSE_FORM_DIR . '/lib/dependencies/frontend.asset.php' )['dependencies'];
-		// $include[] = 'gutenverse-frontend-event';
-
-		// wp_enqueue_script(
-		// 	'gutenverse-form-frontend',
-		// 	GUTENVERSE_FORM_URL . '/assets/js/frontend.js',
-		// 	$include,
-		// 	GUTENVERSE_FORM_VERSION,
-		// 	true
-		// );
-
-		wp_enqueue_style(
-			'gutenverse-form-frontend',
-			GUTENVERSE_FORM_URL . '/assets/css/frontend.css',
-			array( 'fontawesome-gutenverse', 'gutenverse-iconlist' ),
-			GUTENVERSE_FORM_VERSION
-		);
-
+	public function load_conditional_scripts() {
 		$blocks = array(
 			'form-builder',
 			'input-date',
@@ -65,4 +50,46 @@ class Frontend_Assets {
 			);
 		}
 	}
+
+	/**
+	 * Load Conditional Styles
+	 *
+	 * @since 2.3.0-dev
+	 */
+	public function load_conditional_styles() {
+		wp_register_style(
+			'gutenverse-form-frontend-form-input-general-style',
+			GUTENVERSE_FORM_URL . '/assets/css/general-input.css',
+			array( 'fontawesome-gutenverse', 'gutenverse-iconlist' ),
+			GUTENVERSE_FORM_VERSION
+		);
+
+		$blocks = array(
+			'form-builder',
+			'form-input-checkbox',
+			'form-input-date',
+			'form-input-email',
+			'form-input-gdpr',
+			'form-input-multiselect',
+			'form-input-number',
+			'form-input-radio',
+			'form-input-recaptcha',
+			'form-input-select',
+			'form-input-submit',
+			'form-input-switch',
+			'form-input-telp',
+			'form-input-text',
+			'form-input-textarea',
+		);
+
+		foreach ( $blocks as $block ) {
+			wp_register_style(
+				'gutenverse-form-frontend-' . $block . '-style',
+				GUTENVERSE_FORM_URL . '/assets/css/frontend/' . $block . '.css',
+				array(),
+				GUTENVERSE_FORM_VERSION
+			);
+		}
+	}
+	
 }

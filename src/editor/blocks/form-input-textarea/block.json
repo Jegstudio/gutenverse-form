@@ -485,5 +485,9 @@
 		"className": false
 	},
 	"keywords": ["input", "form", "textarea"],
-	"example": {}
+	"example": {},
+	"style": [
+		"gutenverse-form-frontend-form-input-general-style",
+		"gutenverse-form-frontend-form-builder-style"
+	]
 }

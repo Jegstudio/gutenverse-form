@@ -228,5 +228,9 @@
 		"className": false
 	},
 	"keywords": ["input", "form", "verification", "recaptcha"],
-	"example": {}
+	"example": {},
+	"style": [
+		"gutenverse-form-frontend-form-input-general-style",
+		"gutenverse-form-frontend-form-input-recaptcha-style"
+	]
 }

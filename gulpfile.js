@@ -48,14 +48,33 @@ gulp.task('form', function () {
         .pipe(gulp.dest('gutenverse-form/assets/css/'));
 });
 
-gulp.task('frontend', function () {
+gulp.task('general-input', function () {
     return gulp
-        .src([path.resolve(__dirname, './src/assets/frontend.scss')])
+        .src([path.resolve(__dirname, './src/assets/general-input.scss')])
         .pipe(sass({ includePaths: ['node_modules'] }))
         .pipe(sass(sassOptions).on('error', sass.logError))
-        .pipe(concat('frontend.css'))
+        .pipe(concat('general-input.css'))
         .pipe(postcss(postCSSOptions))
         .pipe(gulp.dest('gutenverse-form/assets/css/'));
+});
+
+const blocksDir = path.resolve(__dirname, './src/editor/blocks');
+const blocksStyle = blocksDir + '/**/styles/style.scss';
+const finalDest = path.join(__dirname, 'gutenverse-form/assets/css/frontend');
+
+gulp.task('frontend-block-styles', function () {
+    return gulp
+        .src([blocksStyle])
+        .pipe(sass({ includePaths: ['node_modules'] }))
+        .pipe(sass(sassOptions).on('error', sass.logError))
+        .pipe(postcss(postCSSOptions))
+        .on('data', function (file) {
+            const pathParts = file.relative.split(path.sep);
+            const blockName = pathParts[0];
+
+            file.path = path.join(file.base, blockName + '.css');
+        })
+        .pipe(gulp.dest(finalDest));
 });
 
 gulp.task('update-notice', function () {
@@ -68,12 +87,12 @@ gulp.task('update-notice', function () {
         .pipe(gulp.dest('gutenverse-form/assets/css/'));
 });
 
-gulp.task('build-process', gulp.parallel('blocks', 'form', 'frontend', 'update-notice'));
+gulp.task('build-process', gulp.parallel('blocks', 'form', 'frontend-block-styles', 'general-input', 'update-notice'));
 
 gulp.task('build', gulp.series('build-process'));
 
 const watchProcess = (basePath = '.') => {
-    gulp.watch([`${basePath}/src/**/*.scss`], gulp.parallel(['blocks', 'form', 'frontend', 'update-notice']));
+    gulp.watch([`${basePath}/src/**/*.scss`], gulp.parallel(['blocks', 'form', 'frontend-block-styles', 'general-input', 'update-notice']));
 };
 
 gulp.task(

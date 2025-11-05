@@ -5,7 +5,6 @@
 	"description": "Gutenverse Input Date",
 	"category": "gutenverse-form",
 	"allowCopyStyle": true,
-	"viewScript": ["gutenverse-form-frontend-input-date-script"],
 	"attributes": {
 		"elementId": {
 			"type": "string"
@@ -479,6 +478,20 @@
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "date", "years", "months", "days", "hours", "time"],
-	"example": {}
+	"keywords": [
+		"input",
+		"form",
+		"date",
+		"years",
+		"months",
+		"days",
+		"hours",
+		"time"
+	],
+	"example": {},
+	"viewScript": ["gutenverse-form-frontend-input-date-script"],
+	"style": [
+		"gutenverse-form-frontend-form-input-general-style",
+		"gutenverse-form-frontend-form-input-date-style"
+	]
 }
