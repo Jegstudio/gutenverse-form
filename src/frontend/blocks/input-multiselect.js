@@ -1,5 +1,4 @@
 import { Default, u } from 'gutenverse-core-frontend';
-import Choices from 'choices.js';
 
 class GutenverseMultiInputSelect extends Default {
     /* public */
@@ -11,14 +10,20 @@ class GutenverseMultiInputSelect extends Default {
         this.placeholder = '';
     }
 
-    _selectItems(element) {
-        const selects = u(element).find('.gutenverse-input-multiselect');
-        selects.map(select => {
-            this.choiceInstance = new Choices(select, {
+    _choiceFunc(select) {
+        return import(/* webpackChunkName: "chunk-choices" */ 'choices.js').then(({ default: Choices }) => {
+            return new Choices(select, {
                 removeItemButton: true,
                 shouldSort: false,
                 placeholder: false
             });
+        });
+    }
+
+    _selectItems(element) {
+        const selects = u(element).find('.gutenverse-input-multiselect');
+        selects.map(select => {
+            this.choiceInstance = this._choiceFunc(select);
             select.addEventListener(
                 'change',
                 function (event) {

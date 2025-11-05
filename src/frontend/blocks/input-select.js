@@ -1,5 +1,4 @@
 import { Default, u } from 'gutenverse-core-frontend';
-import Choices from 'choices.js';
 
 class GutenverseInputSelect extends Default {
     /* public */
@@ -10,14 +9,20 @@ class GutenverseInputSelect extends Default {
         });
     }
 
+    _choiceFunc(select) {
+        return import(/* webpackChunkName: "chunk-choices" */ 'choices.js').then(({ default: Choices }) => {
+            return new Choices(select, {
+                removeItemButton: true,
+                shouldSort: false,
+            });
+        });
+    }
+
     _selectItems(element) {
         const selects = u(element).find('.gutenverse-input-select');
         selects.map(select => {
 
-            this.choiceInstance = new Choices(select, {
-                removeItemButton: true,
-                shouldSort: false,
-            });
+            this.choiceInstance = this._choiceFunc(select);
             let dataDropDown = select.getAttribute('data-dropdown');
             if (dataDropDown) {
                 const { iconClose, iconOpen, useCustomDropdown } = JSON.parse(dataDropDown);
