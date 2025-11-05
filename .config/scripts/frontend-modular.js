@@ -65,7 +65,13 @@ const frontendModular = {
                     delete: deleteTasks
                 },
                 onEnd: {
-                    copy: copyTasks,
+                    copy: [
+                        ...copyTasks,
+                        {
+                            source: process.env.NODE_ENV === 'development' ? "./build/chunk-choices.js*" : "./build/chunk-choices.js",
+                            destination: "./gutenverse-form/assets/js/frontend/",
+                        },
+                    ],
                 },
             },
             runTasksInSeries: true,
