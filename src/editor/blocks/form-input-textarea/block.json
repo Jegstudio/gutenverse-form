@@ -486,8 +486,5 @@
 	},
 	"keywords": ["input", "form", "textarea"],
 	"example": {},
-	"style": [
-		"gutenverse-form-frontend-form-input-general-style",
-		"gutenverse-form-frontend-form-builder-style"
-	]
+	"style": ["gutenverse-form-frontend-form-builder-style"]
 }

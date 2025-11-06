@@ -449,8 +449,5 @@
 	},
 	"keywords": ["input", "form", "selection", "options"],
 	"viewScript": ["gutenverse-form-frontend-input-select-script"],
-	"style": [
-		"gutenverse-form-frontend-form-input-general-style",
-		"gutenverse-form-frontend-form-input-select-style"
-	]
+	"style": ["gutenverse-form-frontend-form-input-select-style"]
 }

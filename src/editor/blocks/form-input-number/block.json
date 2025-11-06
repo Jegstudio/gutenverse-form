@@ -485,8 +485,5 @@
 	},
 	"keywords": ["input", "form", "numbers"],
 	"example": {},
-	"style": [
-		"gutenverse-form-frontend-form-input-general-style",
-		"gutenverse-form-frontend-form-input-number-style"
-	]
+	"style": ["gutenverse-form-frontend-form-input-number-style"]
 }

@@ -86,7 +86,7 @@ class Frontend_Assets {
 			wp_register_style(
 				'gutenverse-form-frontend-' . $block . '-style',
 				GUTENVERSE_FORM_URL . '/assets/css/frontend/' . $block . '.css',
-				array(),
+				array('gutenverse-form-frontend-form-input-general-style'),
 				GUTENVERSE_FORM_VERSION
 			);
 		}

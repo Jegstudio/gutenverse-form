@@ -279,8 +279,5 @@
 	"keywords": ["input", "form", "gdpr"],
 	"example": {},
 	"viewScript": ["gutenverse-form-frontend-input-gdpr-script"],
-	"style": [
-		"gutenverse-form-frontend-form-input-general-style",
-		"gutenverse-form-frontend-form-input-gdpr-style"
-	]
+	"style": ["gutenverse-form-frontend-form-input-gdpr-style"]
 }

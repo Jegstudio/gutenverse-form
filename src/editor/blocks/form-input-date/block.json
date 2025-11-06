@@ -490,8 +490,5 @@
 	],
 	"example": {},
 	"viewScript": ["gutenverse-form-frontend-input-date-script"],
-	"style": [
-		"gutenverse-form-frontend-form-input-general-style",
-		"gutenverse-form-frontend-form-input-date-style"
-	]
+	"style": ["gutenverse-form-frontend-form-input-date-style"]
 }

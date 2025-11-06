@@ -257,8 +257,5 @@
 	},
 	"keywords": ["contact", "form", "entry", "submit", "input", "wrapper"],
 	"viewScript": ["gutenverse-form-frontend-form-builder-script"],
-	"style": [
-		"gutenverse-form-frontend-form-input-general-style",
-		"gutenverse-form-frontend-form-builder-style"
-	]
+	"style": ["gutenverse-form-frontend-form-builder-style"]
 }
