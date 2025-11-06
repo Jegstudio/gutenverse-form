@@ -114,8 +114,6 @@ class Form_Validation extends Style_Generator {
 	 * Form Validation Scripts
 	 */
 	public function form_validation_scripts() {
-		wp_enqueue_script( 'gutenverse-frontend-event' );
-
 		$validation_data = null;
 
 		if ( 'direct' === apply_filters( 'gutenverse_frontend_render_mechanism', 'direct' ) ) {
