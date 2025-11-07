@@ -1,5 +1,7 @@
-import { Default, u, apiFetch, applyFilters } from 'gutenverse-core-frontend';
+import { Default, u } from 'gutenverse-core-frontend';
 import isEmpty from 'lodash/isEmpty';
+import apiFetch from '@wordpress/api-fetch';
+import { applyFilters } from '@wordpress/hooks';
 
 class GutenverseFormValidation extends Default {
     /* public */
