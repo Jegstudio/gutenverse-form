@@ -522,5 +522,8 @@
 	},
 	"keywords": ["input", "form", "multiple", "selections", "options"],
 	"viewScript": ["gutenverse-form-frontend-input-multiselect-script"],
-	"style": ["gutenverse-form-frontend-form-input-multiselect-style"]
+	"style": [
+		"gutenverse-form-frontend-form-input-select-style",
+		"gutenverse-form-frontend-form-input-multiselect-style"
+	]
 }
