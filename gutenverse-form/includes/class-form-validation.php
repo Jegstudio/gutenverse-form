@@ -96,14 +96,14 @@ class Form_Validation extends Style_Generator {
 			$cache    = Init::instance()->style_cache;
 			$cache_id = $cache->get_style_cache_id();
 			$filename = $name . '-form-validation-' . $cache_id . '.json';
-			if ( ! $cache->is_file_exist( $filename ) ) {
-				$this->file_name            = $filename;
-				$this->is_bypass            = true;
-				$this->form_validation_data = array();
-				return false;
-			} else {
+
+			if ( $cache->is_file_exist( $filename ) ) {
 				$this->form_file[] = $filename;
+				return true;
 			}
+			$this->file_name            = $filename;
+			$this->is_bypass            = true;
+			$this->form_validation_data = array();
 		}
 
 		return $flag;
