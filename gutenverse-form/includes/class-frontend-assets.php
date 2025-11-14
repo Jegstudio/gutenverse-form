@@ -26,7 +26,7 @@ class Frontend_Assets {
 	/**
 	 * Load Conditional Scripts
 	 *
-	 * @since 2.3.0-dev
+	 * @since 2.3.0
 	 */
 	public function load_conditional_scripts() {
 		$blocks = array(
@@ -54,7 +54,7 @@ class Frontend_Assets {
 	/**
 	 * Load Conditional Styles
 	 *
-	 * @since 2.3.0-dev
+	 * @since 2.3.0
 	 */
 	public function load_conditional_styles() {
 		wp_register_style(
