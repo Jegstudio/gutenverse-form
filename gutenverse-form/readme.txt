@@ -210,6 +210,9 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 ##### New & Improvemenets
 * Improve CSS & JS files to load only if block/feature exist
 
+##### Bug Fixes
+* fix security issue. credit: Patchstack.
+
 = 2.2.0 =
 ##### New & Improvements
 * add notification center for Gutenverse notices
