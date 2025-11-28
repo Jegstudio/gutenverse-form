@@ -67,7 +67,7 @@ class Api {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'create_form_action' ),
-				'permission_callback' => 'gutenverse_permission_check_author',
+				'permission_callback' => 'gutenverse_permission_check_admin',
 			)
 		);
 
@@ -87,7 +87,7 @@ class Api {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'edit_form_action' ),
-				'permission_callback' => 'gutenverse_permission_check_author',
+				'permission_callback' => 'gutenverse_permission_check_admin',
 			)
 		);
 
@@ -97,7 +97,7 @@ class Api {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'get_form_action' ),
-				'permission_callback' => 'gutenverse_permission_check_author',
+				'permission_callback' => 'gutenverse_permission_check_admin',
 			)
 		);
 
@@ -107,7 +107,7 @@ class Api {
 			array(
 				'methods'             => 'DELETE',
 				'callback'            => array( $this, 'delete_form_action' ),
-				'permission_callback' => 'gutenverse_permission_delete_posts',
+				'permission_callback' => 'gutenverse_permission_check_admin',
 			)
 		);
 
@@ -117,7 +117,7 @@ class Api {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'clone_form_action' ),
-				'permission_callback' => 'gutenverse_permission_check_author',
+				'permission_callback' => 'gutenverse_permission_check_admin',
 			)
 		);
 
@@ -127,7 +127,7 @@ class Api {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'export_form_action' ),
-				'permission_callback' => 'gutenverse_permission_check_author',
+				'permission_callback' => 'gutenverse_permission_check_admin',
 			)
 		);
 
@@ -137,7 +137,7 @@ class Api {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'search_form' ),
-				'permission_callback' => 'gutenverse_permission_check_author',
+				'permission_callback' => 'gutenverse_permission_check_admin',
 			)
 		);
 
