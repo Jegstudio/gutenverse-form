@@ -107,7 +107,7 @@ class Api {
 			array(
 				'methods'             => 'DELETE',
 				'callback'            => array( $this, 'delete_form_action' ),
-				'permission_callback' => 'gutenverse_permission_check_author',
+				'permission_callback' => 'gutenverse_permission_delete_posts',
 			)
 		);
 
