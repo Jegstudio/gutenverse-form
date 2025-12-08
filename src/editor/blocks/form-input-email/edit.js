@@ -6,7 +6,7 @@ import { useRef } from '@wordpress/element';
 import { IconLibrary } from 'gutenverse-core/controls';
 import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
-import { gutenverseRoot } from 'gutenverse-core/helper';
+import { gutenverseRoot, renderIcon } from 'gutenverse-core/helper';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
@@ -35,6 +35,7 @@ const FormInputEmailBlock = compose(
         iconType,
         iconStyleMode,
         icon,
+        iconSVG,
         image,
         imageAlt,
         lazyLoad,
@@ -75,9 +76,10 @@ const FormInputEmailBlock = compose(
     const iconContent = () => {
         switch (iconType) {
             case 'icon':
+            case 'svg':
                 return <div className="form-input-email-icon type-icon">
                     <div className={`icon style-${iconStyleMode}`} onClick={() => setOpenIconLibrary(true)}>
-                        <i className={icon}></i>
+                        {renderIcon(icon, iconType, iconSVG)}
                     </div>
                 </div>;
             case 'image':

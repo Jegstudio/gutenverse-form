@@ -126,7 +126,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'color',
                     'id': 'iconColor',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon svg`,
                     'properties': [
                         {
                             'name': 'color',
@@ -174,7 +174,7 @@ export const panelIconStyle = (props) => {
                             'functionName' : 'customHandleBackground'
                         }
                     ],
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient i, .${elementId} .main-wrapper .input-icon-wrapper .form-input-date-icon .icon.style-gradient svg`,
                 }
             ],
         },
@@ -214,7 +214,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'color',
                     'id': 'iconHoverColor',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon svg`,
                     'properties': [
                         {
                             'name': 'color',
@@ -260,7 +260,7 @@ export const panelIconStyle = (props) => {
                             'functionName' : 'customHandleBackground'
                         }
                     ],
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient i, .${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-date-icon .icon.style-gradient svg`,
                 }
             ],
         },
@@ -313,7 +313,7 @@ export const panelIconStyle = (props) => {
                 {
                     'type': 'color',
                     'id': 'iconFocusColor',
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon svg`,
                     'properties': [
                         {
                             'name': 'color',
@@ -359,7 +359,7 @@ export const panelIconStyle = (props) => {
                             'functionName' : 'customHandleBackground'
                         }
                     ],
-                    'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i`,
+                    'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i, ${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient svg`,
                 }
             ],
         },

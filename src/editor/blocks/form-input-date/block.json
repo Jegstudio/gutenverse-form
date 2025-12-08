@@ -324,7 +324,11 @@
 		},
 		"icon": {
 			"type": "string",
-			"default": "gtn gtn-email-light"
+			"default": "gtn gtn-calendar-1-light"
+		},
+		"iconSVG": {
+			"type": "string",
+			"default": "PHN2ZyB2aWV3Qm94PSIwIDAgMTAyNCAxMDM3IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik04NDYgMTc4VjM1aC00MnYxNDNIMjIwVjM1aC00MnYxNDNIMjJ2ODM3aDk4MFYxNzhIODQ2ek02NCAyMThoODk4djE4N0g2NFYyMTh6bTg5OCA3NTZINjRWNDQ2aDg5OHY1Mjh6TTE5OSA1ODRoODh2NDNoLTg4di00M3ptMjY5IDBoODh2NDNoLTg4di00M3ptMjY5IDBoODh2NDNoLTg4di00M3pNMTk5IDc4NWg4OHY0MmgtODh2LTQyem0yNjkgMGg4OHY0MmgtODh2LTQyem0yNjkgMGg4OHY0MmgtODh2LTQyeiIvPjwvc3ZnPg=="
 		},
 		"iconSize": {
 			"type": "object",
