@@ -22,7 +22,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconColor']) && data.push({
         'type': 'color',
         'id': 'iconColor',
-        'selector': `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button i`,
+        'selector': `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button i, .editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button svg`,
         'properties': [
             {
                 'name': 'color',
@@ -58,7 +58,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['hoverTextColor']) && !attributes['hoverWithParent'] && data.push({
         'type': 'color',
         'id': 'hoverTextColor',
-        'selector': `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button:hover i`,
+        'selector': `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button:hover i, .editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button:hover svg`,
         'properties': [
             {
                 'name': 'color',
@@ -70,7 +70,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['hoverTextColor']) && attributes['hoverWithParent'] && data.push({
         'type': 'color',
         'id': 'hoverTextColor',
-        'selector': attributes['parentSelector'] + ` .${elementId}.guten-button-wrapper .guten-button i`,
+        'selector': `${attributes['parentSelector']} .${elementId}.guten-button-wrapper .guten-button i, ${attributes['parentSelector']} .${elementId}.guten-button-wrapper .guten-button svg`,
         'properties': [
             {
                 'name': 'color',
@@ -124,7 +124,7 @@ const getBlockStyle = (elementId, attributes) => {
         'type': 'plain',
         'id': 'iconPosition',
         'responsive': true,
-        'selector': `.${elementId} .guten-button i`,
+        'selector': `.${elementId} .guten-button i, .${elementId} .guten-button svg`,
         'properties': [
             {
                 'name': 'margin-right',
@@ -146,7 +146,7 @@ const getBlockStyle = (elementId, attributes) => {
         'type': 'plain',
         'id': 'iconPosition',
         'responsive': true,
-        'selector': `.${elementId} .guten-button i`,
+        'selector': `.${elementId} .guten-button i, .${elementId} .guten-button svg`,
         'properties': [
             {
                 'name': 'margin-left',
@@ -173,7 +173,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
-        'selector': `.${elementId} .guten-button i`,
+        'selector': `.${elementId} .guten-button i, .${elementId} .guten-button svg`,
         'responsive': true
     });
 
@@ -193,7 +193,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconLineHeight']) && data.push({
         'type': 'plain',
         'id': 'iconLineHeight',
-        'selector': `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button i`,
+        'selector': `.editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button i, .editor-styles-wrapper .${elementId}.guten-button-wrapper .guten-button svg`,
         'properties': [
             {
                 'name': 'line-height',

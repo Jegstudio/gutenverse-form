@@ -89,7 +89,7 @@ class Form_Input_Submit extends Style_Abstract {
 			if ( 'after' === $this->attrs['iconPosition'] ) {
 				$this->inject_style(
 					array(
-						'selector'       => ".{$this->element_id} .guten-button i",
+						'selector'       => ".{$this->element_id} .guten-button i, .{$this->element_id} .guten-button svg",
 						'property'       => function ( $value ) {
 							return "margin-left: {$value}px;";
 						},
@@ -100,7 +100,7 @@ class Form_Input_Submit extends Style_Abstract {
 			} else {
 				$this->inject_style(
 					array(
-						'selector'       => ".{$this->element_id} .guten-button i",
+						'selector'       => ".{$this->element_id} .guten-button i, .{$this->element_id} .guten-button svg",
 						'property'       => function ( $value ) {
 							return "margin-right: {$value}px;";
 						},
@@ -114,7 +114,7 @@ class Form_Input_Submit extends Style_Abstract {
 		if ( isset( $this->attrs['iconSize'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .guten-button i",
+					'selector'       => ".{$this->element_id} .guten-button i, .{$this->element_id} .guten-button svg",
 					'property'       => function ( $value ) {
 						return $this->handle_unit_point( $value, 'font-size' );
 					},
@@ -153,7 +153,7 @@ class Form_Input_Submit extends Style_Abstract {
 		if ( isset( $this->attrs['iconColor'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button i",
+					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button i, .{$this->element_id}.guten-button-wrapper .guten-button svg",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -179,7 +179,7 @@ class Form_Input_Submit extends Style_Abstract {
 		if ( isset( $this->attrs['hoverIconColor'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button:hover i",
+					'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button:hover i, .{$this->element_id}.guten-button-wrapper .guten-button:hover svg",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -203,7 +203,7 @@ class Form_Input_Submit extends Style_Abstract {
 				$this->inject_style(
 					array(
 						'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button span",
-						'property'       => function ( $value ) {
+						'property'       => function () {
 							return 'height: 15px; ';
 						},
 						'value'          => '',
@@ -330,8 +330,8 @@ class Form_Input_Submit extends Style_Abstract {
 			if ( $this->attrs['iconLineHeight'] ) {
 				$this->inject_style(
 					array(
-						'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button i",
-						'property'       => function ( $value ) {
+						'selector'       => ".{$this->element_id}.guten-button-wrapper .guten-button i, .{$this->element_id}.guten-button-wrapper .guten-button svg",
+						'property'       => function () {
 							return 'line-height: normal';
 						},
 						'value'          => $this->attrs['iconLineHeight'],

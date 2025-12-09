@@ -91,6 +91,15 @@
   flex-wrap: wrap-reverse;
 }
 
+@keyframes icon-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .guten-form-builder {
   &.loading {
     .gutenverse-input-submit {
@@ -100,6 +109,16 @@
     .gutenverse-input-submit-loader,
     .guten-button.gutenverse-input-submit-loader {
       display: flex;
+
+      svg {
+        display: inline-block;
+        animation-name: icon-spin;
+        animation-duration: 1.2s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+        width: 30px; 
+        height: 30px;
+      }
     }
   }
 }

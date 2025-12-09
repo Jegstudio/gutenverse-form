@@ -74,7 +74,7 @@ export const panelIcon = (props) => {
                     'type': 'plain',
                     'id': 'iconSize',
                     'responsive': true,
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon svg`,
                     'properties': [
                         {
                             'name': 'font-size',
