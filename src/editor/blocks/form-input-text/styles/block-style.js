@@ -11,7 +11,7 @@ const getBlockStyle = (elementId, attributes) => {
         'type': 'plain',
         'id': 'iconSize',
         'responsive': true,
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i, ${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon svg`,
         'properties': [
             {
                 'name': 'font-size',
@@ -126,7 +126,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconColor']) && data.push({
         'type': 'color',
         'id': 'iconColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon i, ${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon svg`,
         'properties': [
             {
                 'name': 'color',
@@ -157,7 +157,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'functionName' : 'customHandleBackground'
             }
         ],
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient i, ${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon.style-gradient svg`,
     });
 
     isNotEmpty(attributes['iconBackground']) && data.push({
@@ -188,7 +188,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconHoverColor']) && data.push({
         'type': 'color',
         'id': 'iconHoverColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon i, ${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon svg`,
         'properties': [
             {
                 'name': 'color',
@@ -219,7 +219,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'functionName' : 'customHandleBackground'
             }
         ],
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon.style-gradient i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon.style-gradient i, ${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-text-icon .icon.style-gradient svg`,
     });
 
     isNotEmpty(attributes['iconBackgroundHover']) && data.push({
@@ -249,7 +249,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconFocusColor']) && data.push({
         'type': 'color',
         'id': 'iconFocusColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon i`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon i, ${elementId} .main-wrapper .input-icon-wrapper .form-input-text-icon .icon svg`,
         'properties': [
             {
                 'name': 'color',
@@ -281,7 +281,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'functionName' : 'customHandleBackground'
             }
         ],
-        'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon.style-gradient i`,
+        'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon.style-gradient i, ${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-text-icon .icon.style-gradient svg`,
     });
 
     isNotEmpty(attributes['iconBackgroundFocus']) && data.push({

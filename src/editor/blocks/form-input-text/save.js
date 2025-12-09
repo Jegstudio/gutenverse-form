@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
 import { compose } from '@wordpress/compose';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
+import { renderIcon } from 'gutenverse-core/helper';
 
 const WrapAHref = ({ attributes, children }) => {
     const {
@@ -12,7 +13,7 @@ const WrapAHref = ({ attributes, children }) => {
         buttonClass = '',
     } = attributes;
 
-    if (url !== undefined && url !== '' ) {
+    if (url !== undefined && url !== '') {
         return <a className={buttonClass} href={url} target={linkTarget} rel={rel}>
             {children}
         </a>;
@@ -44,6 +45,7 @@ const save = compose(
         iconType,
         iconStyleMode,
         icon,
+        iconSVG,
         useIcon,
     } = attributes;
 
@@ -67,19 +69,20 @@ const save = compose(
     const imageAltText = imageAlt || null;
 
     const imageLazyLoad = () => {
-        if(lazyLoad){
-            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy"/>;
-        }else{
-            return <img src={getImageSrc(image)} alt={imageAltText}/>;
+        if (lazyLoad) {
+            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy" />;
+        } else {
+            return <img src={getImageSrc(image)} alt={imageAltText} />;
         }
     };
     const iconContent = () => {
         switch (iconType) {
             case 'icon':
+            case 'svg':
                 return <div className="form-input-text-icon type-icon">
                     <div className={`icon style-${iconStyleMode}`}>
                         <WrapAHref {...props}>
-                            <i className={icon}></i>
+                            {renderIcon(icon, iconType, iconSVG)}
                         </WrapAHref>
                     </div>
                 </div>;

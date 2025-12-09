@@ -329,7 +329,11 @@
 		},
 		"icon": {
 			"type": "string",
-			"default": "gtn gtn-email-light"
+			"default": "gtn gtn-sort-numeric-up-solid"
+		},
+		"iconSVG": {
+			"type": "string",
+			"default": "PHN2ZyB2aWV3Qm94PSIwIDAgMTAyNCAxMDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0yNzUgMTYwbC01IDI1cS01IDE5LTE4IDM3LTIzIDM0LTYwIDM0djY0cTU0IDAgOTYtNDV2MjA1aDY0VjE2MGgtNzd6bTQ2MSAxNmwtMjMgMjItMTM3IDEzOCA0NSA0NSA4My04M3Y1OThoNjRWMjk4bDgzIDgzIDQ1LTQ1LTEzNy0xMzh6TTI3MiA1NDRxLTQ2IDAtNzkgMzN0LTMzIDc5djE2aDY0di0xNnEwLTIxIDEzLjUtMzQuNVQyNzIgNjA4aDMycTIxIDAgMzQuNSAxMy41VDM1MiA2NTZxMCAyNS0zMCA0My0xNyAxMS0zNiAyMWwtMzggMjAtMjkgMTVxLTI3IDE2LTM5IDI4LTIwIDIyLTIwIDQ5djMyaDI1NnYtNjRIMjcwcTcxLTM3IDg2LTQ2IDI2LTE2IDQzLTQydDE3LTU2cTAtNDYtMzMtNzl0LTc5LTMzaC0zMnoiLz48L3N2Zz4="
 		},
 		"iconSize": {
 			"type": "object",

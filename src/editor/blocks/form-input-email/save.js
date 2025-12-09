@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
 import { compose } from '@wordpress/compose';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
+import { renderIcon } from 'gutenverse-core/helper';
 
 const WrapAHref = ({ attributes, children }) => {
     const {
@@ -43,6 +44,7 @@ const save = compose(
         iconStyleMode,
         iconType,
         icon,
+        iconSVG,
         lazyLoad
     } = attributes;
 
@@ -75,10 +77,11 @@ const save = compose(
     const iconContent = () => {
         switch (iconType) {
             case 'icon':
+            case 'svg':
                 return <div className="form-input-email-icon type-icon">
                     <div className={`icon style-${iconStyleMode}`}>
                         <WrapAHref {...props}>
-                            <i className={icon}></i>
+                            {renderIcon(icon, iconType, iconSVG)}
                         </WrapAHref>
                     </div>
                 </div>;

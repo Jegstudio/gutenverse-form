@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { CheckboxControl, ImageControl, RangeControl, SelectControl, TextControl } from 'gutenverse-core/controls';
+import { CheckboxControl, IconSVGControl, ImageControl, RangeControl, SelectControl, TextControl } from 'gutenverse-core/controls';
 
 export const panelIcon = (props) => {
     const {
@@ -48,11 +48,21 @@ export const panelIcon = (props) => {
                     value: 'image',
                     label: 'Image'
                 },
+                {
+                    value: 'svg',
+                    label: 'SVG'
+                },
             ],
         },
         {
+            id: 'icon',
+            label: __('Icon', 'gutenverse'),
+            component: IconSVGControl,
+            show: iconType && ['icon', 'svg'].includes(iconType) && useIcon,
+        },
+        {
             id: 'iconSize',
-            show: iconType && iconType === 'icon' && useIcon,
+            show: iconType && ['icon', 'svg'].includes(iconType) && useIcon,
             label: __('Icon Size', 'gutenverse-form'),
             component: RangeControl,
             allowDeviceControl: true,
@@ -64,7 +74,7 @@ export const panelIcon = (props) => {
                     'type': 'plain',
                     'id': 'iconSize',
                     'responsive': true,
-                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon i`,
+                    'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon svg`,
                     'properties': [
                         {
                             'name': 'font-size',

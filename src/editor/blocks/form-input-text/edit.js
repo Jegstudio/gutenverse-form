@@ -7,7 +7,7 @@ import { IconLibrary } from 'gutenverse-core/controls';
 import { useState } from '@wordpress/element';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import classnames from 'classnames';
-import { gutenverseRoot } from 'gutenverse-core/helper';
+import { gutenverseRoot, renderIcon } from 'gutenverse-core/helper';
 import { createPortal } from 'react-dom';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
@@ -34,6 +34,7 @@ const FormInputTextBlock = compose(
         validationMax,
         validationWarning,
         icon,
+        iconSVG,
         iconType,
         lazyLoad,
         image,
@@ -79,9 +80,10 @@ const FormInputTextBlock = compose(
     const iconContent = () => {
         switch (iconType) {
             case 'icon':
+            case 'svg':
                 return <div className="form-input-text-icon type-icon">
                     <div className={`icon style-${iconStyleMode}`} onClick={() => setOpenIconLibrary(true)}>
-                        <i className={icon}></i>
+                        {renderIcon(icon, iconType, iconSVG)}
                     </div>
                 </div>;
             case 'image':

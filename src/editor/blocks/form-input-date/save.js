@@ -3,6 +3,8 @@ import SaveInputWrapper from '../form-input/general/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
 import { compose } from '@wordpress/compose';
+import { getImageSrc } from 'gutenverse-core/editor-helper';
+import { renderIcon } from 'gutenverse-core/helper';
 
 const WrapAHref = ({ attributes, children }) => {
     const {
@@ -45,7 +47,9 @@ const save = compose(
         image,
         iconStyleMode,
         iconType,
-        icon
+        icon,
+        iconSVG,
+        lazyLoad
     } = attributes;
 
     const validation = {
@@ -85,10 +89,11 @@ const save = compose(
     const iconContent = () => {
         switch (iconType) {
             case 'icon':
+            case 'svg':
                 return <div className="form-input-date-icon type-icon">
                     <div className={`icon style-${iconStyleMode}`}>
                         <WrapAHref {...props}>
-                            <i className={icon}></i>
+                            {renderIcon(icon, iconType, iconSVG)}
                         </WrapAHref>
                     </div>
                 </div>;
