@@ -185,7 +185,6 @@ const getBlockStyle = (elementId, attributes) => {
                 'valueType': 'direct'
             }
         ],
-        'responsive': true,
     });
 
     isNotEmpty(attributes['iconFocusBgColor']) && data.push({
@@ -210,7 +209,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'functionName' : 'customHandleBackground'
             }
         ],
-        'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i, ${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient svg`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient i, .${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-date-icon .icon.style-gradient svg`,
     });
 
     isNotEmpty(attributes['iconBackgroundFocus']) && data.push({

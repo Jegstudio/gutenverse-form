@@ -11,7 +11,7 @@ const getBlockStyle = (elementId, attributes) => {
         'type': 'plain',
         'id': 'iconSize',
         'responsive': true,
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon i, ${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon svg`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon svg`,
         'properties': [
             {
                 'name': 'font-size',
@@ -125,7 +125,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconColor']) && data.push({
         'type': 'color',
         'id': 'iconColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon i, ${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon svg`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon svg`,
         'properties': [
             {
                 'name': 'color',
@@ -156,7 +156,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'functionName' : 'customHandleBackground'
             }
         ],
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon.style-gradient i, ${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon.style-gradient svg`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon.style-gradient i, .${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon.style-gradient svg`,
     });
 
     isNotEmpty(attributes['iconBackground']) && data.push({
@@ -187,7 +187,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconHoverColor']) && data.push({
         'type': 'color',
         'id': 'iconHoverColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-telp-icon .icon i, ${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon svg`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-telp-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-telp-icon .icon svg`,
         'properties': [
             {
                 'name': 'color',
@@ -218,7 +218,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'functionName' : 'customHandleBackground'
             }
         ],
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-telp-icon .icon.style-gradient i, ${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-telp-icon .icon.style-gradient svg`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-telp-icon .icon.style-gradient i, .${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-telp-icon .icon.style-gradient svg`,
     });
 
     isNotEmpty(attributes['iconBackgroundHover']) && data.push({
@@ -230,7 +230,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconBorderHover']) && data.push({
         'type': 'borderResponsive',
         'id': 'iconBorderHover',
-        'selector': `${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-telp-icon .icon`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-telp-icon .icon`,
     });
 
     isNotEmpty(attributes['iconBoxShadowHover']) && data.push({
@@ -248,14 +248,13 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['iconFocusColor']) && data.push({
         'type': 'color',
         'id': 'iconFocusColor',
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-telp-icon .icon i, ${elementId} .main-wrapper .input-icon-wrapper .form-input-telp-icon .icon svg`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-telp-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-telp-icon .icon svg`,
         'properties': [
             {
                 'name': 'color',
                 'valueType': 'direct'
             }
         ],
-        'responsive': true,
     });
 
     isNotEmpty(attributes['iconFocusBgColor']) && data.push({
@@ -280,7 +279,7 @@ const getBlockStyle = (elementId, attributes) => {
                 'functionName' : 'customHandleBackground'
             }
         ],
-        'selector': `${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-telp-icon .icon.style-gradient i, ${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-telp-icon .icon.style-gradient svg`,
+        'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-telp-icon .icon.style-gradient i, .${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-telp-icon .icon.style-gradient svg`,
     });
 
     isNotEmpty(attributes['iconBackgroundFocus']) && data.push({

@@ -470,7 +470,7 @@ class Form_Input_Date extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['iconType'] ) && 'icon' === $this->attrs['iconType'] ) {
+		if ( isset( $this->attrs['iconType'] ) && in_array( $this->attrs['iconType'], array( 'icon', 'svg' ), true ) ) {
 			if ( isset( $this->attrs['iconSize'] ) ) {
 				$this->inject_style(
 					array(

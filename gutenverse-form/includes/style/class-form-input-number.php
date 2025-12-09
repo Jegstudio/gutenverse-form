@@ -383,7 +383,7 @@ class Form_Input_Number extends Style_Abstract {
 		if ( isset( $this->attrs['inputColorFocus'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon i, .{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon svg",
+					'selector'       => ".{$this->element_id} .gutenverse-input:focus, .{$this->element_id} .gutenverse-input:focus-visible, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon i, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon svg",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -469,7 +469,7 @@ class Form_Input_Number extends Style_Abstract {
 			);
 		}
 
-		if ( isset( $this->attrs['iconType'] ) && 'icon' === $this->attrs['iconType'] ) {
+		if ( isset( $this->attrs['iconType'] ) && in_array( $this->attrs['iconType'], array( 'icon', 'svg' ), true ) ) {
 			if ( isset( $this->attrs['iconSize'] ) ) {
 				$this->inject_style(
 					array(
@@ -601,7 +601,7 @@ class Form_Input_Number extends Style_Abstract {
 		if ( isset( $this->attrs['iconHoverColor'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon i, .{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon svg",
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon i, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon svg",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -625,7 +625,7 @@ class Form_Input_Number extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['iconColorGradientHover'] ) ) {
-			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon.style-gradient i, .{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon.style-gradient svg", $this->attrs['iconColorGradientHover'] );
+			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon.style-gradient i, .{$this->element_id} .main-wrapper .input-icon-wrapper:hover .form-input-number-icon .icon.style-gradient svg", $this->attrs['iconColorGradientHover'] );
 		}
 
 		if ( isset( $this->attrs['iconBackgroundHover'] ) ) {
@@ -673,7 +673,7 @@ class Form_Input_Number extends Style_Abstract {
 		if ( isset( $this->attrs['iconFocusColor'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon i, .{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon svg",
+					'selector'       => ".{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon i, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon svg",
 					'property'       => function ( $value ) {
 						return $this->handle_color( $value, 'color' );
 					},
@@ -697,7 +697,7 @@ class Form_Input_Number extends Style_Abstract {
 		}
 
 		if ( isset( $this->attrs['iconColorGradientFocus'] ) ) {
-			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon.style-gradient i, .{$this->element_id} .main-wrapper .input-icon-wrapper .form-input-number-icon .icon.style-gradient svg", $this->attrs['iconColorGradientFocus'] );
+			$this->custom_handle_background( ".{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon.style-gradient i, .{$this->element_id} .main-wrapper .input-icon-wrapper:focus-within .form-input-number-icon .icon.style-gradient svg", $this->attrs['iconColorGradientFocus'] );
 		}
 
 		if ( isset( $this->attrs['iconBackgroundFocus'] ) ) {
