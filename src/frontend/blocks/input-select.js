@@ -1,6 +1,35 @@
 import { Default, u } from 'gutenverse-core-frontend';
 
 class GutenverseInputSelect extends Default {
+    _createIcon(iconData) {
+        if (!iconData) return null;
+
+        if (typeof iconData === 'string') {
+            const i = document.createElement('i');
+            i.className = iconData;
+            return i;
+        }
+
+        const { type, props } = iconData;
+        if (!type) return null;
+
+        const element = document.createElement(type);
+
+        if (props) {
+            if (props.className) {
+                element.className = props.className;
+            }
+            if (props.dangerouslySetInnerHTML) {
+                element.innerHTML = props.dangerouslySetInnerHTML.__html;
+            }
+            if (props['aria-hidden']) {
+                element.setAttribute('aria-hidden', props['aria-hidden']);
+            }
+        }
+
+        return element;
+    }
+
     /* public */
     init() {
         this.choiceInstance = null;
@@ -37,21 +66,23 @@ class GutenverseInputSelect extends Default {
                     $inner.each(innerEl => {
                         innerEl.style.position = 'relative';
 
-                        // Create Font Awesome icon element
-                        const icon = document.createElement('i');
-                        icon.className = iconOpen;
-
-                        innerEl.appendChild(icon);
+                        // Create Icon
+                        let currentIcon = this._createIcon(iconOpen);
+                        if (currentIcon) innerEl.appendChild(currentIcon);
 
                         // Attach events to that specific dropdown container
                         const wrapper = $choiceWrapper.first();
 
                         wrapper.addEventListener('showDropdown', () => {
-                            icon.className = iconClose; // Open icon
+                            if (currentIcon) currentIcon.remove();
+                            currentIcon = this._createIcon(iconClose);
+                            if (currentIcon) innerEl.appendChild(currentIcon);
                         });
 
                         wrapper.addEventListener('hideDropdown', () => {
-                            icon.className = iconOpen; // Closed icon
+                            if (currentIcon) currentIcon.remove();
+                            currentIcon = this._createIcon(iconOpen);
+                            if (currentIcon) innerEl.appendChild(currentIcon);
                         });
                     });
                     let selector = '';

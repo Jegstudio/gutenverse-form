@@ -67,6 +67,13 @@ class Frontend_Assets {
 					}
 				}
 				break;
+			case 'gutenverse/form-input-select':
+				if ( isset( $attrs['useCustomDropdown'] ) && $attrs['useCustomDropdown'] ) {
+					if ( ! isset( $attrs['dropDownIconOpenType'] ) || 'icon' === $attrs['dropDownIconOpenType'] ) {
+						$this->icon_conditional_load( $conditions );
+					}
+				}
+				break;
 		}
 
 		return $conditions;

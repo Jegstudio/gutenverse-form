@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BoxShadowControl, CheckboxControl, ColorControl, IconControl, RangeControl} from 'gutenverse-core/controls';
+import { CheckboxControl, ColorControl, IconSVGControl, RangeControl} from 'gutenverse-core/controls';
 
 export const panelDropdown = props => {
     const {
@@ -18,7 +18,7 @@ export const panelDropdown = props => {
             id: 'dropDownIconOpen',
             show: useDropDownIcon,
             label: __('Icon Open', 'gutenverse-form'),
-            component: IconControl,
+            component: IconSVGControl,
         },
         {
             id: 'dropDownIconOpenColor',
@@ -74,7 +74,7 @@ export const panelDropdown = props => {
             id: 'dropDownIconClose',
             show: useDropDownIcon,
             label: __('Icon Close', 'gutenverse-form'),
-            component: IconControl,
+            component: IconSVGControl,
         },
         {
             id: 'dropDownIconCloseColor',

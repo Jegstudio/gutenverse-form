@@ -7,6 +7,7 @@ import { ChoiceSelect } from 'gutenverse-core/components';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
+import { renderIcon } from 'gutenverse-core/helper';
 
 const FormInputSelectBlock = compose(
     withMouseMoveEffect,
@@ -27,7 +28,11 @@ const FormInputSelectBlock = compose(
         excludePlaceholder,
         useCustomDropdown,
         dropDownIconOpen,
-        dropDownIconClose
+        dropDownIconClose,
+        dropDownIconOpenType,
+        dropDownIconCloseType,
+        dropDownIconOpenSVG,
+        dropDownIconCloseSVG,
     } = attributes;
 
     const elementRef = useRef();
@@ -57,8 +62,8 @@ const FormInputSelectBlock = compose(
                     }}
                     excludePlaceholder={excludePlaceholder}
                     useCustomDropdown={useCustomDropdown}
-                    dropDownIconOpen={dropDownIconOpen}
-                    dropDownIconClose={dropDownIconClose}
+                    dropDownIconOpen={renderIcon(dropDownIconOpen, dropDownIconOpenType, dropDownIconOpenSVG)}
+                    dropDownIconClose={renderIcon(dropDownIconClose, dropDownIconCloseType, dropDownIconCloseSVG)}
                 />
             </div>
         </InputWrapper>
