@@ -427,8 +427,7 @@
 			"copyStyle": true
 		},
 		"dropDownIconOpenSVG": {
-			"type": "string",
-			"default": "PHN2ZyB2aWV3Qm94PSIwIDAgMTAyNC4wMDA1IDEwMzciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEwMTEgMjcycS0xNC0xNS0zNC41LTE1LjVUOTQyIDI3MEw1MTIgNjc3IDgyIDI3MHEtMTQtMTQtMzQuNS0xMy41VDEzIDI3MiAwIDMwN3QxNSAzNGw0NjMgNDM5cTcgNiAxNiA5LjV0MTggMy41IDE3LjUtMy41VDU0NiA3ODBsNDYzLTQzOXExNC0xNCAxNS0zNHQtMTMtMzV6Ii8+PC9zdmc+"
+			"type": "string"
 		},
 		"dropDownIconCloseType": {
 			"type": "string",
@@ -440,8 +439,7 @@
 			"copyStyle": true
 		},
 		"dropDownIconCloseSVG": {
-			"type": "string",
-			"default": "PHN2ZyB2aWV3Qm94PSIwIDAgMTAyNC4wMDA0IDEwMzciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEwMDkgNzA5TDU0NiAyNzBxLTE1LTEzLTM0LTEzdC0zNCAxM0wxNSA3MDlRMSA3MjMgMCA3NDN0MTMgMzVxMTQgMTQgMzQuNSAxNVQ4MiA3ODBsNDMwLTQwNyA0MzAgNDA3cTcgNiAxNS41IDkuNVQ5NzUgNzkzcTEwIDAgMTktNHQxNy0xMXExNC0xNSAxMy0zNXQtMTUtMzR6Ii8+PC9zdmc+"
+			"type": "string"
 		},
 		"dropDownIconOpenColor": {
 			"type": "object",
