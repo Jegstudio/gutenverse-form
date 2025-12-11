@@ -211,6 +211,7 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 - improve styling cache mechanism
 
 ##### Bug Fixes
+- fix recaptcha issue
 - fix security issue (credit by Patchstack)
 
 = 2.3.1 =
