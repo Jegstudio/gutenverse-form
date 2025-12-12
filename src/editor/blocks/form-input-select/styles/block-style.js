@@ -10,7 +10,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['dropDownIconOpenColor']) && data.push({
         'type': 'color',
         'id': 'dropDownIconOpenColor',
-        'selector': `.${elementId} .choices.custom-dropdown .choices__inner i`,
+        'selector': `.${elementId} .choices.custom-dropdown .choices__inner i, .${elementId} .choices.custom-dropdown .choices__inner svg`,
         'properties': [
             {
                 'name': 'color',
@@ -22,7 +22,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['dropDownIconOpenSize']) && data.push({
         'type': 'plain',
         'id': 'dropDownIconOpenSize',
-        'selector': `.${elementId} .choices.custom-dropdown .choices__inner i`,
+        'selector': `.${elementId} .choices.custom-dropdown .choices__inner i, .${elementId} .choices.custom-dropdown .choices__inner svg`,
         'properties': [
             {
                 'name': 'font-size',
@@ -32,7 +32,6 @@ const getBlockStyle = (elementId, attributes) => {
                     'value': {
                         'type': 'direct',
                     },
-
                 }
             }
         ],
@@ -42,7 +41,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['dropDownIconCloseColor']) && data.push({
         'type': 'color',
         'id': 'dropDownIconCloseColor',
-        'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i`,
+        'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i, .${elementId} .choices.custom-dropdown.is-open .choices__inner svg`,
         'properties': [
             {
                 'name': 'color',
@@ -54,7 +53,7 @@ const getBlockStyle = (elementId, attributes) => {
     isNotEmpty(attributes['dropDownIconCloseSize']) && data.push({
         'type': 'plain',
         'id': 'dropDownIconCloseSize',
-        'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i`,
+        'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i, .${elementId} .choices.custom-dropdown.is-open .choices__inner svg`,
         'properties': [
             {
                 'name': 'font-size',
@@ -64,7 +63,6 @@ const getBlockStyle = (elementId, attributes) => {
                     'value': {
                         'type': 'direct',
                     },
-
                 }
             }
         ],

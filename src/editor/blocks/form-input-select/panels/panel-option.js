@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BackgroundControl, BorderResponsiveControl, BoxShadowControl, ColorControl, DimensionControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
-import { getDeviceType } from 'gutenverse-core/editor-helper';
+import { BackgroundControl, BorderResponsiveControl, ColorControl, DimensionControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
 
 export const optionPanel = props => {
     const {
@@ -8,8 +7,6 @@ export const optionPanel = props => {
         setSwitcher,
         switcher
     } = props;
-
-    const device = getDeviceType();
 
     return [
         {

@@ -29,7 +29,7 @@ export const panelDropdown = props => {
                 {
                     'type': 'color',
                     'id' : 'dropDownIconOpenColor',
-                    'selector': `.${elementId} .choices.custom-dropdown .choices__inner i`,
+                    'selector': `.${elementId} .choices.custom-dropdown .choices__inner i, .${elementId} .choices.custom-dropdown .choices__inner svg`,
                     'properties': [
                         {
                             'name': 'color',
@@ -54,7 +54,7 @@ export const panelDropdown = props => {
                     'type': 'plain',
                     'id': 'dropDownIconOpenSize',
                     'responsive': true,
-                    'selector': `.${elementId} .choices.custom-dropdown .choices__inner i`,
+                    'selector': `.${elementId} .choices.custom-dropdown .choices__inner i, .${elementId} .choices.custom-dropdown .choices__inner svg`,
                     'properties': [
                         {
                             'name': 'font-size',
@@ -85,7 +85,7 @@ export const panelDropdown = props => {
                 {
                     'type': 'color',
                     'id': 'dropDownIconCloseColor',
-                    'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i`,
+                    'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i, .${elementId} .choices.custom-dropdown.is-open .choices__inner svg`,
                     'properties': [
                         {
                             'name': 'color',
@@ -110,7 +110,7 @@ export const panelDropdown = props => {
                     'type': 'plain',
                     'id': 'dropDownIconCloseSize',
                     'responsive': true,
-                    'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i`,
+                    'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i, .${elementId} .choices.custom-dropdown.is-open .choices__inner svg`,
                     'properties': [
                         {
                             'name': 'font-size',
