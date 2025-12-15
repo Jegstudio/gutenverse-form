@@ -228,6 +228,15 @@ class GutenverseFormValidation extends Default {
                     }
                 }
             });
+            if (captcha.nodes.length > 0 && !recaptchaResponse) {
+                validFlag = false;
+                const notifclass = 'guten-error';
+                const message = window?.GutenverseFormValidationData?.recaptchaLabel || 'Please confirm that you are not a robot.';
+                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
+                currentFormBuilder.find('.form-notification').remove();
+                currentFormBuilder.prepend(notice);
+            }
+
             //uncomment this when done debugging
             if (validFlag) {
                 currentFormBuilder.addClass('loading');

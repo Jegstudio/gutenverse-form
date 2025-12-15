@@ -1,7 +1,7 @@
 === Gutenverse Form – Contact Form Builder, Booking, Reservation, Subscribe for Block Editor ===
 Contributors: Jegstudio
 Tags: contact form, form builder, custom form, block form, WordPress form plugin
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.0
 Stable tag: 2.3.2
 License: GPLv3
@@ -211,6 +211,7 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 - improve styling cache mechanism
 
 ##### Bug Fixes
+- fix recaptcha issue
 - fix security issue (credit by Patchstack)
 
 = 2.3.1 =
