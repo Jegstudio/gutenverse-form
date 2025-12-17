@@ -3,7 +3,7 @@ Contributors: Jegstudio
 Tags: contact form, form builder, custom form, block form, WordPress form plugin
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 2.3.2
+Stable tag: 2.4.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -206,8 +206,15 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 
 == Changelog ==
+= 2.4.0 =
+##### New & Improvements
+* Add option to convert Webfont to SVG icon for improved SEO
+
+##### Bug Fixes
+* Fix issue with global styles fetch in editor
+
 = 2.3.2 =
-##### New & Improvemenets
+##### New & Improvements
 - improve styling cache mechanism
 
 ##### Bug Fixes
@@ -215,11 +222,11 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 - fix security issue (credit by Patchstack)
 
 = 2.3.1 =
-##### New & Improvemenets
+##### New & Improvements
 * Update core framework
 
 = 2.3.0 =
-##### New & Improvemenets
+##### New & Improvements
 * Improve CSS & JS files to load only if block/feature exist
 
 ##### Bug Fixes
