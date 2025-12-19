@@ -208,10 +208,14 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 == Changelog ==
 = 2.4.0 =
 ##### New & Improvements
-* Add option to convert Webfont to SVG icon for improved SEO
+* add option to convert Webfont to SVG icon for improved SEO
 
 ##### Bug Fixes
-* Fix issue with global styles fetch in editor
+* fix issue with global styles fetch in editor
+* fix issue with animation effect not running on tablet/mobile
+* fix issue with animation effect when combined with transform effect
+* fix issue with section background type video
+* fix recaptcha block issue on frontend
 
 = 2.3.2 =
 ##### New & Improvements
