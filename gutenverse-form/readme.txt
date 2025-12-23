@@ -216,6 +216,7 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 * fix issue with animation effect when combined with transform effect
 * fix issue with section background type video
 * fix recaptcha block issue on frontend
+* fix security issue (credit by andrea bocchetti - Wordfence)
 
 = 2.3.2 =
 ##### New & Improvements
