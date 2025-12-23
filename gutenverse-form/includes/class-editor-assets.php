@@ -35,13 +35,6 @@ class Editor_Assets {
 			GUTENVERSE_FORM_VERSION
 		);
 
-		wp_enqueue_style(
-			'gutenverse-form-frontend',
-			GUTENVERSE_FORM_URL . '/assets/css/frontend.css',
-			array( 'gutenverse-iconlist', 'fontawesome-gutenverse' ),
-			GUTENVERSE_FORM_VERSION
-		);
-
 		wp_enqueue_script( 'gutenverse-frontend-event' );
 
 		$include   = ( include GUTENVERSE_FORM_DIR . '/lib/dependencies/blocks.asset.php' )['dependencies'];
