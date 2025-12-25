@@ -27,12 +27,18 @@ class GutenverseFormValidation extends Default {
                 this._onSubmit(formBuilder, formData[0]);
             }
             // REMINDER : button classes added here instead of from block save.js, it is done this way to prevent "Block Recovery" issue.
+            const buttonUpdates = [];
             formBuilder.find('.guten-submit-wrapper').each(item => {
                 const button = u(item);
                 const buttonClass = button.find('.gutenverse-input-submit').attr('class');
                 const buttonObj = button.find('.gutenverse-input-submit').first().getBoundingClientRect();
-                button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
-                button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
+                const loader = button.find('.gutenverse-input-submit-loader');
+                buttonUpdates.push({ loader, buttonClass, width: buttonObj.width, height: buttonObj.height });
+            });
+
+            buttonUpdates.forEach(({ loader, buttonClass, width, height }) => {
+                loader.addClass(buttonClass);
+                loader.attr('style', `width:${width}px;height:${height}px;`);
             });
         } else {
             formBuilder.attr('style', '');
@@ -42,12 +48,18 @@ class GutenverseFormValidation extends Default {
                 const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${missingLabel}</div></div>`;
                 formBuilder.prepend(notice);
             });
+            const buttonUpdates = [];
             formBuilder.find('.guten-submit-wrapper').each(item => {
                 const button = u(item);
                 const buttonClass = button.find('.gutenverse-input-submit').attr('class');
                 const buttonObj = button.find('.gutenverse-input-submit').first().getBoundingClientRect();
-                button.find('.gutenverse-input-submit-loader').addClass(buttonClass);
-                button.find('.gutenverse-input-submit-loader').attr('style', `width:${buttonObj.width}px;height:${buttonObj.height}px;`);
+                const loader = button.find('.gutenverse-input-submit-loader');
+                buttonUpdates.push({ loader, buttonClass, width: buttonObj.width, height: buttonObj.height });
+            });
+
+            buttonUpdates.forEach(({ loader, buttonClass, width, height }) => {
+                loader.addClass(buttonClass);
+                loader.attr('style', `width:${width}px;height:${height}px;`);
             });
 
             if (isAdmin) {
