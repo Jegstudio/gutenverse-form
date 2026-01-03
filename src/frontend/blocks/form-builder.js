@@ -399,12 +399,30 @@ class GutenverseFormValidation extends Default {
 
             if ('character' === validation.validationType) {
                 const length = value.length;
-                return length >= validation.validationMin && length <= validation.validationMax;
+                const min = parseFloat(validation.validationMin);
+                const max = parseFloat(validation.validationMax);
+
+                if (!isNaN(min) && length < min) {
+                    return false;
+                }
+                if (!isNaN(max) && length > max) {
+                    return false;
+                }
+                return true;
             }
 
             if ('word' === validation.validationType) {
                 const length = value.split(' ').length;
-                return length >= validation.validationMin && length <= validation.validationMax;
+                const min = parseFloat(validation.validationMin);
+                const max = parseFloat(validation.validationMax);
+
+                if (!isNaN(min) && length < min) {
+                    return false;
+                }
+                if (!isNaN(max) && length > max) {
+                    return false;
+                }
+                return true;
             }
 
             if ('email' === validation.type) {
