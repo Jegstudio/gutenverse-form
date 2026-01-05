@@ -209,6 +209,7 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 = 2.4.3 =
 ##### Bug Fixes
 * fix issue with glitching background image for background slider mode
+* fix word and character validation if only one value exist
 
 = 2.4.0 =
 ##### New & Improvements
