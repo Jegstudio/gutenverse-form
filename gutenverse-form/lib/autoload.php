@@ -7,6 +7,12 @@
  * @package gutenverse-form
  */
 
+if ( defined( 'WP_CLI' ) && WP_CLI && ! defined( 'GUTENVERSE_FRAMEWORK_URL_PATH' ) ) {
+	// wp-cli fix (framework doesnt load properly)
+	define( 'GUTENVERSE_FRAMEWORK_URL_PATH', plugins_url( GUTENVERSE_FORM ) . '/lib/framework' );
+	require_once GUTENVERSE_FORM_DIR . 'lib/framework/bootstrap.php';
+}
+
 spl_autoload_register(
 	function( $class ) {
 		$prefix   = 'Gutenverse_Form\\';
