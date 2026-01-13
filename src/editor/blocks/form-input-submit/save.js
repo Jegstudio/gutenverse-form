@@ -20,6 +20,7 @@ const save = compose(
         iconType,
         iconSVG,
         iconPosition,
+        areaLabel
     } = attributes;
 
     const animationClass = useAnimationFrontend(attributes);
@@ -46,7 +47,7 @@ const save = compose(
     return (
         <div {...useBlockProps.save({ className })}>
             <div className="form-notification"></div>
-            <button className={buttonClass} type="submit">
+            <button className={buttonClass} type="submit" aria-label={areaLabel}>
                 {showIcon && iconPosition === 'before' && renderIcon(icon, iconType, iconSVG)}
                 <span>
                     <RichText.Content value={content} />
