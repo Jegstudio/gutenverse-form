@@ -207,6 +207,9 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 == Changelog ==
 = 2.4.4-dev =
+##### New & Improvements
+* add aria label options in some blocks for SEO & accessibility
+
 ##### Bug Fixes
 * fix error when running wp cli for gutenverse form
 
