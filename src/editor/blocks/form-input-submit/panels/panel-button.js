@@ -38,8 +38,8 @@ export const buttonPanel = (props) => {
             ],
         },
         {
-            id: 'areaLabel',
-            label: __('Area Label', 'gutenverse-form'),
+            id: 'ariaLabel',
+            label: __('Aria Label', 'gutenverse-form'),
             component: TextControl,
         },
         {

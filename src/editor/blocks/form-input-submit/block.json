@@ -237,7 +237,7 @@
 			"type": "object",
 			"copyStyle": true
 		},
-		"areaLabel": {
+		"ariaLabel": {
 			"type": "string",
 			"copyStyle": true
 		},
