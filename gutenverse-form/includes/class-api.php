@@ -557,6 +557,9 @@ class Api {
 				return $response;
 			}
 		}
+		if ( isset( $form_setting['user_browser'] ) ) {
+			$form_entry['user_browser'] = $form_setting['user_browser'];
+		}
 		$form_data_check = $this->filter_form_params( $form_entry['data'], $request );
 		if ( ! $form_data_check['status'] ) {
 			return new WP_REST_Response(
