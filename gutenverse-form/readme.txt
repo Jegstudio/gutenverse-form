@@ -213,6 +213,7 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 ##### Bug Fixes
 * fix error when running wp cli for gutenverse form
+* fix form action capture browser not working
 
 = 2.4.3 =
 ##### New & Improvements
