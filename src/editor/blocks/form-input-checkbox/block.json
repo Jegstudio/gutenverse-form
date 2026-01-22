@@ -268,12 +268,49 @@
 		"condition": {
 			"type": "object",
 			"default": {}
+		},
+		"flexAlignSelf": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexCustomOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeGrow": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeShrink": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
 		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "checkbox", "checkmark"],
+	"keywords": [
+		"input",
+		"form",
+		"checkbox",
+		"checkmark"
+	],
 	"example": {},
-	"style": ["gutenverse-form-frontend-form-input-checkbox-style"]
+	"style": [
+		"gutenverse-form-frontend-form-input-checkbox-style"
+	]
 }

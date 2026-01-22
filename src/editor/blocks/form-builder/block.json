@@ -255,7 +255,18 @@
 		"className": false,
 		"anchor": true
 	},
-	"keywords": ["contact", "form", "entry", "submit", "input", "wrapper"],
-	"viewScript": ["gutenverse-form-frontend-form-builder-script"],
-	"style": ["gutenverse-form-frontend-form-builder-style"]
+	"keywords": [
+		"contact",
+		"form",
+		"entry",
+		"submit",
+		"input",
+		"wrapper"
+	],
+	"viewScript": [
+		"gutenverse-form-frontend-form-builder-script"
+	],
+	"style": [
+		"gutenverse-form-frontend-form-builder-style"
+	]
 }

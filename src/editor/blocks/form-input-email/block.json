@@ -479,12 +479,49 @@
 		"iconBoxShadowFocus": {
 			"type": "object",
 			"copyStyle": true
+		},
+		"flexAlignSelf": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexCustomOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeGrow": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeShrink": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
 		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "email", "message"],
+	"keywords": [
+		"input",
+		"form",
+		"email",
+		"message"
+	],
 	"example": {},
-	"style": ["gutenverse-form-frontend-form-input-email-style"]
+	"style": [
+		"gutenverse-form-frontend-form-input-email-style"
+	]
 }

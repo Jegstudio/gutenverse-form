@@ -271,13 +271,51 @@
 		"condition": {
 			"type": "object",
 			"default": {}
+		},
+		"flexAlignSelf": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexCustomOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeGrow": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeShrink": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
 		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "gdpr"],
+	"keywords": [
+		"input",
+		"form",
+		"gdpr"
+	],
 	"example": {},
-	"viewScript": ["gutenverse-form-frontend-input-gdpr-script"],
-	"style": ["gutenverse-form-frontend-form-input-gdpr-style"]
+	"viewScript": [
+		"gutenverse-form-frontend-input-gdpr-script"
+	],
+	"style": [
+		"gutenverse-form-frontend-form-input-gdpr-style"
+	]
 }
