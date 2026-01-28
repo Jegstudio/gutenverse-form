@@ -19,3 +19,10 @@
         }
     }
 }
+
+.guten-flex-container-editor,
+.guten-inner-container-editor {
+    >.guten-form-builder {
+        width: 100%;
+    }
+}

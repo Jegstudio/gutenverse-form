@@ -2,6 +2,7 @@
     max-width: 1140px;
     margin-left: auto;
     margin-right: auto;
+
     &.pinned {
         position: sticky;
 
@@ -12,7 +13,7 @@
         &.sticky-top {
             top: 0;
         }
-    
+
         &.sticky-bottom {
             bottom: 0;
         }
@@ -36,5 +37,13 @@
                 background-color: #ffd2d2;
             }
         }
+    }
+}
+
+
+.guten-flex-container,
+.guten-inner-container {
+    >.guten-form-builder {
+        width: 100%;
     }
 }
