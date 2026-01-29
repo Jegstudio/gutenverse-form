@@ -208,8 +208,8 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 == Changelog ==
 = 2.4.5-dev =
 ##### Bug Fixes
-- fix transform transition
-- fix tooltip info icon position
+* fix transform transition
+* fix tooltip info icon position
 
 = 2.4.4 =
 ##### New & Improvements
