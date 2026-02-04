@@ -1,8 +1,8 @@
 import classnames from 'classnames';
 import { AlertControl } from 'gutenverse-core/controls';
-import { ControlText, ControlTextarea, ControlCheckbox } from 'gutenverse-core/backend';
+import { ControlText, ControlTextarea, ControlCheckbox, ControlSelect } from 'gutenverse-core/backend';
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
@@ -130,6 +130,14 @@ const TabConfirmation = (props) => {
                 value={values.user_email_body}
                 updateValue={updateValue}
             />
+            <ControlSelect
+                id={'user_email_template'}
+                title={__('Email Template', 'gutenverse-form')}
+                description={__('Select an email template to use. This will override the message body.', 'gutenverse-form')}
+                value={values.user_email_template}
+                options={props.emailTemplates || []}
+                updateValue={updateValue}
+            />
         </>}
     </div>;
 };
@@ -181,6 +189,14 @@ const TabNotification = (props) => {
                 value={values.admin_note}
                 updateValue={updateValue}
             />
+            <ControlSelect
+                id={'admin_email_template'}
+                title={__('Email Template', 'gutenverse-form')}
+                description={__('Select an email template to use. This will override the message body.', 'gutenverse-form')}
+                value={values.admin_email_template}
+                options={props.emailTemplates || []}
+                updateValue={updateValue}
+            />
         </>}
     </div>;
 };
@@ -208,19 +224,30 @@ export const FormContent = (props) => {
         },
     };
 
+    const [emailTemplates, setEmailTemplates] = useState([]);
+
+    useEffect(() => {
+        apiFetch({ path: '/wp/v2/guten-email-tpl?per_page=100' }).then(posts => {
+            const options = posts.map(post => ({ label: post.title.rendered, value: post.id }));
+            setEmailTemplates([{ label: __('Default', 'gutenverse-form'), value: '' }, ...options]);
+        });
+    }, []);
+
+    const tabProps = { ...props, emailTemplates };
+
     const changeActive = key => {
         setActiveTab(key);
     };
 
     const ConfirmationTab = applyFilters(
         'gutenverse.form.tab.confirmation',
-        <TabConfirmation {...props} />,
-        props
+        <TabConfirmation {...tabProps} />,
+        tabProps
     );
     const NotificationTab = applyFilters(
         'gutenverse.form.tab.notification',
-        <TabNotification {...props} />,
-        props
+        <TabNotification {...tabProps} />,
+        tabProps
     );
 
     const ProTab = applyFilters(
@@ -243,7 +270,7 @@ export const FormContent = (props) => {
         setPopupInsufficientTier,
         setInsufficientTierDesc,
         changeActive,
-    }
+    };
     return <div>
         {!hideFormNotice && <div className="form-notice-wrapper">
             <AlertControl>

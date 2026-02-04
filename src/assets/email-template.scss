@@ -1,0 +1,117 @@
+/* Full Screen Overrides for Gutenverse Email Builder */
+.post-type-guten-email-tpl.post-php,
+.post-type-guten-email-tpl.post-new-php {
+    overflow: hidden; /* Prevent body scroll */
+
+    #wpcontent {
+        margin-left: 0; 
+    }
+
+    /* Hide practically everything else */
+    #adminmenumain, 
+    #wpadminbar, 
+    #wpfooter,
+    #screen-meta-links,
+    .update-nag,
+    .notice {
+        display: none !important;
+    }
+}
+
+#gutenverse-email-builder-root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999999;
+    background: #fff;
+}
+
+.gutenverse-email-builder {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.gutenverse-email-builder-header {
+    flex: 0 0 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background: #fff;
+    border-bottom: 1px solid #e2e4e7;
+    box-sizing: border-box;
+    
+    h2 {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e1e1e;
+        line-height: 1;
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 15px;
+            color: #646970;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: normal; 
+            
+            &:hover {
+                color: #2271b1;
+            }
+
+            svg {
+                margin-right: 4px;
+            }
+        }
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .title-input {
+            width: 300px;
+            
+            input {
+                padding: 0 12px;
+                height: 36px;
+                font-size: 14px;
+            }
+        }
+        
+        .components-button {
+            height: 36px; 
+            padding: 0 16px;
+        }
+    }
+}
+
+.editor-container {
+    flex: 1 1 auto;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #f0f0f1;
+    
+    /* Force child to fill */
+    > * {
+        height: 100% !important;
+    }
+}
+
+/* Position snackbar notices in bottom left */
+.gutenverse-email-builder .components-editor-notices__snackbar {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000000;
+}

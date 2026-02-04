@@ -273,6 +273,8 @@ class Form {
 				'admin_email_from'               => $params['admin_email_from'],
 				'admin_email_reply_to'           => $params['admin_email_reply_to'],
 				'admin_note'                     => $params['admin_note'],
+				'user_email_template'            => isset( $params['user_email_template'] ) ? $params['user_email_template'] : '',
+				'admin_email_template'           => isset( $params['admin_email_template'] ) ? $params['admin_email_template'] : '',
 				'overwrite_default_confirmation' => $params['overwrite_default_confirmation'],
 				'overwrite_default_notification' => $params['overwrite_default_notification'],
 				'use_captcha'                    => $params['use_captcha'],
