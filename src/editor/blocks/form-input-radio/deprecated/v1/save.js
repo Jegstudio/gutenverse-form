@@ -1,5 +1,5 @@
 
-import SaveInputWrapper from '../form-input/general/save-input-wrapper';
+import SaveInputWrapper from '../../../form-input/general/deprecated/v1/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
@@ -18,9 +18,10 @@ const save = compose(
         validationWarning,
         defaultLogic,
         displayLogic,
-        checkboxOptions,
+        radioOptions,
         displayBlock
     } = attributes;
+
 
     const innerClass = classnames(
         'gutenverse-inner-input',
@@ -28,7 +29,7 @@ const save = compose(
     );
 
     const validation = {
-        type: 'checkbox',
+        type: 'radio',
         required,
         validationWarning
     };
@@ -43,7 +44,7 @@ const save = compose(
     };
 
     return (
-        <SaveInputWrapper {...props} inputType={'checkbox'} defaultLogic={defaultLogic}>
+        <SaveInputWrapper {...props} inputType={'radio'} defaultLogic={defaultLogic}>
             <div className={innerClass}>
                 <div hidden
                     name={inputName}
@@ -51,14 +52,14 @@ const save = compose(
                     data-validation={JSON.stringify(validation)}
                     {...additionalProps}
                 />
-                {checkboxOptions.map(item => {
-                    return <label key={item.value} htmlFor={item.value}>
+                {radioOptions.map(item => {
+                    return <label key={item.value}>
                         <input
                             name={inputName} value={item.value}
-                            className="gutenverse-input-checkbox"
-                            type="checkbox"
+                            className="gutenverse-input-radio"
+                            type="radio"
                         />
-                        <span className="check">
+                        <span className="radio">
                             {item.label}
                         </span>
                     </label>;

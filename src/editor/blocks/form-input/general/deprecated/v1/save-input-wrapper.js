@@ -16,7 +16,6 @@ const SaveInputWrapper = ({ attributes, inputType, children, defaultLogic }) => 
         position,
         validationWarning,
         required,
-        inputName
     } = attributes;
 
     const animationClass = useAnimationFrontend(attributes);
@@ -40,7 +39,6 @@ const SaveInputWrapper = ({ attributes, inputType, children, defaultLogic }) => 
         className={'input-label'}
         value={inputLabel}
         tagName={'label'}
-        htmlFor={inputName}
     />;
 
     const Helper = showHelper && <RichText.Content
