@@ -209,6 +209,7 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 = 2.4.5 =
 ##### New & Improvements
 * add for label in form input
+* add positioning panel for form builder
 
 ##### Bug Fixes
 * fix transform transition
