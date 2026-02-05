@@ -9,6 +9,38 @@
 		"elementId": {
 			"type": "string"
 		},
+		"positioningType": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningWidth": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningAlign": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningLocation": {
+			"type": "string",
+			"copyStyle": true
+		},
+		"positioningLeft": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningRight": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningTop": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningBottom": {
+			"type": "object",
+			"copyStyle": true
+		},
 		"mouseMoveEffect": {
 			"type": "object",
 			"copyStyle": true
@@ -255,7 +287,18 @@
 		"className": false,
 		"anchor": true
 	},
-	"keywords": ["contact", "form", "entry", "submit", "input", "wrapper"],
-	"viewScript": ["gutenverse-form-frontend-form-builder-script"],
-	"style": ["gutenverse-form-frontend-form-builder-style"]
+	"keywords": [
+		"contact",
+		"form",
+		"entry",
+		"submit",
+		"input",
+		"wrapper"
+	],
+	"viewScript": [
+		"gutenverse-form-frontend-form-builder-script"
+	],
+	"style": [
+		"gutenverse-form-frontend-form-builder-style"
+	]
 }
