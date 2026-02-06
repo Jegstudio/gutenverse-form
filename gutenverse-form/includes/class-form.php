@@ -160,6 +160,7 @@ class Form {
 		$config                      = \Gutenverse\Framework\Init::instance()->editor_assets->gutenverse_config();
 		$config['hideFormNotice']    = get_option( 'gutenverse_form_action_notice' );
 		$config['hideFormProNotice'] = get_option( 'gutenverse_form_pro_notice' );
+		$config['placeholders']      = Placeholder::get_available_placeholders();
 
 		return $config;
 	}
@@ -213,15 +214,44 @@ class Form {
 	 */
 	public static function get_form_action_data( $id ) {
 		if ( $id ) {
+			$post = get_post( $id );
 			$meta = get_post_meta( $id, 'form-data', true );
 			$data = array(
 				'title' => get_the_title( $id ),
 			);
 
+			// Extract input names from post content.
+			$input_names = array();
+			if ( $post ) {
+				$blocks = parse_blocks( $post->post_content );
+				self::extract_input_names_from_blocks( $blocks, $input_names );
+			}
+			$data['available_inputs'] = array_unique( $input_names );
+
 			return array_merge( $data, $meta );
 		}
 
 		return false;
+	}
+
+	/**
+	 * Extract input names from blocks.
+	 *
+	 * @param array $blocks Blocks.
+	 * @param array $input_names Input names array.
+	 */
+	private static function extract_input_names_from_blocks( $blocks, &$input_names ) {
+		foreach ( $blocks as $block ) {
+			if ( isset( $block['blockName'] ) && strpos( $block['blockName'], 'gutenverse/form-input' ) !== false ) {
+				if ( isset( $block['attrs']['inputName'] ) ) {
+					$input_names[] = $block['attrs']['inputName'];
+				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				self::extract_input_names_from_blocks( $block['innerBlocks'], $input_names );
+			}
+		}
 	}
 
 	/**
@@ -280,6 +310,7 @@ class Form {
 				'use_captcha'                    => $params['use_captcha'],
 				'max_size_file'                  => $params['max_size_file'],
 				'allowed_extensions'             => $params['allowed_extensions'],
+				'variable_mapping'               => isset( $params['variable_mapping'] ) ? $params['variable_mapping'] : array(),
 			)
 		);
 

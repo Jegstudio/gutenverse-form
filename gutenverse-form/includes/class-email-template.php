@@ -11,7 +11,7 @@ namespace Gutenverse_Form;
 
 /**
  * Class Email_Template
- * 
+ *
  * @package gutenverse-form
  */
 class Email_Template {
@@ -35,7 +35,7 @@ class Email_Template {
 
 	/**
 	 * Disable Block Editor
-	 * 
+	 *
 	 * @param bool   $use_block_editor  Whether the post type uses the block editor.
 	 * @param string $post_type         The post type.
 	 * @return bool
@@ -84,11 +84,11 @@ class Email_Template {
 			'label'               => __( 'Email Template', 'gutenverse-form' ),
 			'description'         => __( 'Email Template for Gutenverse Form', 'gutenverse-form' ),
 			'labels'              => $labels,
-			'supports'            => array( 'title', 'custom-fields' ), // Standard editor is disabled
+			'supports'            => array( 'title', 'custom-fields' ),
 			'hierarchical'        => false,
-			'public'              => false, // Not publicly viewable
+			'public'              => false,
 			'show_ui'             => true,
-			'show_in_menu'        => false, // We add manual submenu
+			'show_in_menu'        => false,
 			'menu_position'       => 5,
 			'show_in_admin_bar'   => true,
 			'show_in_nav_menus'   => false,
@@ -97,7 +97,7 @@ class Email_Template {
 			'exclude_from_search' => true,
 			'publicly_queryable'  => false,
 			'capability_type'     => 'post',
-			'show_in_rest'        => true, // Important for Block Editor compat if we used it, or API access
+			'show_in_rest'        => true,
 		);
 		register_post_type( self::POST_TYPE, $args );
 
@@ -105,10 +105,10 @@ class Email_Template {
 			self::POST_TYPE,
 			'gutenverse_email_design',
 			array(
-				'show_in_rest'  => true,
-				'single'        => true,
-				'type'          => 'string',
-				'auth_callback' => function () {
+				'show_in_rest'      => true,
+				'single'            => true,
+				'type'              => 'string',
+				'auth_callback'     => function () {
 					return current_user_can( 'edit_posts' );
 				},
 				'sanitize_callback' => function ( $value ) {
@@ -121,10 +121,10 @@ class Email_Template {
 			self::POST_TYPE,
 			'gutenverse_email_html',
 			array(
-				'show_in_rest'  => true,
-				'single'        => true,
-				'type'          => 'string',
-				'auth_callback' => function () {
+				'show_in_rest'      => true,
+				'single'            => true,
+				'type'              => 'string',
+				'auth_callback'     => function () {
 					return current_user_can( 'edit_posts' );
 				},
 				'sanitize_callback' => function ( $value ) {
@@ -154,12 +154,11 @@ class Email_Template {
 		$screen = get_current_screen();
 
 		if ( is_object( $screen ) && self::POST_TYPE === $screen->post_type ) {
-			// Enqueue our React App
 			$asset_file = GUTENVERSE_FORM_DIR . 'lib/dependencies/email-template.asset.php';
 
 			if ( file_exists( $asset_file ) ) {
 				$asset = require $asset_file;
-				
+
 				wp_enqueue_script(
 					'gutenverse-email-template',
 					GUTENVERSE_FORM_URL . '/assets/js/email-template.js',
@@ -172,11 +171,12 @@ class Email_Template {
 					'gutenverse-email-template',
 					'gutenverseEmailTemplate',
 					array(
-						'nonce'  => wp_create_nonce( 'wp_rest' ),
-						'postId' => get_the_ID(),
+						'nonce'        => wp_create_nonce( 'wp_rest' ),
+						'postId'       => get_the_ID(),
+						'placeholders' => $this->get_available_placeholders(),
 					)
 				);
-				
+
 				wp_enqueue_style(
 					'gutenverse-email-template-css',
 					GUTENVERSE_FORM_URL . '/assets/css/email-template.css',
@@ -189,7 +189,7 @@ class Email_Template {
 
 	/**
 	 * Render Editor
-	 * 
+	 *
 	 * @param \WP_Post $post Post object.
 	 */
 	public function render_editor( $post ) {
@@ -202,9 +202,18 @@ class Email_Template {
 
 	/**
 	 * Save Post (Optional if we save via REST)
-	 * 
+	 *
 	 * @param int $post_id Post ID.
 	 */
 	public function save_post( $post_id ) {
+	}
+
+	/**
+	 * Get Available Placeholders
+	 *
+	 * @return array
+	 */
+	public function get_available_placeholders() {
+		return Placeholder::get_available_placeholders();
 	}
 }

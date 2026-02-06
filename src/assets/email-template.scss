@@ -45,19 +45,14 @@
     border-bottom: 1px solid #e2e4e7;
     box-sizing: border-box;
     
-    h2 {
+    .header-left {
+        flex: 0 0 200px;
         display: flex;
         align-items: center;
-        margin: 0;
-        font-size: 18px;
-        font-weight: 600;
-        color: #1e1e1e;
-        line-height: 1;
 
         .back-link {
             display: inline-flex;
             align-items: center;
-            margin-right: 15px;
             color: #646970;
             text-decoration: none;
             font-size: 14px;
@@ -73,21 +68,79 @@
         }
     }
 
-    .actions {
+    .header-center {
+        flex: 1;
         display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            
+            .title-prefix {
+                font-size: 14px;
+                text-transform: uppercase;
+                color: #757575;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+            }
+
+            .edit-icon {
+                color: #757575;
+                display: flex;
+                align-items: center;
+                opacity: 0.6;
+                transition: opacity 0.2s ease;
+            }
+
+            &:hover .edit-icon {
+                opacity: 1;
+            }
+        }
+
+        .title-input {
+            width: 100%;
+            min-width: 200px;
+            max-width: 500px;
+            margin: 0;
+
+            .components-base-control__field {
+                margin: 0;
+            }
+
+            input {
+                padding: 4px 12px;
+                height: 40px;
+                font-size: 20px;
+                font-weight: 600;
+                text-align: center;
+                border: 1px solid transparent;
+                background: transparent;
+                box-shadow: none;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    border-color: #e2e4e7;
+                }
+
+                &:focus {
+                    border-color: #2271b1;
+                    background: #fff;
+                    box-shadow: 0 0 0 1px #2271b1;
+                }
+            }
+        }
+    }
+
+    .header-right {
+        flex: 0 0 200px;
+        display: flex;
+        justify-content: flex-end;
         align-items: center;
         gap: 12px;
 
-        .title-input {
-            width: 300px;
-            
-            input {
-                padding: 0 12px;
-                height: 36px;
-                font-size: 14px;
-            }
-        }
-        
         .components-button {
             height: 36px; 
             padding: 0 16px;

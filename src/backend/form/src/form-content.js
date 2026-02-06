@@ -4,7 +4,7 @@ import { ControlText, ControlTextarea, ControlCheckbox, ControlSelect } from 'gu
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
-import { IconCloseSVG } from 'gutenverse-core/icons';
+import { IconCloseSVG, IconTrashSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'gutenverse-core/helper';
 import { CardBannerPro, PopupInsufficientTier, PopupPro } from 'gutenverse-core/components';
@@ -68,6 +68,7 @@ const TabGeneral = (props) => {
         }
     ];
     let formSettings = applyFilters('gutenverse-form.general-form-action-settings', defaultSettings);
+
     return <div className="form-tab-body">
         {formSettings.map((el, index) => (
             <div key={index}>{el.Component}</div>
@@ -75,8 +76,71 @@ const TabGeneral = (props) => {
     </div>;
 };
 
-const TabConfirmation = (props) => {
+const TabFieldTags = (props) => {
     const { values, updateValue } = props;
+    const mapping = Array.isArray(values.variable_mapping) ? values.variable_mapping : [];
+
+    const addMapping = () => {
+        updateValue('variable_mapping', [...mapping, '']);
+    };
+
+    const removeMapping = (index) => {
+        const newMapping = [...mapping];
+        newMapping.splice(index, 1);
+        updateValue('variable_mapping', newMapping);
+    };
+
+    const updateItem = (index, value) => {
+        const newMapping = [...mapping];
+        newMapping[index] = value;
+        updateValue('variable_mapping', newMapping);
+    };
+
+    return (
+        <div className="form-tab-body">
+            <div className="gutenverse-field-tags" style={{ paddingTop: '10px' }}>
+                <h4 style={{ marginBottom: '10px' }}>{__('Field Tags', 'gutenverse-form')}</h4>
+                <p style={{ fontSize: '12px', color: '#666', marginBottom: '20px' }}>
+                    {__('Please add variable tags from the form builder that will be forwarded and used in the email templates.', 'gutenverse-form')}
+                </p>
+                <div className="tags-list">
+                    {mapping.map((tag, index) => (
+                        <div key={index} style={{
+                            display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '15px',
+                        }}
+                        >
+                            <div style={{ flex: 1 }}>
+                                <ControlText
+                                    title={__('Field Name / Tag', 'gutenverse-form')}
+                                    value={typeof tag === 'string' ? tag : (tag.name || '')}
+                                    updateValue={(id, val) => updateItem(index, val)}
+                                    description={__('Enter the field name exactly as defined in the builder.', 'gutenverse-form')}
+                                />
+                            </div>
+                            <div
+                                className="gutenverse-button cancel"
+                                onClick={() => removeMapping(index)}
+                                style={{
+                                    marginTop: '28px', width: '32px', height: '32px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                                }}
+                            >
+                                <IconTrashSVG size={14} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div className="gutenverse-button create" onClick={addMapping} style={{ display: 'inline-block', marginTop: '10px' }}>
+                    {__('Add New Tag', 'gutenverse-form')}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const TabConfirmation = (props) => {
+    const {
+        values, updateValue, placeholderDescription,
+    } = props;
 
     return <div className="form-tab-body">
         <ControlCheckbox
@@ -94,18 +158,20 @@ const TabConfirmation = (props) => {
                 value={values.auto_select_email}
                 updateValue={updateValue}
             />
-            {!values.auto_select_email && <ControlText
-                id={'email_input_name'}
-                title={__('Use Input\'s Name', 'gutenverse-form')}
-                description={__('Only the selected input name will be sent email. (e.g : input-email).', 'gutenverse-form')}
-                defaultValue={'input-email'}
-                value={values.email_input_name}
-                updateValue={updateValue}
-            />}
+            {!values.auto_select_email && (
+                <ControlText
+                    id={'email_input_name'}
+                    title={__('Use Input\'s Name', 'gutenverse-form')}
+                    description={__('Only the selected input name will be sent email. (e.g : input-email).', 'gutenverse-form')}
+                    defaultValue={'input-email'}
+                    value={values.email_input_name}
+                    updateValue={updateValue}
+                />
+            )}
             <ControlText
                 id={'user_email_subject'}
                 title={__('Email\'s Subject', 'gutenverse-form')}
-                description={__('This will be your email\'s subject or title. (e.g : Thank you for your submission).', 'gutenverse-form')}
+                description={placeholderDescription(__('This will be your email\'s subject or title. (e.g : Thank you for your submission).', 'gutenverse-form'))}
                 value={values.user_email_subject}
                 updateValue={updateValue}
             />
@@ -126,7 +192,7 @@ const TabConfirmation = (props) => {
             <ControlTextarea
                 id={'user_email_body'}
                 title={__('Messages to User', 'gutenverse-form')}
-                description={__('Enter your messages to include it in email\'s body which will be send to user. (e.g : Thank you for your participation in the survey!).', 'gutenverse-form')}
+                description={placeholderDescription(__('Enter your messages to include it in email\'s body which will be send to user. (e.g : Thank you for your participation in the survey!).', 'gutenverse-form'))}
                 value={values.user_email_body}
                 updateValue={updateValue}
             />
@@ -143,7 +209,7 @@ const TabConfirmation = (props) => {
 };
 
 const TabNotification = (props) => {
-    const { values, updateValue } = props;
+    const { values, updateValue, placeholderDescription } = props;
 
     return <div className="form-tab-body">
         <ControlCheckbox
@@ -157,7 +223,7 @@ const TabNotification = (props) => {
             <ControlText
                 id={'admin_email_subject'}
                 title={__('Email Subject', 'gutenverse-form')}
-                description={__('This will be your email\'s subject or title. (e.g : User submission).', 'gutenverse-form')}
+                description={placeholderDescription(__('This will be your email\'s subject or title. (e.g : User submission).', 'gutenverse-form'))}
                 value={values.admin_email_subject}
                 updateValue={updateValue}
             />
@@ -183,9 +249,9 @@ const TabNotification = (props) => {
                 updateValue={updateValue}
             />
             <ControlTextarea
-                id={'admin_note'}
+                id="admin_note"
                 title={__('Messages to Admin', 'gutenverse-form')}
-                description={__('Enter your messages to include it in email\'s body which will be send to admin. (e.g : A submission from user with the following data.).', 'gutenverse-form')}
+                description={placeholderDescription(__('Enter your messages to include it in email\'s body which will be send to admin. (e.g : A submission from user with the following data.).', 'gutenverse-form'))}
                 value={values.admin_note}
                 updateValue={updateValue}
             />
@@ -200,6 +266,8 @@ const TabNotification = (props) => {
         </>}
     </div>;
 };
+
+
 
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
@@ -218,6 +286,10 @@ export const FormContent = (props) => {
         notification: {
             label: __('Notification', 'gutenverse-form'),
         },
+
+        tags: {
+            label: __('Field Tags', 'gutenverse-form'),
+        },
         pro: {
             label: __('Pro', 'gutenverse-form'),
             pro: true
@@ -233,7 +305,22 @@ export const FormContent = (props) => {
         });
     }, []);
 
-    const tabProps = { ...props, emailTemplates };
+    const placeholderDescription = (original) => (
+        <>
+            {original}
+            <br />
+            <span style={{
+                color: '#007cba', display: 'block', marginTop: '5px', fontSize: '11px',
+            }}
+            >
+                {__('Use {{site_title}}, {{form_title}}, {{entry_id}}, or the field tags you\'ve added in the Field Tags tab.', 'gutenverse-form')}
+            </span>
+        </>
+    );
+
+    const tabProps = {
+        ...props, emailTemplates, placeholderDescription,
+    };
 
     const changeActive = key => {
         setActiveTab(key);
@@ -326,8 +413,10 @@ export const FormContent = (props) => {
             })}
         </div>
         {tab === 'general' && <TabGeneral {...props} />}
+        {tab === 'tags' && <TabFieldTags {...tabProps} />}
         {tab === 'confirmation' && ConfirmationTab}
         {tab === 'notification' && NotificationTab}
+
         {tab === 'pro' && ProTab}
     </div>;
 };

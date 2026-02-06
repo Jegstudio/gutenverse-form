@@ -50,11 +50,11 @@ const App = () => {
                     const design = JSON.parse(post.meta.gutenverse_email_design);
                     setInitialDesign(design);
                 } catch (e) {
-                    console.error('Invalid JSON design', e);
+                    // Invalid JSON design
                 }
             }
-        }).catch(err => {
-            console.error('Error loading post', err);
+        }).catch(() => {
+            // Error loading post
         });
     }, [currentPostId]);
 
@@ -104,7 +104,6 @@ const App = () => {
                     isDismissible: true,
                 });
             }).catch((err) => {
-                console.error(err);
                 setIsSaving(false);
                 addNotice({
                     status: 'error',
@@ -120,20 +119,27 @@ const App = () => {
     return (
         <div className="gutenverse-email-builder">
             <div className="gutenverse-email-builder-header">
-                <h2>
+                <div className="header-left">
                     <a href={dashboardUrl} className="back-link">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                         {__('Back', 'gutenverse-form')}
                     </a>
-                    {__('Email Builder', 'gutenverse-form')}
-                </h2>
-                <div className="actions">
-                    <TextControl
-                        value={title}
-                        onChange={(value) => setTitle(value)}
-                        placeholder={__('Template Name', 'gutenverse-form')}
-                        className="title-input"
-                    />
+                </div>
+                <div className="header-center">
+                    <div className="title-wrapper">
+                        <span className="title-prefix">{__('title:', 'gutenverse-form')}</span>
+                        <TextControl
+                            value={title}
+                            onChange={(value) => setTitle(value)}
+                            placeholder={__('Template Name', 'gutenverse-form')}
+                            className="title-input"
+                        />
+                        <span className="edit-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                        </span>
+                    </div>
+                </div>
+                <div className="header-right">
                     <Button isPrimary isBusy={isSaving} onClick={saveDesign}>
                         {isSaving ? __('Saving...', 'gutenverse-form') : __('Save', 'gutenverse-form')}
                     </Button>
@@ -146,6 +152,18 @@ const App = () => {
                     style={{ height: '100%', width: '100%' }}
                     minHeight="100%"
                     options={{
+                        mergeTags: window.gutenverseEmailTemplate?.placeholders || [],
+                        mergeTagsConfig: {
+                            sort: false,
+                            label: __('Field Tags', 'gutenverse-form'),
+                        },
+                        translations: {
+                            en: {
+                                'labels.merge_tags': __('Field Tags', 'gutenverse-form'),
+                                'labels.mergeTags': __('Field Tags', 'gutenverse-form'),
+                                'labels.merge-tags': __('Field Tags', 'gutenverse-form'),
+                            },
+                        },
                         tools: {
                             menu: {
                                 enabled: false
