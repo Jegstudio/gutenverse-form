@@ -99,8 +99,18 @@ export const panelIcon = (props) => {
         {
             id: 'lazyLoad',
             show: iconType && iconType === 'image' && useIcon,
-            label: __('Set Lazy Load', 'gutenverse-form'),
-            component: CheckboxControl,
+            label: __('Image Load', 'gutenverse'),
+            component: SelectControl,
+            options: [
+                {
+                    value: false,
+                    label: __('Normal Load', 'gutenverse')
+                },
+                {
+                    value: true,
+                    label: __('Lazy Load', 'gutenverse')
+                },
+            ]
         },
         {
             id: 'imageAlt',
