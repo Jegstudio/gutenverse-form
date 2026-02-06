@@ -1,6 +1,5 @@
 
 import classnames from 'classnames';
-import { useBlockProps } from '@wordpress/block-editor';
 import { RichText } from '@wordpress/block-editor';
 import { useAnimationFrontend } from 'gutenverse-core/hooks';
 import { useDisplayFrontend } from 'gutenverse-core/hooks';
@@ -16,7 +15,6 @@ const SaveInputWrapper = ({ attributes, inputType, children, defaultLogic }) => 
         position,
         validationWarning,
         required,
-        inputName
     } = attributes;
 
     const animationClass = useAnimationFrontend(attributes);
@@ -40,7 +38,6 @@ const SaveInputWrapper = ({ attributes, inputType, children, defaultLogic }) => 
         className={'input-label'}
         value={inputLabel}
         tagName={'label'}
-        htmlFor={inputName}
     />;
 
     const Helper = showHelper && <RichText.Content
@@ -58,7 +55,7 @@ const SaveInputWrapper = ({ attributes, inputType, children, defaultLogic }) => 
     return (
         <div
             {...additionalProps}
-            {...useBlockProps.save({ className })}>
+            className={className}>
             <div className="label-wrapper">
                 {Label}
                 {Required}

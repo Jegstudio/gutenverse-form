@@ -1,9 +1,10 @@
 
-import SaveInputWrapper from '../form-input/general/save-input-wrapper';
+import SaveInputWrapper from '../../../form-input/general/deprecated/v1/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
 import { compose } from '@wordpress/compose';
+import { RichText } from '@wordpress/block-editor';
 
 const save = compose(
     withMouseMoveEffectScript
@@ -18,8 +19,10 @@ const save = compose(
         validationWarning,
         defaultLogic,
         displayLogic,
-        checkboxOptions,
-        displayBlock
+        displayBlock,
+        gdprValue,
+        gdprFormValue,
+        gdprLabel
     } = attributes;
 
     const innerClass = classnames(
@@ -43,26 +46,26 @@ const save = compose(
     };
 
     return (
-        <SaveInputWrapper {...props} inputType={'checkbox'} defaultLogic={defaultLogic}>
+        <SaveInputWrapper {...props} inputType={'gdpr'} defaultLogic={defaultLogic}>
             <div className={innerClass}>
-                <div hidden
-                    name={inputName}
-                    className="gutenverse-input"
-                    data-validation={JSON.stringify(validation)}
-                    {...additionalProps}
-                />
-                {checkboxOptions.map(item => {
-                    return <label key={item.value} htmlFor={item.value}>
+                <div className="guten-gdpr-wrapper">
+                    <div className="guten-gdpr-input-wrapper">
                         <input
-                            name={inputName} value={item.value}
-                            className="gutenverse-input-checkbox"
+                            name={inputName} checked={gdprValue}
+                            data-validation={JSON.stringify(validation)}
+                            {...additionalProps}
+                            className="gutenverse-input gutenverse-input-gdpr"
                             type="checkbox"
+                            data-value={gdprFormValue}
                         />
-                        <span className="check">
-                            {item.label}
-                        </span>
-                    </label>;
-                })}
+                        <span className="check"></span>
+                    </div>
+                    <RichText.Content
+                        className={'gdpr-label'}
+                        value={gdprLabel}
+                        tagName={'div'}
+                    />
+                </div>
             </div>
         </SaveInputWrapper>
     );
