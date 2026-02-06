@@ -19,7 +19,7 @@ class Email_Template {
 	/**
 	 * Post Type Slug
 	 */
-	const POST_TYPE = 'guten-email-tpl';
+	const POST_TYPE = 'gutenverse-email-tpl';
 
 	/**
 	 * Constructor

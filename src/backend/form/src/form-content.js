@@ -227,7 +227,7 @@ export const FormContent = (props) => {
     const [emailTemplates, setEmailTemplates] = useState([]);
 
     useEffect(() => {
-        apiFetch({ path: '/wp/v2/guten-email-tpl?per_page=100' }).then(posts => {
+        apiFetch({ path: '/wp/v2/gutenverse-email-tpl?per_page=100' }).then(posts => {
             const options = posts.map(post => ({ label: post.title.rendered, value: post.id }));
             setEmailTemplates([{ label: __('Default', 'gutenverse-form'), value: '' }, ...options]);
         });

@@ -33,7 +33,7 @@ const App = () => {
 
         // Fetch Post Data including Meta
         apiFetch({
-            path: `/wp/v2/guten-email-tpl/${currentPostId}`,
+            path: `/wp/v2/gutenverse-email-tpl/${currentPostId}`,
             headers: { 'X-WP-Nonce': nonce }
         }).then((post) => {
             if (post.title && post.title.rendered) {
@@ -76,7 +76,7 @@ const App = () => {
             const { design, html } = data;
 
             apiFetch({
-                path: `/wp/v2/guten-email-tpl/${currentPostId}`,
+                path: `/wp/v2/gutenverse-email-tpl/${currentPostId}`,
                 method: 'POST',
                 headers: { 'X-WP-Nonce': nonce },
                 data: {
@@ -115,7 +115,7 @@ const App = () => {
         });
     };
 
-    const dashboardUrl = window.location.href.split('post.php')[0] + 'edit.php?post_type=guten-email-tpl';
+    const dashboardUrl = window.location.href.split('post.php')[0] + 'edit.php?post_type=gutenverse-email-tpl';
 
     return (
         <div className="gutenverse-email-builder">
