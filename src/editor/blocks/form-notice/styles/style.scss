@@ -1,0 +1,21 @@
+.guten-form-notice {
+	// Default hidden, shown via class injection from form-builder.js
+	display: none;
+
+	&.show-notice {
+		display: block;
+	}
+
+	.guten-form-notice-wrapper {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.guten-form-notice-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		line-height: normal;
+	}
+}

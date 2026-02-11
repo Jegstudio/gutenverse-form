@@ -62,13 +62,13 @@ class GutenverseFormValidation extends Default {
                 loader.attr('style', `width:${width}px;height:${height}px;`);
             });
 
-            if (isAdmin) {
-                const notifclass = 'guten-error';
-                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${missingLabel}</div></div>`;
-                formBuilder.prepend(notice);
-            }
-        }
-    }
+			if (isAdmin) {
+				const notifclass = "guten-error";
+				const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${missingLabel}</div></div>`;
+				formBuilder.prepend(notice);
+			}
+		}
+	}
 
     __captchaJS(formBuilder) {
         const captcha = formBuilder.find('.gutenverse-recaptcha');
@@ -337,40 +337,106 @@ class GutenverseFormValidation extends Default {
         });
     }
 
-    _requestMessage(currentFormBuilder, formData, notifClass, hideAfterSubmit) {
-        let message = '';
-        let notifclass = '';
+	_requestMessage(currentFormBuilder, formData, notifClass, hideAfterSubmit) {
+		const noticeBlock = currentFormBuilder.find(".guten-form-notice");
+		let message = '';
+		let notifclass = '';
 
-        switch (notifClass) {
-            case 'success':
-                message = formData['form_success_notice'];
-                notifclass = 'guten-success';
-                break;
-            case 'error':
-                message = formData['form_error_notice'];
-                notifclass = 'guten-error';
-                break;
-            default:
-                break;
-        }
+		switch (notifClass) {
+			case 'success':
+				message = formData['form_success_notice'];
+				notifclass = "guten-success";
+				break;
+			case "error":
+				message = formData["form_error_notice"];
+				notifclass = "guten-error";
+				break;
+			default:
+				break;
+		}
 
-        if (!isEmpty(message)) {
-            // REMINDER : instead of putting the notice div in block save.js, it is done this way to prevent "Block Recovery" issue.
-            const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
+		if (noticeBlock.nodes.length > 0) {
+			const noticeWrapper = noticeBlock.find(
+				".guten-form-notice-wrapper",
+			);
+			const noticeContent = noticeBlock.find(
+				".guten-form-notice-content",
+			);
+			const noticeIcon = noticeBlock.find(".guten-form-notice-icon");
+			const noticeData = JSON.parse(
+				noticeBlock.attr("data-notice") || "{}",
+			);
 
-            if (hideAfterSubmit === 'true' || hideAfterSubmit === true) {
-                currentFormBuilder.html(notice);
-            } else {
-                currentFormBuilder.prepend(notice);
-            }
+			// Determine message
+			let finalMessage = message;
+			if (noticeData.messageSource === "custom") {
+				finalMessage =
+					notifClass === "success"
+						? noticeData.successMessage
+						: noticeData.errorMessage;
+			}
 
-            return;
-        }
+			// Handle Icon
+			noticeIcon.html("");
+			const currentIcon =
+				notifClass === "success"
+					? noticeData.iconSuccess
+					: noticeData.iconError;
+			const currentType =
+				notifClass === "success"
+					? noticeData.iconSuccessType
+					: noticeData.iconErrorType;
+			const currentSVG =
+				notifClass === "success"
+					? noticeData.iconSuccessSVG
+					: noticeData.iconErrorSVG;
+			const currentLayout =
+				notifClass === "success"
+					? noticeData.iconLayoutSuccess
+					: noticeData.iconLayoutError;
 
-        if (hideAfterSubmit === 'true' || hideAfterSubmit === true) {
-            currentFormBuilder.remove();
-        }
-    }
+			if (currentIcon) {
+				if (currentType === "svg") {
+					noticeIcon.html(currentSVG);
+				} else if (currentType === "icon") {
+					noticeIcon.html(`<i class="${currentIcon}"></i>`);
+				}
+			}
+
+			noticeContent.html(finalMessage);
+			noticeBlock.removeClass(
+				"status-success status-error notice-success notice-error show-notice",
+			);
+			noticeBlock.addClass(
+				`status-${notifClass} notice-${notifClass} show-notice`,
+			);
+
+			noticeWrapper.removeClass(
+				"layout-left layout-right layout-top layout-bottom",
+			);
+			noticeWrapper.addClass(`layout-${currentLayout}`);
+			noticeWrapper.attr("style", "display: flex;");
+
+			return;
+		}
+
+		if (!isEmpty(message)) {
+			// REMINDER : instead of putting the notice div in block save.js, it is done this way to prevent "Block Recovery" issue.
+			const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
+
+			if (hideAfterSubmit === "true" || hideAfterSubmit === true) {
+				currentFormBuilder.html(notice);
+			} else {
+				currentFormBuilder.prepend(notice);
+			}
+
+			return;
+		}
+
+		if (hideAfterSubmit === "true" || hideAfterSubmit === true) {
+			currentFormBuilder.remove();
+		}
+	}
 
     __validateEmail(email) {
         var re = /\S+@\S+\.\S+/;

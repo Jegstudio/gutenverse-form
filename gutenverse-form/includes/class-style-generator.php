@@ -23,6 +23,8 @@ use Gutenverse_Form\Style\Form_Input_Switch;
 use Gutenverse_Form\Style\Form_Input_Telp;
 use Gutenverse_Form\Style\Form_Input_Text;
 use Gutenverse_Form\Style\Form_Input_Textarea;
+use Gutenverse_Form\Style\Form_Notice;
+
 
 /**
  * Class Style Generator
@@ -104,6 +106,10 @@ class Style_Generator {
 			case 'gutenverse/form-input-textarea':
 				$instance = new Form_Input_Textarea( $attrs );
 				break;
+			case 'gutenverse/form-notice':
+				$instance = new Form_Notice( $attrs );
+				break;
+
 		}
 
 		return $instance;

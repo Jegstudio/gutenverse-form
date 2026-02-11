@@ -61,7 +61,9 @@ class Frontend_Assets {
 			case 'gutenverse/form-input-number':
 			case 'gutenverse/form-input-email':
 			case 'gutenverse/form-input-date':
-				if ( isset( $attrs['showIcon'] ) && $attrs['showIcon'] ) {
+			case 'gutenverse/form-notice':
+				if ( ( isset( $attrs['showIcon'] ) && $attrs['showIcon'] ) || ( isset( $attrs['icon'] ) && $attrs['icon'] ) || ( isset( $attrs['iconSuccess'] ) && $attrs['iconSuccess'] ) || ( isset( $attrs['iconError'] ) && $attrs['iconError'] ) ) {
+
 					if ( ! isset( $attrs['iconType'] ) || 'icon' === $attrs['iconType'] ) {
 						$this->icon_conditional_load( $conditions );
 					}
@@ -136,9 +138,11 @@ class Frontend_Assets {
 			'form-input-telp',
 			'form-input-text',
 			'form-input-textarea',
+			'form-notice',
 		);
 
 		foreach ( $blocks as $block ) {
+
 			wp_register_style(
 				'gutenverse-form-frontend-' . $block . '-style',
 				GUTENVERSE_FORM_URL . '/assets/css/frontend/' . $block . '.css',
