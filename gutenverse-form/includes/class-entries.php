@@ -256,7 +256,7 @@ class Entries {
 	 * @param Query $query .
 	 */
 	public function custom_column_query( $query ) {
-		if ( is_admin() && self::POST_TYPE === $query->query['post_type'] ) {
+		if ( is_admin() && isset( $query->query['post_type'] ) && self::POST_TYPE === $query->query['post_type'] ) {
 			$orderby = $query->get( 'orderby' );
 			$form_id = isset( $_GET['form_id'] ) ? (int) $_GET['form_id'] : '';
 

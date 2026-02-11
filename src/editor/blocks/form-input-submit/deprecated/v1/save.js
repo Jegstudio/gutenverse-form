@@ -1,6 +1,6 @@
 
 import classnames from 'classnames';
-import { RichText, useBlockProps } from '@wordpress/block-editor';
+import { RichText } from '@wordpress/block-editor';
 import { useAnimationFrontend } from 'gutenverse-core/hooks';
 import { useDisplayFrontend } from 'gutenverse-core/hooks';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
@@ -41,7 +41,7 @@ const save = compose(
     );
 
     return (
-        <div {...useBlockProps.save({ className })}>
+        <div className={className}>
             <div className="form-notification"></div>
             <button className={buttonClass} type="submit">
                 {showIcon && iconPosition === 'before' && <i className={`fa-lg ${icon}`} />}

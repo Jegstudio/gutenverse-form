@@ -1,6 +1,5 @@
 
 import classnames from 'classnames';
-import { useBlockProps } from '@wordpress/block-editor';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { isSticky } from 'gutenverse-core/helper';
 import { useAnimationFrontend } from 'gutenverse-core/hooks';
@@ -52,7 +51,7 @@ const save = ({ attributes }) => {
     return (
         <form
             style={{ display: 'none' }}
-            {...useBlockProps.save({ className })}
+            className={className}
             {...attr}>
             {isSticky(sticky) &&
             <script>

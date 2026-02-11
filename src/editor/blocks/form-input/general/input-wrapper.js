@@ -47,6 +47,7 @@ const InputWrapper = props => {
         showHelper,
         position,
         required,
+        inputName
     } = attributes;
 
     const animationClass = useAnimationEditor(attributes);
@@ -78,6 +79,7 @@ const InputWrapper = props => {
     const Label = showLabel && <RichText
         className={'input-label'}
         tagName={'label'}
+        htmlFor={inputName}
         aria-label={__('Label Title', 'gutenverse-form')}
         placeholder={__('Label Title', 'gutenverse-form')}
         value={inputLabel}
