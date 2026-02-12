@@ -13,10 +13,10 @@ import classnames from "classnames";
 import { renderIcon } from "gutenverse-core/helper";
 import { useDynamicStyle, useGenerateElementId } from "gutenverse-core/styling";
 import getBlockStyle from "./styles/block-style";
-import { BlockPanelController } from "gutenverse-core/controls";
+import { BlockPanelController, PanelTutorial } from "gutenverse-core/controls";
 import { CopyElementToolbar } from "gutenverse-core/components";
 
-import { useBlockProps, RichText } from "@wordpress/block-editor";
+import { useBlockProps, RichText, InspectorControls } from "@wordpress/block-editor";
 import { __ } from "@wordpress/i18n";
 import { useSelect } from "@wordpress/data";
 
@@ -128,6 +128,18 @@ const FormNoticeBlock = compose(
 	return (
 		<>
 			<CopyElementToolbar {...props} />
+			<InspectorControls>
+				<PanelTutorial
+					title={__('Remove notice?', 'gutenverse-form')}
+					list={[
+						{
+							title: __('Notice still appears after removing the "Form Notice"?', 'gutenverse-form'),
+							description: __('Your form action may have a default notice message. Go to Admin Dashboard > Form > Form Action and delete the notice text.', 'gutenverse-form')
+						},
+					]}
+					openDefault={false}
+				/>
+			</InspectorControls>
 			<BlockPanelController
 				panelList={panelList}
 				props={props}
