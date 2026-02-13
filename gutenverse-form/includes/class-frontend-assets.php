@@ -93,6 +93,7 @@ class Frontend_Assets {
 			'input-gdpr',
 			'input-multiselect',
 			'input-select',
+			'input-radio',
 		);
 
 		foreach ( $blocks as $block ) {
