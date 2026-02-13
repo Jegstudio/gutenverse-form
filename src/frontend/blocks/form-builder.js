@@ -19,6 +19,7 @@ class GutenverseFormValidation extends Default {
         const formData = data.filter(el => el.formId == formId);
 
         this.__captchaJS(formBuilder);
+        this._initDynamicValues(formBuilder);
         if (formData.length !== 0) {
             if (formData[0]['require_login'] && !formData[0]['logged_in']) {
                 formBuilder.remove();
@@ -85,6 +86,39 @@ class GutenverseFormValidation extends Default {
                 document.head.appendChild(script);
             }, 300);
         }
+    }
+
+    _initDynamicValues(formBuilder) {
+        formBuilder.find('.gutenverse-input').each(input => {
+            const dynamicConfig = u(input).data('dynamic-value');
+            if (dynamicConfig) {
+                try {
+                    const config = typeof dynamicConfig === 'string' ? JSON.parse(dynamicConfig) : dynamicConfig;
+                    if (config.type === 'custom' && config.custom) {
+                        if (!input.value) input.value = config.custom;
+                    } else if (config.type === 'query' && config.query?.key) {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const val = urlParams.get(config.query.key);
+                        if (val && !input.value) input.value = val;
+                    } else if (config.type === 'user' && config.user?.type) {
+                        const userData = window['GutenverseFormValidationData']?.userData;
+                        if (userData) {
+                            let val = '';
+                            if (config.user.type === 'role') {
+                                val = userData.role ? userData.role.join(', ') : '';
+                            } else if (config.user.type === 'meta' && config.user.meta) {
+                                val = userData[config.user.meta] || '';
+                            } else {
+                                val = userData[config.user.type];
+                            }
+                            if (val && !input.value) input.value = val;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Gutenverse Form: Error parsing dynamic value', e);
+                }
+            }
+        });
     }
 
     _getInputValue(currentFormBuilder, input, validation) {

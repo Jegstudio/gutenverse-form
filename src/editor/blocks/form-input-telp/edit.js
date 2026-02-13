@@ -40,7 +40,9 @@ const FormInputNumberTelp = compose(
         image,
         imageAlt,
         lazyLoad,
-        elementId
+        elementId,
+        defaultValueType,
+        customDefaultValue,
     } = attributes;
 
     const elementRef = useRef();
@@ -114,6 +116,11 @@ const FormInputNumberTelp = compose(
                         className="gutenverse-input gutenverse-input-telp"
                         type="tel"
                         pattern={inputPattern}
+                        defaultValue={
+                            defaultValueType === "custom"
+                                ? customDefaultValue
+                                : ""
+                        }
                         ref={elementRef}
                     />
                 </div>
@@ -124,6 +131,11 @@ const FormInputNumberTelp = compose(
                     className="gutenverse-input gutenverse-input-telp"
                     type="tel"
                     pattern={inputPattern}
+                    defaultValue={
+                        defaultValueType === "custom"
+                            ? customDefaultValue
+                            : ""
+                    }
                     ref={elementRef}
                 />}
         </InputWrapper>

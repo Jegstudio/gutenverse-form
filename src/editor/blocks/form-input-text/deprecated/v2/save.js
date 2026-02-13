@@ -1,4 +1,5 @@
-import SaveInputWrapper from '../form-input/general/save-input-wrapper';
+
+import SaveInputWrapper from '../../../form-input/general/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
 import { compose } from '@wordpress/compose';
@@ -38,15 +39,6 @@ const save = compose(withMouseMoveEffectScript)((props) => {
 		icon,
 		iconSVG,
 		useIcon,
-		defaultValueType,
-		customDefaultValue,
-		loopDataType,
-		loopDataMetaKey,
-		loopDataTaxonomySlug,
-		queryParamKey,
-		userDataType,
-		userDataMetaKey,
-		fallbackDefaultValue,
 	} = attributes;
 
     const validation = {
@@ -64,24 +56,7 @@ const save = compose(withMouseMoveEffectScript)((props) => {
 	};
 
     const additionalProps = {
-        ['data-display-rule']: !isEmpty(defaultLogic) && !isEmpty(displayLogic) ? JSON.stringify(displayRule) : undefined,
-        ['data-dynamic-value']: JSON.stringify({
-            type: defaultValueType,
-            custom: customDefaultValue,
-            loop: {
-                type: loopDataType,
-                meta: loopDataMetaKey,
-                tax: loopDataTaxonomySlug
-            },
-            query: {
-                key: queryParamKey
-            },
-            user: {
-                type: userDataType,
-                meta: userDataMetaKey
-            },
-            fallback: fallbackDefaultValue
-        })
+        ['data-display-rule']: !isEmpty(defaultLogic) && !isEmpty(displayLogic) ? JSON.stringify(displayRule) : undefined
     };
     const imageAltText = imageAlt || null;
 

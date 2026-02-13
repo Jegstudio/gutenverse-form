@@ -1,5 +1,5 @@
 
-import SaveInputWrapper from '../form-input/general/save-input-wrapper';
+import SaveInputWrapper from '../../../form-input/general/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
@@ -18,10 +18,9 @@ const save = compose(
         validationWarning,
         defaultLogic,
         displayLogic,
-        radioOptions,
+        checkboxOptions,
         displayBlock
     } = attributes;
-
 
     const innerClass = classnames(
         'gutenverse-inner-input',
@@ -29,7 +28,7 @@ const save = compose(
     );
 
     const validation = {
-        type: 'radio',
+        type: 'checkbox',
         required,
         validationWarning
     };
@@ -44,7 +43,7 @@ const save = compose(
     };
 
     return (
-        <SaveInputWrapper {...props} inputType={'radio'} defaultLogic={defaultLogic}>
+        <SaveInputWrapper {...props} inputType={'checkbox'} defaultLogic={defaultLogic}>
             <div className={innerClass}>
                 <div hidden
                     name={inputName}
@@ -52,15 +51,14 @@ const save = compose(
                     data-validation={JSON.stringify(validation)}
                     {...additionalProps}
                 />
-                {radioOptions.map(item => {
-                    return <label key={item.value}>
+                {checkboxOptions.map(item => {
+                    return <label key={item.value} htmlFor={item.value}>
                         <input
                             name={inputName} value={item.value}
-                            className="gutenverse-input-radio"
-                            type="radio"
-                            checked={item.selected ? true : undefined}
+                            className="gutenverse-input-checkbox"
+                            type="checkbox"
                         />
-                        <span className="radio">
+                        <span className="check">
                             {item.label}
                         </span>
                     </label>;

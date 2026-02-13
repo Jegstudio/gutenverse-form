@@ -57,6 +57,7 @@ const save = compose(
                             name={inputName} value={item.value}
                             className="gutenverse-input-checkbox"
                             type="checkbox"
+                            checked={item.selected ? true : undefined}
                         />
                         <span className="check">
                             {item.label}

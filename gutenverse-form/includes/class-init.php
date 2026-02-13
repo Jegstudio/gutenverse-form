@@ -100,6 +100,13 @@ class Init {
 	public $form_validation;
 
 	/**
+	 * Hold Dynamic Value Instance.
+	 *
+	 * @var Dynamic_Value
+	 */
+	public $dynamic_value;
+
+	/**
 	 * Singleton page for Init Class
 	 *
 	 * @return Gutenverse
@@ -351,6 +358,7 @@ class Init {
 		$this->meta_option      = new Meta_Option();
 		$this->blocks           = new Blocks();
 		$this->form_validation  = new Form_Validation();
+		$this->dynamic_value    = new Dynamic_Value();
 	}
 
 	/**

@@ -25,24 +25,26 @@ const FormInputTextBlock = compose(
         clientId
     } = props;
 
-    const {
-        inputPlaceholder,
-        inputName,
-        required,
-        validationType,
-        validationMin,
-        validationMax,
-        validationWarning,
-        icon,
-        iconSVG,
-        iconType,
-        lazyLoad,
-        image,
-        imageAlt,
-        iconStyleMode,
-        useIcon,
-        elementId
-    } = attributes;
+	const {
+		inputPlaceholder,
+		inputName,
+		required,
+		validationType,
+		validationMin,
+		validationMax,
+		validationWarning,
+		icon,
+		iconSVG,
+		iconType,
+		lazyLoad,
+		image,
+		imageAlt,
+		iconStyleMode,
+		useIcon,
+		elementId,
+		defaultValueType,
+		customDefaultValue,
+	} = attributes;
 
     const animationClass = useAnimationEditor(attributes);
     const elementRef = useRef();
@@ -51,8 +53,8 @@ const FormInputTextBlock = compose(
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     useDynamicScript(elementRef);
 
-    const [openIconLibrary, setOpenIconLibrary] = useState(false);
-    const imageAltText = imageAlt || null;
+	const [openIconLibrary, setOpenIconLibrary] = useState(false);
+	const imageAltText = imageAlt || null;
 
     const inputData = {
         ...props,
@@ -61,14 +63,14 @@ const FormInputTextBlock = compose(
         elementRef
     };
 
-    const validation = {
-        type: 'text',
-        required,
-        validationType,
-        validationMin,
-        validationMax,
-        validationWarning
-    };
+	const validation = {
+		type: 'text',
+		required,
+		validationType,
+		validationMin,
+		validationMax,
+		validationWarning,
+	};
 
     const imageLazyLoad = () => {
         if (lazyLoad) {
@@ -97,46 +99,62 @@ const FormInputTextBlock = compose(
         }
     };
 
-    return <>
-        <CopyElementToolbar {...props} />
-        <InputWrapper {...inputData}>
-            {openIconLibrary && createPortal(
-                <IconLibrary
-                    closeLibrary={() => setOpenIconLibrary(false)}
-                    value={icon}
-                    onChange={icon => setAttributes({ icon })}
-                />,
-                gutenverseRoot
-            )}
-            {useIcon ?
-                <div className="input-icon-wrapper input-text">
-                    {iconContent()}
-                    <input data-validation={JSON.stringify(validation)}
-                        placeholder={inputPlaceholder}
-                        name={inputName}
-                        className={classnames(
-                            'gutenverse-input',
-                            'gutenverse-input-text',
-                            animationClass
-                        )}
-                        type="text"
-                        ref={elementRef}
-                    />
-                </div>
-                :
-                <input data-validation={JSON.stringify(validation)}
-                    placeholder={inputPlaceholder}
-                    name={inputName}
-                    className={classnames(
-                        'gutenverse-input',
-                        'gutenverse-input-text',
-                        animationClass
-                    )}
-                    type="text"
-                    ref={elementRef}
-                />}
-        </InputWrapper>
-    </>;
+	return (
+		<>
+			<CopyElementToolbar {...props} />
+			<InputWrapper {...inputData}>
+				{openIconLibrary &&
+					createPortal(
+						<IconLibrary
+							closeLibrary={() => setOpenIconLibrary(false)}
+							value={icon}
+							onChange={(icon) => setAttributes({ icon })}
+						/>,
+						gutenverseRoot,
+					)}
+				{useIcon ? (
+					<div className="input-icon-wrapper input-text">
+						{iconContent()}
+						<input
+							data-validation={JSON.stringify(validation)}
+							placeholder={inputPlaceholder}
+							name={inputName}
+							className={classnames(
+								"gutenverse-input",
+								"gutenverse-input-text",
+								animationClass,
+							)}
+							type="text"
+							defaultValue={
+								defaultValueType === "custom"
+									? customDefaultValue
+									: ""
+							}
+							ref={elementRef}
+						/>
+					</div>
+				) : (
+					<input
+						data-validation={JSON.stringify(validation)}
+						placeholder={inputPlaceholder}
+						name={inputName}
+						className={classnames(
+							"gutenverse-input",
+							"gutenverse-input-text",
+							animationClass,
+						)}
+						type="text"
+						defaultValue={
+							defaultValueType === "custom"
+								? customDefaultValue
+								: ""
+						}
+						ref={elementRef}
+					/>
+				)}
+			</InputWrapper>
+		</>
+	);
 });
 
 export default FormInputTextBlock;

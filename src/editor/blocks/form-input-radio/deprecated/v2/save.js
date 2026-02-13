@@ -1,5 +1,5 @@
 
-import SaveInputWrapper from '../form-input/general/save-input-wrapper';
+import SaveInputWrapper from '../../../form-input/general/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
@@ -58,7 +58,6 @@ const save = compose(
                             name={inputName} value={item.value}
                             className="gutenverse-input-radio"
                             type="radio"
-                            checked={item.selected ? true : undefined}
                         />
                         <span className="radio">
                             {item.label}

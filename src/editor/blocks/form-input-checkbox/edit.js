@@ -66,6 +66,7 @@ const FormInputCheckboxBlock = compose(
                             name={inputName} value={item.value}
                             className="gutenverse-input-checkbox"
                             type="checkbox"
+                            defaultChecked={item.selected}
                         />
                         <span className="check">
                             {item.label}

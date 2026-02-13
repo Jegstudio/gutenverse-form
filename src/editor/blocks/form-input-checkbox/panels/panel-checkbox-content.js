@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { RepeaterControl, TextControl } from 'gutenverse-core/controls';
+import { CheckboxControl, RepeaterControl, TextControl } from 'gutenverse-core/controls';
 
 export const checkboxContentPanel = () => {
     return [
@@ -18,6 +18,11 @@ export const checkboxContentPanel = () => {
                     id: 'value',
                     label: __('Value', 'gutenverse-form'),
                     component: TextControl,
+                },
+                {
+                    id: 'selected',
+                    label: __('Selected', 'gutenverse-form'),
+                    component: CheckboxControl,
                 },
             ],
         },

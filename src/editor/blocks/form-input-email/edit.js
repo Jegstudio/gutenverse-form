@@ -39,7 +39,9 @@ const FormInputEmailBlock = compose(
         image,
         imageAlt,
         lazyLoad,
-        elementId
+        elementId,
+        defaultValueType,
+        customDefaultValue,
     } = attributes;
 
     const elementRef = useRef();
@@ -113,6 +115,11 @@ const FormInputEmailBlock = compose(
                         name={inputName}
                         className="gutenverse-input gutenverse-input-email"
                         type="text"
+                        defaultValue={
+                            defaultValueType === "custom"
+                                ? customDefaultValue
+                                : ""
+                        }
                         ref={elementRef}
                     />
                 </div>
@@ -122,6 +129,11 @@ const FormInputEmailBlock = compose(
                     name={inputName}
                     className="gutenverse-input gutenverse-input-email"
                     type="text"
+                    defaultValue={
+                        defaultValueType === "custom"
+                            ? customDefaultValue
+                            : ""
+                    }
                     ref={elementRef}
                 />}
         </InputWrapper>

@@ -40,7 +40,9 @@ const FormInputTextareaBlock = compose(
         image,
         imageAlt,
         lazyLoad,
-        elementId
+        elementId,
+        defaultValueType,
+        customDefaultValue,
     } = attributes;
 
     const elementRef = useRef();
@@ -111,6 +113,11 @@ const FormInputTextareaBlock = compose(
                         placeholder={inputPlaceholder}
                         name={inputName}
                         className="gutenverse-input gutenverse-input-textarea"
+                        defaultValue={
+                            defaultValueType === "custom"
+                                ? customDefaultValue
+                                : ""
+                        }
                         ref={elementRef}
                     />
                 </div>
@@ -119,6 +126,11 @@ const FormInputTextareaBlock = compose(
                     placeholder={inputPlaceholder}
                     name={inputName}
                     className="gutenverse-input gutenverse-input-textarea"
+                    defaultValue={
+                        defaultValueType === "custom"
+                            ? customDefaultValue
+                            : ""
+                    }
                     ref={elementRef}
                 />}
         </InputWrapper>
