@@ -1,3 +1,9 @@
+.block-editor-block-list__layout.is-root-container > .guten-form-builder {
+    max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .input-warning {
   font-size: 14px !important;
   background: red;
@@ -22,7 +28,10 @@
 
 .guten-flex-container-editor,
 .guten-inner-container-editor {
-    >.guten-form-builder {
+    > .guten-form-builder {
         width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
     }
 }

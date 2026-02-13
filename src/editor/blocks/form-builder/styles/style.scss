@@ -43,7 +43,10 @@
 
 .guten-flex-container,
 .guten-inner-container {
-    >.guten-form-builder {
+    > .guten-form-builder {
         width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
     }
 }
