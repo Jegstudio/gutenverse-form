@@ -3,6 +3,7 @@ import { withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { BlockPanelController } from 'gutenverse-core/controls';
+import FormNavigation from '../form-input/general/form-navigation';
 import classnames from 'classnames';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
@@ -34,7 +35,7 @@ const FormInputRecaptcha = compose(
         className: classnames(
             'gutenverse-recaptcha',
             'g-recaptcha',
-            elementId,
+            elementId
         ),
         ref: elementRef
     });
@@ -46,6 +47,7 @@ const FormInputRecaptcha = compose(
     }, []);
 
     return <>
+        <FormNavigation clientId={clientId} />
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
         {!validParent && <h1 className="input-warning">
             {__('Please put input element inside Form Builder', 'gutenverse-form')}

@@ -1,0 +1,170 @@
+/* Full Screen Overrides for Gutenverse Email Builder */
+.post-type-gutenverse-email-tpl.post-php,
+.post-type-gutenverse-email-tpl.post-new-php {
+    overflow: hidden; /* Prevent body scroll */
+
+    #wpcontent {
+        margin-left: 0; 
+    }
+
+    /* Hide practically everything else */
+    #adminmenumain, 
+    #wpadminbar, 
+    #wpfooter,
+    #screen-meta-links,
+    .update-nag,
+    .notice {
+        display: none !important;
+    }
+}
+
+#gutenverse-email-builder-root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999999;
+    background: #fff;
+}
+
+.gutenverse-email-builder {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.gutenverse-email-builder-header {
+    flex: 0 0 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background: #fff;
+    border-bottom: 1px solid #e2e4e7;
+    box-sizing: border-box;
+    
+    .header-left {
+        flex: 0 0 200px;
+        display: flex;
+        align-items: center;
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #646970;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: normal; 
+            
+            &:hover {
+                color: #2271b1;
+            }
+
+            svg {
+                margin-right: 4px;
+            }
+        }
+    }
+
+    .header-center {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            
+            .title-prefix {
+                font-size: 14px;
+                text-transform: uppercase;
+                color: #757575;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+            }
+
+            .edit-icon {
+                color: #757575;
+                display: flex;
+                align-items: center;
+                opacity: 0.6;
+                transition: opacity 0.2s ease;
+            }
+
+            &:hover .edit-icon {
+                opacity: 1;
+            }
+        }
+
+        .title-input {
+            width: 100%;
+            min-width: 200px;
+            max-width: 500px;
+            margin: 0;
+
+            .components-base-control__field {
+                margin: 0;
+            }
+
+            input {
+                padding: 4px 12px;
+                height: 40px;
+                font-size: 20px;
+                font-weight: 600;
+                text-align: center;
+                border: 1px solid transparent;
+                background: transparent;
+                box-shadow: none;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    border-color: #e2e4e7;
+                }
+
+                &:focus {
+                    border-color: #2271b1;
+                    background: #fff;
+                    box-shadow: 0 0 0 1px #2271b1;
+                }
+            }
+        }
+    }
+
+    .header-right {
+        flex: 0 0 200px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 12px;
+
+        .components-button {
+            height: 36px; 
+            padding: 0 16px;
+        }
+    }
+}
+
+.editor-container {
+    flex: 1 1 auto;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #f0f0f1;
+    
+    /* Force child to fill */
+    > * {
+        height: 100% !important;
+    }
+}
+
+/* Position snackbar notices in bottom left */
+.gutenverse-email-builder .components-editor-notices__snackbar {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000000;
+}

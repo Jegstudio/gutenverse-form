@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
 import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import FormNavigation from '../form-input/general/form-navigation';
 import { displayShortcut } from '@wordpress/keycodes';
 import { BlockPanelController, IconLibrary } from 'gutenverse-core/controls';
 import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
@@ -77,6 +78,7 @@ const FormInputSubmitBlock = compose(
 
     return <>
         <CopyElementToolbar {...props} />
+        <FormNavigation clientId={clientId} />
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
         {openIconLibrary && createPortal(
             <IconLibrary

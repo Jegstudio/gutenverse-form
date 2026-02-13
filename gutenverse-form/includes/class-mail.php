@@ -40,12 +40,23 @@ class Mail {
 		$subject  = isset( $form_data['user_email_subject'] ) ? $form_data['user_email_subject'] : get_bloginfo( 'name' );
 		$from     = isset( $form_data['user_email_from'] ) ? $form_data['user_email_from'] : null;
 		$reply_to = isset( $form_data['user_email_reply_to'] ) ? $form_data['user_email_reply_to'] : null;
-		$body     = nl2br( isset( $form_data['user_email_body'] ) ? $form_data['user_email_body'] : null );
 
-		$body      = "<html><body><h2 style='text-align: center;'>" . get_the_title( $entry_id ) . "</h2><h4 style='text-align: center;'>" . $body . '</h4>';
-		$form_html = $this->format_data_for_mail( $entry_id, $form_entry, $entry_id, false );
-		$body     .= $form_html . '</body></html>';
-		$body      = apply_filters( 'gutenverse_form_user_email_body', $body, $form_id, $form_data, $entry_id, $form_entry );
+		$template_id  = isset( $form_data['user_email_template'] ) ? (int) $form_data['user_email_template'] : 0;
+		$use_template = $template_id > 0 && get_post_type( $template_id ) === Email_Template::POST_TYPE;
+
+		if ( $use_template ) {
+			$body = get_post_meta( $template_id, 'gutenverse_email_html', true );
+		} else {
+			$message   = nl2br( isset( $form_data['user_email_body'] ) ? $form_data['user_email_body'] : '' );
+			$body      = "<html><body><h2 style='text-align: center;'>" . get_the_title( $entry_id ) . "</h2><h4 style='text-align: center;'>" . $message . '</h4>';
+			$form_html = $this->format_data_for_mail( $entry_id, $form_entry, $entry_id, false );
+			$body     .= $form_html . '</body></html>';
+		}
+
+		$body    = $this->replace_placeholders( $body, $form_entry, $form_id, $entry_id, $form_data );
+		$subject = $this->replace_placeholders( $subject, $form_entry, $form_id, $entry_id, $form_data );
+
+		$body = apply_filters( 'gutenverse_form_user_email_body', $body, $form_id, $form_data, $entry_id, $form_entry );
 
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
 		$headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
@@ -84,17 +95,28 @@ class Mail {
 		$subject  = isset( $form_data['admin_email_subject'] ) ? $form_data['admin_email_subject'] : null;
 		$from     = isset( $form_data['admin_email_from'] ) ? $form_data['admin_email_from'] : null;
 		$reply_to = isset( $form_data['admin_email_reply_to'] ) ? $form_data['admin_email_reply_to'] : null;
-		$body     = nl2br( isset( $form_data['admin_note'] ) ? $form_data['admin_note'] : null );
 
-		$body      = "<html><body><h2 style='text-align: center;'>" . get_the_title( $form_id ) . ' ' . esc_html__( 'Submission', 'gutenverse-form' ) . "</h2><h4 style='text-align: center;'>" . $body . '</h4>';
-		$form_html = $this->format_data_for_mail( $entry_id, $form_entry, $entry_id );
-		$body     .= $form_html;
-		if ( $entry_id ) {
-			$edit_link = get_edit_post_link( $entry_id );
-			$body     .= '<br/><span>' . __( 'Entry Details', 'gutenverse-form' ) . ' : <a href="' . $edit_link . '">' . $edit_link . '</a></span>';
+		$template_id  = isset( $form_data['admin_email_template'] ) ? (int) $form_data['admin_email_template'] : 0;
+		$use_template = $template_id > 0 && get_post_type( $template_id ) === Email_Template::POST_TYPE;
+
+		if ( $use_template ) {
+			$body = get_post_meta( $template_id, 'gutenverse_email_html', true );
+		} else {
+			$message   = nl2br( isset( $form_data['admin_note'] ) ? $form_data['admin_note'] : '' );
+			$body      = "<html><body><h2 style='text-align: center;'>" . get_the_title( $form_id ) . ' ' . esc_html__( 'Submission', 'gutenverse-form' ) . "</h2><h4 style='text-align: center;'>" . $message . '</h4>';
+			$form_html = $this->format_data_for_mail( $entry_id, $form_entry, $entry_id );
+			$body     .= $form_html;
+			if ( $entry_id ) {
+				$edit_link = get_edit_post_link( $entry_id );
+				$body     .= '<br/><span>' . __( 'Entry Details', 'gutenverse-form' ) . ' : <a href="' . $edit_link . '">' . $edit_link . '</a></span>';
+			}
+			$body .= '</body></html>';
 		}
-		$body .= '</body></html>';
-		$body  = apply_filters( 'gutenverse_form_admin_email_body', $body, $form_id, $form_data, $entry_id, $form_entry );
+
+		$body    = $this->replace_placeholders( $body, $form_entry, $form_id, $entry_id, $form_data );
+		$subject = $this->replace_placeholders( $subject, $form_entry, $form_id, $entry_id, $form_data );
+
+		$body = apply_filters( 'gutenverse_form_admin_email_body', $body, $form_id, $form_data, $entry_id, $form_entry );
 
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
 		$headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
@@ -176,5 +198,58 @@ class Mail {
 		$data_html = ob_get_contents();
 		ob_end_clean();
 		return apply_filters( 'gutenverse_form_format_data', $data_html, $form_id, $form_entry, $entry_id, $admin );
+	}
+
+	/**
+	 * Replace placeholders in content.
+	 *
+	 * @param string $content .
+	 * @param array  $form_entry .
+	 * @param int    $form_id .
+	 * @param int    $entry_id .
+	 * @param array  $form_data .
+	 *
+	 * @return string
+	 */
+	private function replace_placeholders( $content, $form_entry, $form_id, $entry_id, $form_data = array() ) {
+		if ( empty( $content ) ) {
+			return $content;
+		}
+
+		// Generic placeholders.
+		$content = str_replace( '{{form_id}}', $form_id, $content );
+		$content = str_replace( '{{entry_id}}', $entry_id, $content );
+		$content = str_replace( '{{form_title}}', get_the_title( $form_id ), $content );
+		$content = str_replace( '{{entry_title}}', get_the_title( $entry_id ), $content );
+		$content = str_replace( '{{site_title}}', get_bloginfo( 'name' ), $content );
+
+		// Field Tags.
+		if ( ! empty( $form_data['variable_mapping'] ) && is_array( $form_data['variable_mapping'] ) ) {
+			foreach ( $form_data['variable_mapping'] as $mapping ) {
+				$var      = isset( $mapping['name'] ) ? $mapping['name'] : '';
+				$input_id = isset( $mapping['input'] ) ? $mapping['input'] : '';
+
+				if ( ! empty( $var ) && ! empty( $input_id ) ) {
+					$val = '';
+					foreach ( $form_entry['entry-data'] as $data ) {
+						if ( $data['id'] === $input_id ) {
+							$val = is_array( $data['value'] ) ? implode( ', ', $data['value'] ) : $data['value'];
+							break;
+						}
+					}
+					$content = str_replace( '{{' . $var . '}}', $val, $content );
+				}
+			}
+		}
+
+		if ( ! empty( $form_entry['entry-data'] ) ) {
+			foreach ( $form_entry['entry-data'] as $data ) {
+				$id      = $data['id'];
+				$value   = is_array( $data['value'] ) ? implode( ', ', $data['value'] ) : $data['value'];
+				$content = str_replace( '{{' . $id . '}}', $value, $content );
+			}
+		}
+
+		return $content;
 	}
 }

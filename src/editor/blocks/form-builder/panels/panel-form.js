@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { CheckboxControl, SelectSearchControl, TextControl } from 'gutenverse-core/controls';
 import apiFetch from '@wordpress/api-fetch';
+import { CreateForm } from './create-form';
 
 export const formPanel = () => {
     const searchForms = input => new Promise(resolve => {
@@ -30,6 +31,10 @@ export const formPanel = () => {
             label: __('Choose Form Action', 'gutenverse-form'),
             component: SelectSearchControl,
             onSearch: searchForms
+        },
+        {
+            id: 'createForm',
+            component: CreateForm,
         },
         {
             id: 'hideAfterSubmit',

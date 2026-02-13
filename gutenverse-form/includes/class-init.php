@@ -44,6 +44,13 @@ class Init {
 	public $dashboard;
 
 	/**
+	 * Hold instance of email template
+	 *
+	 * @var Email_Template
+	 */
+	public $email_template;
+
+	/**
 	 * Hold frontend assets instance
 	 *
 	 * @var Frontend_Assets
@@ -344,7 +351,8 @@ class Init {
 	public function init_post_type() {
 		$this->form      = new Form();
 		$this->entries   = new Entries();
-		$this->dashboard = new Dashboard();
+		$this->dashboard      = new Dashboard();
+		$this->email_template = new Email_Template();
 	}
 
 	/**

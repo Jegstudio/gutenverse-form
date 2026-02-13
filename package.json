@@ -58,6 +58,7 @@
 		"flatpickr": "^4.6.13",
 		"gutenverse-core": "file:gutenverse-core",
 		"lodash": "^4.17.21",
-		"react-datepicker": "^4.25.0"
+		"react-datepicker": "^4.25.0",
+		"react-email-editor": "^1.7.11"
 	}
 }
