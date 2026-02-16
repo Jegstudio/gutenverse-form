@@ -7,7 +7,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { IconCloseSVG, IconTrashSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'gutenverse-core/helper';
-import { CardPro, PopupInsufficientTier, PopupPro } from 'gutenverse-core/components';
+import { CardPro } from 'gutenverse-core/components';
 
 const TabGeneral = (props) => {
     const { values, updateValue } = props;
@@ -227,13 +227,50 @@ const TabNotification = (props) => {
                 value={values.admin_email_subject}
                 updateValue={updateValue}
             />
-            <ControlText
-                id={'admin_email_to'}
-                title={__('Email\'s Recipient', 'gutenverse-form')}
-                description={__('Enter admin email where you want to send mail (For multiple email addresses please use "," as separator).', 'gutenverse-form')}
-                value={values.admin_email_to}
+            <ControlSelect
+                id={'admin_email_type'}
+                title={__('Recipient Type', 'gutenverse-form')}
+                description={__('Choose whether to send to a static email or dynamic recipient.', 'gutenverse-form')}
+                value={values.admin_email_type || 'static'}
+                options={[
+                    { label: __('Static Email', 'gutenverse-form'), value: 'static' },
+                    { label: __('Dynamic Recipient', 'gutenverse-form'), value: 'dynamic' },
+                ]}
                 updateValue={updateValue}
             />
+            {values.admin_email_type === 'dynamic' ? (
+                <>
+                    <ControlSelect
+                        id={'admin_email_source'}
+                        title={__('Dynamic Source', 'gutenverse-form')}
+                        description={__('Select the source to get the recipient email address.', 'gutenverse-form')}
+                        value={values.admin_email_source || 'post_author'}
+                        options={[
+                            { label: __('Post Author', 'gutenverse-form'), value: 'post_author' },
+                            { label: __('Post Metadata (Custom Field)', 'gutenverse-form'), value: 'post_meta' },
+                            { label: __('Custom (Developer Hook)', 'gutenverse-form'), value: 'custom' },
+                        ]}
+                        updateValue={updateValue}
+                    />
+                    {values.admin_email_source === 'post_meta' && (
+                        <ControlText
+                            id={'admin_email_meta_key'}
+                            title={__('Meta Key', 'gutenverse-form')}
+                            description={__('Enter the meta key (custom field name) that holds the email address.', 'gutenverse-form')}
+                            value={values.admin_email_meta_key}
+                            updateValue={updateValue}
+                        />
+                    )}
+                </>
+            ) : (
+                <ControlText
+                    id={'admin_email_to'}
+                    title={__('Email\'s Recipient', 'gutenverse-form')}
+                    description={__('Enter admin email where you want to send mail (For multiple email addresses please use "," as separator).', 'gutenverse-form')}
+                    value={values.admin_email_to}
+                    updateValue={updateValue}
+                />
+            )}
             <ControlText
                 id={'admin_email_from'}
                 title={__('Email\'s Sender', 'gutenverse-form')}
@@ -248,13 +285,34 @@ const TabNotification = (props) => {
                 value={values.admin_email_reply_to}
                 updateValue={updateValue}
             />
-            <ControlTextarea
-                id="admin_note"
-                title={__('Messages to Admin', 'gutenverse-form')}
-                description={placeholderDescription(__('Enter your messages to include it in email\'s body which will be send to admin. (e.g : A submission from user with the following data.).', 'gutenverse-form'))}
-                value={values.admin_note}
+            <ControlSelect
+                id={'admin_message_type'}
+                title={__('Message Type', 'gutenverse-form')}
+                description={__('Choose whether to use a static message or a value from a form input.', 'gutenverse-form')}
+                value={values.admin_message_type || 'static'}
+                options={[
+                    { label: __('Static Text', 'gutenverse-form'), value: 'static' },
+                    { label: __('Form Input (Dynamic)', 'gutenverse-form'), value: 'dynamic' },
+                ]}
                 updateValue={updateValue}
             />
+            {values.admin_message_type === 'dynamic' ? (
+                <ControlText
+                    id={'admin_message_input_name'}
+                    title={__('Message Input ID', 'gutenverse-form')}
+                    description={__('Enter the ID of the form input field that contains the message body.', 'gutenverse-form')}
+                    value={values.admin_message_input_name}
+                    updateValue={updateValue}
+                />
+            ) : (
+                <ControlTextarea
+                    id="admin_note"
+                    title={__('Messages to Admin', 'gutenverse-form')}
+                    description={placeholderDescription(__('Enter your messages to include it in email\'s body which will be send to admin. You can use field tags to include user submitted data.', 'gutenverse-form'))}
+                    value={values.admin_note}
+                    updateValue={updateValue}
+                />
+            )}
             <ControlSelect
                 id={'admin_email_template'}
                 title={__('Email Template', 'gutenverse-form')}
@@ -272,9 +330,6 @@ const TabNotification = (props) => {
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
     const [hideFormNotice, setHideFormNotice] = useState(!isEmpty(window['GutenverseConfig']) && window['GutenverseConfig']['hideFormNotice'] ? window['GutenverseConfig']['hideFormNotice'] : false);
-    const [popupActive, setPopupActive] = useState(false);
-    const [popupInsufficientTier, setPopupInsufficientTier] = useState(false);
-    const [insufficientTierDesc, setInsufficientTierDesc] = useState('');
 
     const tabs = {
         general: {
@@ -356,8 +411,6 @@ export const FormContent = (props) => {
     };
 
     const proPopupProps = {
-        setPopupInsufficientTier,
-        setInsufficientTierDesc,
         changeActive,
     };
     return <div>
@@ -379,16 +432,6 @@ export const FormContent = (props) => {
                 </>
             </AlertControl>
         </div>}
-        {/* <PopupPro
-            active={popupActive}
-            setActive={setPopupActive}
-            description={<>{__('Upgrade ', '--gctd--')}<span>{__(' Gutenverse PRO ', '--gctd--')}</span>{__(' version to ', '--gctd--')}<br />{__(' unlock these premium features', '--gctd--')}</>}
-        />
-        <PopupInsufficientTier
-            active={popupInsufficientTier}
-            setActive={setPopupInsufficientTier}
-            description={insufficientTierDesc}
-        /> */}
         <div className="form-tab-header">
             {Object.keys(tabs).map(key => {
                 const item = tabs[key];
@@ -401,7 +444,6 @@ export const FormContent = (props) => {
                         'gutenverse-form.tab-pro-button',
                         <div className={classes} key={key} onClick={() => {
                             changeActive(key);
-                            setPopupActive(true);
                         }}>
                             {item.label}
                         </div>,
@@ -418,7 +460,6 @@ export const FormContent = (props) => {
         {tab === 'tags' && <TabFieldTags {...tabProps} />}
         {tab === 'confirmation' && ConfirmationTab}
         {tab === 'notification' && NotificationTab}
-
         {tab === 'pro' && ProTab}
     </div>;
 };

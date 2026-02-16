@@ -102,7 +102,21 @@ class Mail {
 		if ( $use_template ) {
 			$body = get_post_meta( $template_id, 'gutenverse_email_html', true );
 		} else {
-			$message   = nl2br( isset( $form_data['admin_note'] ) ? $form_data['admin_note'] : '' );
+			$message = isset( $form_data['admin_note'] ) ? $form_data['admin_note'] : '';
+
+			if ( isset( $form_data['admin_message_type'] ) && 'dynamic' === $form_data['admin_message_type'] ) {
+				$input_id = isset( $form_data['admin_message_input_name'] ) ? $form_data['admin_message_input_name'] : '';
+				if ( ! empty( $input_id ) && isset( $form_entry['entry-data'] ) ) {
+					foreach ( $form_entry['entry-data'] as $data ) {
+						if ( $data['id'] === $input_id ) {
+							$message = is_array( $data['value'] ) ? implode( ', ', $data['value'] ) : $data['value'];
+							break;
+						}
+					}
+				}
+			}
+
+			$message   = nl2br( $message );
 			$body      = "<html><body><h2 style='text-align: center;'>" . get_the_title( $form_id ) . ' ' . esc_html__( 'Submission', 'gutenverse-form' ) . "</h2><h4 style='text-align: center;'>" . $message . '</h4>';
 			$form_html = $this->format_data_for_mail( $entry_id, $form_entry, $entry_id );
 			$body     .= $form_html;
@@ -127,6 +141,13 @@ class Mail {
 
 		$mail = isset( $form_data['admin_email_to'] ) ? $form_data['admin_email_to'] : null;
 
+		if ( isset( $form_data['admin_email_type'] ) && 'dynamic' === $form_data['admin_email_type'] ) {
+			$dynamic_mail = $this->get_dynamic_recipient( $form_data, $form_entry );
+			if ( $dynamic_mail ) {
+				$mail = $mail ? $mail . ',' . $dynamic_mail : $dynamic_mail;
+			}
+		}
+
 		if ( ! $mail ) {
 			return new WP_Error(
 				'email_error',
@@ -145,6 +166,39 @@ class Mail {
 		}
 
 		return new WP_REST_Response( $status, 200 );
+	}
+
+	/**
+	 * Get dynamic recipient email.
+	 *
+	 * @param array $form_data .
+	 * @param array $form_entry .
+	 *
+	 * @return string|false
+	 */
+	public function get_dynamic_recipient( $form_data, $form_entry ) {
+		$source  = isset( $form_data['admin_email_source'] ) ? $form_data['admin_email_source'] : 'post_author';
+		$post_id = isset( $form_entry['post-id'] ) ? $form_entry['post-id'] : 0;
+		$email   = false;
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		switch ( $source ) {
+			case 'post_author':
+				$author_id = get_post_field( 'post_author', $post_id );
+				$email     = get_the_author_meta( 'user_email', $author_id );
+				break;
+			case 'post_meta':
+				$meta_key = isset( $form_data['admin_email_meta_key'] ) ? $form_data['admin_email_meta_key'] : '';
+				if ( ! empty( $meta_key ) ) {
+					$email = get_post_meta( $post_id, $meta_key, true );
+				}
+				break;
+		}
+
+		return apply_filters( 'gutenverse_form_dynamic_admin_recipient', $email, $source, $post_id, $form_data );
 	}
 
 	/**
