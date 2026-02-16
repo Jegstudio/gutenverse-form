@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { BorderControl, BorderResponsiveControl, BoxShadowControl, ColorControl, DimensionControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
+import { AlignCenter, AlignLeft, AlignRight } from 'gutenverse-core/components';
+import { BorderControl, BorderResponsiveControl, BoxShadowControl, ColorControl, DimensionControl, IconRadioControl, SwitchControl, TypographyControl } from 'gutenverse-core/controls';
 import { getDeviceType } from 'gutenverse-core/editor-helper';
 
 export const inputPanel = props => {
@@ -53,6 +54,29 @@ export const inputPanel = props => {
                     unit: '%'
                 },
             },
+        },
+        {
+            id: 'textAlign',
+            label: __('Selected Alignment', 'gutenverse'),
+            component: IconRadioControl,
+            allowDeviceControl: true,
+            options: [
+                {
+                    label: __('Align Left', 'gutenverse'),
+                    value: 'left',
+                    icon: <AlignLeft />,
+                },
+                {
+                    label: __('Align Center', 'gutenverse'),
+                    value: 'center',
+                    icon: <AlignCenter />,
+                },
+                {
+                    label: __('Align Right', 'gutenverse'),
+                    value: 'right',
+                    icon: <AlignRight />,
+                },
+            ]
         },
         {
             id: 'placeholderColor',

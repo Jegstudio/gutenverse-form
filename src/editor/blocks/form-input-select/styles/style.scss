@@ -18,6 +18,10 @@
 		z-index: 99;
 	}
 
+	.choices__list{
+        text-align: left;
+    }
+
 	.choices[data-type*="select-one"] .choices__input {
 		display: none;
 	}

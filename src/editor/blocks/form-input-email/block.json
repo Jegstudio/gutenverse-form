@@ -225,6 +225,10 @@
 			"type": "object",
 			"copyStyle": true
 		},
+		"textAlign": {
+			"type": "object",
+			"copyStyle": true
+		},
 		"placeholderColor": {
 			"type": "object",
 			"copyStyle": true

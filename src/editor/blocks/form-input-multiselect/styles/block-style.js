@@ -96,6 +96,19 @@ const getBlockStyle = (elementId, attributes) => {
         'responsive': true,
     });
 
+    isNotEmpty(attributes['textAlign']) && data.push({
+        'type': 'plain',
+        'id': 'textAlign',
+        'selector': `.guten-element.${elementId} .choices, .guten-element.${elementId} .choices__input`,
+        'properties': [
+            {
+                'name': 'text-align',
+                'valueType': 'direct'
+            }
+        ],
+        'responsive': true,
+    });
+
     isNotEmpty(attributes['placeholderColor']) && data.push({
         'type': 'color',
         'id': 'placeholderColor',

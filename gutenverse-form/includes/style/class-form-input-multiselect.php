@@ -218,6 +218,19 @@ class Form_Input_Multiselect extends Style_Abstract {
 			);
 		}
 
+		if ( isset( $this->attrs['textAlign'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".guten-element.{$this->element_id} .choices, .guten-element.{$this->element_id} .choices__input",
+					'property'       => function ( $value ) {
+						return "text-align: {$value};";
+					},
+					'value'          => $this->attrs['textAlign'],
+					'device_control' => true,
+				)
+			);
+		}
+
 		if ( isset( $this->attrs['placeholderColor'] ) ) {
 			$this->inject_style(
 				array(
