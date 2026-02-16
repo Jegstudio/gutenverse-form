@@ -96,6 +96,44 @@ const TabFieldTags = (props) => {
         updateValue('variable_mapping', newMapping);
     };
 
+    const isEditor = !!props.isEditor;
+
+    const generateTags = () => {
+        if (!isEditor) return;
+
+        const clientId = props.clientId;
+        const blocks = clientId ? window.wp.data.select('core/block-editor').getBlocks(clientId) : window.wp.data.select('core/block-editor').getBlocks();
+        const inputs = [];
+        const traverseBlocks = (innerBlocks) => {
+            innerBlocks.forEach(block => {
+                if (block.name.startsWith('gutenverse/form-input') || block.name === 'gutenverse/form-textarea') {
+                    const name = block.attributes.inputName;
+                    if (name) {
+                        inputs.push({
+                            name: name,
+                            input: name
+                        });
+                    }
+                }
+                if (block.innerBlocks) {
+                    traverseBlocks(block.innerBlocks);
+                }
+            });
+        };
+        traverseBlocks(blocks);
+
+        const newMapping = [...mapping];
+        const existingInputs = newMapping.map(m => (typeof m === 'string' ? '' : m.input));
+
+        inputs.forEach(input => {
+            if (!existingInputs.includes(input.input)) {
+                newMapping.push(input);
+            }
+        });
+
+        updateValue('variable_mapping', newMapping);
+    };
+
     return (
         <div className="form-tab-body">
             <div className="gutenverse-field-tags" style={{ paddingTop: '10px' }}>
@@ -132,6 +170,11 @@ const TabFieldTags = (props) => {
                 <div className="gutenverse-button create" onClick={addMapping} style={{ display: 'inline-block', marginTop: '10px' }}>
                     {__('Add New Tag', 'gutenverse-form')}
                 </div>
+                {isEditor && (
+                    <div className="gutenverse-button" onClick={generateTags} style={{ display: 'inline-block', marginTop: '10px', marginLeft: '10px' }}>
+                        {__('Generate from Editor', 'gutenverse-form')}
+                    </div>
+                )}
             </div>
         </div>
     );
