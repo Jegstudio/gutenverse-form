@@ -96,6 +96,7 @@
     display: flex;
     gap: 10px;
     padding: 20px;
+    
 
     .header-item {
         flex-grow: 1;
@@ -120,8 +121,8 @@
 
     .control-wrapper {
         text-align: left;
-        padding: 30px 0;
-        border-bottom: 1px solid #e6e6ef;
+        padding: 30px 0 0;
+        // border-bottom: 1px solid #e6e6ef;
 
         .control-title {
             font-size: 14px;
@@ -309,5 +310,49 @@
         .gutenverse-close {
             cursor: pointer;
         }
+    }
+}
+
+.gutenverse-form-group {
+    margin-bottom: 40px;
+    padding-bottom: 10px;
+    position: relative;
+    border-bottom: none;
+
+    /* Last child should not have margin */
+    &:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    h4 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0 0 20px;
+        color: #1a1a2e;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        text-transform: none;
+        letter-spacing: 0;
+        border-bottom: none;
+        padding-bottom: 0;
+        
+        &::after {
+            content: "";
+            -webkit-box-flex: 1;
+            flex: 1;
+            height: 1px;
+            background: #e6e6ef;
+            margin-left: 15px;
+        }
+    }
+
+    .form-notice-wrapper {
+        margin: 0 0 15px 0 !important;
+    }
+
+    > .control-wrapper:first-of-type {
+        padding-top: 0;
     }
 }
