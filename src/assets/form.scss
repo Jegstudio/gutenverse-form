@@ -15,6 +15,10 @@
     border: 1px solid #f5f7fe;
 }
 
+.gutenverse-drawer-container {
+    width: 460px;
+}
+
 .form-notice-wrapper {
     margin: 15px 20px;
 
@@ -94,8 +98,9 @@
 
 .form-tab-header {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     padding: 20px;
+    
 
     .header-item {
         flex-grow: 1;
@@ -120,8 +125,8 @@
 
     .control-wrapper {
         text-align: left;
-        padding: 30px 0;
-        border-bottom: 1px solid #e6e6ef;
+        padding: 30px 0 0;
+        // border-bottom: 1px solid #e6e6ef;
 
         .control-title {
             font-size: 14px;
@@ -308,6 +313,111 @@
 
         .gutenverse-close {
             cursor: pointer;
+        }
+    }
+}
+
+.gutenverse-form-group {
+    margin-bottom: 40px;
+    padding-bottom: 10px;
+    position: relative;
+    border-bottom: none;
+
+    /* Last child should not have margin */
+    &:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    h4 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0 0 20px;
+        color: #1a1a2e;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        text-transform: none;
+        letter-spacing: 0;
+        border-bottom: none;
+        padding-bottom: 0;
+        
+        &::after {
+            content: "";
+            -webkit-box-flex: 1;
+            flex: 1;
+            height: 1px;
+            background: #e6e6ef;
+            margin-left: 15px;
+        }
+    }
+
+    .form-notice-wrapper {
+        margin: 0 0 15px 0 !important;
+    }
+
+    > .control-wrapper:first-of-type {
+        padding-top: 0;
+    }
+}
+.gutenverse-create-form-action {
+    margin-bottom: 20px;
+    margin-top: 10px;
+
+    .gutenverse-form-action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+
+        .gutenverse-button {
+            flex: 1;
+            justify-content: center;
+            text-align: center;
+            padding: 8px 12px;
+            margin: 0;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &.create {
+                 background-color: #3B57F7;
+                 color: #fff;
+                 transition: background 0.2s;
+                 
+                 &:hover {
+                     background-color: #243cc7;
+                 }
+            }
+
+            /* Ensure text truncation works if flex shrinks */
+            min-width: 0;
+            border-radius: 4px; /* Standard WP radius */
+
+            &.edit {
+                background-color: #fff;
+                color: #333;
+                border: 1px solid #c3c4c7;
+                
+                &:hover {
+                    background-color: #f0f0f1;
+                    color: #1d2327;
+                    border-color: #8c8f94;
+                }
+            }
+        }
+    }
+
+    .gutenverse-form-action-list-link {
+        display: block; 
+        text-align: center; 
+        width: 100%; 
+        color: #3B57F7; 
+        text-decoration: none; 
+        font-size: 13px;
+        &:hover {
+            text-decoration: underline;
+            color: #243cc7;
         }
     }
 }

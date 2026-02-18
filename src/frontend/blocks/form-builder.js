@@ -217,7 +217,7 @@ class GutenverseFormValidation extends Default {
     _onSubmit(formBuilder, formData) {
         const instance = this;
         const formId = formBuilder.data('form-id');
-        const postId = !isEmpty(window['GutenverseData']) ? window['GutenverseData']['postId'] : 0;
+        const postId = formBuilder.data('post-id') || (!isEmpty(window['GutenverseData']) ? window['GutenverseData']['postId'] : 0);
         const hideAfterSubmit = formBuilder.data('hide-after');
         const redirectTo = formBuilder.data('redirect');
 

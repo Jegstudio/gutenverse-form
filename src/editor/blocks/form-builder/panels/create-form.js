@@ -123,32 +123,34 @@ export const CreateForm = (props) => {
     const hasSelectedForm = attributes && attributes.formId && attributes.formId.value;
 
     return (
-        <div className="gutenverse-create-form-action" style={{ marginBottom: '20px' }}>
-            <div
-                className="gutenverse-button create"
-                onClick={openCreateModal}
-                style={{ display: 'block', textAlign: 'center', width: '100%', boxSizing: 'border-box', marginBottom: '10px' }}
-            >
-                {__('Create New Form Action', 'gutenverse-form')}
-            </div>
-
-            {hasSelectedForm && (
+        <div className="gutenverse-create-form-action">
+            <div className="gutenverse-form-action-buttons">
                 <div
-                    className="gutenverse-button"
-                    onClick={openEditModal}
-                    style={{ display: 'block', textAlign: 'center', width: '100%', boxSizing: 'border-box', background: '#fff', color: '#333', border: '1px solid #ddd', marginBottom: '10px' }}
+                    className="gutenverse-button create"
+                    onClick={openCreateModal}
+                    title={__('Create New Form Action', 'gutenverse-form')}
                 >
-                    {__('Edit Selected Form', 'gutenverse-form')}
+                    {__('Create New', 'gutenverse-form')}
                 </div>
-            )}
+
+                {hasSelectedForm && (
+                    <div
+                        className="gutenverse-button edit"
+                        onClick={openEditModal}
+                        title={__('Edit Selected Form', 'gutenverse-form')}
+                    >
+                        {__('Edit Form', 'gutenverse-form')}
+                    </div>
+                )}
+            </div>
 
             <a
                 href="edit.php?post_type=gutenverse-form"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: 'block', textAlign: 'center', width: '100%', boxSizing: 'border-box', color: '#007cba', textDecoration: 'none', padding: '5px' }}
+                className="gutenverse-form-action-list-link"
             >
-                {__('View Form Action List', 'gutenverse-form')}
+                {__('View All Form Actions', 'gutenverse-form')}
             </a>
 
             {open && (
@@ -164,7 +166,7 @@ export const CreateForm = (props) => {
                                 {__('Loading...', 'gutenverse-form')}
                             </div>
                         ) : (
-                            <FormContent values={values} updateValue={updateValue} />
+                            <FormContent values={values} updateValue={updateValue} isEditor={true} clientId={props.clientId} />
                         )}
                     </div>
                     <div className="gutenverse-form-modal-footer" style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
