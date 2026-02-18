@@ -25,7 +25,7 @@ const TabGeneral = (props) => {
             Component: <ControlText
                 id={'title'}
                 title={__('Form Title', 'gutenverse-form')}
-                description={__('This title will be searchable in Gutenverse Form Builder Block.', 'gutenverse-form')}
+                description={__('The form title, used for identification in the editor.', 'gutenverse-form')}
                 value={values.title}
                 {...props}
             />
@@ -34,7 +34,7 @@ const TabGeneral = (props) => {
             Component: <ControlCheckbox
                 id={'require_login'}
                 title={__('Require Login', 'gutenverse-form')}
-                description={__('Hide form if the user is not logged in.', 'gutenverse-form')}
+                description={__('Hide the form for non-logged-in users.', 'gutenverse-form')}
                 value={values.require_login}
                 updateValue={updateValue}
             />,
@@ -42,8 +42,8 @@ const TabGeneral = (props) => {
         {
             Component: <ControlCheckbox
                 id={'user_browser'}
-                title={__('Capture User Browser Data', 'gutenverse-form')}
-                description={__('Store user\'s browser data such as ip, browser name, etc. (If you served website for countries with GDPR law, please make sure you\'ve setup notice for your user regarding the datas you collect.)', 'gutenverse-form')}
+                title={__('Capture User Data', 'gutenverse-form')}
+                description={__('Collect user metadata including IP address and browser information. Ensure compliance with GDPR regulations.', 'gutenverse-form')}
                 value={values.user_browser}
                 updateValue={updateValue}
             />,
@@ -51,8 +51,8 @@ const TabGeneral = (props) => {
         {
             Component: <ControlText
                 id={'form_success_notice'}
-                title={__('Success Notice on Submit', 'gutenverse-form')}
-                description={__('This will be your success notice when form is successfully submitted. (If empty, notice will not be showed).', 'gutenverse-form')}
+                title={__('Success Message', 'gutenverse-form')}
+                description={__('The message displayed after successful submission.', 'gutenverse-form')}
                 value={values.form_success_notice}
                 updateValue={updateValue}
             />,
@@ -60,8 +60,8 @@ const TabGeneral = (props) => {
         {
             Component: <ControlText
                 id={'form_error_notice'}
-                title={__('Error Notice on Submit', 'gutenverse-form')}
-                description={__('This will be your error notice when form is failed on submit. (If empty, notice will not be showed).', 'gutenverse-form')}
+                title={__('Error Message', 'gutenverse-form')}
+                description={__('The message displayed if submission fails.', 'gutenverse-form')}
                 value={values.form_error_notice}
                 updateValue={updateValue}
             />,
@@ -69,8 +69,8 @@ const TabGeneral = (props) => {
         {
             Component: <ControlCheckbox
                 id={'use_captcha'}
-                title={__('Use Captcha', 'gutenverse-form')}
-                description={__('Check this if you want to use captcha.', 'gutenverse-form')}
+                title={__('Enable Captcha', 'gutenverse-form')}
+                description={__('Protect your form from spam using captcha.', 'gutenverse-form')}
                 value={values.use_captcha}
                 updateValue={updateValue}
             />
@@ -181,10 +181,10 @@ const TabFieldTags = (props) => {
                         >
                             <div style={{ flex: 1 }}>
                                 <ControlText
-                                    title={__('Field Name / Tag', 'gutenverse-form')}
+                                    title={__('Tag Name', 'gutenverse-form')}
                                     value={typeof tag === 'string' ? tag : (tag.name || '')}
                                     updateValue={(id, val) => updateItem(index, val)}
-                                    description={__('Enter the field name exactly as defined in the builder.', 'gutenverse-form')}
+                                    description={__('The field name (ID) as defined in the Form Builder.', 'gutenverse-form')}
                                 />
                             </div>
                             <div
@@ -229,8 +229,8 @@ const TabConfirmation = (props) => {
         <div style={{ marginBottom: '20px' }}>
             <ControlCheckbox
                 id={'user_confirm'}
-                title={__('Confirmation Mail to User', 'gutenverse-form')}
-                description={__('Send confirmation email to user. (To be able to send email, please make sure you\'ve setup SMTP correctly).', 'gutenverse-form')}
+                title={__('Send Confirmation Email', 'gutenverse-form')}
+                description={__('Send an automated confirmation email to the user upon submission.', 'gutenverse-form')}
                 value={values.user_confirm}
                 updateValue={updateValue}
             />
@@ -239,16 +239,16 @@ const TabConfirmation = (props) => {
             <FormGroup title={__('Recipient Settings', 'gutenverse-form')}>
                 <ControlCheckbox
                     id={'auto_select_email'}
-                    title={__('Auto Select Email', 'gutenverse-form')}
-                    description={__('This will automatically select emails inputted from email\'s fields. Please make sure the input field is "email" and not "text"', 'gutenverse-form')}
+                    title={__('Auto-Detect Recipient', 'gutenverse-form')}
+                    description={__('Automatically send to the email address entered in the form. Requires an "Email" input type.', 'gutenverse-form')}
                     value={values.auto_select_email}
                     updateValue={updateValue}
                 />
                 {!values.auto_select_email && (
                     <ControlText
                         id={'email_input_name'}
-                        title={__('Use Input\'s Name', 'gutenverse-form')}
-                        description={__('Only the selected input name will be sent email. (e.g : input-email).', 'gutenverse-form')}
+                        title={__('Recipient Field ID', 'gutenverse-form')}
+                        description={__('The specific input ID (name) to use as the recipient email address.', 'gutenverse-form')}
                         defaultValue={'input-email'}
                         value={values.email_input_name}
                         updateValue={updateValue}
@@ -259,22 +259,22 @@ const TabConfirmation = (props) => {
             <FormGroup title={__('Email Details', 'gutenverse-form')}>
                 <ControlText
                     id={'user_email_subject'}
-                    title={__('Email\'s Subject', 'gutenverse-form')}
-                    description={placeholderDescription(__('This will be your email\'s subject or title. (e.g : Thank you for your submission).', 'gutenverse-form'))}
+                    title={__('Email Subject', 'gutenverse-form')}
+                    description={placeholderDescription(__('The subject line for the confirmation email.', 'gutenverse-form'))}
                     value={values.user_email_subject}
                     updateValue={updateValue}
                 />
                 <ControlText
                     id={'user_email_form'}
-                    title={__('Email\'s Sender', 'gutenverse-form')}
-                    description={__('Enter the sender email by which you want to send email to user. (Please make sure you use the same email in your SMTP setup).', 'gutenverse-form')}
+                    title={__('Sender Email', 'gutenverse-form')}
+                    description={__('The email address the confirmation is sent from. Must match your SMTP settings.', 'gutenverse-form')}
                     value={values.user_email_form}
                     updateValue={updateValue}
                 />
                 <ControlText
                     id={'user_email_reply_to'}
-                    title={__('Email\'s Reply Target', 'gutenverse-form')}
-                    description={__('Enter email where user can reply/ you want to get reply. (e.g : supportreply@email.com).', 'gutenverse-form')}
+                    title={__('Reply-To Address', 'gutenverse-form')}
+                    description={__('The email address where user replies will be sent.', 'gutenverse-form')}
                     value={values.user_email_reply_to}
                     updateValue={updateValue}
                 />
@@ -283,8 +283,8 @@ const TabConfirmation = (props) => {
             <FormGroup title={__('Message Content', 'gutenverse-form')}>
                 <ControlTextarea
                     id={'user_email_body'}
-                    title={__('Messages to User', 'gutenverse-form')}
-                    description={placeholderDescription(__('Enter your messages to include it in email\'s body which will be send to user. (e.g : Thank you for your participation in the survey!).', 'gutenverse-form'))}
+                    title={__('Email Body', 'gutenverse-form')}
+                    description={placeholderDescription(__('The content of the confirmation email.', 'gutenverse-form'))}
                     value={values.user_email_body}
                     updateValue={updateValue}
                 />
@@ -308,8 +308,8 @@ const TabNotification = (props) => {
         <div style={{ marginBottom: '20px' }}>
             <ControlCheckbox
                 id={'admin_confirm'}
-                title={__('Notification Mail to Admin', 'gutenverse-form')}
-                description={__('Send notification email to you or your admin. (To be able to send email, please make sure you\'ve setup SMTP correctly).', 'gutenverse-form')}
+                title={__('Send Admin Notification', 'gutenverse-form')}
+                description={__('Send an email notification to the site administrator upon submission.', 'gutenverse-form')}
                 value={values.admin_confirm}
                 updateValue={updateValue}
             />
@@ -319,21 +319,21 @@ const TabNotification = (props) => {
                 <ControlText
                     id={'admin_email_subject'}
                     title={__('Email Subject', 'gutenverse-form')}
-                    description={placeholderDescription(__('This will be your email\'s subject or title. (e.g : User submission).', 'gutenverse-form'))}
+                    description={placeholderDescription(__('The subject line for the notification email.', 'gutenverse-form'))}
                     value={values.admin_email_subject}
                     updateValue={updateValue}
                 />
                 <ControlText
                     id={'admin_email_from'}
-                    title={__('Email\'s Sender', 'gutenverse-form')}
-                    description={__('Enter the sender email by which you want to send email to admin. (Please make sure you use the same email in your SMTP setup).', 'gutenverse-form')}
+                    title={__('Sender Email', 'gutenverse-form')}
+                    description={__('The email address the notification is sent from. Must match your SMTP settings.', 'gutenverse-form')}
                     value={values.admin_email_from}
                     updateValue={updateValue}
                 />
                 <ControlText
                     id={'admin_email_reply_to'}
-                    title={__('Email\'s Reply Target', 'gutenverse-form')}
-                    description={__('Enter email where admin can reply/ you want to get reply. (e.g : admnreply@email.com).', 'gutenverse-form')}
+                    title={__('Reply-To Address', 'gutenverse-form')}
+                    description={__('The email address where admin replies will be sent.', 'gutenverse-form')}
                     value={values.admin_email_reply_to}
                     updateValue={updateValue}
                 />
@@ -343,7 +343,7 @@ const TabNotification = (props) => {
                 <ControlSelect
                     id={'admin_email_type'}
                     title={__('Recipient Type', 'gutenverse-form')}
-                    description={__('Choose whether to send to a static email or dynamic recipient.', 'gutenverse-form')}
+                    description={__('Choose between a static email address or a dynamic recipient based on form data.', 'gutenverse-form')}
                     value={values.admin_email_type || 'static'}
                     options={[
                         { label: __('Static Email', 'gutenverse-form'), value: 'static' },
@@ -355,7 +355,7 @@ const TabNotification = (props) => {
                     <>
                         <ControlSelect
                             id={'admin_email_source'}
-                            title={__('Dynamic Source', 'gutenverse-form')}
+                            title={__('Recipient Source', 'gutenverse-form')}
                             description={__('Select the source to get the recipient email address.', 'gutenverse-form')}
                             value={values.admin_email_source || 'post_author'}
                             options={[
@@ -369,7 +369,7 @@ const TabNotification = (props) => {
                             <ControlText
                                 id={'admin_email_meta_key'}
                                 title={__('Meta Key', 'gutenverse-form')}
-                                description={__('Enter the meta key (custom field name) that holds the email address.', 'gutenverse-form')}
+                                description={__('The custom field name containing the recipient\'s email address.', 'gutenverse-form')}
                                 value={values.admin_email_meta_key}
                                 updateValue={updateValue}
                             />
@@ -378,8 +378,8 @@ const TabNotification = (props) => {
                 ) : (
                     <ControlText
                         id={'admin_email_to'}
-                        title={__('Email\'s Recipient', 'gutenverse-form')}
-                        description={__('Enter admin email where you want to send mail (For multiple email addresses please use "," as separator).', 'gutenverse-form')}
+                        title={__('Recipient Email', 'gutenverse-form')}
+                        description={__('The email address(es) to receive notifications. Separate multiple emails with commas.', 'gutenverse-form')}
                         value={values.admin_email_to}
                         updateValue={updateValue}
                     />
@@ -389,8 +389,8 @@ const TabNotification = (props) => {
             <FormGroup title={__('Message Content', 'gutenverse-form')}>
                 <ControlSelect
                     id={'admin_message_type'}
-                    title={__('Message Type', 'gutenverse-form')}
-                    description={__('Choose whether to use a static message or a value from a form input.', 'gutenverse-form')}
+                    title={__('Message Content Type', 'gutenverse-form')}
+                    description={__('Choose between a custom static message or content from a form input.', 'gutenverse-form')}
                     value={values.admin_message_type || 'static'}
                     options={[
                         { label: __('Static Text', 'gutenverse-form'), value: 'static' },
@@ -401,16 +401,16 @@ const TabNotification = (props) => {
                 {values.admin_message_type === 'dynamic' ? (
                     <ControlText
                         id={'admin_message_input_name'}
-                        title={__('Message Input ID', 'gutenverse-form')}
-                        description={__('Enter the ID of the form input field that contains the message body.', 'gutenverse-form')}
+                        title={__('Message Field ID', 'gutenverse-form')}
+                        description={__('The form input ID that contains the message body.', 'gutenverse-form')}
                         value={values.admin_message_input_name}
                         updateValue={updateValue}
                     />
                 ) : (
                     <ControlTextarea
                         id="admin_note"
-                        title={__('Messages to Admin', 'gutenverse-form')}
-                        description={placeholderDescription(__('Enter your messages to include it in email\'s body which will be send to admin. You can use field tags to include user submitted data.', 'gutenverse-form'))}
+                        title={__('Email Body', 'gutenverse-form')}
+                        description={placeholderDescription(__('The content of the notification email. You can use field tags to include form data.', 'gutenverse-form'))}
                         value={values.admin_note}
                         updateValue={updateValue}
                     />
