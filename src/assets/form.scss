@@ -360,3 +360,64 @@
         padding-top: 0;
     }
 }
+.gutenverse-create-form-action {
+    margin-bottom: 20px;
+    margin-top: 10px;
+
+    .gutenverse-form-action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+
+        .gutenverse-button {
+            flex: 1;
+            justify-content: center;
+            text-align: center;
+            padding: 8px 12px;
+            margin: 0;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &.create {
+                 background-color: #3B57F7;
+                 color: #fff;
+                 transition: background 0.2s;
+                 
+                 &:hover {
+                     background-color: #243cc7;
+                 }
+            }
+
+            /* Ensure text truncation works if flex shrinks */
+            min-width: 0;
+            border-radius: 4px; /* Standard WP radius */
+
+            &.edit {
+                background-color: #fff;
+                color: #333;
+                border: 1px solid #c3c4c7;
+                
+                &:hover {
+                    background-color: #f0f0f1;
+                    color: #1d2327;
+                    border-color: #8c8f94;
+                }
+            }
+        }
+    }
+
+    .gutenverse-form-action-list-link {
+        display: block; 
+        text-align: center; 
+        width: 100%; 
+        color: #3B57F7; 
+        text-decoration: none; 
+        font-size: 13px;
+        &:hover {
+            text-decoration: underline;
+            color: #243cc7;
+        }
+    }
+}
