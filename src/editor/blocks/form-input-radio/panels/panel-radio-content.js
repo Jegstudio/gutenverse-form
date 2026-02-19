@@ -26,7 +26,6 @@ export const radioContentPanel = (props) => {
                     label: __('Selected', 'gutenverse-form'),
                     component: CheckboxControl,
                     onChange: (value) => {
-                        console.log({ value });
                         if (value?.selected) {
                             const newOptions = radioOptions.map((opt) => {
                                 return {

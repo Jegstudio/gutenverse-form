@@ -31,6 +31,7 @@ class Dynamic_Value {
 			'gutenverse/form-input-email',
 			'gutenverse/form-input-telp',
 			'gutenverse/form-input-textarea',
+			'gutenverse/form-input-mobile',
 		);
 
 		if ( in_array( $block_type, $blocks, true ) ) {
@@ -59,6 +60,10 @@ class Dynamic_Value {
 		} elseif ( 'loop' === $default_value_type ) {
 			$loop_data_type = isset( $attributes['loopDataType'] ) ? $attributes['loopDataType'] : 'id';
 			$resolved_value = $this->resolve_loop_data( $loop_data_type, $attributes );
+		} elseif ( 'query' === $default_value_type ) {
+			$resolved_value = $this->resolve_query_data( $attributes );
+		} elseif ( 'user' === $default_value_type ) {
+			$resolved_value = $this->resolve_user_data( $attributes );
 		} else {
 			return $content;
 		}
@@ -136,6 +141,66 @@ class Dynamic_Value {
 					if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
 						$value = $terms[0]->name;
 					}
+				}
+				break;
+		}
+
+		return ! empty( $value ) ? (string) $value : ( isset( $attributes['fallbackDefaultValue'] ) ? (string) $attributes['fallbackDefaultValue'] : '' );
+	}
+
+	/**
+	 * Resolve Query Data.
+	 *
+	 * @param array $attributes Block Attributes.
+	 * @return string
+	 */
+	private function resolve_query_data( $attributes ) {
+		$key   = isset( $attributes['queryParamKey'] ) ? $attributes['queryParamKey'] : '';
+		$value = ! empty( $key ) && isset( $_GET[ $key ] ) ? $_GET[ $key ] : '';
+		return ! empty( $value ) ? (string) $value : ( isset( $attributes['fallbackDefaultValue'] ) ? (string) $attributes['fallbackDefaultValue'] : '' );
+	}
+
+	/**
+	 * Resolve User Data.
+	 *
+	 * @param array $attributes Block Attributes.
+	 * @return string
+	 */
+	private function resolve_user_data( $attributes ) {
+		$user = wp_get_current_user();
+		if ( ! $user || 0 === $user->ID ) {
+			return isset( $attributes['fallbackDefaultValue'] ) ? (string) $attributes['fallbackDefaultValue'] : '';
+		}
+
+		$type  = isset( $attributes['userDataType'] ) ? $attributes['userDataType'] : 'id';
+		$value = '';
+
+		switch ( $type ) {
+			case 'id':
+				$value = $user->ID;
+				break;
+			case 'username':
+				$value = $user->user_login;
+				break;
+			case 'display_name':
+				$value = $user->display_name;
+				break;
+			case 'first_name':
+				$value = $user->first_name;
+				break;
+			case 'last_name':
+				$value = $user->last_name;
+				break;
+			case 'email':
+				$value = $user->user_email;
+				break;
+			case 'role':
+				$value = ! empty( $user->roles ) ? $user->roles[0] : '';
+				break;
+			case 'meta':
+				$meta_key = isset( $attributes['userDataMetaKey'] ) ? $attributes['userDataMetaKey'] : '';
+				if ( ! empty( $meta_key ) ) {
+					$value = get_user_meta( $user->ID, $meta_key, true );
 				}
 				break;
 		}
