@@ -626,12 +626,22 @@ class Form_Input_Select extends Style_Abstract {
 					'device_control' => false,
 				)
 			);
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices.custom-dropdown .choices__inner .gutenverse-icon-svg svg",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'fill' );
+					},
+					'value'          => $this->attrs['dropDownIconOpenColor'],
+					'device_control' => false,
+				)
+			);
 		}
 
 		if ( isset( $this->attrs['dropDownIconOpenSize'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .choices.custom-dropdown .choices__inner i",
+					'selector'       => ".{$this->element_id} .choices.custom-dropdown .choices__inner i, .{$this->element_id} .choices.custom-dropdown .choices__inner .gutenverse-icon-svg",
 					'property'       => function ( $value ) {
 						return "font-size: {$value}px;";
 					},
@@ -652,17 +662,128 @@ class Form_Input_Select extends Style_Abstract {
 					'device_control' => false,
 				)
 			);
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id} .choices.custom-dropdown.is-open .choices__inner .gutenverse-icon-svg svg",
+					'property'       => function ( $value ) {
+						return $this->handle_color( $value, 'fill' );
+					},
+					'value'          => $this->attrs['dropDownIconCloseColor'],
+					'device_control' => false,
+				)
+			);
 		}
 
 		if ( isset( $this->attrs['dropDownIconCloseSize'] ) ) {
 			$this->inject_style(
 				array(
-					'selector'       => ".{$this->element_id} .choices.custom-dropdown.is-open .choices__inner i",
+					'selector'       => ".{$this->element_id} .choices.custom-dropdown.is-open .choices__inner i, .{$this->element_id} .choices.custom-dropdown.is-open .choices__inner .gutenverse-icon-svg",
 					'property'       => function ( $value ) {
 						return "font-size: {$value}px;";
 					},
 					'value'          => $this->attrs['dropDownIconCloseSize'],
 					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['dropDownDisableIconRemove'] ) ) {
+			if ( $this->attrs['dropDownDisableIconRemove'] ) {
+				$this->inject_style(
+					array(
+						'selector'       => ".{$this->element_id}.guten-element .choices[data-type*=select-one] .choices__button",
+						'property'       => function () {
+							return 'display: none';
+						},
+						'value'          => $this->attrs['dropDownDisableIconRemove'],
+						'device_control' => false,
+					)
+				);
+			}
+		}
+
+		if ( isset( $this->attrs['dropDownIconRemoveColor'] ) && isset( $this->attrs['dropDownIconRemove'] ) ) {
+			if ( '' !== $this->attrs['dropDownIconRemove'] ) {
+				$this->inject_style(
+					array(
+						'selector'       => ".{$this->element_id}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button",
+						'property'       => function ( $value ) {
+							return $this->handle_color( $value, 'background-color' );
+						},
+						'value'          => $this->attrs['dropDownIconRemoveColor'],
+						'device_control' => false,
+					)
+				);
+			}
+		}
+
+		if ( isset( $this->attrs['dropDownIconRemoveSize'] ) && isset( $this->attrs['dropDownIconRemove'] ) ) {
+			if ( '' !== $this->attrs['dropDownIconRemove'] ) {
+				$this->inject_style(
+					array(
+						'selector'       => ".{$this->element_id}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button",
+						'property'       => function ( $value ) {
+							return "mask-size: {$value}px;";
+						},
+						'value'          => $this->attrs['dropDownIconRemoveSize'],
+						'device_control' => true,
+					)
+				);
+				$this->inject_style(
+					array(
+						'selector'       => ".{$this->element_id}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button",
+						'property'       => function ( $value ) {
+							return "-webkit-mask-size: {$value}px;";
+						},
+						'value'          => $this->attrs['dropDownIconRemoveSize'],
+						'device_control' => true,
+					)
+				);
+			}
+		}
+
+		if ( isset( $this->attrs['dropDownIconRemoveOffset'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button",
+					'property'       => function ( $value ) {
+						return "margin-right: {$value}px;";
+					},
+					'value'          => $this->attrs['dropDownIconRemoveOffset'],
+					'device_control' => true,
+				)
+			);
+		}
+
+		if ( isset( $this->attrs['dropDownIconRemove'] ) ) {
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id}.guten-element .choices[data-type*=select-one] .choices__button",
+					'property'       => function ( $value ) {
+						return "mask: url(data:image/svg+xml;base64,{$value}) no-repeat center; mask-size: 8px; background-color: black;";
+					},
+					'value'          => $this->attrs['dropDownIconRemove'],
+					'device_control' => false,
+				)
+			);
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id}.guten-element .choices[data-type*=select-one] .choices__button",
+					'property'       => function ( $value ) {
+						return "-webkit-mask: url(data:image/svg+xml;base64,{$value}) no-repeat center; mask-size: 8px; background-color: black;";
+					},
+					'value'          => $this->attrs['dropDownIconRemove'],
+					'device_control' => false,
+				)
+			);
+			$this->inject_style(
+				array(
+					'selector'       => ".{$this->element_id}.guten-element .choices[data-type*=select-one] .choices__button",
+					'property'       => function () {
+						return 'background-image: none;';
+					},
+					'value'          => $this->attrs['dropDownIconRemove'],
+					'device_control' => false,
 				)
 			);
 		}
