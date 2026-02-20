@@ -457,6 +457,30 @@
 			"type": "object",
 			"copyStyle": true
 		},
+		"dropDownDisableIconRemove": {
+			"type": "boolean",
+			"default": false
+		},
+		"dropDownIconRemove": {
+			"type": "string",
+			"default": "",
+			"copyStyle": true
+		},
+		"dropDownIconRemoveColor": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"dropDownIconRemoveSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"dropDownIconRemoveOffset": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
 		"flexAlignSelf": {
 			"type": "object",
 			"default": {},

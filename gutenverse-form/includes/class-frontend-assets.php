@@ -74,6 +74,9 @@ class Frontend_Assets {
 					}
 				}
 				break;
+			case 'gutenverse/form-input-gdpr':
+				$this->icon_conditional_load( $conditions );
+				break;
 		}
 
 		return $conditions;
