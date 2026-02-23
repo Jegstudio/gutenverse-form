@@ -1,11 +1,13 @@
 import { __ } from "@wordpress/i18n";
-import { SelectControl, TextControl } from "gutenverse-core/controls";
+import { SelectControl, TextControl, LockedDynamicContentControl } from "gutenverse-core/controls";
+import { applyFilters } from "@wordpress/hooks";
 
 export const inputValuePanel = (props) => {
 	const { defaultValueType, loopDataType, userDataType } = props;
 
-	return [
-		{
+	return applyFilters(
+        'gutenverse.form-input.options',
+		[{
 			id: "defaultValueType",
 			label: __("Default Value Type", "gutenverse-form"),
 			component: SelectControl,
@@ -26,6 +28,12 @@ export const inputValuePanel = (props) => {
 					label: __("Logged-in User Data", "gutenverse-form"),
 					value: "user",
 				},
+				{
+					label: __("Pro Dynamic Data", "gutenverse-form"),
+					value: 'pro-dynamic',
+					pro: true,
+					description: __('Get dynamic data from ACF, Meta Box, or other plugins.', 'gutenverse-form')
+				}
 			],
 		},
 		// Custom Type
@@ -143,5 +151,5 @@ export const inputValuePanel = (props) => {
 			label: __("Fallback Default Value", "gutenverse-form"),
 			component: TextControl,
 		},
-	];
+	], props );
 };

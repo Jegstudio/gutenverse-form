@@ -4,11 +4,12 @@ import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
 import { IconLibrary } from 'gutenverse-core/controls';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { createPortal } from 'react-dom';
 import { gutenverseRoot, renderIcon } from 'gutenverse-core/helper';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import { useDynamicContent } from 'gutenverse-core/hooks';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
@@ -43,6 +44,7 @@ const FormInputNumberTelp = compose(
         elementId,
         defaultValueType,
         customDefaultValue,
+        dynamicContent,
     } = attributes;
 
     const elementRef = useRef();
@@ -52,6 +54,8 @@ const FormInputNumberTelp = compose(
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     useDynamicScript(elementRef);
+
+    const { dynamicText } = useDynamicContent(dynamicContent);
 
     const inputData = {
         ...props,
@@ -68,6 +72,12 @@ const FormInputNumberTelp = compose(
         validationMax,
         validationWarning
     };
+
+    useEffect(() => {
+        if (dynamicText !== undefined) {
+            setAttributes({ customDefaultValue: dynamicText });
+        }
+    }, [dynamicText]);
 
     const imageLazyLoad = () => {
         if (lazyLoad) {
@@ -119,6 +129,8 @@ const FormInputNumberTelp = compose(
                         defaultValue={
                             defaultValueType === "custom"
                                 ? customDefaultValue
+                                : defaultValueType === "pro-dynamic"
+                                ? dynamicText
                                 : ""
                         }
                         ref={elementRef}
@@ -134,6 +146,8 @@ const FormInputNumberTelp = compose(
                     defaultValue={
                         defaultValueType === "custom"
                             ? customDefaultValue
+                            : defaultValueType === "pro-dynamic"
+                            ? dynamicText
                             : ""
                     }
                     ref={elementRef}

@@ -518,6 +518,14 @@
 		"fallbackDefaultValue": {
 			"type": "string",
 			"default": ""
+		},
+		"dynamicContent": {
+			"type": "object",
+			"default": {}
+		},
+		"isDynamic": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {

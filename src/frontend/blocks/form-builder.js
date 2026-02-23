@@ -94,7 +94,7 @@ class GutenverseFormValidation extends Default {
             if (dynamicConfig) {
                 try {
                     const config = typeof dynamicConfig === 'string' ? JSON.parse(dynamicConfig) : dynamicConfig;
-                    if (config.type === 'custom' && config.custom) {
+                    if (( config.type === 'custom' || config.type === 'pro-dynamic' ) && config.custom) {
                         if (!input.value) input.value = config.custom;
                     } else if (config.type === 'query' && config.query?.key) {
                         const urlParams = new URLSearchParams(window.location.search);

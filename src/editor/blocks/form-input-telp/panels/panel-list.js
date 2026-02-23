@@ -21,6 +21,12 @@ export const panelList = () => {
             tabRole: TabSetting
         },
         {
+            title: __("Input Value", "gutenverse-form"),
+            panelArray: inputValuePanel,
+            initialOpen: false,
+            tabRole: TabSetting,
+        },
+        {
             title: __('Icon', 'gutenverse'),
             initialOpen: false,
             panelArray: panelIcon,
