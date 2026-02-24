@@ -883,7 +883,7 @@ const getBlockStyle = (elementId, attributes) => {
         'selector': `.${elementId}.guten-element .choices[data-type*=select-one] .choices__button`,
     });
 
-    isNotEmpty(attributes['dropDownIconRemoveColor']) && isNotEmpty(attributes['dropDownIconRemove']) && data.push({
+    isNotEmpty(attributes['dropDownIconRemoveColor']) && data.push({
         'type': 'color',
         'id': 'dropDownIconRemoveColor',
         'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
@@ -1063,56 +1063,6 @@ const getBlockStyle = (elementId, attributes) => {
                     }
                 }
             ],
-        },
-    );
-    isNotEmpty(attributes['dropDownIconRemove']) && data.push(
-        {
-            'type': 'plain',
-            'id': 'dropDownIconRemove',
-            'properties': [
-                {
-                    'name': 'mask',
-                    'valueType': 'pattern',
-                    'pattern': 'url(data:image/svg+xml;base64,{value}) no-repeat center; mask-size: 8px; background-color: black',
-                    'patternValues': {
-                        'value': {
-                            'type': 'direct',
-                        },
-
-                    }
-                }
-            ],
-            'selector': `.${elementId}.guten-element .choices[data-type*=select-one] .choices__button`,
-        },
-        {
-            'type': 'plain',
-            'id': 'dropDownIconRemove',
-            'properties': [
-                {
-                    'name': '-webkit-mask',
-                    'valueType': 'pattern',
-                    'pattern': 'url(data:image/svg+xml;base64,{value}) no-repeat center; -webkit-mask-size: 8px; background-color: black',
-                    'patternValues': {
-                        'value': {
-                            'type': 'direct',
-                        },
-
-                    }
-                }
-            ],
-            'selector': `.${elementId}.guten-element .choices[data-type*=select-one] .choices__button`,
-        },
-        {
-            'type': 'plain',
-            'id': 'dropDownIconRemove',
-            'properties': [
-                {
-                    'name': 'background-image',
-                    'valueType': 'static',
-                    'staticValue': 'none',
-                }
-            ],
-            'selector': `.${elementId}.guten-element .choices[data-type*=select-one] .choices__button`,
         },
     );
 
