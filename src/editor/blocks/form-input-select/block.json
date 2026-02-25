@@ -456,12 +456,45 @@
 		"dropDownIconCloseSize": {
 			"type": "object",
 			"copyStyle": true
+		},
+		"dropDownDisableIconRemove": {
+			"type": "boolean",
+			"default": false
+		},
+		"dropDownIconRemove": {
+			"type": "string",
+			"default": "",
+			"copyStyle": true
+		},
+		"dropDownIconRemoveColor": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"dropDownIconRemoveSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"dropDownIconRemoveOffset": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
 		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "selection", "options"],
-	"viewScript": ["gutenverse-form-frontend-input-select-script"],
-	"style": ["gutenverse-form-frontend-form-input-select-style"]
+	"keywords": [
+		"input",
+		"form",
+		"selection",
+		"options"
+	],
+	"viewScript": [
+		"gutenverse-form-frontend-input-select-script"
+	],
+	"style": [
+		"gutenverse-form-frontend-form-input-select-style"
+	]
 }

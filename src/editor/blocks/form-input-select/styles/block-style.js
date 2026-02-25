@@ -92,9 +92,9 @@ const getBlockStyle = (elementId, attributes) => {
                 'name': 'display',
                 'valueType': 'function',
                 'functionName': 'handleSimpleCondition',
-                'functionProps' : {
-                    'valueTrue' : 'none',
-                    'valueFalse' : 'block'
+                'functionProps': {
+                    'valueTrue': 'none',
+                    'valueFalse': 'block'
                 }
             }
         ],
@@ -853,6 +853,139 @@ const getBlockStyle = (elementId, attributes) => {
         'selector': `.${elementId}.guten-element`,
         'attributeType': 'custom',
     });
+
+    isNotEmpty(attributes['dropDownDisableIconRemove']) && data.push({
+        'type': 'plain',
+        'id': 'dropDownDisableIconRemove',
+        'properties': [
+            {
+                'name': 'display',
+                'valueType': 'static',
+                'staticValue': 'none',
+            }
+        ],
+        'selector': `.${elementId}.guten-element .choices[data-type*=select-one] .choices__button`,
+    });
+
+    isNotEmpty(attributes['dropDownIconRemoveColor']) && isNotEmpty(attributes['dropDownIconRemove']) && data.push({
+        'type': 'color',
+        'id': 'dropDownIconRemoveColor',
+        'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
+        'properties': [
+            {
+                'name': 'background-color',
+                'valueType': 'direct'
+            }
+        ],
+    });
+    isNotEmpty(attributes['dropDownIconRemoveSize']) && isNotEmpty(attributes['dropDownIconRemove']) && data.push(
+        {
+            'type': 'plain',
+            'id': 'dropDownIconRemoveSize',
+            'responsive': true,
+            'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
+            'properties': [
+                {
+                    'name': 'mask-size',
+                    'valueType': 'pattern',
+                    'pattern': '{value}px',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        },
+                    }
+                }
+            ],
+        },
+        {
+            'type': 'plain',
+            'id': 'dropDownIconRemoveSize',
+            'responsive': true,
+            'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
+            'properties': [
+                {
+                    'name': '-webkit-mask-size',
+                    'valueType': 'pattern',
+                    'pattern': '{value}px',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        },
+                    }
+                }
+            ],
+        },
+    );
+    isNotEmpty(attributes['dropDownIconRemoveOffset']) && data.push(
+        {
+            'type': 'plain',
+            'id': 'dropDownIconRemoveOffset',
+            'responsive': true,
+            'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
+            'properties': [
+                {
+                    'name': 'margin-right',
+                    'valueType': 'pattern',
+                    'pattern': '{value}px',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        },
+                    }
+                }
+            ],
+        },
+    );
+    isNotEmpty(attributes['dropDownIconRemove']) && data.push(
+        {
+            'type': 'plain',
+            'id': 'dropDownIconRemove',
+            'properties': [
+                {
+                    'name': 'mask',
+                    'valueType': 'pattern',
+                    'pattern': 'url(data:image/svg+xml;base64,{value}) no-repeat center; mask-size: 8px; background-color: black',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        },
+
+                    }
+                }
+            ],
+            'selector': `.${elementId}.guten-element .choices[data-type*=select-one] .choices__button`,
+        },
+        {
+            'type': 'plain',
+            'id': 'dropDownIconRemove',
+            'properties': [
+                {
+                    'name': '-webkit-mask',
+                    'valueType': 'pattern',
+                    'pattern': 'url(data:image/svg+xml;base64,{value}) no-repeat center; -webkit-mask-size: 8px; background-color: black',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        },
+
+                    }
+                }
+            ],
+            'selector': `.${elementId}.guten-element .choices[data-type*=select-one] .choices__button`,
+        },
+        {
+            'type': 'plain',
+            'id': 'dropDownIconRemove',
+            'properties': [
+                {
+                    'name': 'background-image',
+                    'valueType': 'static',
+                    'staticValue': 'none',
+                }
+            ],
+            'selector': `.${elementId}.guten-element .choices[data-type*=select-one] .choices__button`,
+        },
+    );
 
     return [
         ...data,
