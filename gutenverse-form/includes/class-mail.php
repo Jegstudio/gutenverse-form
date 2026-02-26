@@ -37,12 +37,27 @@ class Mail {
 	 * @return WP_Response
 	 */
 	public function send_user_email( $form_id, $form_data, $entry_id, $form_entry, $user_mail ) {
-		$subject  = isset( $form_data['user_email_subject'] ) ? $form_data['user_email_subject'] : get_bloginfo( 'name' );
+		$subject_type = isset( $form_data['user_email_subject_type'] ) ? $form_data['user_email_subject_type'] : 'static';
+		if ( 'post_title' === $subject_type ) {
+			$post_id = isset( $form_entry['post-id'] ) ? $form_entry['post-id'] : 0;
+			$subject = $post_id ? get_the_title( $post_id ) : get_bloginfo( 'name' );
+		} elseif ( 'post_meta' === $subject_type ) {
+			$post_id  = isset( $form_entry['post-id'] ) ? $form_entry['post-id'] : 0;
+			$meta_key = isset( $form_data['user_email_subject_meta_key'] ) ? $form_data['user_email_subject_meta_key'] : '';
+			$subject  = ( $post_id && ! empty( $meta_key ) ) ? get_post_meta( $post_id, $meta_key, true ) : get_bloginfo( 'name' );
+			if ( ! $subject ) {
+				$subject = get_bloginfo( 'name' );
+			}
+		} else {
+			$subject = isset( $form_data['user_email_subject'] ) ? $form_data['user_email_subject'] : get_bloginfo( 'name' );
+		}
+
 		$from     = isset( $form_data['user_email_from'] ) ? $form_data['user_email_from'] : null;
 		$reply_to = isset( $form_data['user_email_reply_to'] ) ? $form_data['user_email_reply_to'] : null;
 
+		$message_type = isset( $form_data['user_message_type'] ) ? $form_data['user_message_type'] : 'static';
 		$template_id  = isset( $form_data['user_email_template'] ) ? (int) $form_data['user_email_template'] : 0;
-		$use_template = $template_id > 0 && get_post_type( $template_id ) === Email_Template::POST_TYPE;
+		$use_template = 'template' === $message_type && $template_id > 0 && get_post_type( $template_id ) === Email_Template::POST_TYPE;
 
 		if ( $use_template ) {
 			$body = get_post_meta( $template_id, 'gutenverse_email_html', true );
@@ -92,19 +107,31 @@ class Mail {
 	 * @return WP_Response
 	 */
 	public function send_admin_email( $form_id, $form_data, $entry_id, $form_entry ) {
-		$subject  = isset( $form_data['admin_email_subject'] ) ? $form_data['admin_email_subject'] : null;
+		$subject_type = isset( $form_data['admin_email_subject_type'] ) ? $form_data['admin_email_subject_type'] : 'static';
+		if ( 'post_title' === $subject_type ) {
+			$post_id = isset( $form_entry['post-id'] ) ? $form_entry['post-id'] : 0;
+			$subject = $post_id ? get_the_title( $post_id ) : null;
+		} elseif ( 'post_meta' === $subject_type ) {
+			$post_id  = isset( $form_entry['post-id'] ) ? $form_entry['post-id'] : 0;
+			$meta_key = isset( $form_data['admin_email_subject_meta_key'] ) ? $form_data['admin_email_subject_meta_key'] : '';
+			$subject  = ( $post_id && ! empty( $meta_key ) ) ? get_post_meta( $post_id, $meta_key, true ) : null;
+		} else {
+			$subject = isset( $form_data['admin_email_subject'] ) ? $form_data['admin_email_subject'] : null;
+		}
+
 		$from     = isset( $form_data['admin_email_from'] ) ? $form_data['admin_email_from'] : null;
 		$reply_to = isset( $form_data['admin_email_reply_to'] ) ? $form_data['admin_email_reply_to'] : null;
 
+		$message_type = isset( $form_data['admin_message_type'] ) ? $form_data['admin_message_type'] : 'static';
 		$template_id  = isset( $form_data['admin_email_template'] ) ? (int) $form_data['admin_email_template'] : 0;
-		$use_template = $template_id > 0 && get_post_type( $template_id ) === Email_Template::POST_TYPE;
+		$use_template = 'template' === $message_type && $template_id > 0 && get_post_type( $template_id ) === Email_Template::POST_TYPE;
 
 		if ( $use_template ) {
 			$body = get_post_meta( $template_id, 'gutenverse_email_html', true );
 		} else {
 			$message = isset( $form_data['admin_note'] ) ? $form_data['admin_note'] : '';
 
-			if ( isset( $form_data['admin_message_type'] ) && 'dynamic' === $form_data['admin_message_type'] ) {
+			if ( 'dynamic' === $message_type ) {
 				$input_id = isset( $form_data['admin_message_input_name'] ) ? $form_data['admin_message_input_name'] : '';
 				if ( ! empty( $input_id ) && isset( $form_entry['entry-data'] ) ) {
 					foreach ( $form_entry['entry-data'] as $data ) {
