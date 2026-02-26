@@ -75,7 +75,16 @@ class Integration {
 					'google_sheets',
 				);
 
-				$config['currentService'] = in_array( $service, $allowed_services, true ) ? $service : '';
+				$current_service          = in_array( $service, $allowed_services, true ) ? $service : '';
+				$config['currentService'] = $current_service;
+
+				if ( $current_service ) {
+					$instance = $this->get_service_instance( $current_service );
+					if ( $instance ) {
+						$config['serviceFields']   = method_exists( $instance, 'get_fields' ) ? $instance->get_fields() : array();
+						$config['serviceSettings'] = method_exists( $instance, 'get_settings' ) ? $instance->get_settings() : array();
+					}
+				}
 
 				wp_localize_script(
 					'gutenverse-form-integration',
@@ -118,5 +127,25 @@ class Integration {
 			<div id="gutenverse-form-integration"></div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Get service instance
+	 *
+	 * @param string $service .
+	 *
+	 * @return object|null
+	 */
+	public function get_service_instance( $service ) {
+		$class_name = str_replace( '_', ' ', $service );
+		$class_name = ucwords( $class_name );
+		$class_name = str_replace( ' ', '_', $class_name );
+		$class_name = '\\Gutenverse_Form\\Integrations\\' . $class_name;
+
+		if ( class_exists( $class_name ) ) {
+			return new $class_name();
+		}
+
+		return null;
 	}
 }

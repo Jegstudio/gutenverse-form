@@ -167,6 +167,20 @@
                     }
                 }
 
+                .setup-link-button {
+                    background: none;
+                    border: none;
+                    color: #2271b1;
+                    cursor: pointer;
+                    margin-right: 15px;
+                    font-weight: 500;
+                    padding: 0;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+
                 .gutenverse-toggle {
                     width: 44px;
                     height: 22px;

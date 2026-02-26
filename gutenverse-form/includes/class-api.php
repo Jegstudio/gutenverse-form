@@ -103,6 +103,16 @@ class Api {
 
 		register_rest_route(
 			self::ENDPOINT,
+			'integration/save_settings',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'save_integration_settings' ),
+				'permission_callback' => 'gutenverse_permission_check_admin',
+			)
+		);
+
+		register_rest_route(
+			self::ENDPOINT,
 			'form-action/(?P<id>\d+)',
 			array(
 				'methods'             => 'GET',
@@ -886,7 +896,52 @@ class Api {
 				return new WP_REST_Response( array( 'success' => true ), 200 );
 			}
 		}
+	}
 
-		return new WP_REST_Response( array( 'success' => false, 'message' => esc_html__( 'Invalid integration service.', 'gutenverse-form' ) ), 400 );
+	/**
+	 * Save Integration Settings
+	 *
+	 * @param WP_REST_Request $request .
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function save_integration_settings( $request ) {
+		$params = $request->get_params();
+
+		if ( isset( $params['service'] ) && isset( $params['settings'] ) ) {
+			$allowed_services = array(
+				'whatsapp',
+				'telegram',
+				'discord',
+				'mailchimp',
+				'slack',
+				'webhook',
+				'get_response',
+				'drip',
+				'active_campaign',
+				'convert_kit',
+				'mailer',
+				'google_sheets',
+			);
+
+			$service = sanitize_key( $params['service'] );
+
+			if ( in_array( $service, $allowed_services, true ) ) {
+				$settings = $params['settings'];
+				// Sanitize settings based on the service if needed,
+				// but for now we'll just save it as an array.
+				update_option( "gutenverse_form_{$service}_settings", $settings );
+
+				return new WP_REST_Response( array( 'success' => true ), 200 );
+			}
+		}
+
+		return new WP_REST_Response(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Invalid integration service or settings.', 'gutenverse-form' ),
+			),
+			400
+		);
 	}
 }

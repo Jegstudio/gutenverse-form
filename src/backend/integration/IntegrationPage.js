@@ -5,6 +5,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { CardPro } from 'gutenverse-core/components';
 import { IconCrownBannerSVG } from 'gutenverse-core/icons';
 
+import { TextControl, Button, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
 const services = [
@@ -45,7 +46,9 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
             <div className="item-actions">
                 {isActive && (
                     <button
-                        onClick={() => onSetup(service.id)}
+                        onClick={() => {
+                            window.location.href = admin_url + 'admin.php?page=form_integration&service=' + service.id;
+                        }}
                         className="setup-link-button"
                     >
                         {__('Continue setup', 'gutenverse-form')}
@@ -98,6 +101,70 @@ const TabSetting = ({ onSetup }) => {
 const admin_url = window['GutenverseConfig']?.adminUrl || '';
 
 
+const ServiceSetup = ({ serviceId, title }) => {
+    const config = window['GutenverseConfig'] || {};
+    const fields = config.serviceFields || {};
+    const [settings, setSettings] = useState(config.serviceSettings || {});
+    const [isSaving, setIsSaving] = useState(false);
+    const [notice, setNotice] = useState(null);
+
+    const handleSave = () => {
+        setIsSaving(true);
+        setNotice(null);
+        apiFetch({
+            path: 'gutenverse-form-client/v1/integration/save_settings',
+            method: 'POST',
+            data: { service: serviceId, settings },
+        }).then(() => {
+            setIsSaving(false);
+            setNotice({ type: 'success', message: __('Settings saved successfully.', 'gutenverse-form') });
+        }).catch((err) => {
+            setIsSaving(false);
+            setNotice({ type: 'error', message: err.message || __('Failed to save settings.', 'gutenverse-form') });
+        });
+    };
+
+    const updateSetting = (key, value) => {
+        setSettings((prev) => ({ ...prev, [key]: value }));
+    };
+
+    return (
+        <div className="service-setup-content">
+            <h3>{__('Setup', 'gutenverse-form')} {title}</h3>
+            {notice && (
+                <Notice status={notice.type} onRemove={() => setNotice(null)}>
+                    {notice.message}
+                </Notice>
+            )}
+            <div className="setup-fields">
+                {Object.keys(fields).map((key) => {
+                    const field = fields[key];
+                    return (
+                        <div key={key} className="setup-field-item">
+                            <TextControl
+                                label={field.label}
+                                value={settings[key] || ''}
+                                onChange={(val) => updateSetting(key, val)}
+                                placeholder={field.placeholder}
+                            />
+                        </div>
+                    );
+                })}
+            </div>
+            <div className="setup-footer">
+                <Button
+                    isPrimary
+                    isBusy={isSaving}
+                    onClick={handleSave}
+                    disabled={isSaving}
+                >
+                    {__('Save Settings', 'gutenverse-form')}
+                </Button>
+            </div>
+        </div>
+    );
+};
+
 const TabAdvanced = () => {
     return (
         <div className="form-tab-body pro-tab">
@@ -129,16 +196,13 @@ const IntegrationPage = () => {
                 <div className="integration-header">
                     <h1>{service ? service.title : __('Integration', 'gutenverse-form')}</h1>
                     <button className="back-button" onClick={() => {
-                        window.history.pushState({}, '', admin_url + 'admin.php?page=form_integration');
-                        setCurrentService('');
+                        window.location.href = admin_url + 'admin.php?page=form_integration';
                     }}>
                         {__('Back to list', 'gutenverse-form')}
                     </button>
                 </div>
                 <div className="form-tab-body">
-                    <h3>{__('Setup', 'gutenverse-form')} {service?.title}</h3>
-                    <p>{__('Configure your', 'gutenverse-form')} {service?.title} {__('integration settings here.', 'gutenverse-form')}</p>
-                    {/* Placeholder for specific integration settings */}
+                    <ServiceSetup serviceId={currentService} title={service?.title} />
                 </div>
             </div>
         );
