@@ -141,6 +141,16 @@ class Api {
 			)
 		);
 
+		register_rest_route(
+			self::ENDPOINT,
+			'form/meta-keys',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_meta_keys' ),
+				'permission_callback' => 'gutenverse_permission_check_admin',
+			)
+		);
+
 		/** ----------------------------------------------------------------
 		 * Frontend/Global Routes
 		 */
@@ -339,12 +349,24 @@ class Api {
 				'user_email_form'                => '',
 				'user_email_reply_to'            => '',
 				'user_email_body'                => '',
+				'user_email_subject_type'        => '',
+				'user_email_subject_meta_key'    => '',
+				'user_message_type'              => '',
 				'admin_confirm'                  => '',
 				'admin_email_subject'            => '',
+				'admin_email_subject_type'       => '',
+				'admin_email_subject_meta_key'   => '',
 				'admin_email_to'                 => '',
 				'admin_email_from'               => '',
 				'admin_email_reply_to'           => '',
 				'admin_note'                     => '',
+				'admin_email_type'               => '',
+				'admin_email_source'             => '',
+				'admin_email_meta_key'           => '',
+				'admin_message_type'             => '',
+				'admin_message_input_name'       => '',
+				'user_email_template'            => '',
+				'admin_email_template'           => '',
 				'overwrite_default_confirmation' => '',
 				'overwrite_default_notification' => '',
 			)
@@ -703,6 +725,64 @@ class Api {
 		wp_reset_postdata();
 
 		return $result;
+	}
+
+	/**
+	 * Get Meta Keys & ACF Fields
+	 *
+	 * @param object $request .
+	 *
+	 * @return WP_Rest.
+	 */
+	public function get_meta_keys( $request ) {
+		global $wpdb;
+
+		// Get all meta keys that do not start with underscore
+		$keys = $wpdb->get_col( "
+			SELECT meta_key
+			FROM $wpdb->postmeta
+			WHERE meta_key NOT LIKE '\_%'
+			GROUP BY meta_key
+			ORDER BY meta_key ASC
+		" );
+
+		$options = array();
+		foreach ( $keys as $key ) {
+			$options[] = array(
+				'label' => $key,
+				'value' => $key,
+			);
+		}
+
+		if ( function_exists( 'acf_get_field_groups' ) ) {
+			$groups = acf_get_field_groups();
+			if ( ! empty( $groups ) ) {
+				foreach ( $groups as $group ) {
+					$fields = acf_get_fields( $group['key'] );
+					if ( ! empty( $fields ) ) {
+						foreach ( $fields as $field ) {
+							$exists = false;
+							foreach ( $options as &$option ) {
+								if ( $option['value'] === $field['name'] ) {
+									$exists = true;
+									$option['label'] = $field['label'] . ' (' . $field['name'] . ')';
+									break;
+								}
+							}
+
+							if ( ! $exists ) {
+								$options[] = array(
+									'label' => $field['label'] . ' (' . $field['name'] . ')',
+									'value' => $field['name'],
+								);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return rest_ensure_response( $options );
 	}
 
 	/**

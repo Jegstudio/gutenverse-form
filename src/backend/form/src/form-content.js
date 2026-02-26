@@ -257,13 +257,37 @@ const TabConfirmation = (props) => {
             </FormGroup>
 
             <FormGroup title={__('Email Details', 'gutenverse-form')}>
-                <ControlText
-                    id={'user_email_subject'}
-                    title={__('Email Subject', 'gutenverse-form')}
-                    description={placeholderDescription(__('The subject line for the confirmation email.', 'gutenverse-form'))}
-                    value={values.user_email_subject}
+                <ControlSelect
+                    id={'user_email_subject_type'}
+                    title={__('Subject Type', 'gutenverse-form')}
+                    description={__('Choose between static text, post title, or post metadata.', 'gutenverse-form')}
+                    value={values.user_email_subject_type || 'static'}
+                    options={[
+                        { label: __('Static Text', 'gutenverse-form'), value: 'static' },
+                        { label: __('Post Title', 'gutenverse-form'), value: 'post_title' },
+                        { label: __('Post Meta (Custom Field)', 'gutenverse-form'), value: 'post_meta' },
+                    ]}
                     updateValue={updateValue}
                 />
+                {values.user_email_subject_type === 'post_meta' && (
+                    <ControlSelect
+                        id={'user_email_subject_meta_key'}
+                        title={__('Meta Key', 'gutenverse-form')}
+                        description={__('The custom field name containing the subject.', 'gutenverse-form')}
+                        value={values.user_email_subject_meta_key || ''}
+                        options={props.metaKeys || []}
+                        updateValue={updateValue}
+                    />
+                )}
+                {(!values.user_email_subject_type || values.user_email_subject_type === 'static') && (
+                    <ControlText
+                        id={'user_email_subject'}
+                        title={__('Email Subject', 'gutenverse-form')}
+                        description={placeholderDescription(__('The subject line for the confirmation email.', 'gutenverse-form'))}
+                        value={values.user_email_subject}
+                        updateValue={updateValue}
+                    />
+                )}
                 <ControlText
                     id={'user_email_form'}
                     title={__('Sender Email', 'gutenverse-form')}
@@ -281,21 +305,36 @@ const TabConfirmation = (props) => {
             </FormGroup>
 
             <FormGroup title={__('Message Content', 'gutenverse-form')}>
-                <ControlTextarea
-                    id={'user_email_body'}
-                    title={__('Email Body', 'gutenverse-form')}
-                    description={placeholderDescription(__('The content of the confirmation email.', 'gutenverse-form'))}
-                    value={values.user_email_body}
-                    updateValue={updateValue}
-                />
                 <ControlSelect
-                    id={'user_email_template'}
-                    title={__('Email Template', 'gutenverse-form')}
-                    description={__('Select an email template to use. This will override the message body.', 'gutenverse-form')}
-                    value={values.user_email_template}
-                    options={props.emailTemplates || []}
+                    id={'user_message_type'}
+                    title={__('Message Content Type', 'gutenverse-form')}
+                    description={__('Choose between a custom static message or an email template.', 'gutenverse-form')}
+                    value={values.user_message_type || 'static'}
+                    options={[
+                        { label: __('Static Text', 'gutenverse-form'), value: 'static' },
+                        { label: __('Email Template', 'gutenverse-form'), value: 'template' },
+                    ]}
                     updateValue={updateValue}
                 />
+                {(!values.user_message_type || values.user_message_type === 'static') && (
+                    <ControlTextarea
+                        id={'user_email_body'}
+                        title={__('Email Body', 'gutenverse-form')}
+                        description={placeholderDescription(__('The content of the confirmation email.', 'gutenverse-form'))}
+                        value={values.user_email_body}
+                        updateValue={updateValue}
+                    />
+                )}
+                {values.user_message_type === 'template' && (
+                    <ControlSelect
+                        id={'user_email_template'}
+                        title={__('Email Template', 'gutenverse-form')}
+                        description={__('Select an email template to use. This will override the message body.', 'gutenverse-form')}
+                        value={values.user_email_template}
+                        options={props.emailTemplates || []}
+                        updateValue={updateValue}
+                    />
+                )}
             </FormGroup>
         </>}
     </div>;
@@ -316,13 +355,37 @@ const TabNotification = (props) => {
         </div>
         {values.admin_confirm && <>
             <FormGroup title={__('Email Details', 'gutenverse-form')}>
-                <ControlText
-                    id={'admin_email_subject'}
-                    title={__('Email Subject', 'gutenverse-form')}
-                    description={placeholderDescription(__('The subject line for the notification email.', 'gutenverse-form'))}
-                    value={values.admin_email_subject}
+                <ControlSelect
+                    id={'admin_email_subject_type'}
+                    title={__('Subject Type', 'gutenverse-form')}
+                    description={__('Choose between static text, post title, or post metadata.', 'gutenverse-form')}
+                    value={values.admin_email_subject_type || 'static'}
+                    options={[
+                        { label: __('Static Text', 'gutenverse-form'), value: 'static' },
+                        { label: __('Post Title', 'gutenverse-form'), value: 'post_title' },
+                        { label: __('Post Meta (Custom Field)', 'gutenverse-form'), value: 'post_meta' },
+                    ]}
                     updateValue={updateValue}
                 />
+                {values.admin_email_subject_type === 'post_meta' && (
+                    <ControlSelect
+                        id={'admin_email_subject_meta_key'}
+                        title={__('Meta Key', 'gutenverse-form')}
+                        description={__('The custom field name containing the subject.', 'gutenverse-form')}
+                        value={values.admin_email_subject_meta_key || ''}
+                        options={props.metaKeys || []}
+                        updateValue={updateValue}
+                    />
+                )}
+                {(!values.admin_email_subject_type || values.admin_email_subject_type === 'static') && (
+                    <ControlText
+                        id={'admin_email_subject'}
+                        title={__('Email Subject', 'gutenverse-form')}
+                        description={placeholderDescription(__('The subject line for the notification email.', 'gutenverse-form'))}
+                        value={values.admin_email_subject}
+                        updateValue={updateValue}
+                    />
+                )}
                 <ControlText
                     id={'admin_email_from'}
                     title={__('Sender Email', 'gutenverse-form')}
@@ -366,11 +429,12 @@ const TabNotification = (props) => {
                             updateValue={updateValue}
                         />
                         {values.admin_email_source === 'post_meta' && (
-                            <ControlText
+                            <ControlSelect
                                 id={'admin_email_meta_key'}
                                 title={__('Meta Key', 'gutenverse-form')}
                                 description={__('The custom field name containing the recipient\'s email address.', 'gutenverse-form')}
-                                value={values.admin_email_meta_key}
+                                value={values.admin_email_meta_key || ''}
+                                options={props.metaKeys || []}
                                 updateValue={updateValue}
                             />
                         )}
@@ -390,15 +454,16 @@ const TabNotification = (props) => {
                 <ControlSelect
                     id={'admin_message_type'}
                     title={__('Message Content Type', 'gutenverse-form')}
-                    description={__('Choose between a custom static message or content from a form input.', 'gutenverse-form')}
+                    description={__('Choose between a custom static message, content from a form input, or an email template.', 'gutenverse-form')}
                     value={values.admin_message_type || 'static'}
                     options={[
                         { label: __('Static Text', 'gutenverse-form'), value: 'static' },
                         { label: __('Form Input (Dynamic)', 'gutenverse-form'), value: 'dynamic' },
+                        { label: __('Email Template', 'gutenverse-form'), value: 'template' },
                     ]}
                     updateValue={updateValue}
                 />
-                {values.admin_message_type === 'dynamic' ? (
+                {values.admin_message_type === 'dynamic' && (
                     <ControlText
                         id={'admin_message_input_name'}
                         title={__('Message Field ID', 'gutenverse-form')}
@@ -406,7 +471,8 @@ const TabNotification = (props) => {
                         value={values.admin_message_input_name}
                         updateValue={updateValue}
                     />
-                ) : (
+                )}
+                {(!values.admin_message_type || values.admin_message_type === 'static') && (
                     <ControlTextarea
                         id="admin_note"
                         title={__('Email Body', 'gutenverse-form')}
@@ -415,14 +481,16 @@ const TabNotification = (props) => {
                         updateValue={updateValue}
                     />
                 )}
-                <ControlSelect
-                    id={'admin_email_template'}
-                    title={__('Email Template', 'gutenverse-form')}
-                    description={__('Select an email template to use. This will override the message body.', 'gutenverse-form')}
-                    value={values.admin_email_template}
-                    options={props.emailTemplates || []}
-                    updateValue={updateValue}
-                />
+                {values.admin_message_type === 'template' && (
+                    <ControlSelect
+                        id={'admin_email_template'}
+                        title={__('Email Template', 'gutenverse-form')}
+                        description={__('Select an email template to use. This will override the message body.', 'gutenverse-form')}
+                        value={values.admin_email_template}
+                        options={props.emailTemplates || []}
+                        updateValue={updateValue}
+                    />
+                )}
             </FormGroup>
         </>}
     </div>;
@@ -455,11 +523,18 @@ export const FormContent = (props) => {
     };
 
     const [emailTemplates, setEmailTemplates] = useState([]);
+    const [metaKeys, setMetaKeys] = useState([]);
 
     useEffect(() => {
         apiFetch({ path: '/wp/v2/gutenverse-email-tpl?per_page=100' }).then(posts => {
             const options = posts.map(post => ({ label: post.title.rendered, value: post.id }));
             setEmailTemplates([{ label: __('Default', 'gutenverse-form'), value: '' }, ...options]);
+        });
+
+        apiFetch({ path: 'gutenverse-form-client/v1/form/meta-keys' }).then(keys => {
+            setMetaKeys([{ label: __('Select Meta Key', 'gutenverse-form'), value: '' }, ...keys]);
+        }).catch(() => {
+            setMetaKeys([{ label: __('Failed to load meta keys', 'gutenverse-form'), value: '' }]);
         });
     }, []);
 
@@ -477,7 +552,7 @@ export const FormContent = (props) => {
     );
 
     const tabProps = {
-        ...props, emailTemplates, placeholderDescription,
+        ...props, emailTemplates, metaKeys, placeholderDescription,
     };
 
     const changeActive = key => {
