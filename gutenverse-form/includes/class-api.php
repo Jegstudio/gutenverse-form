@@ -93,6 +93,16 @@ class Api {
 
 		register_rest_route(
 			self::ENDPOINT,
+			'integration/save',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'save_integration' ),
+				'permission_callback' => 'gutenverse_permission_check_admin',
+			)
+		);
+
+		register_rest_route(
+			self::ENDPOINT,
 			'form-action/(?P<id>\d+)',
 			array(
 				'methods'             => 'GET',
@@ -758,5 +768,45 @@ class Api {
 		}
 
 		return $result;
+	}
+	/**
+	 * Save Integration Settings
+	 *
+	 * @param object $request .
+	 *
+	 * @return WP_Rest_Response.
+	 */
+	public function save_integration( $request ) {
+		$params = $request->get_params();
+
+		if ( isset( $params['key'] ) && isset( $params['value'] ) ) {
+			$allowed_services = array(
+				'whatsapp',
+				'telegram',
+				'discord',
+				'mailchimp',
+				'slack',
+				'webhook',
+				'get_response',
+				'drip',
+				'active_campaign',
+				'convert_kit',
+				'mailer',
+				'google_sheets',
+			);
+
+			$key   = sanitize_key( $params['key'] );
+			$value = (bool) $params['value'];
+
+			if ( in_array( $key, $allowed_services, true ) ) {
+				$options         = get_option( 'gutenverse_form_integrations', array() );
+				$options[ $key ] = $value;
+				update_option( 'gutenverse_form_integrations', $options );
+
+				return new WP_REST_Response( array( 'success' => true ), 200 );
+			}
+		}
+
+		return new WP_REST_Response( array( 'success' => false, 'message' => esc_html__( 'Invalid integration service.', 'gutenverse-form' ) ), 400 );
 	}
 }

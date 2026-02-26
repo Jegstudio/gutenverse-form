@@ -228,6 +228,10 @@ class Form {
 			}
 			$data['available_inputs'] = array_unique( $input_names );
 
+			if ( ! is_array( $meta ) ) {
+				$meta = array();
+			}
+
 			return array_merge( $data, $meta );
 		}
 

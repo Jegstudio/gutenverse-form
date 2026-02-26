@@ -114,6 +114,13 @@ class Init {
 	public $dynamic_value;
 
 	/**
+	 * Hold Integration Instance.
+	 *
+	 * @var Integration
+	 */
+	public $integration;
+
+	/**
 	 * Singleton page for Init Class
 	 *
 	 * @return Gutenverse
@@ -196,7 +203,7 @@ class Init {
 		}
 		$plugins = get_plugins();
 		$checks  = array(
-			'gutenverse' => array(
+			'gutenverse'      => array(
 				'plugin' => 'gutenverse/gutenverse.php',
 			),
 			'gutenverse-news' => array(
@@ -349,10 +356,11 @@ class Init {
 	 * Initialize Form
 	 */
 	public function init_post_type() {
-		$this->form      = new Form();
-		$this->entries   = new Entries();
+		$this->form           = new Form();
+		$this->entries        = new Entries();
 		$this->dashboard      = new Dashboard();
 		$this->email_template = new Email_Template();
+		$this->integration    = new Integration();
 	}
 
 	/**

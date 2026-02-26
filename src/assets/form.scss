@@ -380,6 +380,10 @@
             overflow: hidden;
             text-overflow: ellipsis;
 
+            /* Ensure text truncation works if flex shrinks */
+            min-width: 0;
+            border-radius: 4px; /* Standard WP radius */
+
             &.create {
                  background-color: #3B57F7;
                  color: #fff;
@@ -389,10 +393,6 @@
                      background-color: #243cc7;
                  }
             }
-
-            /* Ensure text truncation works if flex shrinks */
-            min-width: 0;
-            border-radius: 4px; /* Standard WP radius */
 
             &.edit {
                 background-color: #fff;
