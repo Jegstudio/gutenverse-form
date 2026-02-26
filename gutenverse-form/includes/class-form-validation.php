@@ -176,6 +176,15 @@ class Form_Validation extends Style_Generator {
 				'data'         => $form_result,
 				'missingLabel' => esc_html__( 'Form action is missing, please assign form action into this form.', 'gutenverse-form' ),
 				'isAdmin'      => current_user_can( 'manage_options' ),
+				'userData'     => is_user_logged_in() ? array(
+					'id'           => get_current_user_id(),
+					'username'     => wp_get_current_user()->user_login,
+					'display_name' => wp_get_current_user()->display_name,
+					'first_name'   => wp_get_current_user()->first_name,
+					'last_name'    => wp_get_current_user()->last_name,
+					'email'        => wp_get_current_user()->user_email,
+					'role'         => (array) wp_get_current_user()->roles,
+				) : null,
 			)
 		);
 	}

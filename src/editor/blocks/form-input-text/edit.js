@@ -4,13 +4,14 @@ import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef } from '@wordpress/element';
 import { IconLibrary } from 'gutenverse-core/controls';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import classnames from 'classnames';
 import { gutenverseRoot, renderIcon } from 'gutenverse-core/helper';
 import { createPortal } from 'react-dom';
 import { getImageSrc } from 'gutenverse-core/editor-helper';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
+import { useDynamicContent } from 'gutenverse-core/hooks';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
@@ -25,24 +26,27 @@ const FormInputTextBlock = compose(
         clientId
     } = props;
 
-    const {
-        inputPlaceholder,
-        inputName,
-        required,
-        validationType,
-        validationMin,
-        validationMax,
-        validationWarning,
-        icon,
-        iconSVG,
-        iconType,
-        lazyLoad,
-        image,
-        imageAlt,
-        iconStyleMode,
-        useIcon,
-        elementId
-    } = attributes;
+	const {
+		inputPlaceholder,
+		inputName,
+		required,
+		validationType,
+		validationMin,
+		validationMax,
+		validationWarning,
+		icon,
+		iconSVG,
+		iconType,
+		lazyLoad,
+		image,
+		imageAlt,
+		iconStyleMode,
+		useIcon,
+		elementId,
+		defaultValueType,
+		customDefaultValue,
+		dynamicContent,
+	} = attributes;
 
     const animationClass = useAnimationEditor(attributes);
     const elementRef = useRef();
@@ -51,8 +55,10 @@ const FormInputTextBlock = compose(
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     useDynamicScript(elementRef);
 
-    const [openIconLibrary, setOpenIconLibrary] = useState(false);
-    const imageAltText = imageAlt || null;
+    const { dynamicText } = useDynamicContent(dynamicContent);
+
+	const [openIconLibrary, setOpenIconLibrary] = useState(false);
+	const imageAltText = imageAlt || null;
 
     const inputData = {
         ...props,
@@ -61,14 +67,20 @@ const FormInputTextBlock = compose(
         elementRef
     };
 
-    const validation = {
-        type: 'text',
-        required,
-        validationType,
-        validationMin,
-        validationMax,
-        validationWarning
-    };
+	useEffect(() => {
+        if (dynamicText !== undefined) {
+            setAttributes({ customDefaultValue: dynamicText });
+        }
+    }, [dynamicText]);
+
+	const validation = {
+		type: 'text',
+		required,
+		validationType,
+		validationMin,
+		validationMax,
+		validationWarning,
+	};
 
     const imageLazyLoad = () => {
         if (lazyLoad) {
@@ -97,46 +109,66 @@ const FormInputTextBlock = compose(
         }
     };
 
-    return <>
-        <CopyElementToolbar {...props} />
-        <InputWrapper {...inputData}>
-            {openIconLibrary && createPortal(
-                <IconLibrary
-                    closeLibrary={() => setOpenIconLibrary(false)}
-                    value={icon}
-                    onChange={icon => setAttributes({ icon })}
-                />,
-                gutenverseRoot
-            )}
-            {useIcon ?
-                <div className="input-icon-wrapper input-text">
-                    {iconContent()}
-                    <input data-validation={JSON.stringify(validation)}
-                        placeholder={inputPlaceholder}
-                        name={inputName}
-                        className={classnames(
-                            'gutenverse-input',
-                            'gutenverse-input-text',
-                            animationClass
-                        )}
-                        type="text"
-                        ref={elementRef}
-                    />
-                </div>
-                :
-                <input data-validation={JSON.stringify(validation)}
-                    placeholder={inputPlaceholder}
-                    name={inputName}
-                    className={classnames(
-                        'gutenverse-input',
-                        'gutenverse-input-text',
-                        animationClass
-                    )}
-                    type="text"
-                    ref={elementRef}
-                />}
-        </InputWrapper>
-    </>;
+	return (
+		<>
+			<CopyElementToolbar {...props} />
+			<InputWrapper {...inputData}>
+				{openIconLibrary &&
+					createPortal(
+						<IconLibrary
+							closeLibrary={() => setOpenIconLibrary(false)}
+							value={icon}
+							onChange={(icon) => setAttributes({ icon })}
+						/>,
+						gutenverseRoot,
+					)}
+				{useIcon ? (
+					<div className="input-icon-wrapper input-text">
+						{iconContent()}
+						<input
+							data-validation={JSON.stringify(validation)}
+							placeholder={inputPlaceholder}
+							name={inputName}
+							className={classnames(
+								"gutenverse-input",
+								"gutenverse-input-text",
+								animationClass,
+							)}
+							type="text"
+							defaultValue={
+								defaultValueType === "custom"
+									? customDefaultValue
+									: defaultValueType === "pro-dynamic"
+									? dynamicText
+									: ""
+							}
+							ref={elementRef}
+						/>
+					</div>
+				) : (
+					<input
+						data-validation={JSON.stringify(validation)}
+						placeholder={inputPlaceholder}
+						name={inputName}
+						className={classnames(
+							"gutenverse-input",
+							"gutenverse-input-text",
+							animationClass,
+						)}
+						type="text"
+						defaultValue={
+							defaultValueType === "custom"
+								? customDefaultValue
+								: defaultValueType === "pro-dynamic"
+								? dynamicText
+								: ""
+						}
+						ref={elementRef}
+					/>
+				)}
+			</InputWrapper>
+		</>
+	);
 });
 
 export default FormInputTextBlock;

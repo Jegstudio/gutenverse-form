@@ -6,12 +6,7 @@ import { getImageSrc } from 'gutenverse-core/editor-helper';
 import { renderIcon } from 'gutenverse-core/helper';
 
 const WrapAHref = ({ attributes, children }) => {
-    const {
-        url,
-        linkTarget,
-        rel,
-        buttonClass = '',
-    } = attributes;
+	const { url, linkTarget, rel, buttonClass = "" } = attributes;
 
     if (url !== undefined && url !== '') {
         return <a className={buttonClass} href={url} target={linkTarget} rel={rel}>
@@ -22,32 +17,37 @@ const WrapAHref = ({ attributes, children }) => {
     }
 };
 
-const save = compose(
-    withMouseMoveEffectScript
-)(props => {
-    const {
-        attributes,
-    } = props;
+const save = compose(withMouseMoveEffectScript)((props) => {
+	const { attributes } = props;
 
-    const {
-        inputPlaceholder,
-        inputName,
-        required,
-        validationType,
-        validationMin,
-        validationMax,
-        validationWarning,
-        defaultLogic,
-        displayLogic,
-        lazyLoad,
-        image,
-        imageAlt,
-        iconType,
-        iconStyleMode,
-        icon,
-        iconSVG,
-        useIcon,
-    } = attributes;
+	const {
+		inputPlaceholder,
+		inputName,
+		required,
+		validationType,
+		validationMin,
+		validationMax,
+		validationWarning,
+		defaultLogic,
+		displayLogic,
+		lazyLoad,
+		image,
+		imageAlt,
+		iconType,
+		iconStyleMode,
+		icon,
+		iconSVG,
+		useIcon,
+		defaultValueType,
+		customDefaultValue,
+		loopDataType,
+		loopDataMetaKey,
+		loopDataTaxonomySlug,
+		queryParamKey,
+		userDataType,
+		userDataMetaKey,
+		fallbackDefaultValue,
+	} = attributes;
 
     const validation = {
         type: 'text',
@@ -58,72 +58,102 @@ const save = compose(
         validationWarning
     };
 
-    const displayRule = {
-        type: defaultLogic,
-        rule: displayLogic
-    };
+	const displayRule = {
+		type: defaultLogic,
+		rule: displayLogic,
+	};
 
     const additionalProps = {
-        ['data-display-rule']: !isEmpty(defaultLogic) && !isEmpty(displayLogic) ? JSON.stringify(displayRule) : undefined
+        ['data-display-rule']: !isEmpty(defaultLogic) && !isEmpty(displayLogic) ? JSON.stringify(displayRule) : undefined,
+        ['data-dynamic-value']: JSON.stringify({
+            type: defaultValueType,
+            custom: customDefaultValue,
+            loop: {
+                type: loopDataType,
+                meta: loopDataMetaKey,
+                tax: loopDataTaxonomySlug
+            },
+            query: {
+                key: queryParamKey
+            },
+            user: {
+                type: userDataType,
+                meta: userDataMetaKey
+            },
+            fallback: fallbackDefaultValue
+        })
     };
     const imageAltText = imageAlt || null;
 
-    const imageLazyLoad = () => {
-        if (lazyLoad) {
-            return <img src={getImageSrc(image)} alt={imageAltText} loading="lazy" />;
-        } else {
-            return <img src={getImageSrc(image)} alt={imageAltText} />;
-        }
-    };
-    const iconContent = () => {
-        switch (iconType) {
-            case 'icon':
-            case 'svg':
-                return <div className="form-input-text-icon type-icon">
-                    <div className={`icon style-${iconStyleMode}`}>
-                        <WrapAHref {...props}>
-                            {renderIcon(icon, iconType, iconSVG)}
-                        </WrapAHref>
-                    </div>
-                </div>;
-            case 'image':
-                return <div className="form-input-text-icon type-image">
-                    <div className={`icon style-${iconStyleMode}`}>
-                        <WrapAHref {...props}>
-                            {imageLazyLoad()}
-                        </WrapAHref>
-                    </div>
-                </div>;
-            default:
-                return null;
-        }
-    };
+	const imageLazyLoad = () => {
+		if (lazyLoad) {
+			return (
+				<img
+					src={getImageSrc(image)}
+					alt={imageAltText}
+					loading="lazy"
+				/>
+			);
+		} else {
+			return <img src={getImageSrc(image)} alt={imageAltText} />;
+		}
+	};
+	const iconContent = () => {
+		switch (iconType) {
+			case 'icon':
+			case 'svg':
+				return (
+					<div className="form-input-text-icon type-icon">
+						<div className={`icon style-${iconStyleMode}`}>
+							<WrapAHref {...props}>
+								{renderIcon(icon, iconType, iconSVG)}
+							</WrapAHref>
+						</div>
+					</div>
+				);
+			case 'image':
+				return (
+					<div className="form-input-text-icon type-image">
+						<div className={`icon style-${iconStyleMode}`}>
+							<WrapAHref {...props}>{imageLazyLoad()}</WrapAHref>
+						</div>
+					</div>
+				);
+			default:
+				return null;
+		}
+	};
 
-    return (
-        <SaveInputWrapper {...props} inputType={validation.type} defaultLogic={defaultLogic}>
-            {useIcon ?
-                <div className="input-icon-wrapper input-text">
-                    {iconContent()}
-                    <input
-                        data-validation={JSON.stringify(validation)}
-                        placeholder={inputPlaceholder}
-                        name={inputName}
-                        className="gutenverse-input gutenverse-input-text"
-                        type="text"
-                        {...additionalProps}
-                    />
-                </div>
-                :
-                <input
-                    data-validation={JSON.stringify(validation)}
-                    placeholder={inputPlaceholder}
-                    name={inputName}
-                    className="gutenverse-input gutenverse-input-text"
-                    type="text"
-                    {...additionalProps}
-                />}
-        </SaveInputWrapper>
-    );
+	return (
+		<SaveInputWrapper
+			{...props}
+			inputType={validation.type}
+			defaultLogic={defaultLogic}
+		>
+			{useIcon ? (
+				<div className="input-icon-wrapper input-text">
+					{iconContent()}
+					<input
+						data-validation={JSON.stringify(validation)}
+						placeholder={inputPlaceholder}
+						name={inputName}
+						className="gutenverse-input gutenverse-input-text"
+						type="text"
+						{...additionalProps}
+					/>
+				</div>
+			) : (
+				<input
+					data-validation={JSON.stringify(validation)}
+					placeholder={inputPlaceholder}
+					name={inputName}
+					className="gutenverse-input gutenverse-input-text"
+					type="text"
+					{...additionalProps}
+				/>
+			)}
+		</SaveInputWrapper>
+	);
 });
 
 export default save;

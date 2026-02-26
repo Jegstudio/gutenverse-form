@@ -60,12 +60,14 @@ const FormInputCheckboxBlock = compose(
                     className="gutenverse-input"
                     data-validation={JSON.stringify(validation)}
                 />
-                {checkboxOptions.map(item => {
-                    return <label key={item.value} htmlFor={item.value}>
+                {checkboxOptions.map((item, index) => {
+                    return <label key={item.value} htmlFor={`${elementId}-${index}`}>
                         <input
+                            id={`${elementId}-${index}`}
                             name={inputName} value={item.value}
                             className="gutenverse-input-checkbox"
                             type="checkbox"
+                            defaultChecked={item.selected}
                         />
                         <span className="check">
                             {item.label}

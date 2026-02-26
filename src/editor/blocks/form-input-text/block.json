@@ -478,6 +478,50 @@
 		"condition": {
 			"type": "object",
 			"default": {}
+		},
+		"defaultValueType": {
+			"type": "string",
+			"default": "custom"
+		},
+		"customDefaultValue": {
+			"type": "string",
+			"default": ""
+		},
+		"loopDataType": {
+			"type": "string",
+			"default": "id"
+		},
+		"loopDataMetaKey": {
+			"type": "string",
+			"default": ""
+		},
+		"loopDataTaxonomySlug": {
+			"type": "string",
+			"default": ""
+		},
+		"queryParamKey": {
+			"type": "string",
+			"default": ""
+		},
+		"userDataType": {
+			"type": "string",
+			"default": "id"
+		},
+		"userDataMetaKey": {
+			"type": "string",
+			"default": ""
+		},
+		"fallbackDefaultValue": {
+			"type": "string",
+			"default": ""
+		},
+		"dynamicContent": {
+			"type": "object",
+			"default": {}
+		},
+		"isDynamic": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {

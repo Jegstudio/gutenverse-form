@@ -58,6 +58,7 @@ const save = compose(
                             name={inputName} value={item.value}
                             className="gutenverse-input-radio"
                             type="radio"
+                            checked={item.selected ? true : undefined}
                         />
                         <span className="radio">
                             {item.label}

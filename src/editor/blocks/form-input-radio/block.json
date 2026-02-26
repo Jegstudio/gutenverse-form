@@ -275,5 +275,6 @@
 	},
 	"keywords": ["input", "form", "radio", "dot"],
 	"example": {},
+	"viewScript": ["gutenverse-form-frontend-input-radio-script"],
 	"style": ["gutenverse-form-frontend-form-input-radio-style"]
 }
