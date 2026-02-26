@@ -22,15 +22,15 @@ class Placeholder {
 	 */
 	public static function get_available_placeholders() {
 		$placeholders = array(
-			array(
+			'entry_title' => array(
 				'name'  => 'Entry Title',
 				'value' => '{{entry_title}}',
 			),
-			array(
+			'form_title'  => array(
 				'name'  => 'Form Title',
 				'value' => '{{form_title}}',
 			),
-			array(
+			'site_title'  => array(
 				'name'  => 'Site Title',
 				'value' => '{{site_title}}',
 			),
@@ -68,7 +68,7 @@ class Placeholder {
 		}
 
 		foreach ( $custom_vars as $var ) {
-			$placeholders[] = array(
+			$placeholders[ $var ] = array(
 				'name'  => 'Tag: ' . $var,
 				'value' => '{{' . $var . '}}',
 			);
