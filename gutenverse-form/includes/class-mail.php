@@ -38,10 +38,7 @@ class Mail {
 	 */
 	public function send_user_email( $form_id, $form_data, $entry_id, $form_entry, $user_mail ) {
 		$subject_type = isset( $form_data['user_email_subject_type'] ) ? $form_data['user_email_subject_type'] : 'static';
-		if ( 'post_title' === $subject_type ) {
-			$post_id = isset( $form_entry['post-id'] ) ? $form_entry['post-id'] : 0;
-			$subject = $post_id ? get_the_title( $post_id ) : get_bloginfo( 'name' );
-		} elseif ( 'post_meta' === $subject_type ) {
+		if ( 'post_meta' === $subject_type ) {
 			$post_id  = isset( $form_entry['post-id'] ) ? $form_entry['post-id'] : 0;
 			$meta_key = isset( $form_data['user_email_subject_meta_key'] ) ? $form_data['user_email_subject_meta_key'] : '';
 			$subject  = ( $post_id && ! empty( $meta_key ) ) ? get_post_meta( $post_id, $meta_key, true ) : get_bloginfo( 'name' );
@@ -108,10 +105,7 @@ class Mail {
 	 */
 	public function send_admin_email( $form_id, $form_data, $entry_id, $form_entry ) {
 		$subject_type = isset( $form_data['admin_email_subject_type'] ) ? $form_data['admin_email_subject_type'] : 'static';
-		if ( 'post_title' === $subject_type ) {
-			$post_id = isset( $form_entry['post-id'] ) ? $form_entry['post-id'] : 0;
-			$subject = $post_id ? get_the_title( $post_id ) : null;
-		} elseif ( 'post_meta' === $subject_type ) {
+		if ( 'post_meta' === $subject_type ) {
 			$post_id  = isset( $form_entry['post-id'] ) ? $form_entry['post-id'] : 0;
 			$meta_key = isset( $form_data['admin_email_subject_meta_key'] ) ? $form_data['admin_email_subject_meta_key'] : '';
 			$subject  = ( $post_id && ! empty( $meta_key ) ) ? get_post_meta( $post_id, $meta_key, true ) : null;
@@ -166,7 +160,11 @@ class Mail {
 			'Reply-To: ' . $reply_to . "\r\n" .
 			'X-Mailer: PHP/' . phpversion();
 
-		$mail = isset( $form_data['admin_email_to'] ) ? $form_data['admin_email_to'] : null;
+		$mail = '';
+
+		if ( isset( $form_data['admin_email_type'] ) && 'static' === $form_data['admin_email_type'] ) {
+			$mail = isset( $form_data['admin_email_to'] ) ? $form_data['admin_email_to'] : null;
+		}
 
 		if ( isset( $form_data['admin_email_type'] ) && 'dynamic' === $form_data['admin_email_type'] ) {
 			$dynamic_mail = $this->get_dynamic_recipient( $form_data, $form_entry );
