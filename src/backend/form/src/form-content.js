@@ -260,12 +260,11 @@ const TabConfirmation = (props) => {
                 <ControlSelect
                     id={'user_email_subject_type'}
                     title={__('Subject Type', 'gutenverse-form')}
-                    description={__('Choose between static text, post title, or post metadata.', 'gutenverse-form')}
+                    description={__('Choose between static text, post title, or meta action.', 'gutenverse-form')}
                     value={values.user_email_subject_type || 'static'}
                     options={[
                         { label: __('Static Text', 'gutenverse-form'), value: 'static' },
-                        { label: __('Post Title', 'gutenverse-form'), value: 'post_title' },
-                        { label: __('Post Meta (Custom Field)', 'gutenverse-form'), value: 'post_meta' },
+                        { label: __('Meta Action', 'gutenverse-form'), value: 'post_meta' },
                     ]}
                     updateValue={updateValue}
                 />
@@ -358,12 +357,11 @@ const TabNotification = (props) => {
                 <ControlSelect
                     id={'admin_email_subject_type'}
                     title={__('Subject Type', 'gutenverse-form')}
-                    description={__('Choose between static text, post title, or post metadata.', 'gutenverse-form')}
+                    description={__('Choose between static text, post title, or meta action.', 'gutenverse-form')}
                     value={values.admin_email_subject_type || 'static'}
                     options={[
                         { label: __('Static Text', 'gutenverse-form'), value: 'static' },
-                        { label: __('Post Title', 'gutenverse-form'), value: 'post_title' },
-                        { label: __('Post Meta (Custom Field)', 'gutenverse-form'), value: 'post_meta' },
+                        { label: __('Meta Action', 'gutenverse-form'), value: 'post_meta' },
                     ]}
                     updateValue={updateValue}
                 />
@@ -423,7 +421,7 @@ const TabNotification = (props) => {
                             value={values.admin_email_source || 'post_author'}
                             options={[
                                 { label: __('Post Author', 'gutenverse-form'), value: 'post_author' },
-                                { label: __('Post Metadata (Custom Field)', 'gutenverse-form'), value: 'post_meta' },
+                                { label: __('Meta Action', 'gutenverse-form'), value: 'post_meta' },
                                 { label: __('Custom (Developer Hook)', 'gutenverse-form'), value: 'custom' },
                             ]}
                             updateValue={updateValue}
