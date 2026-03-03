@@ -206,6 +206,13 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 
 
 == Changelog ==
+= 2.4.8-dev =
+##### New & Improvements
+* add new container block
+
+##### Bug Fixes
+* fix form vulnerability issues
+
 = 2.4.7 =
 ##### New & Improvements
 * update core framework version
