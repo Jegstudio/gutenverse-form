@@ -108,7 +108,6 @@ const FormInputSubmitBlock = compose(
             {__('Please put input element inside Form Builder', 'gutenverse-form')}
         </h1>}
         <div  {...blockProps}>
-            
             <button {...buttonProps} onClick={() => { }} onSubmit={() => textRef.current.focus()}>
                 {showIcon && iconPosition === 'before' && renderIcon(icon, iconType, iconSVG)}
                 <RichText
