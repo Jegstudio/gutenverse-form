@@ -5,7 +5,7 @@ import saveV1 from './deprecated/v1/save';
 import metadata from './block.json';
 import { IconFormCheckboxSVG } from '../../../assets/icon/index';
 
-const { name, attributes } = metadata;
+const { name, attributes, supports } = metadata;
 
 export { metadata, name };
 
@@ -16,7 +16,8 @@ export const settings = {
     deprecated: [
         {
             attributes,
+            supports,
             save: saveV1
-        }
+        },
     ]
 };

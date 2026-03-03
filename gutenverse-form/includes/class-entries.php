@@ -452,21 +452,33 @@ class Entries {
 	 * @param - $post post.
 	 */
 	public function entry_data_metabox( $post ) {
-		$entry  = get_post_meta( $post->ID, 'entry-data', true );
-		$result = '<div class="entry-title">Entry ID</div>
-		<div class="entry-data">' . $post->ID . '</div>';
-
-		if ( isset( $entry ) ) {
+		$entry = get_post_meta( $post->ID, 'entry-data', true );
+		?>
+		<div class="entry-title"><?php esc_html_e( 'Entry ID', 'gutenverse-form' ); ?></div>
+		<div class="entry-data"><?php echo (int) $post->ID; ?></div>
+		<?php
+		if ( isset( $entry ) && is_array( $entry ) ) {
 			foreach ( $entry as $item ) {
-				$value = is_array( $item['value'] ) ? gutenverse_join_array( $item['value'] ) : $item['value'];
-				$value = ! empty( $value ) ? $value : esc_html__( 'empty', 'gutenverse-form' );
-
-				$result .= '<div class="entry-title">Input ID : ' . $item['id'] . '</div>
-				<div class="entry-data">' . $value . '</div>';
+				$value = is_array( $item['value'] ) ? array_map( 'esc_html', $item['value'] ) : $item['value'];
+				?>
+				<div class="entry-title"><?php echo esc_html__( 'Input ID : ', 'gutenverse-form' ) . esc_html( $item['id'] ); ?></div>
+				<div class="entry-data">
+					<?php
+					if ( is_array( $value ) ) {
+						echo '<span>' . implode( ', ', $value ) . ' </span>';
+					} else {
+						// Check if it's a URL (possibly a file)
+						if ( filter_var( $value, FILTER_VALIDATE_URL ) ) {
+							echo '<a href="' . esc_url( $value ) . '" target="_blank">' . esc_html( $value ) . '</a>';
+						} else {
+							echo esc_html( $value );
+						}
+					}
+					?>
+				</div>
+				<?php
 			}
 		}
-
-		gutenverse_print_html( $result, 'post' );
 	}
 
 	/**

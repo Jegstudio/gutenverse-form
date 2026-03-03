@@ -1,5 +1,5 @@
 import { compose } from '@wordpress/compose';
-import { useRef } from '@wordpress/element';
+import { useRef, useEffect } from '@wordpress/element';
 import { useBlockProps, RichText, BlockControls } from '@wordpress/block-editor';
 import classnames from 'classnames';
 import { useState } from '@wordpress/element';
@@ -16,6 +16,7 @@ import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenve
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 import { renderIcon } from 'gutenverse-core/helper';
+import { recursiveParentBlock } from '../form-input/general/input-wrapper';
 
 const FormInputSubmitBlock = compose(
     withMouseMoveEffect,
@@ -75,6 +76,12 @@ const FormInputSubmitBlock = compose(
         ),
     };
 
+    const [validParent, setValidParent] = useState(true);
+
+    useEffect(() => {
+        setValidParent(recursiveParentBlock(clientId));
+    }, []);
+
     return <>
         <CopyElementToolbar {...props} />
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
@@ -97,7 +104,11 @@ const FormInputSubmitBlock = compose(
                 />
             </ToolbarGroup>
         </BlockControls>
+        {!validParent && <h1 className="input-warning">
+            {__('Please put input element inside Form Builder', 'gutenverse-form')}
+        </h1>}
         <div  {...blockProps}>
+            
             <button {...buttonProps} onClick={() => { }} onSubmit={() => textRef.current.focus()}>
                 {showIcon && iconPosition === 'before' && renderIcon(icon, iconType, iconSVG)}
                 <RichText
