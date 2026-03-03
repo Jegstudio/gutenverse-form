@@ -195,7 +195,7 @@ class Form {
 				'hierarchical'    => false,
 				'supports'        => array( 'title', 'revisions', 'page-attributes' ),
 				'map_meta_cap'    => true,
-				'show_in_menu'    => self::POST_TYPE,
+				'show_in_menu'    => false,
 				'rewrite'         => array(
 					'slug' => self::POST_TYPE,
 				),

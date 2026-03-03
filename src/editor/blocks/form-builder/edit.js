@@ -108,15 +108,15 @@ const FormBuilderBlock = compose(
                 list={[
                     {
                         title: __('Adding inputs', 'gutenverse-form'),
-                        description: __('Click the + symbol on form builder block, then search for inputs you need ("checkbox", "text", "email", etc). Also don\'t forget to add "submit button"', 'gutenverse-form')
+                        description: __('Click the + symbol on form builder block, then search for inputs you need (checkbox, text, email, etc). Also don\'t forget to add a submit button.', 'gutenverse-form')
                     },
                     {
-                        title: __('Creating your form setting', 'gutenverse-form'),
-                        description: __('You need to create a form first from your "Dashboard -> Form."', 'gutenverse-form')
+                        title: __('Create your form configuration', 'gutenverse-form'),
+                        description: __('In the Form Setting panel below, click Create New to create a form action directly from here. Your email configuration is managed inside the form action.', 'gutenverse-form')
                     },
                     {
-                        title: __('Selecting your form setting', 'gutenverse-form'),
-                        description: __('In the "Form Setting" below, you can click "Choose Form Action" and type your form\'s name to search it.', 'gutenverse-form')
+                        title: __('Edit your form configuration', 'gutenverse-form'),
+                        description: __('If a form action is already linked, click Edit Form to update its settings, including confirmation and notification emails.', 'gutenverse-form')
                     }
                 ]}
             />

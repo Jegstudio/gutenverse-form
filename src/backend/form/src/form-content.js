@@ -4,7 +4,7 @@ import { ControlText, ControlTextarea, ControlCheckbox, ControlSelect } from 'gu
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
-import { IconCloseSVG, IconTrashSVG } from 'gutenverse-core/icons';
+import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'gutenverse-core/helper';
 import { CardPro } from 'gutenverse-core/components';
@@ -109,113 +109,121 @@ const TabGeneral = (props) => {
     </div>;
 };
 
-const TabFieldTags = (props) => {
-    const { values, updateValue } = props;
-    const mapping = Array.isArray(values.variable_mapping) ? values.variable_mapping : [];
 
-    const addMapping = () => {
-        updateValue('variable_mapping', [...mapping, '']);
-    };
+const getAdminUrl = () => {
+    if (window.ajaxurl) {
+        return window.ajaxurl.replace('admin-ajax.php', '');
+    }
+    return '/wp-admin/';
+};
 
-    const removeMapping = (index) => {
-        const newMapping = [...mapping];
-        newMapping.splice(index, 1);
-        updateValue('variable_mapping', newMapping);
-    };
+const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplates, onRefresh, formTitle }) => {
+    const [saving, setSaving] = useState(false);
+    const adminUrl = getAdminUrl();
+    const template = emailTemplates ? emailTemplates.find(t => t.value === templateId) : null;
+    const templateTitle = template ? template.label : __('(No Template Found)', 'gutenverse-form');
 
-    const updateItem = (index, value) => {
-        const newMapping = [...mapping];
-        newMapping[index] = value;
-        updateValue('variable_mapping', newMapping);
-    };
+    const handleCreate = () => {
+        setSaving(true);
+        const name = `${formTitle || 'Form'} - ${fieldName === 'user_email_template' ? 'Confirmation' : 'Notification'}`;
 
-    const isEditor = !!props.isEditor;
-
-    const generateTags = () => {
-        if (!isEditor) return;
-
-        const clientId = props.clientId;
-        const blocks = clientId ? window.wp.data.select('core/block-editor').getBlocks(clientId) : window.wp.data.select('core/block-editor').getBlocks();
-        const inputs = [];
-        const traverseBlocks = (innerBlocks) => {
-            innerBlocks.forEach(block => {
-                if (block.name.startsWith('gutenverse/form-input') || block.name === 'gutenverse/form-textarea') {
-                    const name = block.attributes.inputName;
-                    if (name) {
-                        inputs.push({
-                            name: name,
-                            input: name
-                        });
-                    }
-                }
-                if (block.innerBlocks) {
-                    traverseBlocks(block.innerBlocks);
-                }
-            });
-        };
-        traverseBlocks(blocks);
-
-        const newMapping = [...mapping];
-        const existingInputs = newMapping.map(m => (typeof m === 'string' ? '' : m.input));
-
-        inputs.forEach(input => {
-            if (!existingInputs.includes(input.input)) {
-                newMapping.push(input);
+        apiFetch({
+            path: '/wp/v2/gutenverse-email-tpl',
+            method: 'POST',
+            data: {
+                title: name,
+                status: 'publish'
             }
+        }).then(response => {
+            if (response && response.id) {
+                updateValue(fieldName, response.id);
+                if (onRefresh) onRefresh();
+            }
+            setSaving(false);
+        }).catch(err => {
+            console.error(err); // eslint-disable-line no-console
+            setSaving(false);
         });
-
-        updateValue('variable_mapping', newMapping);
     };
+
+    const handleDelete = () => {
+        if (!window.confirm(__('Are you sure you want to delete this email template?', 'gutenverse-form'))) return;
+        setSaving(true);
+        apiFetch({
+            path: `/wp/v2/gutenverse-email-tpl/${templateId}`,
+            method: 'DELETE',
+        }).then(() => {
+            updateValue(fieldName, '');
+            if (onRefresh) onRefresh();
+            setSaving(false);
+        }).catch(err => {
+            console.error(err); // eslint-disable-line no-console
+            setSaving(false);
+        });
+    };
+
+    if (!templateId) {
+        return (
+            <div style={{ marginTop: '10px' }}>
+                <div
+                    className={`gutenverse-button create ${saving ? 'disabled' : ''}`}
+                    onClick={!saving ? handleCreate : undefined}
+                    style={{ cursor: saving ? 'not-allowed' : 'pointer' }}
+                >
+                    {saving ? __('Creating...', 'gutenverse-form') : __('Create Email Template', 'gutenverse-form')}
+                </div>
+            </div>
+        );
+    }
+
+    const editUrl = `${adminUrl}post.php?post=${templateId}&action=edit`;
 
     return (
-        <div className="form-tab-body">
-            <FormGroup title={__('Field Tags', 'gutenverse-form')}>
-                <p style={{ fontSize: '12px', color: '#666', marginTop: '-10px', marginBottom: '20px' }}>
-                    {__('Please add variable tags from the form builder that will be forwarded and used in the email templates.', 'gutenverse-form')}
-                </p>
-                <div className="tags-list">
-                    {mapping.map((tag, index) => (
-                        <div key={index} style={{
-                            display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '15px',
-                        }}
-                        >
-                            <div style={{ flex: 1 }}>
-                                <ControlText
-                                    title={__('Tag Name', 'gutenverse-form')}
-                                    value={typeof tag === 'string' ? tag : (tag.name || '')}
-                                    updateValue={(id, val) => updateItem(index, val)}
-                                    description={__('The field name (ID) as defined in the Form Builder.', 'gutenverse-form')}
-                                />
-                            </div>
-                            <div
-                                className="gutenverse-button cancel"
-                                onClick={() => removeMapping(index)}
-                                style={{
-                                    marginTop: '28px', width: '32px', height: '32px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                                }}
-                            >
-                                <IconTrashSVG size={14} />
-                            </div>
-                        </div>
-                    ))}
+        <div style={{ marginTop: '10px' }}>
+            <div style={{ 
+                padding: '8px 12px', 
+                backgroundColor: '#f6f7f7', 
+                borderRadius: '4px', 
+                marginBottom: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                border: '1px solid #dcdcde'
+            }}>
+                <span style={{ fontWeight: '500', color: '#1e1e1e' }}>{templateTitle}</span>
+                <span style={{ fontSize: '11px', color: '#666' }}>ID: {templateId}</span>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <a
+                    href={editUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="gutenverse-button"
+                    style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                >
+                    {__('Edit Template', 'gutenverse-form')}
+                </a>
+                <div
+                    className={`gutenverse-button cancel ${saving ? 'disabled' : ''}`}
+                    onClick={!saving ? handleDelete : undefined}
+                    style={{ 
+                        cursor: saving ? 'not-allowed' : 'pointer', 
+                        backgroundColor: '#d63638', 
+                        color: '#fff',
+                        display: 'inline-flex',
+                        alignItems: 'center'
+                    }}
+                >
+                    {saving ? __('Deleting...', 'gutenverse-form') : __('Delete', 'gutenverse-form')}
                 </div>
-                <div className="gutenverse-button create" onClick={addMapping} style={{ display: 'inline-block', marginTop: '10px' }}>
-                    {__('Add New Tag', 'gutenverse-form')}
+                <div
+                    className="gutenverse-button"
+                    onClick={onRefresh}
+                    style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
+                >
+                    {__('Refresh', 'gutenverse-form')}
                 </div>
-                {isEditor ? (
-                    <div className="gutenverse-button" onClick={generateTags} style={{ display: 'inline-block', marginTop: '10px', marginLeft: '10px' }}>
-                        {__('Generate from the Form Builder', 'gutenverse-form')}
-                    </div>
-                ) : (
-                    <div style={{ marginTop: '20px' }}>
-                        <AlertControl>
-                            <p style={{ margin: 0 }}>
-                                {__('To automatically generate tags from your form fields, please edit this form action directly from the Form Builder block in the editor.', 'gutenverse-form')}
-                            </p>
-                        </AlertControl>
-                    </div>
-                )}
-            </FormGroup>
+            </div>
         </div>
     );
 };
@@ -325,13 +333,13 @@ const TabConfirmation = (props) => {
                     />
                 )}
                 {values.user_message_type === 'template' && (
-                    <ControlSelect
-                        id={'user_email_template'}
-                        title={__('Email Template', 'gutenverse-form')}
-                        description={__('Select an email template to use. This will override the message body.', 'gutenverse-form')}
-                        value={values.user_email_template}
-                        options={props.emailTemplates || []}
+                    <EmailTemplateManager
+                        templateId={values.user_email_template}
+                        fieldName={'user_email_template'}
                         updateValue={updateValue}
+                        emailTemplates={props.emailTemplates}
+                        onRefresh={props.refreshTemplates}
+                        formTitle={values.title}
                     />
                 )}
             </FormGroup>
@@ -480,13 +488,13 @@ const TabNotification = (props) => {
                     />
                 )}
                 {values.admin_message_type === 'template' && (
-                    <ControlSelect
-                        id={'admin_email_template'}
-                        title={__('Email Template', 'gutenverse-form')}
-                        description={__('Select an email template to use. This will override the message body.', 'gutenverse-form')}
-                        value={values.admin_email_template}
-                        options={props.emailTemplates || []}
+                    <EmailTemplateManager
+                        templateId={values.admin_email_template}
+                        fieldName={'admin_email_template'}
                         updateValue={updateValue}
+                        emailTemplates={props.emailTemplates}
+                        onRefresh={props.refreshTemplates}
+                        formTitle={values.title}
                     />
                 )}
             </FormGroup>
@@ -495,6 +503,41 @@ const TabNotification = (props) => {
 };
 
 
+
+const autoGenerateTags = ({ clientId, values, updateValue }) => {
+    if (!clientId || !window.wp || !window.wp.data) return;
+
+    const blocks = window.wp.data.select('core/block-editor').getBlocks(clientId);
+    const inputs = [];
+    const traverseBlocks = (innerBlocks) => {
+        innerBlocks.forEach(block => {
+            if (block.name.startsWith('gutenverse/form-input') || block.name === 'gutenverse/form-textarea') {
+                const name = block.attributes.inputName;
+                if (name) {
+                    inputs.push({ name, input: name });
+                }
+            }
+            if (block.innerBlocks) {
+                traverseBlocks(block.innerBlocks);
+            }
+        });
+    };
+    traverseBlocks(blocks);
+
+    const existing = Array.isArray(values.variable_mapping) ? values.variable_mapping : [];
+    const existingInputs = existing.map(m => (typeof m === 'string' ? '' : m.input));
+    const newMapping = [...existing];
+
+    inputs.forEach(input => {
+        if (!existingInputs.includes(input.input)) {
+            newMapping.push(input);
+        }
+    });
+
+    if (newMapping.length !== existing.length) {
+        updateValue('variable_mapping', newMapping);
+    }
+};
 
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
@@ -510,10 +553,6 @@ export const FormContent = (props) => {
         notification: {
             label: __('Notification', 'gutenverse-form'),
         },
-
-        tags: {
-            label: __('Field Tags', 'gutenverse-form'),
-        },
         pro: {
             label: __('Pro', 'gutenverse-form'),
             pro: true
@@ -523,17 +562,25 @@ export const FormContent = (props) => {
     const [emailTemplates, setEmailTemplates] = useState([]);
     const [metaKeys, setMetaKeys] = useState([]);
 
-    useEffect(() => {
+    const fetchEmailTemplates = () => {
         apiFetch({ path: '/wp/v2/gutenverse-email-tpl?per_page=100' }).then(posts => {
             const options = posts.map(post => ({ label: post.title.rendered, value: post.id }));
             setEmailTemplates([{ label: __('Default', 'gutenverse-form'), value: '' }, ...options]);
         });
+    };
+
+    useEffect(() => {
+        fetchEmailTemplates();
 
         apiFetch({ path: 'gutenverse-form-client/v1/form/meta-keys' }).then(keys => {
             setMetaKeys([{ label: __('Select Meta Key', 'gutenverse-form'), value: '' }, ...keys]);
         }).catch(() => {
             setMetaKeys([{ label: __('Failed to load meta keys', 'gutenverse-form'), value: '' }]);
         });
+
+        if (props.isEditor && props.clientId) {
+            autoGenerateTags(props);
+        }
     }, []);
 
     const placeholderDescription = (original) => (
@@ -544,13 +591,13 @@ export const FormContent = (props) => {
                 color: '#007cba', display: 'block', marginTop: '5px', fontSize: '11px',
             }}
             >
-                {__('Use {{site_title}}, {{form_title}}, {{entry_id}}, or the field tags you\'ve added in the Field Tags tab.', 'gutenverse-form')}
+                {__('Use {{site_title}}, {{form_title}}, {{entry_id}}, or field names from your form inputs.', 'gutenverse-form')}
             </span>
         </>
     );
 
     const tabProps = {
-        ...props, emailTemplates, metaKeys, placeholderDescription,
+        ...props, emailTemplates, metaKeys, placeholderDescription, refreshTemplates: fetchEmailTemplates,
     };
 
     const changeActive = key => {
@@ -633,7 +680,6 @@ export const FormContent = (props) => {
             })}
         </div>
         {tab === 'general' && <TabGeneral {...props} />}
-        {tab === 'tags' && <TabFieldTags {...tabProps} />}
         {tab === 'confirmation' && ConfirmationTab}
         {tab === 'notification' && NotificationTab}
         {tab === 'pro' && ProTab}
