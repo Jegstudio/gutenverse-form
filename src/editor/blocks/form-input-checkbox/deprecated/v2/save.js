@@ -1,5 +1,4 @@
-
-import SaveInputWrapper from '../form-input/general/save-input-wrapper';
+import SaveInputWrapper from '../../../form-input/general/deprecated/v1/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
@@ -52,12 +51,11 @@ const save = compose(
                     {...additionalProps}
                 />
                 {checkboxOptions.map(item => {
-                    return <label key={item.value} htmlFor={inputName + '-' + item.value}>
+                    return <label key={item.value} htmlFor={item.value}>
                         <input
                             name={inputName} value={item.value}
                             className="gutenverse-input-checkbox"
                             type="checkbox"
-                            id={inputName + '-' + item.value}
                         />
                         <span className="check">
                             {item.label}
