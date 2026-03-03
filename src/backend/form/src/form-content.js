@@ -123,9 +123,18 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
     const template = emailTemplates ? emailTemplates.find(t => t.value === templateId) : null;
     const templateTitle = template ? template.label : __('(No Template Found)', 'gutenverse-form');
 
+    const decodeEntities = (html) => {
+        if (!html) return '';
+        const txt = document.createElement('textarea');
+        txt.innerHTML = html;
+        return txt.value;
+    };
+
     const handleCreate = () => {
         setSaving(true);
-        const name = `${formTitle || 'Form'} - ${fieldName === 'user_email_template' ? 'Confirmation' : 'Notification'}`;
+        const type = fieldName === 'user_email_template' ? __('Confirmation', 'gutenverse-form') : __('Notification', 'gutenverse-form');
+        const cleanTitle = decodeEntities(formTitle) || __('Untitled Form', 'gutenverse-form');
+        const name = `${cleanTitle} - ${type}`;
 
         apiFetch({
             path: '/wp/v2/gutenverse-email-tpl',
