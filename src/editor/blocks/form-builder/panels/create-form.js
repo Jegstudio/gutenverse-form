@@ -2,7 +2,7 @@
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
-import { Modal } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { IconTrashSVG } from 'gutenverse-core/icons';
 import FormContent from '../../../../backend/form/src/form-content';
@@ -16,9 +16,11 @@ export const CreateForm = (props) => {
         window['GutenverseDashboard'].imgDir = (window['GutenverseConfig'] && window['GutenverseConfig'].gutenverseFormImgDir) ? window['GutenverseConfig'].gutenverseFormImgDir : '';
     }
 
-    const { setAttributes, values: attributes, clientId } = props;
+    const { setAttributes, clientId } = props;
+    const attributes = props.attributes || props.values || {};
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [values, setValues] = useState({
         title: 'Form Action'
     });
@@ -26,10 +28,10 @@ export const CreateForm = (props) => {
     const [loadingData, setLoadingData] = useState(false);
 
     const updateValue = (id, value) => {
-        setValues({
-            ...values,
+        setValues((prevValues) => ({
+            ...prevValues,
             [id]: value
-        });
+        }));
     };
 
     const resetValues = () => {
@@ -51,14 +53,15 @@ export const CreateForm = (props) => {
     };
 
     const openEditModal = () => {
-        if (!attributes.formId || !attributes.formId.value) return;
+        const formId = attributes.formId?.value;
+        if (!formId) return;
 
         setIsEditing(true);
         setLoadingData(true);
         setOpen(true);
 
         apiFetch({
-            path: `/gutenverse-form-client/v1/form-action/${attributes.formId.value}`,
+            path: `/gutenverse-form-client/v1/form-action/${formId}`,
             method: 'GET',
         }).then((response) => {
             if (response) {
@@ -71,33 +74,35 @@ export const CreateForm = (props) => {
         });
     };
 
-    const deleteFormAction = () => {
-        if (!attributes.formId || !attributes.formId.value || saving) return;
+    const confirmDeleteFormAction = () => {
+        const formId = attributes.formId?.value;
+        if (!formId || saving) return;
 
-        if (window.confirm(__('Are you sure you want to delete this form action? This cannot be undone.', 'gutenverse-form'))) {
-            setSaving(true);
-            apiFetch({
-                path: `/gutenverse-form-client/v1/form-action/${attributes.formId.value}`,
-                method: 'DELETE',
-            }).then(() => {
-                setSaving(false);
-                setAttributes({
-                    formId: {
-                        label: '',
-                        value: ''
-                    }
-                });
-            }).catch((err) => {
-                setSaving(false);
-                console.error(err); // eslint-disable-line no-console
+        setSaving(true);
+        apiFetch({
+            path: `/gutenverse-form-client/v1/form-action/${formId}`,
+            method: 'DELETE',
+        }).then(() => {
+            setAttributes({
+                formId: {
+                    label: '',
+                    value: ''
+                }
             });
-        }
+            setSaving(false);
+            setIsDeleteModalOpen(false);
+        }).catch((err) => {
+            setSaving(false);
+            setIsDeleteModalOpen(false);
+            console.error(err); // eslint-disable-line no-console
+        });
     };
 
     const submitFormAction = () => {
         setSaving(true);
         const path = isEditing ? '/gutenverse-form-client/v1/form-action/edit' : '/gutenverse-form-client/v1/form-action/create';
-        const formData = isEditing ? { ...values, id: attributes.formId.value } : values;
+        const formId = attributes.formId?.value;
+        const formData = isEditing ? { ...values, id: formId } : values;
 
         apiFetch({
             path: path,
@@ -110,11 +115,11 @@ export const CreateForm = (props) => {
             setOpen(false);
 
             if (isEditing) {
-                if (values.title && attributes.formId.label !== values.title) {
+                if (values.title && attributes.formId?.label !== values.title) {
                     setAttributes({
                         formId: {
                             label: values.title,
-                            value: attributes.formId.value
+                            value: formId
                         }
                     });
                 }
@@ -134,7 +139,7 @@ export const CreateForm = (props) => {
         });
     };
 
-    const hasSelectedForm = attributes && attributes.formId && attributes.formId.value;
+    const hasSelectedForm = !!attributes.formId?.value;
 
     return (
         <div className="gutenverse-create-form-action" style={{ marginTop: '10px' }}>
@@ -189,7 +194,7 @@ export const CreateForm = (props) => {
                         </div>
                         <div
                             className={`gutenverse-button cancel destructive ${saving ? 'disabled' : ''}`}
-                            onClick={deleteFormAction}
+                            onClick={() => setIsDeleteModalOpen(true)}
                             title={__('Delete Selected Form', 'gutenverse-form')}
                             style={{ backgroundColor: '#d63638', color: '#fff', display: 'flex', alignItems: 'center', gap: '5px' }}
                         >
@@ -222,6 +227,28 @@ export const CreateForm = (props) => {
                         </div>
                         <div className="gutenverse-button cancel" onClick={() => setOpen(false)}>
                             {__('Cancel', 'gutenverse-form')}
+                        </div>
+                    </div>
+                </Modal>
+            )}
+
+            {isDeleteModalOpen && (
+                <Modal
+                    title={__('Delete Form Action', 'gutenverse-form')}
+                    onRequestClose={() => setIsDeleteModalOpen(false)}
+                    className="gutenverse-form-confirm-modal"
+                >
+                    <div style={{ padding: '0 20px 20px' }}>
+                        <p style={{ margin: '0 0 20px 0', fontSize: '14px', lineHeight: '1.5' }}>
+                            {__('Are you sure you want to delete this form action? This cannot be undone and will permanently remove the action data.', 'gutenverse-form')}
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                            <Button isSecondary onClick={() => setIsDeleteModalOpen(false)}>
+                                {__('Cancel', 'gutenverse-form')}
+                            </Button>
+                            <Button isPrimary isDestructive onClick={confirmDeleteFormAction} disabled={saving}>
+                                {saving ? __('Deleting...', 'gutenverse-form') : __('Delete Permanently', 'gutenverse-form')}
+                            </Button>
                         </div>
                     </div>
                 </Modal>

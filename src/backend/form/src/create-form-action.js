@@ -15,10 +15,10 @@ const CreateForm = () => {
     const [saving, setSaving] = useState(false);
 
     const updateValue = (id, value) => {
-        setValues({
-            ...values,
+        setValues((prevValues) => ({
+            ...prevValues,
             [id]: value
-        });
+        }));
     };
 
     useEffect(() => {

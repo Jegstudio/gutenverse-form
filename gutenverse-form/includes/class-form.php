@@ -340,11 +340,11 @@ class Form {
 	 * @return mixed
 	 */
 	public static function delete_form_action( $id ) {
-		$psot_type = get_post_type( $id );
-		if ( self::POST_TYPE !== $psot_type ) {
+		$post_type = get_post_type( $id );
+		if ( self::POST_TYPE !== $post_type ) {
 			return new WP_Error(
 				'forbidden_permission',
-				esc_html__( 'Forbidden Access', '--gctd--' ),
+				esc_html__( 'Forbidden Access', 'gutenverse-form' ),
 				array( 'status' => 403 )
 			);
 		}

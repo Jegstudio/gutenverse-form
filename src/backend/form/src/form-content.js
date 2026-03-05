@@ -8,6 +8,7 @@ import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'gutenverse-core/helper';
 import { CardPro } from 'gutenverse-core/components';
+import { Modal, Button } from '@wordpress/components';
 
 const FormGroup = ({ title, children, className = '' }) => {
     return (
@@ -119,6 +120,7 @@ const getAdminUrl = () => {
 
 const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplates, onRefresh, formTitle }) => {
     const [saving, setSaving] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const adminUrl = getAdminUrl();
     const template = emailTemplates ? emailTemplates.find(t => t.value === templateId) : null;
     const templateTitle = template ? template.label : __('(No Template Found)', 'gutenverse-form');
@@ -156,18 +158,19 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
     };
 
     const handleDelete = () => {
-        if (!window.confirm(__('Are you sure you want to delete this email template?', 'gutenverse-form'))) return;
         setSaving(true);
         apiFetch({
-            path: `/wp/v2/gutenverse-email-tpl/${templateId}`,
+            path: `/wp/v2/gutenverse-email-tpl/${templateId}?force=true`,
             method: 'DELETE',
         }).then(() => {
             updateValue(fieldName, '');
             if (onRefresh) onRefresh();
             setSaving(false);
+            setIsDeleteModalOpen(false);
         }).catch(err => {
             console.error(err); // eslint-disable-line no-console
             setSaving(false);
+            setIsDeleteModalOpen(false);
         });
     };
 
@@ -189,10 +192,10 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
 
     return (
         <div style={{ marginTop: '10px' }}>
-            <div style={{ 
-                padding: '8px 12px', 
-                backgroundColor: '#f6f7f7', 
-                borderRadius: '4px', 
+            <div style={{
+                padding: '8px 12px',
+                backgroundColor: '#f6f7f7',
+                borderRadius: '4px',
                 marginBottom: '10px',
                 display: 'flex',
                 alignItems: 'center',
@@ -214,10 +217,10 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
                 </a>
                 <div
                     className={`gutenverse-button cancel ${saving ? 'disabled' : ''}`}
-                    onClick={!saving ? handleDelete : undefined}
-                    style={{ 
-                        cursor: saving ? 'not-allowed' : 'pointer', 
-                        backgroundColor: '#d63638', 
+                    onClick={!saving ? () => setIsDeleteModalOpen(true) : undefined}
+                    style={{
+                        cursor: saving ? 'not-allowed' : 'pointer',
+                        backgroundColor: '#d63638',
                         color: '#fff',
                         display: 'inline-flex',
                         alignItems: 'center'
@@ -233,6 +236,28 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
                     {__('Refresh', 'gutenverse-form')}
                 </div>
             </div>
+
+            {isDeleteModalOpen && (
+                <Modal
+                    title={__('Delete Email Template', 'gutenverse-form')}
+                    onRequestClose={() => setIsDeleteModalOpen(false)}
+                    className="gutenverse-form-confirm-modal"
+                >
+                    <div style={{ padding: '0 20px 20px' }}>
+                        <p style={{ margin: '0 0 20px 0', fontSize: '14px', lineHeight: '1.5' }}>
+                            {__('Are you sure you want to permanently delete this email template? This action cannot be undone.', 'gutenverse-form')}
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                            <Button isSecondary onClick={() => setIsDeleteModalOpen(false)}>
+                                {__('Cancel', 'gutenverse-form')}
+                            </Button>
+                            <Button isPrimary isDestructive onClick={handleDelete} disabled={saving}>
+                                {saving ? __('Deleting...', 'gutenverse-form') : __('Delete Permanently', 'gutenverse-form')}
+                            </Button>
+                        </div>
+                    </div>
+                </Modal>
+            )}
         </div>
     );
 };

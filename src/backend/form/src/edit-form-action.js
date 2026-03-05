@@ -15,10 +15,10 @@ const EditForm = () => {
     const [postId, setPostId] = useState(null);
 
     const updateValue = (id, value) => {
-        setValues({
-            ...values,
+        setValues((prevValues) => ({
+            ...prevValues,
             [id]: value
-        });
+        }));
     };
 
     useEffect(() => {
