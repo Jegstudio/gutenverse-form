@@ -501,6 +501,11 @@ class Api {
 					case 'file':
 						$id         = sanitize_key( $data['id'] );
 						$files      = $request->get_file_params();
+
+						if ( ! isset( $files['form-entry'] ) ) {
+							break;
+						}
+
 						$file_names = $files['form-entry']['name']['data'][ $key ][ $value_key ];
 						if ( ! empty( $file_names ) ) {
 							$file_info = array(
@@ -572,9 +577,22 @@ class Api {
 		$recaptcha     = $request->get_param( 'g-recaptcha-response' ) ? $request->get_param( 'g-recaptcha-response' ) : false;
 		$settings_data = get_option( 'gutenverse-settings', array() );
 		$form_entry    = $request->get_param( 'form-entry' );
-		$form_id       = $form_entry['formId'];
-		$form_setting  = get_post_meta( (int) $form_id, 'form-data', true );
-		if ( $form_setting['use_captcha'] && ! empty( $recaptcha ) ) {
+		if ( empty($form_entry) || empty($form_entry['formId']) ) {
+			$response = rest_ensure_response(
+				array(
+					'error'   => 'Bad Request',
+					'message' => 'Missing form entry data!',
+				)
+			);
+			$response->set_status( 400 );
+			return $response;
+		}
+
+		$form_id       = (int) $form_entry['formId'];
+		$form_setting  = get_post_meta( $form_id, 'form-data', true ) ?: array();
+		$use_captcha   = ! empty( $form_setting['use_captcha'] ) ? (bool) $form_setting['use_captcha'] : false;
+
+		if ( $use_captcha && ! empty( $recaptcha ) ) {
 			$secret = $settings_data['form_captcha_settings']['captcha_key'];
 			$verify = wp_remote_post(
 				'https://www.google.com/recaptcha/api/siteverify',
@@ -602,6 +620,12 @@ class Api {
 		if ( isset( $form_setting['user_browser'] ) ) {
 			$form_entry['user_browser'] = $form_setting['user_browser'];
 		}
+
+		/**
+		 * Hook before validation.
+		 */
+		do_action( 'gutenverse_form_before_validation', $form_entry, $request );
+
 		$form_data_check = $this->filter_form_params( $form_entry['data'], $request );
 		if ( ! $form_data_check['status'] ) {
 			return new WP_REST_Response(
@@ -634,6 +658,7 @@ class Api {
 				'post-id'      => $post_id,
 				'entry-data'   => $form_data,
 				'browser-data' => $this->get_browser_data( $form_entry ),
+				'integrations' => isset($form_entry['integrations']) ? json_decode(stripslashes($form_entry['integrations']), true) : array(),
 			);
 
 			$params = wp_parse_args(
@@ -643,12 +668,30 @@ class Api {
 					'post-id'      => 0,
 					'entry-data'   => array(),
 					'browser-data' => array(),
+					'integrations' => array(),
 				)
 			);
+
+			/**
+			 * Hook after validation before store.
+			 * This hook can be used to abort submission.
+			 */
+			$abort = apply_filters( 'gutenverse_form_after_validation_abort', false, $params, $request );
+			if ( $abort ) {
+				return rest_ensure_response( $abort );
+			}
+
+			do_action( 'gutenverse_form_after_validation_before_store', $params, $request );
 
 			$result = array( 'entry_id' => Entries::submit_form_data( $params ) );
 
 			if ( (int) $result['entry_id'] > 0 ) {
+				/**
+				 * Hook after store.
+				 * This is where integrations should run.
+				 */
+				do_action( 'gutenverse_form_after_store', $result['entry_id'], $params, $form_setting, $request );
+
 				$form_data = get_post_meta( $form_id, 'form-data', true );
 				$entry_id  = $result['entry_id'];
 
@@ -673,6 +716,11 @@ class Api {
 				}
 			}
 		}
+
+		/**
+		 * Hook after response.
+		 */
+		do_action( 'gutenverse_form_after_response', $result, $form_id, $request );
 
 		return rest_ensure_response( $result );
 	}

@@ -9,18 +9,18 @@ import { TextControl, Button, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
 const services = [
-    { id: 'whatsapp', title: 'Whatsapp', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'telegram', title: 'Telegram', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'discord', title: 'Discord', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'mailchimp', title: 'Mail Chimp', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'slack', title: 'Slack', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'webhook', title: 'Webhook', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'get_response', title: 'GetResponse', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'drip', title: 'Drip', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'active_campaign', title: 'Active Campaign', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'convert_kit', title: 'Convert Kit', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'mailer', title: 'Mailer', icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'google_sheets', title: 'Google Sheets', icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'whatsapp', title: 'Whatsapp', description: __('Send form notifications directly to your WhatsApp.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'telegram', title: 'Telegram', description: __('Receive form alerts via Telegram bot.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'discord', title: 'Discord', description: __('Integrate form submissions with your Discord channel.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'mailchimp', title: 'Mail Chimp', description: __('Subscribe users to your Mailchimp email lists.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'slack', title: 'Slack', description: __('Get real-time form notifications in your Slack workspace.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'webhook', title: 'Webhook', description: __('Send form data to any external URL or service.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'get_response', title: 'GetResponse', description: __('Connect your forms to GetResponse marketing automation.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'drip', title: 'Drip', description: __('Sync form data with Drip CRM and marketing platform.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'active_campaign', title: 'Active Campaign', description: __('Automate your marketing with ActiveCampaign integration.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'convert_kit', title: 'Convert Kit', description: __('Grow your audience with ConvertKit integration.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'mailer', title: 'Mailer', description: __('Connect form data to your MailerLite account.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'google_sheets', title: 'Google Sheets', description: __('Save form submissions directly to Google Sheets.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
 ];
 
 const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
@@ -42,6 +42,9 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                     {service.icon}
                 </div>
                 {service.title}
+            </div>
+            <div className="item-description">
+                {service.description}
             </div>
             <div className="item-actions">
                 {isActive && (
@@ -83,6 +86,12 @@ const TabSetting = ({ onSetup }) => {
     return (
         <div className="form-tab-body">
             <div className="integration-list">
+                <p><span>{__('Info', 'gutenverse-form')}</span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings.', 'gutenverse-form')}</p>
+                <div className="integration-list-header">
+                    <div className="header-title">{__('Integration', 'gutenverse-form')}</div>
+                    <div className="header-description">{__('Description', 'gutenverse-form')}</div>
+                    <div className="header-actions">{__('Apply Globally', 'gutenverse-form')}</div>
+                </div>
                 {services.map((service) => (
                     <IntegrationItem
                         key={service.id}

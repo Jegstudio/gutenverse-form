@@ -1,0 +1,1 @@
+export const MailerControls = () => null;

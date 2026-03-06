@@ -19,6 +19,7 @@ import { CopyElementToolbar } from "gutenverse-core/components";
 import { useBlockProps, RichText, InspectorControls } from "@wordpress/block-editor";
 import { __ } from "@wordpress/i18n";
 import { useSelect } from "@wordpress/data";
+import FormNavigation from '../form-input/general/form-navigation';
 
 const FormNoticeBlock = compose(
 	withMouseMoveEffect,
@@ -59,7 +60,6 @@ const FormNoticeBlock = compose(
 	useGenerateElementId(clientId, elementId, elementRef);
 	useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
 
-	// Get formData from parent Form Builder if possible
 	const { formData, validParentState } = useSelect(
 		(select) => {
 			const { getBlockRootClientId, getBlockAttributes } =
@@ -68,8 +68,6 @@ const FormNoticeBlock = compose(
 			const rootClientId = getBlockRootClientId(clientId);
 			let data = null;
 			if (rootClientId) {
-				// We might need to go up further to find form-builder if this is nested
-				// But for simplicity let's try direct root first
 				data = getBlockAttributes(rootClientId);
 			}
 			return {
@@ -91,9 +89,6 @@ const FormNoticeBlock = compose(
 			return noticeStatus === "success" ? successMessage : errorMessage;
 		}
 
-		// This is tricky in editor as formData might not be fully available or in the same format
-		// But per requirements, it uses formData['form_success_notice'] etc.
-		// If not available, fallback to default labels
 		if (formData) {
 			return noticeStatus === "success"
 				? formData.form_success_notice ||
@@ -128,6 +123,7 @@ const FormNoticeBlock = compose(
 	return (
 		<>
 			<CopyElementToolbar {...props} />
+			<FormNavigation clientId={clientId} />
 			<InspectorControls>
 				<PanelTutorial
 					title={__('Remove notice?', 'gutenverse-form')}

@@ -20,11 +20,13 @@ class Whatsapp {
 		return array(
 			'number'  => array(
 				'label'       => __( 'WhatsApp Number', 'gutenverse-form' ),
+				'description' => __( 'Enter your WhatsApp number', 'gutenverse-form' ),
 				'type'        => 'text',
 				'placeholder' => __( 'Example: 628123456789', 'gutenverse-form' ),
 			),
 			'api_key' => array(
 				'label'       => __( 'API Key', 'gutenverse-form' ),
+				'description' => __( 'Enter your WhatsApp API Key', 'gutenverse-form' ),
 				'type'        => 'text',
 				'placeholder' => __( 'Enter your WhatsApp API Key', 'gutenverse-form' ),
 			),

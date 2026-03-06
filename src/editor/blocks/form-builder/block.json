@@ -281,6 +281,12 @@
 		"condition": {
 			"type": "object",
 			"default": {}
+		},
+		"integration": {
+			"type": "object",
+			"default": {
+				"actions": []
+			}
 		}
 	},
 	"supports": {

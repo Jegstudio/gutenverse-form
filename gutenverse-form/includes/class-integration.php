@@ -21,6 +21,40 @@ class Integration {
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'integration_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
+		$this->init_integrations();
+	}
+
+	/**
+	 * Get list of available services
+	 *
+	 * @return array
+	 */
+	public static function get_services() {
+		return array(
+			'whatsapp',
+			'telegram',
+			'discord',
+			'mailchimp',
+			'slack',
+			'webhook',
+			'get_response',
+			'drip',
+			'active_campaign',
+			'convert_kit',
+			'mailer',
+			'google_sheets',
+		);
+	}
+
+	/**
+	 * Initialize all enabled integrations.
+	 */
+	public function init_integrations() {
+		$services = self::get_services();
+		foreach ( $services as $service ) {
+			$this->get_service_instance( $service );
+		}
 	}
 
 	/**
@@ -60,21 +94,7 @@ class Integration {
 				$config['integrations'] = get_option( 'gutenverse_form_integrations', array() );
 
 				$service          = isset( $_GET['service'] ) ? sanitize_key( wp_unslash( $_GET['service'] ) ) : '';
-				$allowed_services = array(
-					'whatsapp',
-					'telegram',
-					'discord',
-					'mailchimp',
-					'slack',
-					'webhook',
-					'get_response',
-					'drip',
-					'active_campaign',
-					'convert_kit',
-					'mailer',
-					'google_sheets',
-				);
-
+				$allowed_services = self::get_services();
 				$current_service          = in_array( $service, $allowed_services, true ) ? $service : '';
 				$config['currentService'] = $current_service;
 
@@ -128,7 +148,6 @@ class Integration {
 		</div>
 		<?php
 	}
-
 	/**
 	 * Get service instance
 	 *

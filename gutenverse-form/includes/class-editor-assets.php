@@ -69,6 +69,24 @@ class Editor_Assets {
 			'noticeVersions' => array( '1.0.0' ),
 		);
 
+		// Global Integrations
+		$global_integrations = array();
+		$enabled_services    = get_option( 'gutenverse_form_integrations', array() );
+		$available_services  = Integration::get_services();
+
+		foreach ( $available_services as $service ) {
+			if ( ! empty( $enabled_services[ $service ] ) ) {
+				$service_settings = get_option( "gutenverse_form_{$service}_settings", array() );
+				if ( ! empty( $service_settings['apply_globally'] ) ) {
+					$global_integrations[] = array_merge(
+						array( 'type' => $service ),
+						$service_settings
+					);
+				}
+			}
+		}
+		$config['globalIntegrations'] = $global_integrations;
+
 		return $config;
 	}
 }

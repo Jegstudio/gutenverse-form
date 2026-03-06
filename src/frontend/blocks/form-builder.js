@@ -290,6 +290,11 @@ class GutenverseFormValidation extends Default {
                 requestBody.append('form-entry[formId]', formId);
                 requestBody.append('form-entry[postId]', postId);
 
+                const integrationsInput = currentFormBuilder.find('input[name="gutenverse-form-integrations"]').first();
+                if (integrationsInput) {
+                    requestBody.append('form-entry[integrations]', integrationsInput.value);
+                }
+
                 // append each value field
                 values.forEach(({ id, value, type }, idx) => {
                     requestBody.append(`form-entry[data][${idx}][id]`, id);

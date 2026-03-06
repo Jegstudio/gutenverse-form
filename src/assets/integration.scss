@@ -120,61 +120,90 @@
     .integration-list {
         display: flex;
         flex-direction: column;
-        gap: 1px;
-        background: #e6e6ef;
+        background: #fff;
         border: 1px solid #e6e6ef;
         border-radius: 8px;
         overflow: hidden;
 
+        .integration-list-header {
+            display: flex;
+            padding: 15px 25px;
+            background: #fbfbfd;
+            border-bottom: 2px solid #e6e6ef;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1a1a2e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+
+            .header-title {
+                flex: 0 0 250px;
+            }
+
+            .header-description {
+                flex: 1;
+                padding-left: 20px;
+            }
+
+            .header-actions {
+                flex: 0 0 200px;
+                text-align: right;
+            }
+        }
+
         .integration-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             padding: 20px 25px;
             background: #fff;
+            border-bottom: 1px solid #f0f0f5;
             transition: background 0.2s ease;
+
+            &:last-child {
+                border-bottom: none;
+            }
 
             &:hover {
                 background: #fbfbfd;
             }
 
             .item-title {
+                flex: 0 0 250px;
                 font-size: 15px;
                 font-weight: 600;
                 color: #1a1a2e;
-                flex-direction: row;
                 display: flex;
                 align-items: center;
 
                 .item-icon {
-                    margin-right: 10px;
+                    margin-right: 15px;
+                    display: flex;
                 }
             }
 
+            .item-description {
+                flex: 1;
+                font-size: 14px;
+                color: #667085;
+                padding-left: 20px;
+                line-height: 1.5;
+            }
+
             .item-actions {
+                flex: 0 0 200px;
                 display: flex;
                 align-items: center;
+                justify-content: flex-end;
                 gap: 20px;
-
-                .setup-link {
-                    font-size: 13px;
-                    color: #3b57f7;
-                    text-decoration: none;
-                    font-weight: 500;
-
-                    &:hover {
-                        text-decoration: underline;
-                    }
-                }
 
                 .setup-link-button {
                     background: none;
                     border: none;
-                    color: #2271b1;
+                    color: #3b57f7;
                     cursor: pointer;
-                    margin-right: 15px;
-                    font-weight: 500;
+                    font-weight: 600;
                     padding: 0;
+                    font-size: 13px;
 
                     &:hover {
                         text-decoration: underline;
@@ -182,8 +211,8 @@
                 }
 
                 .gutenverse-toggle {
-                    width: 44px;
-                    height: 22px;
+                    width: 40px;
+                    height: 20px;
                     background: #e6e6ef;
                     border-radius: 20px;
                     position: relative;
@@ -191,14 +220,14 @@
                     transition: all 0.3s ease;
 
                     .toggle-handle {
-                        width: 18px;
-                        height: 18px;
+                        width: 14px;
+                        height: 14px;
                         background: #fff;
                         border-radius: 50%;
                         position: absolute;
-                        top: 2px;
-                        left: 2px;
-                        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                        top: 3px;
+                        left: 3px;
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
                         transition: all 0.3s ease;
                     }
 
@@ -206,7 +235,7 @@
                         background: #3b57f7;
 
                         .toggle-handle {
-                            left: 24px;
+                            left: 23px;
                         }
                     }
                 }

@@ -22,7 +22,8 @@ const save = compose(
         stickyPosition,
         stickyDuration,
         topSticky,
-        bottomSticky
+        bottomSticky,
+        integration
     } = attributes;
 
     const stickyClass = {
@@ -58,6 +59,7 @@ const save = compose(
             style={{ display: 'none' }}
             {...useBlockProps.save({ className })}
             {...attr}>
+            {integration?.actions?.length > 0 && <input type="hidden" name="gutenverse-form-integrations" value={JSON.stringify(integration)} />}
             {isSticky(sticky) &&
             <div className="guten-data">
                 <div data-var={`stickyData${elementId?.split('-')[1]}`} data-value={JSON.stringify({

@@ -40,6 +40,9 @@ class Entries {
 		add_filter( 'posts_join', array( $this, 'search_join' ) );
 		add_filter( 'posts_where', array( $this, 'search_where' ) );
 		add_filter( 'posts_groupby', array( $this, 'search_groupby' ) );
+
+		add_action( 'wp_ajax_gutenverse_form_retrigger_integration', array( $this, 'retrigger_integration' ) );
+		add_action( 'admin_footer', array( $this, 'admin_footer_scripts' ) );
 	}
 
 	/**
@@ -452,8 +455,9 @@ class Entries {
 	 * @param - $post post.
 	 */
 	public function entry_data_metabox( $post ) {
-		$entry  = get_post_meta( $post->ID, 'entry-data', true );
-		$result = '<div class="entry-title">Entry ID</div>
+		$entry        = get_post_meta( $post->ID, 'entry-data', true );
+		$integrations = get_post_meta( $post->ID, 'integrations', true );
+		$result       = '<div class="entry-title">Entry ID</div>
 		<div class="entry-data">' . $post->ID . '</div>';
 
 		if ( isset( $entry ) ) {
@@ -463,6 +467,27 @@ class Entries {
 
 				$result .= '<div class="entry-title">Input ID : ' . $item['id'] . '</div>
 				<div class="entry-data">' . $value . '</div>';
+			}
+		}
+
+		if ( ! empty( $integrations ) && isset( $integrations['actions'] ) ) {
+			$services = [];
+			foreach ( $integrations['actions'] as $action ) {
+				if ( ! empty( $action['type'] ) ) {
+					$services[] = $action['type'];
+				}
+			}
+
+			if ( ! empty( $services ) ) {
+				$retrigger_all_btn = current_user_can( 'manage_options' ) ? ' <button type="button" class="button button-small retrigger-integrations-all" data-entry-id="' . $post->ID . '">' . __( 'Resubmit All', 'gutenverse-form' ) . '</button>' : '';
+				$result           .= '<div class="entry-title">' . __( 'Integrations Triggered', 'gutenverse-form' ) . $retrigger_all_btn . '</div>';
+
+				$integration_list = [];
+				foreach ( array_unique( $services ) as $service ) {
+					$retrigger_btn      = current_user_can( 'manage_options' ) ? ' <a href="#" class="retrigger-integration-item" data-entry-id="' . $post->ID . '" data-service="' . $service . '">(' . __( 'Retrigger', 'gutenverse-form' ) . ')</a>' : '';
+					$integration_list[] = '<span class="integration-tag">' . ucfirst( $service ) . $retrigger_btn . '</span>';
+				}
+				$result .= '<div class="entry-data">' . implode( ' ', $integration_list ) . '</div>';
 			}
 		}
 
@@ -539,5 +564,119 @@ class Entries {
 		);
 
 		return count( $posts );
+	}
+
+	/**
+	 * Retrigger Integration AJAX
+	 */
+	public function retrigger_integration() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Permission denied', 'gutenverse-form' ) ) );
+		}
+
+		check_ajax_referer( 'gutenverse_form_retrigger', 'nonce' );
+
+		$entry_id = isset( $_POST['entry_id'] ) ? (int) $_POST['entry_id'] : 0;
+		$service  = isset( $_POST['service'] ) ? sanitize_text_field( $_POST['service'] ) : '';
+
+		if ( ! $entry_id ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid Entry ID', 'gutenverse-form' ) ) );
+		}
+
+		$params = array(
+			'form-id'      => get_post_meta( $entry_id, 'form-id', true ),
+			'post-id'      => get_post_meta( $entry_id, 'post-id', true ),
+			'entry-data'   => get_post_meta( $entry_id, 'entry-data', true ),
+			'browser-data' => get_post_meta( $entry_id, 'browser-data', true ),
+			'integrations' => get_post_meta( $entry_id, 'integrations', true ),
+		);
+
+		$form_id      = isset( $params['form-id'] ) ? (int) $params['form-id'] : 0;
+		$form_setting = get_post_meta( $form_id, 'form-data', true );
+
+		if ( $service ) {
+			$integration = new Integration();
+			$instance    = $integration->get_service_instance( $service );
+			if ( $instance && method_exists( $instance, 'after_store' ) ) {
+				$instance->after_store( $entry_id, $params, $form_setting, null );
+				wp_send_json_success( array( 'message' => sprintf( __( '%s retriggered successfully', 'gutenverse-form' ), ucfirst( $service ) ) ) );
+			} else {
+				wp_send_json_error( array( 'message' => __( 'Integration not found or not support retriggering', 'gutenverse-form' ) ) );
+			}
+		} else {
+			do_action( 'gutenverse_form_after_store', $entry_id, $params, $form_setting, null );
+			wp_send_json_success( array( 'message' => __( 'All integrations retriggered successfully', 'gutenverse-form' ) ) );
+		}
+	}
+
+	/**
+	 * Admin Footer Scripts for Retriggering
+	 */
+	public function admin_footer_scripts() {
+		$screen = get_current_screen();
+		if ( ! $screen || self::POST_TYPE !== $screen->post_type || 'post' !== $screen->base ) {
+			return;
+		}
+		?>
+		<div id="gutenverse-form-toast">
+			<div class="toast-title"></div>
+			<div class="toast-message"></div>
+		</div>
+
+		<script type="text/javascript">
+		jQuery(document).ready(function($) {
+			function showToast(title, message, type) {
+				var $toast = $('#gutenverse-form-toast');
+				$toast.removeClass('success error').addClass(type);
+				$toast.find('.toast-title').text(title);
+				$toast.find('.toast-message').text(message);
+				$toast.stop(true, true).fadeIn().css('display', 'block');
+				
+				setTimeout(function() {
+					$toast.css('animation', 'gv-fade-out 0.5s forwards');
+					setTimeout(function() {
+						$toast.hide().css('animation', '');
+					}, 500);
+				}, 4000);
+			}
+
+			$(document).on('click', '.retrigger-integrations-all, .retrigger-integration-item', function(e) {
+				e.preventDefault();
+				var $this = $(this);
+				var entryId = $this.data('entry-id');
+				var service = $this.data('service') || '';
+				var nonce = '<?php echo wp_create_nonce( 'gutenverse_form_retrigger' ); ?>';
+
+				if ($this.hasClass('loading')) return;
+
+				$this.addClass('loading').css('opacity', '0.5');
+
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: {
+						action: 'gutenverse_form_retrigger_integration',
+						entry_id: entryId,
+						service: service,
+						nonce: nonce
+					},
+					success: function(response) {
+						if (response.success) {
+							showToast('Success', response.data.message, 'success');
+						} else {
+							showToast('Error', response.data.message || 'Error occurred', 'error');
+						}
+					},
+					error: function() {
+						showToast('Error', 'AJAX error occurred', 'error');
+					},
+					complete: function() {
+						$this.removeClass('loading').css('opacity', '1');
+					}
+				});
+			});
+		});
+		</script>
+		<?php
 	}
 }

@@ -61,7 +61,6 @@ class Frontend_Assets {
 			case 'gutenverse/form-input-number':
 			case 'gutenverse/form-input-email':
 			case 'gutenverse/form-input-date':
-			case 'gutenverse/form-notice':
 				if ( ( isset( $attrs['showIcon'] ) && $attrs['showIcon'] ) || ( isset( $attrs['icon'] ) && $attrs['icon'] ) || ( isset( $attrs['iconSuccess'] ) && $attrs['iconSuccess'] ) || ( isset( $attrs['iconError'] ) && $attrs['iconError'] ) ) {
 
 					if ( ! isset( $attrs['iconType'] ) || 'icon' === $attrs['iconType'] ) {
@@ -78,6 +77,11 @@ class Frontend_Assets {
 				break;
 			case 'gutenverse/form-input-gdpr':
 				$this->icon_conditional_load( $conditions );
+				break;
+			case 'gutenverse/form-notice':
+				if ( ! isset( $attrs['iconSuccessType'] ) || 'icon' === $attrs['iconSuccessType'] || ! isset( $attrs['iconErrorType'] ) || 'icon' === $attrs['iconErrorType'] ) {
+					$this->icon_conditional_load( $conditions );
+				}
 				break;
 		}
 
