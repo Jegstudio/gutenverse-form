@@ -195,7 +195,7 @@ class Form {
 				'hierarchical'    => false,
 				'supports'        => array( 'title', 'revisions', 'page-attributes' ),
 				'map_meta_cap'    => true,
-				'show_in_menu'    => self::POST_TYPE,
+				'show_in_menu'    => false,
 				'rewrite'         => array(
 					'slug' => self::POST_TYPE,
 				),
@@ -344,11 +344,11 @@ class Form {
 	 * @return mixed
 	 */
 	public static function delete_form_action( $id ) {
-		$psot_type = get_post_type( $id );
-		if ( self::POST_TYPE !== $psot_type ) {
+		$post_type = get_post_type( $id );
+		if ( self::POST_TYPE !== $post_type ) {
 			return new WP_Error(
 				'forbidden_permission',
-				esc_html__( 'Forbidden Access', '--gctd--' ),
+				esc_html__( 'Forbidden Access', 'gutenverse-form' ),
 				array( 'status' => 403 )
 			);
 		}

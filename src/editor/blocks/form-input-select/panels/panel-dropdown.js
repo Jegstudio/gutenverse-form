@@ -1,11 +1,10 @@
 import { __ } from '@wordpress/i18n';
-import { CheckboxControl, ColorControl, IconSVGControl, RangeControl, SVGControl } from 'gutenverse-core/controls';
+import { CheckboxControl, ColorControl, IconSVGControl, RangeControl } from 'gutenverse-core/controls';
 
 export const panelDropdown = props => {
     const {
         useDropDownIcon,
         dropDownDisableIconRemove,
-        dropDownIconRemove,
         elementId
     } = props;
 
@@ -136,7 +135,7 @@ export const panelDropdown = props => {
         {
             id: 'dropDownIconRemoveOffset',
             label: __('Remove Icon Offset', 'gutenverse-form'),
-            show: !dropDownDisableIconRemove && '' !== dropDownIconRemove,
+            show: !dropDownDisableIconRemove,
             component: RangeControl,
             min: 1,
             max: 500,
@@ -165,15 +164,9 @@ export const panelDropdown = props => {
             ]
         },
         {
-            id: 'dropDownIconRemove',
-            label: __('Remove Icon', 'gutenverse-form'),
-            show: !dropDownDisableIconRemove,
-            component: SVGControl,
-        },
-        {
             id: 'dropDownIconRemoveColor',
             label: __('Remove Icon Color', 'gutenverse-form'),
-            show: !dropDownDisableIconRemove && '' !== dropDownIconRemove,
+            show: !dropDownDisableIconRemove,
             component: ColorControl,
             liveStyle: [
                 {
@@ -192,7 +185,7 @@ export const panelDropdown = props => {
         {
             id: 'dropDownIconRemoveSize',
             label: __('Remove Icon Size', 'gutenverse-form'),
-            show: !dropDownDisableIconRemove && '' !== dropDownIconRemove,
+            show: !dropDownDisableIconRemove,
             component: RangeControl,
             min: 1,
             max: 20,

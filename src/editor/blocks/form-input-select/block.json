@@ -461,11 +461,6 @@
 			"type": "boolean",
 			"default": false
 		},
-		"dropDownIconRemove": {
-			"type": "string",
-			"default": "",
-			"copyStyle": true
-		},
 		"dropDownIconRemoveColor": {
 			"type": "object",
 			"default": {},

@@ -152,7 +152,7 @@ const App = () => {
                     style={{ height: '100%', width: '100%' }}
                     minHeight="100%"
                     options={{
-                        mergeTags: window.gutenverseEmailTemplate?.placeholders || [],
+                        mergeTags: window.gutenverseEmailTemplate?.placeholders || {},
                         mergeTagsConfig: {
                             sort: false,
                             label: __('Field Tags', 'gutenverse-form'),

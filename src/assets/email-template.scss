@@ -3,8 +3,18 @@
 .post-type-gutenverse-email-tpl.post-new-php {
     overflow: hidden; /* Prevent body scroll */
 
-    #wpcontent {
-        margin-left: 0; 
+    #wpcontent, #wpbody {
+        margin-left: 0 !important;
+        cursor: default !important;
+        padding: 0 !important;
+    }
+
+    #wpbody-content {
+        padding-bottom: 0 !important;
+    }
+
+    html.wp-admin {
+        padding-top: 0 !important;
     }
 
     /* Hide practically everything else */
@@ -12,6 +22,7 @@
     #wpadminbar, 
     #wpfooter,
     #screen-meta-links,
+    #screen-meta,
     .update-nag,
     .notice {
         display: none !important;

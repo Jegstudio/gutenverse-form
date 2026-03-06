@@ -26,10 +26,8 @@ class Email_Template {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_post_type' ) );
-		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 		add_action( 'edit_form_after_title', array( $this, 'render_editor' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'save_post_' . self::POST_TYPE, array( $this, 'save_post' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
 	}
 
@@ -135,19 +133,6 @@ class Email_Template {
 	}
 
 	/**
-	 * Add Menu
-	 */
-	public function add_menu() {
-		add_submenu_page(
-			'gutenverse-form',
-			__( 'Email Template', 'gutenverse-form' ),
-			__( 'Email Template', 'gutenverse-form' ),
-			'manage_options',
-			'edit.php?post_type=' . self::POST_TYPE
-		);
-	}
-
-	/**
 	 * Enqueue Scripts
 	 */
 	public function enqueue_scripts() {
@@ -198,14 +183,6 @@ class Email_Template {
 		}
 
 		echo '<div id="gutenverse-email-builder-root"></div>';
-	}
-
-	/**
-	 * Save Post (Optional if we save via REST)
-	 *
-	 * @param int $post_id Post ID.
-	 */
-	public function save_post( $post_id ) {
 	}
 
 	/**
