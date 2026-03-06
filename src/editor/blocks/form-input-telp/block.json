@@ -527,5 +527,8 @@
 	"example": {},
 	"style": [
 		"gutenverse-form-frontend-form-input-telp-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
 	]
 }

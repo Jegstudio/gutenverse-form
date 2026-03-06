@@ -407,5 +407,8 @@
 	"style": [
 		"gutenverse-form-frontend-form-input-select-style",
 		"gutenverse-form-frontend-form-input-multiselect-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
 	]
 }

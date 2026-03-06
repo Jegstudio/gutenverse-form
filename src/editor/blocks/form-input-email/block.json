@@ -523,5 +523,8 @@
 	"example": {},
 	"style": [
 		"gutenverse-form-frontend-form-input-email-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
 	]
 }

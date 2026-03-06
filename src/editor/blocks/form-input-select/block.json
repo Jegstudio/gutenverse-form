@@ -521,5 +521,8 @@
 	],
 	"style": [
 		"gutenverse-form-frontend-form-input-select-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
 	]
 }

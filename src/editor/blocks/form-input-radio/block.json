@@ -312,5 +312,8 @@
 	"example": {},
 	"style": [
 		"gutenverse-form-frontend-form-input-radio-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
 	]
 }

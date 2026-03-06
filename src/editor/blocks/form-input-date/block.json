@@ -527,5 +527,8 @@
 	],
 	"style": [
 		"gutenverse-form-frontend-form-input-date-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
 	]
 }

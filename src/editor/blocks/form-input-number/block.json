@@ -524,5 +524,8 @@
 	"example": {},
 	"style": [
 		"gutenverse-form-frontend-form-input-number-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
 	]
 }

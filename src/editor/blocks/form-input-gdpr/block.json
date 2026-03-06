@@ -317,5 +317,8 @@
 	],
 	"style": [
 		"gutenverse-form-frontend-form-input-gdpr-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
 	]
 }

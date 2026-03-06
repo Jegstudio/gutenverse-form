@@ -304,5 +304,8 @@
 	"example": {},
 	"style": [
 		"gutenverse-form-frontend-form-input-switch-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
 	]
 }
