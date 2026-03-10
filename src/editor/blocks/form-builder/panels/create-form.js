@@ -205,6 +205,16 @@ export const CreateForm = (props) => {
                 )}
             </div>
 
+            <a
+                href={window.ajaxurl ? window.ajaxurl.replace('admin-ajax.php', 'admin.php?page=gutenverse-form') : '/wp-admin/admin.php?page=gutenverse-form'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gutenverse-form-action-list-link"
+                title={__('View Form Entries', 'gutenverse-form')}
+            >
+                {__('View Form Entries', 'gutenverse-form')}
+            </a>
+
             {open && (
                 <Modal
                     title={isEditing ? __('Edit Form Action', 'gutenverse-form') : __('Create New Form Action', 'gutenverse-form')}
