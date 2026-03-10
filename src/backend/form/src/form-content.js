@@ -135,7 +135,7 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
     const handleCreate = () => {
         setSaving(true);
         const type = fieldName === 'user_email_template' ? __('Confirmation', 'gutenverse-form') : __('Notification', 'gutenverse-form');
-        const cleanTitle = decodeEntities(formTitle) || __('Untitled Form', 'gutenverse-form');
+        const cleanTitle = (decodeEntities(formTitle) || __('Untitled Form', 'gutenverse-form')).replace(/[\u2013\u2014]/g, '-');
         const name = `${cleanTitle} - ${type}`;
 
         apiFetch({
