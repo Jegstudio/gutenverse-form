@@ -527,12 +527,52 @@
 		"isDynamic": {
 			"type": "boolean",
 			"default": false
+		},
+		"flexAlignSelf": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexCustomOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeGrow": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeShrink": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
 		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "telephone", "number"],
+	"keywords": [
+		"input",
+		"form",
+		"telephone",
+		"number"
+	],
 	"example": {},
-	"style": ["gutenverse-form-frontend-form-input-telp-style"]
+	"style": [
+		"gutenverse-form-frontend-form-input-telp-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
+	]
 }
