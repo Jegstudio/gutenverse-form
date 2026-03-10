@@ -757,26 +757,19 @@ class Api {
 		$form_data = $form_data_check['data'];
 		if ( isset( $form_data ) ) {
 
-			// -----------------------------
-			// Store safely
-			// -----------------------------
+			$settings_data = get_option( 'gutenverse-settings', array() );
+			$integrations  = array();
+
+			if ( isset( $form_entry['integrations'] ) ) {
+				$integrations = is_string( $form_entry['integrations'] ) ? json_decode( stripslashes( $form_entry['integrations'] ), true ) : $form_entry['integrations'];
+			}
+
 			$params = array(
 				'form-id'      => $form_id,
 				'post-id'      => absint( $form_entry['postId'] ?? 0 ),
 				'entry-data'   => $form_data,
 				'browser-data' => $this->get_browser_data( $form_entry ),
-				'integrations' => isset( $form_entry['integrations'] ) ? json_decode( stripslashes( $form_entry['integrations'] ), true ) : array(),
-			);
-
-			$params = wp_parse_args(
-				$form_entry,
-				array(
-					'form-id'      => 0,
-					'post-id'      => 0,
-					'entry-data'   => array(),
-					'browser-data' => array(),
-					'integrations' => array(),
-				)
+				'integrations' => is_array( $integrations ) ? $integrations : array(),
 			);
 
 			/**
@@ -799,27 +792,27 @@ class Api {
 				 */
 				do_action( 'gutenverse_form_after_store', $result['entry_id'], $params, $form_setting, $request );
 
-				$form_data = get_post_meta( $form_id, 'form-data', true );
-				$entry_id  = $result['entry_id'];
+				$form_data_settings = get_post_meta( $form_id, 'form-data', true );
+				$entry_id           = $result['entry_id'];
 
 				if ( isset( $settings_data['form'] ) ) {
-					if ( isset( $settings['form']['confirmation'] ) && true !== $form_data['overwrite_default_confirmation'] ) {
-						$form_data = array_merge( $form_data, $settings['form']['confirmation'] );
+					if ( isset( $settings_data['form']['confirmation'] ) && true !== $form_data_settings['overwrite_default_confirmation'] ) {
+						$form_data_settings = array_merge( $form_data_settings, $settings_data['form']['confirmation'] );
 					}
 
-					if ( isset( $settings['form']['notification'] ) && true !== $form_data['overwrite_default_notification'] ) {
-						$form_data = array_merge( $form_data, $settings['form']['notification'] );
+					if ( isset( $settings_data['form']['notification'] ) && true !== $form_data_settings['overwrite_default_notification'] ) {
+						$form_data_settings = array_merge( $form_data_settings, $settings_data['form']['notification'] );
 					}
 				}
 
-				$mail_list = $this->mail_list( $form_entry['entry-data'], $form_data );
+				$mail_list = $this->mail_list( $params['entry-data'], $form_data_settings );
 
 				if ( ! empty( $mail_list ) ) {
-					$result = ( new Mail() )->send_user_email( $form_id, $form_data, $entry_id, $form_entry, $mail_list );
+					$result = ( new Mail() )->send_user_email( $form_id, $form_data_settings, $entry_id, $params, $mail_list );
 				}
 
-				if ( ! empty( $form_data['admin_confirm'] ) ) {
-					$result = ( new Mail() )->send_admin_email( $form_id, $form_data, $entry_id, $form_entry );
+				if ( ! empty( $form_data_settings['admin_confirm'] ) ) {
+					$result = ( new Mail() )->send_admin_email( $form_id, $form_data_settings, $entry_id, $params );
 				}
 			}
 		}

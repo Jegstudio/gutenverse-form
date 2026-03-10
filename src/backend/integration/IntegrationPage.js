@@ -3,65 +3,122 @@ import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { CardPro } from 'gutenverse-core/components';
-import { IconCrownBannerSVG } from 'gutenverse-core/icons';
-
+import { InfoIcon } from 'gutenverse-core/icons';
+import { 
+    IconGoogleSheetSVG,
+    IconMailerLiteSVG,
+    IconTelegramSVG,
+    IconDiscordSVG,
+    IconWhatsAppSVG,
+    IconWebhookSVG,
+    IconGetResponseSVG,
+    IconDripSVG,
+    IconActiveCampaignSVG,
+    IconConvertKitSVG,
+    IconSlackSVG,
+    IconSettingsSVG,
+    IconWarningSVG,
+    IconMailchimpSVG } from '../../assets/icon/index';
 import { TextControl, TextareaControl, Button, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
 const services = [
-    { id: 'whatsapp', title: 'Whatsapp', description: __('Send form notifications directly to your WhatsApp.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'telegram', title: 'Telegram', description: __('Receive form alerts via Telegram bot.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'discord', title: 'Discord', description: __('Integrate form submissions with your Discord channel.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'mailchimp', title: 'Mail Chimp', description: __('Subscribe users to your Mailchimp email lists.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'slack', title: 'Slack', description: __('Get real-time form notifications in your Slack workspace.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'webhook', title: 'Webhook', description: __('Send form data to any external URL or service.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'get_response', title: 'GetResponse', description: __('Connect your forms to GetResponse marketing automation.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'drip', title: 'Drip', description: __('Sync form data with Drip CRM and marketing platform.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'active_campaign', title: 'Active Campaign', description: __('Automate your marketing with ActiveCampaign integration.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'convert_kit', title: 'Convert Kit', description: __('Grow your audience with ConvertKit integration.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'mailer', title: 'Mailer', description: __('Connect form data to your MailerLite account.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
-    { id: 'google_sheets', title: 'Google Sheets', description: __('Save form submissions directly to Google Sheets.', 'gutenverse-form'), icon: <IconCrownBannerSVG fill='blue' /> },
+    { id: 'whatsapp', title: 'Whatsapp', description: __('Send form notifications directly to your WhatsApp.', 'gutenverse-form'), icon: <IconWhatsAppSVG /> },
+    { id: 'telegram', title: 'Telegram', description: __('Receive form alerts via Telegram bot.', 'gutenverse-form'), icon: <IconTelegramSVG /> },
+    { id: 'discord', title: 'Discord', description: __('Integrate form submissions with your Discord channel.', 'gutenverse-form'), icon: <IconDiscordSVG /> },
+    { id: 'mailchimp', title: 'Mail Chimp', description: __('Subscribe users to your Mailchimp email lists.', 'gutenverse-form'), icon: <IconMailchimpSVG /> },
+    { id: 'slack', title: 'Slack', description: __('Get real-time form notifications in your Slack workspace.', 'gutenverse-form'), icon: <IconSlackSVG /> },
+    { id: 'webhook', title: 'Webhook', description: __('Send form data to any external URL or service.', 'gutenverse-form'), icon: <IconWebhookSVG /> },
+    { id: 'get_response', title: 'GetResponse', description: __('Connect your forms to GetResponse marketing automation.', 'gutenverse-form'), icon: <IconGetResponseSVG /> },
+    { id: 'drip', title: 'Drip', description: __('Sync form data with Drip CRM and marketing platform.', 'gutenverse-form'), icon: <IconDripSVG /> },
+    { id: 'active_campaign', title: 'Active Campaign', description: __('Automate your marketing with ActiveCampaign integration.', 'gutenverse-form'), icon: <IconActiveCampaignSVG /> },
+    { id: 'convert_kit', title: 'Convert Kit', description: __('Grow your audience with ConvertKit integration.', 'gutenverse-form'), icon: <IconConvertKitSVG /> },
+    { id: 'mailer', title: 'Mailer', description: __('Connect form data to your MailerLite account.', 'gutenverse-form'), icon: <IconMailerLiteSVG /> },
+    { id: 'google_sheets', title: 'Google Sheets', description: __('Save form submissions directly to Google Sheets.', 'gutenverse-form'), icon: <IconGoogleSheetSVG /> },
 ];
 
+const DisableModal = ({ isOpen, onConfirm, onCancel }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="gutenverse-modal-overlay" onClick={onCancel}>
+            <div className="gutenverse-modal-content" onClick={(e) => e.stopPropagation()}>
+                <button className="modal-close" onClick={onCancel}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                </button>
+                <div className="modal-body">
+                    <div className="modal-header">
+                        <IconWarningSVG />
+                    </div>
+                    <h2>{__('Disable This Integration?', 'gutenverse-form')}</h2>
+                    <p>{__('Are you sure you want to disable this integration? This may break existing forms using this service.', 'gutenverse-form')}</p>
+                </div>
+                <div className="modal-footer">
+                    <button className="button-disable" onClick={onConfirm}>{__('Disable', 'gutenverse-form')}</button>
+                    <button className="button-cancel" onClick={onCancel}>{__('Cancel', 'gutenverse-form')}</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const isActive = !!status;
 
     const handleToggle = () => {
         if (isActive) {
-            if (!window.confirm(__('Are you sure you want to disable this integration? This may break existing forms using this service.', 'gutenverse-form'))) {
-                return;
-            }
+            setIsModalOpen(true);
+        } else {
+            onToggle(service.id, true);
         }
-        onToggle(service.id, !isActive);
+    };
+
+    const confirmDisable = () => {
+        onToggle(service.id, false);
+        setIsModalOpen(false);
     };
 
     return (
-        <div className="integration-item">
-            <div className="item-title">
-                <div className="item-icon">
-                    {service.icon}
+        <>
+            <div className={classnames('integration-item', { active: isActive })}>
+                <div className="item-header">
+                    <div className="item-icon">
+                        {service.icon}
+                    </div>
+                    <div className="item-info">
+                        <div className="item-title">{service.title}</div>
+                        <div className="item-description">{service.description}</div>
+                    </div>
                 </div>
-                {service.title}
-            </div>
-            <div className="item-description">
-                {service.description}
-            </div>
-            <div className="item-actions">
-                {isActive && (
-                    <button
-                        onClick={() => {
-                            window.location.href = admin_url + 'admin.php?page=form_integration&service=' + service.id;
-                        }}
-                        className="setup-link-button"
-                    >
-                        {__('Continue setup', 'gutenverse-form')}
-                    </button>
-                )}
-                <div className={`gutenverse-toggle ${isActive ? 'active' : ''}`} onClick={handleToggle}>
-                    <div className="toggle-handle" />
+                <div className="item-footer">
+                    <div className="item-toggle-wrap">
+                        <div className={classnames('gutenverse-toggle', { active: isActive })} onClick={handleToggle}>
+                            <div className="toggle-handle" />
+                        </div>
+                        <span className="toggle-label">{isActive ? __('ON', 'gutenverse-form') : __('OFF', 'gutenverse-form')}</span>
+                    </div>
+                    {isActive && (
+                        <button
+                            onClick={() => {
+                                window.location.href = admin_url + 'admin.php?page=form_integration&service=' + service.id;
+                            }}
+                            className="setup-link-button"
+                        >
+                            {__('Continue setup', 'gutenverse-form')}
+                            <IconSettingsSVG />
+                        </button>
+                    )}
                 </div>
             </div>
-        </div>
+            <DisableModal 
+                isOpen={isModalOpen} 
+                onConfirm={confirmDisable} 
+                onCancel={() => setIsModalOpen(false)} 
+            />
+        </>
     );
 };
 
@@ -86,12 +143,7 @@ const TabSetting = ({ onSetup }) => {
     return (
         <div className="form-tab-body">
             <div className="integration-list">
-                <p><span>{__('Info', 'gutenverse-form')}</span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings.', 'gutenverse-form')}</p>
-                <div className="integration-list-header">
-                    <div className="header-title">{__('Integration', 'gutenverse-form')}</div>
-                    <div className="header-description">{__('Description', 'gutenverse-form')}</div>
-                    <div className="header-actions">{__('Apply Globally', 'gutenverse-form')}</div>
-                </div>
+                <p><span><InfoIcon /></span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings.', 'gutenverse-form')}</p>
                 {services.map((service) => (
                     <IntegrationItem
                         key={service.id}
@@ -248,37 +300,40 @@ const IntegrationPage = () => {
     );
 
     return (
-        <div className="gutenverse-form-integration-wrap">
-            <div className="integration-header">
+        <>
+            <div className="gutenverse-form-integration-header">
                 <h1>{__('Form Integration', 'gutenverse-form')}</h1>
+                <p>{__('Connect your form with external services to automate data and workflows.', 'gutenverse-form')}</p>
             </div>
+            <div className="gutenverse-form-integration-wrap">
 
-            <div className="form-tab-header">
-                {Object.keys(filteredTabs).map((key) => {
-                    const item = filteredTabs[key];
-                    const classes = classnames('header-item', {
-                        active: key === tab,
-                        pro: item.pro,
-                    });
+                <div className="form-tab-header">
+                    {Object.keys(filteredTabs).map((key) => {
+                        const item = filteredTabs[key];
+                        const classes = classnames('header-item', {
+                            active: key === tab,
+                            pro: item.pro,
+                        });
 
-                    const tabButton = (
-                        <div className={classes} key={key} onClick={() => setActiveTab(key)}>
-                            {item.label}
-                            {item.pro && <span className="pro-badge">{__('Pro', 'gutenverse-form')}</span>}
-                        </div>
-                    );
+                        const tabButton = (
+                            <div className={classes} key={key} onClick={() => setActiveTab(key)}>
+                                {item.label}
+                                {item.pro && <span className="pro-badge">{__('Pro', 'gutenverse-form')}</span>}
+                            </div>
+                        );
 
-                    return item.pro
-                        ? applyFilters('gutenverse-form.integration.tab-pro-button', tabButton, { key, item, classes, setActiveTab })
-                        : tabButton;
-                })}
+                        return item.pro
+                            ? applyFilters('gutenverse-form.integration.tab-pro-button', tabButton, { key, item, classes, setActiveTab })
+                            : tabButton;
+                    })}
+                </div>
+
+                {tab === 'setting' && SettingTab}
+                {tab === 'advanced' && AdvancedTab}
+
+                {applyFilters(`gutenverse.form.integration.content.${tab}`, null)}
             </div>
-
-            {tab === 'setting' && SettingTab}
-            {tab === 'advanced' && AdvancedTab}
-
-            {applyFilters(`gutenverse.form.integration.content.${tab}`, null)}
-        </div>
+        </>
     );
 };
 
