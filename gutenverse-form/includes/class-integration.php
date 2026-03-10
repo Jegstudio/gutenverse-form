@@ -32,18 +32,18 @@ class Integration {
 	 */
 	public static function get_services() {
 		return array(
-			'whatsapp',
-			'telegram',
-			'discord',
-			'mailchimp',
-			'slack',
-			'webhook',
-			'get_response',
-			'drip',
-			'active_campaign',
-			'convert_kit',
-			'mailer',
-			'google_sheets',
+			array('service_name' => 'whatsapp', 'documentation_url' => 'https://developers.facebook.com/documentation/business-messaging/whatsapp/get-started'),
+			array('service_name' => 'telegram', 'documentation_url' => 'https://core.telegram.org/bots/api'),
+			array('service_name' => 'discord', 'documentation_url' => 'https://discord.com/developers/docs/intro'),
+			array('service_name' => 'mailchimp', 'documentation_url' => 'https://mailchimp.com/developer/'),
+			array('service_name' => 'slack', 'documentation_url' => 'https://api.slack.com/'),
+			array('service_name' => 'webhook', 'documentation_url' => 'https://api.slack.com/'),
+			array('service_name' => 'get_response', 'documentation_url' => 'https://api.slack.com/'),
+			array('service_name' => 'drip', 'documentation_url' => 'https://api.slack.com/'),
+			array('service_name' => 'active_campaign', 'documentation_url' => 'https://api.slack.com/'),
+			array('service_name' => 'convert_kit', 'documentation_url' => 'https://api.slack.com/'),
+			array('service_name' => 'mailer', 'documentation_url' => 'https://api.slack.com/'),
+			array('service_name' => 'google_sheets', 'documentation_url' => 'https://api.slack.com/'),
 		);
 	}
 
@@ -53,7 +53,7 @@ class Integration {
 	public function init_integrations() {
 		$services = self::get_services();
 		foreach ( $services as $service ) {
-			$this->get_service_instance( $service );
+			$this->get_service_instance( $service['service_name'] );
 		}
 	}
 
@@ -95,7 +95,9 @@ class Integration {
 
 				$service          = isset( $_GET['service'] ) ? sanitize_key( wp_unslash( $_GET['service'] ) ) : '';
 				$allowed_services = self::get_services();
-				$current_service          = in_array( $service, $allowed_services, true ) ? $service : '';
+				$service_names    = array_column( $allowed_services, 'service_name' );
+				$current_service  = in_array( $service, $service_names, true ) ? $service : '';
+
 				$config['currentService'] = $current_service;
 
 				if ( $current_service ) {
@@ -103,6 +105,15 @@ class Integration {
 					if ( $instance ) {
 						$config['serviceFields']   = method_exists( $instance, 'get_fields' ) ? $instance->get_fields() : array();
 						$config['serviceSettings'] = method_exists( $instance, 'get_settings' ) ? $instance->get_settings() : array();
+
+						// Documentation URL
+						foreach ( $allowed_services as $s ) {
+							if ( $s['service_name'] === $current_service ) {
+								$config['integrationDocumentationUrl'] = $s['documentation_url'];
+								$config['serviceName']                 = $s['service_name'];
+								break;
+							}
+						}
 					}
 				}
 
@@ -166,5 +177,39 @@ class Integration {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Parse template string with form data and generic placeholders.
+	 *
+	 * @param string $template Template string.
+	 * @param array  $data     Form data.
+	 * @param int    $entry_id Entry ID.
+	 * @param int    $form_id  Form ID.
+	 * @return string
+	 */
+	public static function parse_template( $template, $data, $entry_id = 0, $form_id = 0 ) {
+		if ( empty( $template ) ) {
+			return '';
+		}
+
+		// Generic placeholders.
+		$template = str_replace( '{form_id}', $form_id, $template );
+		$template = str_replace( '{entry_id}', $entry_id, $template );
+		$template = str_replace( '{form_title}', get_the_title( $form_id ), $template );
+		$template = str_replace( '{site_title}', get_bloginfo( 'name' ), $template );
+
+		// Field placeholders.
+		$all_fields = '';
+		foreach ( $data as $key => $value ) {
+			$display_value = is_array( $value ) ? implode( ', ', $value ) : $value;
+			$all_fields   .= "{$key}: {$display_value}\n";
+			$template      = str_replace( '{' . $key . '}', $display_value, $template );
+			$template      = str_replace( '{{' . $key . '}}', $display_value, $template );
+		}
+
+		$template = str_replace( '{all_fields}', trim( $all_fields ), $template );
+
+		return $template;
 	}
 }

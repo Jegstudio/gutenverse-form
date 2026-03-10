@@ -22,11 +22,13 @@ class Discord {
      * Send data to Discord.
      *
      * @param array $data Form data.
+     * @param int $entry_id Entry ID.
+     * @param int $form_id Form ID.
      * @return array|\WP_Error
      */
-    public function send($data) {
+    public function send($data, $entry_id = 0, $form_id = 0) {
         $body = [
-            'content'    => $this->parse_template($this->settings['content'] ?? '', $data),
+            'content'    => \Gutenverse_Form\Integration::parse_template($this->settings['content'] ?? '', $data, $entry_id, $form_id),
             'username'   => $this->settings['username'] ?? '',
             'avatar_url' => $this->settings['avatar_url'] ?? '',
         ];
@@ -35,29 +37,6 @@ class Discord {
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode(array_filter($body)),
         ]);
-    }
-
-    /**
-     * Parse template string with data.
-     *
-     * @param string $template Template string.
-     * @param array  $data     Form data.
-     * @return string
-     */
-    protected function parse_template($template, $data) {
-        if (empty($template)) {
-            return '';
-        }
-
-        $all_fields = "";
-        foreach ($data as $key => $value) {
-            $all_fields .= "{$key}: {$value}\n";
-            $template = str_replace('{' . $key . '}', $value, $template);
-        }
-
-        $template = str_replace('{all_fields}', trim($all_fields), $template);
-
-        return $template;
     }
 
     /**
@@ -103,7 +82,7 @@ class Discord {
             $settings = array_merge($global_settings, $local_settings);
             if (!empty($settings['webhookUrl'])) {
                 $this->set_settings($settings);
-                $this->send($data);
+                $this->send($data, $entry_id, $params['form-id']);
             }
         }
 
@@ -113,7 +92,7 @@ class Discord {
                 if ('discord' === ($action['type'] ?? '')) {
                     if (!empty($action['webhookUrl'])) {
                         $this->set_settings($action);
-                        $this->send($data);
+                        $this->send($data, $entry_id, $params['form-id']);
                     }
                 }
             }

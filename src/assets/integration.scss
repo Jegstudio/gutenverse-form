@@ -115,6 +115,30 @@
             color: #667085;
             line-height: 1.6;
         }
+
+        .setup-doc-note {
+            margin-top: 10px;
+            padding: 15px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+
+            p {
+                font-size: 13px;
+                color: #64748b;
+                margin: 0;
+
+                a {
+                    color: #3b57f7;
+                    font-weight: 600;
+                    text-decoration: none;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
     }
 
     .integration-list {

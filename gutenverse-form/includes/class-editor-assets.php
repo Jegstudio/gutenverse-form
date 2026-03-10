@@ -75,11 +75,12 @@ class Editor_Assets {
 		$available_services  = Integration::get_services();
 
 		foreach ( $available_services as $service ) {
-			if ( ! empty( $enabled_services[ $service ] ) ) {
-				$service_settings = get_option( "gutenverse_form_{$service}_settings", array() );
+			$service_name = $service['service_name'];
+			if ( ! empty( $enabled_services[ $service_name ] ) ) {
+				$service_settings = get_option( "gutenverse_form_{$service_name}_settings", array() );
 				if ( ! empty( $service_settings['apply_globally'] ) ) {
 					$global_integrations[] = array_merge(
-						array( 'type' => $service ),
+						array( 'type' => $service_name ),
 						$service_settings
 					);
 				}

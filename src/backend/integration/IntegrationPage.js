@@ -5,7 +5,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { CardPro } from 'gutenverse-core/components';
 import { IconCrownBannerSVG } from 'gutenverse-core/icons';
 
-import { TextControl, Button, Notice } from '@wordpress/components';
+import { TextControl, TextareaControl, Button, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
 const services = [
@@ -150,15 +150,35 @@ const ServiceSetup = ({ serviceId, title }) => {
                     const field = fields[key];
                     return (
                         <div key={key} className="setup-field-item">
-                            <TextControl
-                                label={field.label}
-                                value={settings[key] || ''}
-                                onChange={(val) => updateSetting(key, val)}
-                                placeholder={field.placeholder}
-                            />
+                            {field.type === 'textarea' ? (
+                                <TextareaControl
+                                    label={field.label}
+                                    value={settings[key] || ''}
+                                    onChange={(val) => updateSetting(key, val)}
+                                    placeholder={field.placeholder}
+                                    rows={10}
+                                />
+                            ) : (
+                                <TextControl
+                                    label={field.label}
+                                    value={settings[key] || ''}
+                                    onChange={(val) => updateSetting(key, val)}
+                                    placeholder={field.placeholder}
+                                />
+                            )}
                         </div>
                     );
                 })}
+                {config.integrationDocumentationUrl && (
+                    <div className="setup-doc-note">
+                        <p>
+                            {__('Need help setting up this integration? ', 'gutenverse-form')}
+                            <a href={config.integrationDocumentationUrl} target="_blank" rel="noreferrer">
+                                {__('Check the service documentation for setup instructions', 'gutenverse-form')}
+                            </a>
+                        </p>
+                    </div>
+                )}
             </div>
             <div className="setup-footer">
                 <Button

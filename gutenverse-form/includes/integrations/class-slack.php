@@ -22,11 +22,13 @@ class Slack {
      * Send data to Slack.
      *
      * @param array $data Form data.
+     * @param int $entry_id Entry ID.
+     * @param int $form_id Form ID.
      * @return array|\WP_Error
      */
-    public function send($data) {
+    public function send($data, $entry_id = 0, $form_id = 0) {
         $body = [
-            'text' => $this->parse_template($this->settings['content'] ?? '', $data),
+            'text' => \Gutenverse_Form\Integration::parse_template($this->settings['content'] ?? '', $data, $entry_id, $form_id),
         ];
 
         if (!empty($this->settings['username'])) {
@@ -41,25 +43,6 @@ class Slack {
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode(array_filter($body)),
         ]);
-    }
-
-    /**
-     * Parse template string with data.
-     *
-     * @param string $template Template string.
-     * @param array  $data     Form data.
-     * @return string
-     */
-    protected function parse_template($template, $data) {
-        if (empty($template)) {
-            return '';
-        }
-
-        foreach ($data as $key => $value) {
-            $template = str_replace('{' . $key . '}', $value, $template);
-        }
-
-        return $template;
     }
 
     /**
@@ -105,7 +88,7 @@ class Slack {
             $settings = array_merge($global_settings, $local_settings);
             if (!empty($settings['webhookUrl'])) {
                 $this->set_settings($settings);
-                $this->send($data);
+                $this->send($data, $entry_id, $params['form-id']);
             }
         }
 
@@ -115,7 +98,7 @@ class Slack {
                 if ('slack' === ($action['type'] ?? '')) {
                     if (!empty($action['webhookUrl'])) {
                         $this->set_settings($action);
-                        $this->send($data);
+                        $this->send($data, $entry_id, $params['form-id']);
                     }
                 }
             }
