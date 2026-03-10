@@ -135,7 +135,7 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
     const handleCreate = () => {
         setSaving(true);
         const type = fieldName === 'user_email_template' ? __('Confirmation', 'gutenverse-form') : __('Notification', 'gutenverse-form');
-        const cleanTitle = decodeEntities(formTitle) || __('Untitled Form', 'gutenverse-form');
+        const cleanTitle = (decodeEntities(formTitle) || __('Untitled Form', 'gutenverse-form')).replace(/[\u2013\u2014]/g, '-');
         const name = `${cleanTitle} - ${type}`;
 
         apiFetch({
@@ -279,13 +279,6 @@ const TabConfirmation = (props) => {
         </div>
         {values.user_confirm && <>
             <FormGroup title={__('Recipient Settings', 'gutenverse-form')}>
-                <ControlCheckbox
-                    id={'auto_select_email'}
-                    title={__('Auto-Detect Recipient', 'gutenverse-form')}
-                    description={__('Automatically send to the email address entered in the form. Requires an "Email" input type.', 'gutenverse-form')}
-                    value={values.auto_select_email}
-                    updateValue={updateValue}
-                />
                 {!values.auto_select_email && (
                     <ControlText
                         id={'email_input_name'}
@@ -311,12 +304,11 @@ const TabConfirmation = (props) => {
                     updateValue={updateValue}
                 />
                 {values.user_email_subject_type === 'post_meta' && (
-                    <ControlSelect
+                    <ControlText
                         id={'user_email_subject_meta_key'}
                         title={__('Meta Key', 'gutenverse-form')}
                         description={__('The custom field name containing the subject.', 'gutenverse-form')}
                         value={values.user_email_subject_meta_key || ''}
-                        options={props.metaKeys || []}
                         updateValue={updateValue}
                     />
                 )}
@@ -336,13 +328,34 @@ const TabConfirmation = (props) => {
                     value={values.user_email_form}
                     updateValue={updateValue}
                 />
-                <ControlText
-                    id={'user_email_reply_to'}
-                    title={__('Reply-To Address', 'gutenverse-form')}
-                    description={__('The email address where user replies will be sent.', 'gutenverse-form')}
-                    value={values.user_email_reply_to}
+                <ControlSelect
+                    id={'user_email_reply_to_type'}
+                    title={__('Reply-To Type', 'gutenverse-form')}
+                    description={__('Choose between a static email address or a dynamic recipient based on form data.', 'gutenverse-form')}
+                    value={values.user_email_reply_to_type || 'static'}
+                    options={[
+                        { label: __('Static Email', 'gutenverse-form'), value: 'static' },
+                        { label: __('Dynamic Recipient', 'gutenverse-form'), value: 'dynamic' },
+                    ]}
                     updateValue={updateValue}
                 />
+                {values.user_email_reply_to_type === 'dynamic' ? (
+                    <ControlText
+                        id={'user_email_reply_to_dynamic'}
+                        title={__('Reply-To Field ID', 'gutenverse-form')}
+                        description={__('The specific input ID (name) to use as the reply-to email address.', 'gutenverse-form')}
+                        value={values.user_email_reply_to_dynamic}
+                        updateValue={updateValue}
+                    />
+                ) : (
+                    <ControlText
+                        id={'user_email_reply_to'}
+                        title={__('Reply-To Address', 'gutenverse-form')}
+                        description={__('The static email address where user replies will be sent.', 'gutenverse-form')}
+                        value={values.user_email_reply_to}
+                        updateValue={updateValue}
+                    />
+                )}
             </FormGroup>
 
             <FormGroup title={__('Message Content', 'gutenverse-form')}>
@@ -408,12 +421,11 @@ const TabNotification = (props) => {
                     updateValue={updateValue}
                 />
                 {values.admin_email_subject_type === 'post_meta' && (
-                    <ControlSelect
+                    <ControlText
                         id={'admin_email_subject_meta_key'}
                         title={__('Meta Key', 'gutenverse-form')}
                         description={__('The custom field name containing the subject.', 'gutenverse-form')}
                         value={values.admin_email_subject_meta_key || ''}
-                        options={props.metaKeys || []}
                         updateValue={updateValue}
                     />
                 )}
@@ -433,13 +445,34 @@ const TabNotification = (props) => {
                     value={values.admin_email_from}
                     updateValue={updateValue}
                 />
-                <ControlText
-                    id={'admin_email_reply_to'}
-                    title={__('Reply-To Address', 'gutenverse-form')}
-                    description={__('The email address where admin replies will be sent.', 'gutenverse-form')}
-                    value={values.admin_email_reply_to}
+                <ControlSelect
+                    id={'admin_email_reply_to_type'}
+                    title={__('Reply-To Type', 'gutenverse-form')}
+                    description={__('Choose between a static email address or a dynamic recipient based on form data.', 'gutenverse-form')}
+                    value={values.admin_email_reply_to_type || 'static'}
+                    options={[
+                        { label: __('Static Email', 'gutenverse-form'), value: 'static' },
+                        { label: __('Dynamic Recipient', 'gutenverse-form'), value: 'dynamic' },
+                    ]}
                     updateValue={updateValue}
                 />
+                {values.admin_email_reply_to_type === 'dynamic' ? (
+                    <ControlText
+                        id={'admin_email_reply_to_dynamic'}
+                        title={__('Reply-To Field ID', 'gutenverse-form')}
+                        description={__('The specific input ID (name) to use as the reply-to email address.', 'gutenverse-form')}
+                        value={values.admin_email_reply_to_dynamic}
+                        updateValue={updateValue}
+                    />
+                ) : (
+                    <ControlText
+                        id={'admin_email_reply_to'}
+                        title={__('Reply-To Address', 'gutenverse-form')}
+                        description={__('The static email address where admin replies will be sent.', 'gutenverse-form')}
+                        value={values.admin_email_reply_to}
+                        updateValue={updateValue}
+                    />
+                )}
             </FormGroup>
 
             <FormGroup title={__('Recipient Settings', 'gutenverse-form')}>
@@ -464,17 +497,15 @@ const TabNotification = (props) => {
                             options={[
                                 { label: __('Post Author', 'gutenverse-form'), value: 'post_author' },
                                 { label: __('Meta Action', 'gutenverse-form'), value: 'post_meta' },
-                                { label: __('Custom (Developer Hook)', 'gutenverse-form'), value: 'custom' },
                             ]}
                             updateValue={updateValue}
                         />
                         {values.admin_email_source === 'post_meta' && (
-                            <ControlSelect
+                            <ControlText
                                 id={'admin_email_meta_key'}
                                 title={__('Meta Key', 'gutenverse-form')}
                                 description={__('The custom field name containing the recipient\'s email address.', 'gutenverse-form')}
                                 value={values.admin_email_meta_key || ''}
-                                options={props.metaKeys || []}
                                 updateValue={updateValue}
                             />
                         )}

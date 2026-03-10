@@ -19,8 +19,7 @@ const save = compose(
         defaultLogic,
         displayLogic,
         checkboxOptions,
-        displayBlock,
-        elementId
+        displayBlock
     } = attributes;
 
     const innerClass = classnames(
@@ -52,14 +51,14 @@ const save = compose(
                     data-validation={JSON.stringify(validation)}
                     {...additionalProps}
                 />
-                {checkboxOptions.map((item, index) => {
-                    return <label key={item.value} htmlFor={`${elementId}-${index}`}>
+                {checkboxOptions.map(item => {
+                    return <label key={item.value} htmlFor={inputName + '-' + item.value}>
                         <input
-                            id={`${elementId}-${index}`}
                             name={inputName} value={item.value}
                             className="gutenverse-input-checkbox"
                             type="checkbox"
                             checked={item.selected ? true : undefined}
+                            id={inputName + '-' + item.value}
                         />
                         <span className="check">
                             {item.label}

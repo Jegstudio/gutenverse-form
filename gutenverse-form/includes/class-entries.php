@@ -462,16 +462,26 @@ class Entries {
 
 		if ( isset( $entry ) ) {
 			foreach ( $entry as $item ) {
-				$value = is_array( $item['value'] ) ? gutenverse_join_array( $item['value'] ) : $item['value'];
-				$value = ! empty( $value ) ? $value : esc_html__( 'empty', 'gutenverse-form' );
-
-				$result .= '<div class="entry-title">Input ID : ' . $item['id'] . '</div>
-				<div class="entry-data">' . $value . '</div>';
+				$value = is_array( $item['value'] ) ? array_map( 'esc_html', $item['value'] ) : $item['value'];
+				?>
+				<div class="entry-title"><?php echo esc_html__( 'Input ID : ', 'gutenverse-form' ) . esc_html( $item['id'] ); ?></div>
+				<div class="entry-data">
+					<?php
+					if ( is_array( $value ) ) {
+						echo esc_html( '<span>' . implode( ', ', $value ) . ' </span>' );
+					} elseif ( filter_var( $value, FILTER_VALIDATE_URL ) ) {
+						echo esc_html( '<a href="' . esc_url( $value ) . '" target="_blank">' . esc_html( $value ) . '</a>' );
+					} else {
+						echo esc_html( $value );
+					}
+					?>
+				</div>
+				<?php
 			}
 		}
 
 		if ( ! empty( $integrations ) && isset( $integrations['actions'] ) ) {
-			$services = [];
+			$services = array();
 			foreach ( $integrations['actions'] as $action ) {
 				if ( ! empty( $action['type'] ) ) {
 					$services[] = $action['type'];
@@ -482,7 +492,7 @@ class Entries {
 				$retrigger_all_btn = current_user_can( 'manage_options' ) ? ' <button type="button" class="button button-small retrigger-integrations-all" data-entry-id="' . $post->ID . '">' . __( 'Resubmit All', 'gutenverse-form' ) . '</button>' : '';
 				$result           .= '<div class="entry-title">' . __( 'Integrations Triggered', 'gutenverse-form' ) . $retrigger_all_btn . '</div>';
 
-				$integration_list = [];
+				$integration_list = array();
 				foreach ( array_unique( $services ) as $service ) {
 					$retrigger_btn      = current_user_can( 'manage_options' ) ? ' <a href="#" class="retrigger-integration-item" data-entry-id="' . $post->ID . '" data-service="' . $service . '">(' . __( 'Retrigger', 'gutenverse-form' ) . ')</a>' : '';
 					$integration_list[] = '<span class="integration-tag">' . ucfirst( $service ) . $retrigger_btn . '</span>';

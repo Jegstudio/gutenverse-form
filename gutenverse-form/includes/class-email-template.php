@@ -95,6 +95,7 @@ class Email_Template {
 			'exclude_from_search' => true,
 			'publicly_queryable'  => false,
 			'capability_type'     => 'post',
+			'map_meta_cap'        => true,
 			'show_in_rest'        => true,
 		);
 		register_post_type( self::POST_TYPE, $args );

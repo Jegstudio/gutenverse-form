@@ -220,7 +220,6 @@ class GutenverseFormValidation extends Default {
         const postId = formBuilder.data('post-id') || (!isEmpty(window['GutenverseData']) ? window['GutenverseData']['postId'] : 0);
         const hideAfterSubmit = formBuilder.data('hide-after');
         const redirectTo = formBuilder.data('redirect');
-
         formBuilder.on('submit', (e) => {
             e.preventDefault();
             let recaptchaResponse = null;

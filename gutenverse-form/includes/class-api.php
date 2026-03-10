@@ -180,7 +180,9 @@ class Api {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'form_init' ),
-				'permission_callback' => '__return_true',
+				'permission_callback' => function () {
+					return true; // Only if public forms are intended.
+				},
 			)
 		);
 
@@ -190,7 +192,9 @@ class Api {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'submit_form' ),
-				'permission_callback' => '__return_true',
+				'permission_callback' => function () {
+					return true; // Only if public forms are intended.
+				},
 			)
 		);
 	}
@@ -493,9 +497,10 @@ class Api {
 					case 'multiselect':
 					case 'multi-group-select':
 					case 'checkbox':
+						$raw_values     = rest_sanitize_array( $data[ $value_key ] );
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),
-							'value' => rest_sanitize_array( $data[ $value_key ] ),
+							'value' => array_map( 'sanitize_text_field', $raw_values ),
 						);
 						break;
 					case 'file':
@@ -521,21 +526,36 @@ class Api {
 								array_push( $error, $file_info['name'] . ' exceeds max size of ' . $file_rules['max_size'] . 'KB.' );
 							}
 
+							$allowed_ext = array();
 							if ( $file_rules['allowed_extensions'] && 0 < count( $file_rules['allowed_extensions'] ) ) {
-								$file_ext    = strtolower( pathinfo( $file_info['name'], PATHINFO_EXTENSION ) );
 								$allowed_ext = array_column( $file_rules['allowed_extensions'], 'value' );
-								if ( ! in_array( $file_ext, $allowed_ext, true ) ) {
-									array_push( $error, $file_info['name'] . '\'s extensions not allowed. Allowed: ' . implode( ', ', $allowed_ext ) );
-								}
+							} else {
+								$allowed_ext = array( 'jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'zip' );
+							}
+
+							$file_ext = strtolower( pathinfo( $file_info['name'], PATHINFO_EXTENSION ) );
+							if ( ! in_array( $file_ext, $allowed_ext, true ) ) {
+								array_push( $error, $file_info['name'] . '\'s extensions not allowed.' );
 							}
 							if ( count( $error ) > 0 ) {
 								break;
 							}
 							$uploaded = wp_handle_upload( $file_info, array( 'test_form' => false ) );
 							if ( ! isset( $uploaded['error'] ) ) {
-								$file_url = $uploaded['url'];   // ✅ public URL
+								$file_url = $uploaded['url'];
 
-								// Keep a list of uploaded files
+								// SVG Safety Check .
+								if ( 'image/svg+xml' === $uploaded['type'] || 'svg' === strtolower( pathinfo( $uploaded['file'], PATHINFO_EXTENSION ) ) ) {
+									if ( function_exists( 'gutenverse_is_svg_safe' ) ) {
+										$svg_content = file_get_contents( $uploaded['file'] );
+										if ( ! gutenverse_is_svg_safe( $svg_content ) ) {
+											unlink( $uploaded['file'] );
+											array_push( $error, $file_info['name'] . ' contains unsafe SVG content.' );
+											break;
+										}
+									}
+								}
+
 								$filtered_data[] = array(
 									'id'    => $id,
 									'value' => $file_url,
@@ -574,47 +594,133 @@ class Api {
 	 * @return WP_Response
 	 */
 	public function submit_form( $request ) {
-		$recaptcha     = $request->get_param( 'g-recaptcha-response' ) ? $request->get_param( 'g-recaptcha-response' ) : false;
-		$settings_data = get_option( 'gutenverse-settings', array() );
-		$form_entry    = $request->get_param( 'form-entry' );
-		if ( empty($form_entry) || empty($form_entry['formId']) ) {
-			$response = rest_ensure_response(
+		// -----------------------------
+		// 1. Verify nonce (CSRF protection)
+		// -----------------------------
+		$nonce = $request->get_header( 'X-WP-Nonce' );
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+			return new WP_REST_Response(
 				array(
-					'error'   => 'Bad Request',
-					'message' => 'Missing form entry data!',
-				)
+					'status'  => 'failed',
+					'message' => 'Invalid request.',
+				),
+				403
 			);
-			$response->set_status( 400 );
-			return $response;
 		}
 
-		$form_id       = (int) $form_entry['formId'];
-		$form_setting  = get_post_meta( $form_id, 'form-data', true ) ?: array();
-		$use_captcha   = ! empty( $form_setting['use_captcha'] ) ? (bool) $form_setting['use_captcha'] : false;
+		// -----------------------------
+		// 2. Validate form-entry structure
+		// -----------------------------
+		$form_entry = $request->get_param( 'form-entry' );
 
-		if ( $use_captcha && ! empty( $recaptcha ) ) {
-			$secret = $settings_data['form_captcha_settings']['captcha_key'];
-			$verify = wp_remote_post(
+		if ( empty( $form_entry ) || ! is_array( $form_entry ) ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'failed',
+					'message' => 'Invalid form submission.',
+				),
+				400
+			);
+		}
+
+		$form_id = isset( $form_entry['formId'] ) ? absint( $form_entry['formId'] ) : 0;
+
+		if ( ! $form_id || get_post_type( $form_id ) !== 'gutenverse-form' ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'failed',
+					'message' => 'Invalid form.',
+				),
+				400
+			);
+		}
+
+		$form_setting = get_post_meta( $form_id, 'form-data', true );
+		if ( empty( $form_setting ) || ! is_array( $form_setting ) ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'failed',
+					'message' => 'Form configuration error.',
+				),
+				500
+			);
+		}
+
+		// -----------------------------
+		// 3. Require login if enabled
+		// -----------------------------
+		if ( ! empty( $form_setting['require_login'] ) && ! is_user_logged_in() ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'failed',
+					'message' => 'You must login to submit this form.',
+				),
+				403
+			);
+		}
+
+		// -----------------------------
+		// 4. CAPTCHA validation (safe)
+		// -----------------------------
+		if ( ! empty( $form_setting['use_captcha'] ) ) {
+
+			$recaptcha = sanitize_text_field( $request->get_param( 'g-recaptcha-response' ) );
+
+			if ( empty( $recaptcha ) ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'failed',
+						'message' => 'CAPTCHA required.',
+					),
+					400
+				);
+			}
+
+			$settings_data = get_option( 'gutenverse-settings', array() );
+			$secret = $settings_data['form_captcha_settings']['captcha_key'] ?? '';
+
+			if ( empty( $secret ) ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'failed',
+						'message' => 'CAPTCHA configuration error.',
+					),
+					500
+				);
+			}
+
+			$response = wp_remote_post(
 				'https://www.google.com/recaptcha/api/siteverify',
 				array(
-					'body' => array(
+					'timeout' => 10,
+					'body'    => array(
 						'secret'   => $secret,
 						'response' => $recaptcha,
-						'remoteip' => $_SERVER['REMOTE_ADDR'],
+						'remoteip' => sanitize_text_field( $_SERVER['REMOTE_ADDR'] ?? '' ),
 					),
 				)
 			);
 
-			$result = json_decode( wp_remote_retrieve_body( $verify ), true );
-			if ( empty( $result['success'] ) ) {
-				$response = rest_ensure_response(
+			if ( is_wp_error( $response ) ) {
+				return new WP_REST_Response(
 					array(
-						'error'   => 'Bad Request',
-						'message' => 'CAPTCHA failed! Please Try Again!',
-					)
+						'status'  => 'failed',
+						'message' => 'CAPTCHA verification failed.',
+					),
+					400
 				);
-				$response->set_status( 400 );
-				return $response;
+			}
+
+			$result = json_decode( wp_remote_retrieve_body( $response ), true );
+
+			if ( empty( $result['success'] ) ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'failed',
+						'message' => 'CAPTCHA failed.',
+					),
+					400
+				);
 			}
 		}
 		if ( isset( $form_setting['user_browser'] ) ) {
@@ -626,6 +732,18 @@ class Api {
 		 */
 		do_action( 'gutenverse_form_before_validation', $form_entry, $request );
 
+		// -----------------------------
+		// 5. Sanitize form data (CRITICAL FIX)
+		// -----------------------------
+		if ( empty( $form_entry['data'] ) || ! is_array( $form_entry['data'] ) ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'failed',
+					'message' => 'Invalid form data.',
+				),
+				400
+			);
+		}
 		$form_data_check = $this->filter_form_params( $form_entry['data'], $request );
 		if ( ! $form_data_check['status'] ) {
 			return new WP_REST_Response(
@@ -637,28 +755,17 @@ class Api {
 			);
 		}
 		$form_data = $form_data_check['data'];
-		$is_login  = is_user_logged_in();
-		if ( $form_setting['require_login'] ) {
-			if ( ! $is_login ) {
-				$response = rest_ensure_response(
-					array(
-						'error'   => 'Bad Request',
-						'message' => 'Your Must Login To Submit This Form',
-					)
-				);
-				$response->set_status( 400 );
-				return $response;
-			}
-		}
 		if ( isset( $form_data ) ) {
-			$form_id    = (int) $form_entry['formId'];
-			$post_id    = (int) $form_entry['postId'];
-			$form_entry = array(
+
+			// -----------------------------
+			// Store safely
+			// -----------------------------
+			$params = array(
 				'form-id'      => $form_id,
-				'post-id'      => $post_id,
+				'post-id'      => absint( $form_entry['postId'] ?? 0 ),
 				'entry-data'   => $form_data,
 				'browser-data' => $this->get_browser_data( $form_entry ),
-				'integrations' => isset($form_entry['integrations']) ? json_decode(stripslashes($form_entry['integrations']), true) : array(),
+				'integrations' => isset( $form_entry['integrations'] ) ? json_decode( stripslashes( $form_entry['integrations'] ), true ) : array(),
 			);
 
 			$params = wp_parse_args(
@@ -805,7 +912,7 @@ class Api {
 	public function get_meta_keys( $request ) {
 		global $wpdb;
 
-		// Get all meta keys that do not start with underscore
+		// Get all meta keys that do not start with underscore .
 		$keys = $wpdb->get_col( "
 			SELECT meta_key
 			FROM $wpdb->postmeta

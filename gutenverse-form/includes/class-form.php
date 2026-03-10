@@ -328,6 +328,28 @@ class Form {
 			)
 		);
 
+		// Update associated email template titles.
+		$user_tpl_id  = isset( $params['user_email_template'] ) ? (int) $params['user_email_template'] : 0;
+		$admin_tpl_id = isset( $params['admin_email_template'] ) ? (int) $params['admin_email_template'] : 0;
+
+		if ( $user_tpl_id && 'gutenverse-email-tpl' === get_post_type( $user_tpl_id ) ) {
+			wp_update_post(
+				array(
+					'ID'         => $user_tpl_id,
+					'post_title' => $params['title'] . ' - ' . __( 'Confirmation', 'gutenverse-form' ),
+				)
+			);
+		}
+
+		if ( $admin_tpl_id && 'gutenverse-email-tpl' === get_post_type( $admin_tpl_id ) ) {
+			wp_update_post(
+				array(
+					'ID'         => $admin_tpl_id,
+					'post_title' => $params['title'] . ' - ' . __( 'Notification', 'gutenverse-form' ),
+				)
+			);
+		}
+
 		return wp_update_post(
 			array(
 				'ID'         => $params['id'],
@@ -345,10 +367,11 @@ class Form {
 	 */
 	public static function delete_form_action( $id ) {
 		$post_type = get_post_type( $id );
-		if ( self::POST_TYPE !== $post_type ) {
+		if ( self::POST_TYPE !== $post_type && 'revision' !== $post_type ) {
 			return new WP_Error(
 				'forbidden_permission',
-				esc_html__( 'Forbidden Access', 'gutenverse-form' ),
+				/* translators: %s is the post type name */
+				sprintf( esc_html__( 'Forbidden Access: Target post type is %s', 'gutenverse-form' ), $post_type ),
 				array( 'status' => 403 )
 			);
 		}

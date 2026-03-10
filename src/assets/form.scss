@@ -379,6 +379,9 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            /* Ensure text truncation works if flex shrinks */
+            min-width: 0;
+            border-radius: 4px; /* Standard WP radius */
 
             /* Ensure text truncation works if flex shrinks */
             min-width: 0;

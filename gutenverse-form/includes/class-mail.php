@@ -49,8 +49,23 @@ class Mail {
 			$subject = isset( $form_data['user_email_subject'] ) ? $form_data['user_email_subject'] : get_bloginfo( 'name' );
 		}
 
-		$from     = isset( $form_data['user_email_from'] ) ? $form_data['user_email_from'] : null;
-		$reply_to = isset( $form_data['user_email_reply_to'] ) ? $form_data['user_email_reply_to'] : null;
+		$from = isset( $form_data['user_email_from'] ) ? $form_data['user_email_from'] : null;
+
+		$reply_to_type = isset( $form_data['user_email_reply_to_type'] ) ? $form_data['user_email_reply_to_type'] : 'static';
+		if ( 'dynamic' === $reply_to_type ) {
+			$reply_to_field = isset( $form_data['user_email_reply_to_dynamic'] ) ? $form_data['user_email_reply_to_dynamic'] : '';
+			$reply_to       = '';
+			if ( ! empty( $reply_to_field ) && isset( $form_entry['entry-data'] ) ) {
+				foreach ( $form_entry['entry-data'] as $data ) {
+					if ( $data['id'] === $reply_to_field ) {
+						$reply_to = is_array( $data['value'] ) ? implode( ', ', $data['value'] ) : $data['value'];
+						break;
+					}
+				}
+			}
+		} else {
+			$reply_to = isset( $form_data['user_email_reply_to'] ) ? $form_data['user_email_reply_to'] : null;
+		}
 
 		$message_type = isset( $form_data['user_message_type'] ) ? $form_data['user_message_type'] : 'static';
 		$template_id  = isset( $form_data['user_email_template'] ) ? (int) $form_data['user_email_template'] : 0;
@@ -113,8 +128,23 @@ class Mail {
 			$subject = isset( $form_data['admin_email_subject'] ) ? $form_data['admin_email_subject'] : null;
 		}
 
-		$from     = isset( $form_data['admin_email_from'] ) ? $form_data['admin_email_from'] : null;
-		$reply_to = isset( $form_data['admin_email_reply_to'] ) ? $form_data['admin_email_reply_to'] : null;
+		$from = isset( $form_data['admin_email_from'] ) ? $form_data['admin_email_from'] : null;
+
+		$reply_to_type = isset( $form_data['admin_email_reply_to_type'] ) ? $form_data['admin_email_reply_to_type'] : 'static';
+		if ( 'dynamic' === $reply_to_type ) {
+			$reply_to_field = isset( $form_data['admin_email_reply_to_dynamic'] ) ? $form_data['admin_email_reply_to_dynamic'] : '';
+			$reply_to       = '';
+			if ( ! empty( $reply_to_field ) && isset( $form_entry['entry-data'] ) ) {
+				foreach ( $form_entry['entry-data'] as $data ) {
+					if ( $data['id'] === $reply_to_field ) {
+						$reply_to = is_array( $data['value'] ) ? implode( ', ', $data['value'] ) : $data['value'];
+						break;
+					}
+				}
+			}
+		} else {
+			$reply_to = isset( $form_data['admin_email_reply_to'] ) ? $form_data['admin_email_reply_to'] : null;
+		}
 
 		$message_type = isset( $form_data['admin_message_type'] ) ? $form_data['admin_message_type'] : 'static';
 		$template_id  = isset( $form_data['admin_email_template'] ) ? (int) $form_data['admin_email_template'] : 0;

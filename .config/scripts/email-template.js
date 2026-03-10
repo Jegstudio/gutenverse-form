@@ -32,8 +32,7 @@ const emailTemplate = {
                 onStart: {
                     delete: [
                         "./gutenverse-form/assets/js/email-template.js*",
-                        "./gutenverse-form/lib/dependencies/email-template.asset.php",
-                        "./gutenverse-form/assets/css/email-template.css"
+                        "./gutenverse-form/lib/dependencies/email-template.asset.php"
                     ]
                 },
                 onEnd: {
@@ -45,10 +44,6 @@ const emailTemplate = {
                         {
                             source: "./build/email-template.asset.php",
                             destination: "./gutenverse-form/lib/dependencies/",
-                        },
-                        {
-                            source: "./build/email-template.css",
-                            destination: "./gutenverse-form/assets/css/",
                         }
                     ],
                 },
