@@ -100,7 +100,7 @@
     display: flex;
     gap: 8px;
     padding: 20px;
-    
+
 
     .header-item {
         flex-grow: 1;
@@ -142,7 +142,9 @@
             display: block;
         }
 
-        &.control-text, &.control-number, &.control-search-select  {
+        &.control-text,
+        &.control-number,
+        &.control-search-select {
             input {
                 border: 1px solid #e6e6ef;
                 border-radius: 3px;
@@ -229,9 +231,10 @@
         }
 
         &.control-number {
-            input{
+            input {
                 width: 150px;
             }
+
             .control-title {
                 display: flex;
                 justify-content: space-between;
@@ -239,15 +242,17 @@
             }
         }
 
-        &.control-search-select{
-            .async-select__control{
+        &.control-search-select {
+            .async-select__control {
                 border: 1px solid #e6e6ef;
                 border-radius: 3px;
             }
-            .select-search{
+
+            .select-search {
                 margin-top: 10px;
             }
-            .async-select__menu-list{
+
+            .async-select__menu-list {
                 height: 150px;
             }
         }
@@ -341,7 +346,7 @@
         letter-spacing: 0;
         border-bottom: none;
         padding-bottom: 0;
-        
+
         &::after {
             content: "";
             -webkit-box-flex: 1;
@@ -356,10 +361,11 @@
         margin: 0 0 15px 0 !important;
     }
 
-    > .control-wrapper:first-of-type {
+    >.control-wrapper:first-of-type {
         padding-top: 0;
     }
 }
+
 .gutenverse-create-form-action {
     margin-bottom: 20px;
     margin-top: 10px;
@@ -381,27 +387,29 @@
             text-overflow: ellipsis;
             /* Ensure text truncation works if flex shrinks */
             min-width: 0;
-            border-radius: 4px; /* Standard WP radius */
+            border-radius: 4px;
+            /* Standard WP radius */
 
             /* Ensure text truncation works if flex shrinks */
             min-width: 0;
-            border-radius: 4px; /* Standard WP radius */
+            border-radius: 4px;
+            /* Standard WP radius */
 
             &.create {
-                 background-color: #3B57F7;
-                 color: #fff;
-                 transition: background 0.2s;
-                 
-                 &:hover {
-                     background-color: #243cc7;
-                 }
+                background-color: #3B57F7;
+                color: #fff;
+                transition: background 0.2s;
+
+                &:hover {
+                    background-color: #243cc7;
+                }
             }
 
             &.edit {
                 background-color: #fff;
                 color: #333;
                 border: 1px solid #c3c4c7;
-                
+
                 &:hover {
                     background-color: #f0f0f1;
                     color: #1d2327;
@@ -412,12 +420,13 @@
     }
 
     .gutenverse-form-action-list-link {
-        display: block; 
-        text-align: center; 
-        width: 100%; 
-        color: #3B57F7; 
-        text-decoration: none; 
+        display: block;
+        text-align: center;
+        width: 100%;
+        color: #3B57F7;
+        text-decoration: none;
         font-size: 13px;
+
         &:hover {
             text-decoration: underline;
             color: #243cc7;
@@ -489,5 +498,57 @@
             color: #243cc7;
             text-decoration: underline;
         }
+    }
+}
+
+.gutenverse-form-builder-modal {
+    .components-modal__header {
+        border-bottom: 1px solid #eee;
+    }
+}
+
+.gutenverse-form-modal-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #eee;
+}
+
+.gutenverse-form-modal-content {
+    margin-bottom: 30px;
+}
+
+.gutenverse-form-confirm-modal {
+    .components-modal__content {
+        padding: 4px 32px 10px;
+    }
+}
+
+.gutenverse-form-builder-modal {
+    .components-modal__header {
+        border-bottom: 1px solid #eee;
+    }
+}
+
+.gutenverse-form-modal-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #eee;
+}
+
+.gutenverse-form-modal-content {
+    margin-bottom: 30px;
+}
+
+.gutenverse-form-confirm-modal {
+    .components-modal__content {
+        padding: 4px 32px 10px;
     }
 }

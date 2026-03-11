@@ -71,7 +71,7 @@ const TabGeneral = (props) => {
             Component: <ControlCheckbox
                 id={'use_captcha'}
                 title={__('Enable Captcha', 'gutenverse-form')}
-                description={__('Protect your form from spam using captcha.', 'gutenverse-form')}
+                description={__('Protect your form from spam using captcha. Require you to enter captcha secret key in the form settings', 'gutenverse-form')}
                 value={values.use_captcha}
                 updateValue={updateValue}
             />

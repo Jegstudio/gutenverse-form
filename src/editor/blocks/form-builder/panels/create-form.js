@@ -220,7 +220,7 @@ export const CreateForm = (props) => {
                     title={isEditing ? __('Edit Form Action', 'gutenverse-form') : __('Create New Form Action', 'gutenverse-form')}
                     onRequestClose={() => setOpen(false)}
                     className="gutenverse-form-builder-modal"
-                    style={{ maxWidth: '800px' }}
+                    style={{ width: '800px', maxHeight: 'calc(100% - 60px)' }}
                 >
                     <div className="gutenverse-form-modal-content">
                         {loadingData ? (
