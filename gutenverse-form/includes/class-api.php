@@ -756,12 +756,11 @@ class Api {
 		}
 		$form_data = $form_data_check['data'];
 		if ( isset( $form_data ) ) {
-
 			$settings_data = get_option( 'gutenverse-settings', array() );
 			$integrations  = array();
 
 			if ( isset( $form_entry['integrations'] ) ) {
-				$integrations = is_string( $form_entry['integrations'] ) ? json_decode( stripslashes( $form_entry['integrations'] ), true ) : $form_entry['integrations'];
+				$integrations = is_string( $form_entry['integrations'] ) ? json_decode( $form_entry['integrations'], true ) : $form_entry['integrations'];
 			}
 
 			$params = array(

@@ -32,18 +32,54 @@ class Integration {
 	 */
 	public static function get_services() {
 		return array(
-			array('service_name' => 'whatsapp', 'documentation_url' => 'https://developers.facebook.com/documentation/business-messaging/whatsapp/get-started'),
-			array('service_name' => 'telegram', 'documentation_url' => 'https://core.telegram.org/bots/api'),
-			array('service_name' => 'discord', 'documentation_url' => 'https://discord.com/developers/docs/intro'),
-			array('service_name' => 'mailchimp', 'documentation_url' => 'https://mailchimp.com/developer/'),
-			array('service_name' => 'slack', 'documentation_url' => 'https://api.slack.com/'),
-			array('service_name' => 'webhook', 'documentation_url' => 'https://api.slack.com/'),
-			array('service_name' => 'get_response', 'documentation_url' => 'https://api.slack.com/'),
-			array('service_name' => 'drip', 'documentation_url' => 'https://api.slack.com/'),
-			array('service_name' => 'active_campaign', 'documentation_url' => 'https://api.slack.com/'),
-			array('service_name' => 'convert_kit', 'documentation_url' => 'https://api.slack.com/'),
-			array('service_name' => 'mailer', 'documentation_url' => 'https://api.slack.com/'),
-			array('service_name' => 'google_sheets', 'documentation_url' => 'https://api.slack.com/'),
+			array(
+				'service_name'      => 'whatsapp',
+				'documentation_url' => 'https://developers.facebook.com/documentation/business-messaging/whatsapp/get-started',
+			),
+			array(
+				'service_name'      => 'telegram',
+				'documentation_url' => 'https://core.telegram.org/bots/api',
+			),
+			array(
+				'service_name'      => 'discord',
+				'documentation_url' => 'https://discord.com/developers/docs/intro',
+			),
+			array(
+				'service_name'      => 'mailchimp',
+				'documentation_url' => 'https://mailchimp.com/developer/',
+			),
+			array(
+				'service_name'      => 'slack',
+				'documentation_url' => 'https://api.slack.com/',
+			),
+			array(
+				'service_name'      => 'webhook',
+				'documentation_url' => 'https://api.slack.com/',
+			),
+			array(
+				'service_name'      => 'get_response',
+				'documentation_url' => 'https://api.slack.com/',
+			),
+			array(
+				'service_name'      => 'drip',
+				'documentation_url' => 'https://api.slack.com/',
+			),
+			array(
+				'service_name'      => 'active_campaign',
+				'documentation_url' => 'https://api.slack.com/',
+			),
+			array(
+				'service_name'      => 'convert_kit',
+				'documentation_url' => 'https://api.slack.com/',
+			),
+			array(
+				'service_name'      => 'mailer',
+				'documentation_url' => 'https://api.slack.com/',
+			),
+			array(
+				'service_name'      => 'google_sheets',
+				'documentation_url' => 'https://api.slack.com/',
+			),
 		);
 	}
 
@@ -106,7 +142,7 @@ class Integration {
 						$config['serviceFields']   = method_exists( $instance, 'get_fields' ) ? $instance->get_fields() : array();
 						$config['serviceSettings'] = method_exists( $instance, 'get_settings' ) ? $instance->get_settings() : array();
 
-						// Documentation URL
+						// Documentation URL.
 						foreach ( $allowed_services as $s ) {
 							if ( $s['service_name'] === $current_service ) {
 								$config['integrationDocumentationUrl'] = $s['documentation_url'];

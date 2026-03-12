@@ -44,8 +44,9 @@ const DisableModal = ({ isOpen, onConfirm, onCancel }) => {
         <div className="gutenverse-modal-overlay" onClick={onCancel}>
             <div className="gutenverse-modal-content" onClick={(e) => e.stopPropagation()}>
                 <button className="modal-close" onClick={onCancel}>
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.16671 6.147L6.15337 5.16034C6.24107 5.07263 6.32683 5.07068 6.41063 5.15449L17.4729 16.2168C17.5567 16.3006 17.5548 16.3863 17.4671 16.474L16.4804 17.4607C16.3927 17.5484 16.307 17.5504 16.2232 17.4666L5.16086 6.40426C5.07706 6.32045 5.07901 6.2347 5.16671 6.147Z" fill="#7D8292"/>
+                        <path d="M5.19405 16.2447L16.2447 5.19405C16.3324 5.10635 16.4181 5.1044 16.5019 5.18821L17.4447 6.13102C17.5285 6.21482 17.5266 6.30058 17.4389 6.38828L6.38828 17.4389C6.30058 17.5266 6.21482 17.5285 6.13102 17.4447L5.18821 16.5019C5.1044 16.4181 5.10635 16.3324 5.19405 16.2447Z" fill="#7D8292"/>
                     </svg>
                 </button>
                 <div className="modal-body">
@@ -96,9 +97,9 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                 <div className="item-footer">
                     <div className="item-toggle-wrap">
                         <div className={classnames('gutenverse-toggle', { active: isActive })} onClick={handleToggle}>
+                            <span className="toggle-label">{isActive ? __('ON', 'gutenverse-form') : __('OFF', 'gutenverse-form')}</span>
                             <div className="toggle-handle" />
                         </div>
-                        <span className="toggle-label">{isActive ? __('ON', 'gutenverse-form') : __('OFF', 'gutenverse-form')}</span>
                     </div>
                     {isActive && (
                         <button

@@ -287,14 +287,6 @@
                 .item-toggle-wrap {
                     display: flex;
                     align-items: center;
-                    gap: 10px;
-
-                    .toggle-label {
-                        font-family: 'Roboto', sans-serif;
-                        font-weight: 600;
-                        font-size: 11px;
-                        color: #8181a5;
-                    }
                 }
 
                 .setup-link-button {
@@ -324,31 +316,55 @@
                 }
 
                 .gutenverse-toggle {
-                    width: 32px;
-                    height: 18px;
+                    width: 60px;
+                    height: 28px;
                     background: #e6e6ef;
-                    border-radius: 9px;
+                    border-radius: 14px;
                     position: relative;
                     cursor: pointer;
                     transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+
+                    .toggle-label {
+                        font-family: 'Roboto', sans-serif;
+                        font-weight: 600;
+                        font-size: 11px;
+                        line-height: 1;
+                        color: #8181a5;
+                        position: absolute;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        transition: all 0.3s ease;
+                        pointer-events: none;
+                        z-index: 1;
+                        right: 12px; // Default for OFF text
+                    }
 
                     .toggle-handle {
-                        width: 12px;
-                        height: 12px;
+                        width: 18px;
+                        height: 18px;
                         background: #fff;
                         border-radius: 50%;
                         position: absolute;
-                        top: 3px;
-                        left: 3px;
+                        top: 5px;
+                        left: 5px;
                         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
                         transition: all 0.3s ease;
+                        z-index: 2;
                     }
 
                     &.active {
                         background: #3b57f7;
 
+                        .toggle-label {
+                            color: #fff;
+                            right: auto;
+                            left: 12px; // For ON text
+                        }
+
                         .toggle-handle {
-                            left: 17px;
+                            left: 37px; // 60 - 18 - 5 = 37
                         }
                     }
                 }
@@ -383,7 +399,6 @@
     background: #fff;
     width: 417px;
     border-radius: 10px;
-    padding: 60px 40px 40px;
     position: relative;
     box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -392,8 +407,8 @@
 
     .modal-close {
         position: absolute;
-        top: 24px;
-        right: 24px;
+        top: 12px;
+        right: 12px;
         background: none;
         border: none;
         font-size: 20px;
@@ -409,7 +424,7 @@
     }
 
     .modal-body {
-        margin-bottom: 32px;
+        margin: 48px 32px;
 
         .modal-header {
             margin-bottom: 24px;
@@ -417,43 +432,47 @@
             justify-content: center;
         
             svg {
-                width: 72px;
-                height: 72px;
+                width: 64px;
+                height: 64px;
             }
         }
 
         h2 {
             font-family: 'Roboto', sans-serif;
             font-weight: 600;
-            font-size: 20px;
-            line-height: normal;
             color: #1a1a2e;
-            margin: 0 0 12px;
-            letter-spacing: -0.02em;
+            margin: 0 0 8px;
+            font-size: 22px;
+            line-height: 100%;
+            letter-spacing: 0%;
+            text-align: center;
+            vertical-align: middle;
         }
 
         p {
             font-family: 'Roboto', sans-serif;
             font-weight: 400;
             font-size: 14px;
-            line-height: 1.5;
             color: #64748B;
             margin: 0;
-            padding: 0 10px;
+            line-height: 150%;
+            letter-spacing: 0%;
+            text-align: center;
+            vertical-align: middle;
         }
     }
 
     .modal-footer {
         display: flex;
         gap: 12px;
-        justify-content: center;
+        padding: 12px;
+        justify-content: flex-end;
+        border-top: 1px solid rgba(227, 228, 230, 1);
 
         button {
-            padding: 0 24px;
+            padding: 12px 22px;
             height: 40px;
-            border-radius: 6px;
-            font-weight: 500;
-            font-size: 14px;
+            border-radius: 5px;
             cursor: pointer;
             transition: all 0.2s ease;
             min-width: 100px;
@@ -461,14 +480,21 @@
             align-items: center;
             justify-content: center;
             border: none;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 100%;
+            letter-spacing: 0%;
+            text-align: center;
+            vertical-align: middle;
         }
 
         .button-disable {
-            background: #3B57F7;
+            background: rgba(59, 87, 247, 1);
             color: #fff;
 
             &:hover {
-                background: #2D44C4;
+                background: rgba(45, 68, 196, 1);
                 box-shadow: 0 4px 12px rgba(59, 87, 247, 0.2);
             }
         }
