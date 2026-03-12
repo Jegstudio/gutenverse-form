@@ -722,23 +722,23 @@ class Api {
 				$entry_id  = $result['entry_id'];
 
 				if ( isset( $settings_data['form'] ) ) {
-					if ( isset( $settings['form']['confirmation'] ) && true !== $form_data['overwrite_default_confirmation'] ) {
-						$form_data = array_merge( $form_data, $settings['form']['confirmation'] );
+					if ( isset( $settings_data['form']['confirmation'] ) && true !== ( $form_data['overwrite_default_confirmation'] ?? false ) ) {
+						$form_data = array_merge( $form_data, $settings_data['form']['confirmation'] );
 					}
 
-					if ( isset( $settings['form']['notification'] ) && true !== $form_data['overwrite_default_notification'] ) {
-						$form_data = array_merge( $form_data, $settings['form']['notification'] );
+					if ( isset( $settings_data['form']['notification'] ) && true !== ( $form_data['overwrite_default_notification'] ?? false ) ) {
+						$form_data = array_merge( $form_data, $settings_data['form']['notification'] );
 					}
 				}
 
-				$mail_list = $this->mail_list( $form_entry['entry-data'], $form_data );
+				$mail_list = $this->mail_list( $params['entry-data'], $form_data );
 
 				if ( ! empty( $mail_list ) ) {
-					$result = ( new Mail() )->send_user_email( $form_id, $form_data, $entry_id, $form_entry, $mail_list );
+					$result = ( new Mail() )->send_user_email( $form_id, $form_data, $entry_id, $params, $mail_list );
 				}
 
 				if ( ! empty( $form_data['admin_confirm'] ) ) {
-					$result = ( new Mail() )->send_admin_email( $form_id, $form_data, $entry_id, $form_entry );
+					$result = ( new Mail() )->send_admin_email( $form_id, $form_data, $entry_id, $params );
 				}
 			}
 		}
