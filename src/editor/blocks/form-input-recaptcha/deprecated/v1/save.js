@@ -1,4 +1,4 @@
-import { classnames } from 'gutenverse-core/components';
+import classnames from 'classnames';
 
 const save = props => {
     const {

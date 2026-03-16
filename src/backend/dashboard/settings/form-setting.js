@@ -170,7 +170,7 @@ const FormReCaptcha = ({ settingValues, updateSettingValues, saving, saveData })
             </div>}
         </div>
     </div>;
-}
+};
 
 const FormSetting = (props) => {
     const [formActive, setFormActive] = useState('confirmation');

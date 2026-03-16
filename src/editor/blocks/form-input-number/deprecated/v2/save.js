@@ -1,5 +1,4 @@
-
-import SaveInputWrapper from '../../../form-input/general/save-input-wrapper';
+import SaveInputWrapper from '../../../form-input/general/deprecated/v2/save-input-wrapper';
 import isEmpty from 'lodash/isEmpty';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
 import { compose } from '@wordpress/compose';
