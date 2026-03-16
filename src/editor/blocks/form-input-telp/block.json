@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-telp",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Telp",
 	"title": "Phone Input",
 	"description": "Gutenverse Input Phone",
 	"category": "gutenverse-form",

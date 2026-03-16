@@ -1,5 +1,5 @@
 import { compose } from '@wordpress/compose';
-import { withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { BlockPanelController } from 'gutenverse-core/controls';
@@ -12,12 +12,14 @@ import { recursiveParentBlock } from '../form-input/general/input-wrapper';
 
 
 const FormInputRecaptcha = compose(
+    withMouseMoveEffect,
     withPartialRender,
     withPassRef,
 )(props => {
     const {
         attributes,
-        clientId
+        clientId,
+        setBlockRef
     } = props;
 
     const {
@@ -25,6 +27,12 @@ const FormInputRecaptcha = compose(
     } = attributes;
 
     const elementRef = useRef();
+
+    useEffect(() => {
+        if (elementRef) {
+            setBlockRef(elementRef);
+        }
+    }, [elementRef]);
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);

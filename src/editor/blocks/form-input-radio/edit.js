@@ -3,7 +3,7 @@ import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import classnames from 'classnames';
-import { useRef } from '@wordpress/element';
+import { useRef, useEffect } from '@wordpress/element';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
@@ -15,7 +15,8 @@ const FormInputRadioBlock = compose(
 )(props => {
     const {
         attributes,
-        clientId
+        clientId,
+        setBlockRef
     } = props;
 
     const {
@@ -28,6 +29,12 @@ const FormInputRadioBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
+
+    useEffect(() => {
+        if (elementRef) {
+            setBlockRef(elementRef);
+        }
+    }, [elementRef]);
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
@@ -56,7 +63,6 @@ const FormInputRadioBlock = compose(
         <InputWrapper {...inputData}>
             <div className={innerClass}>
                 <div hidden
-                    ref={elementRef}
                     name={inputName}
                     className="gutenverse-input"
                     data-validation={JSON.stringify(validation)}

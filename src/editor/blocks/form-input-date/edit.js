@@ -23,7 +23,8 @@ const FormInputDateBlock = compose(
     const {
         clientId,
         attributes,
-        setAttributes
+        setAttributes,
+        setBlockRef
     } = props;
 
     const {
@@ -50,6 +51,13 @@ const FormInputDateBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
+
+    useEffect(() => {
+        if (elementRef) {
+            setBlockRef(elementRef);
+        }
+    }, [elementRef]);
+
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     useDynamicScript(elementRef);
@@ -133,7 +141,6 @@ const FormInputDateBlock = compose(
                         name={inputName}
                         className="gutenverse-input gutenverse-input-date"
                         type="text"
-                        ref={elementRef}
                     />
                 </div>
                 :
@@ -143,7 +150,6 @@ const FormInputDateBlock = compose(
                     name={inputName}
                     className="gutenverse-input gutenverse-input-date"
                     type="text"
-                    ref={elementRef}
                 />}
         </InputWrapper>
     </>;

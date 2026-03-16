@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-gdpr",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Gdpr",
 	"title": "GDPR Input",
 	"description": "Gutenverse Input GDPR gdpr",
 	"category": "gutenverse-form",

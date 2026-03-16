@@ -27,7 +27,8 @@ const FormInputSubmitBlock = compose(
         attributes,
         setAttributes,
         displayClass,
-        clientId
+        clientId,
+        setBlockRef
     } = props;
 
     const {
@@ -43,6 +44,13 @@ const FormInputSubmitBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
+
+    useEffect(() => {
+        if (elementRef) {
+            setBlockRef(elementRef);
+        }
+    }, [elementRef]);
+
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     useDynamicScript(elementRef);

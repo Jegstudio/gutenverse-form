@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-textarea",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Textarea",
 	"title": "Textarea",
 	"description": "Gutenverse Input Textarea",
 	"category": "gutenverse-form",

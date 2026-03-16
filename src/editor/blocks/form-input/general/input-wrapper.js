@@ -68,6 +68,7 @@ const InputWrapper = props => {
                 'hide-helper': !showHelper
             }
         ),
+        ref: elementRef
     });
 
     const [validParent, setValidParent] = useState(true);

@@ -4,7 +4,7 @@ import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import classnames from 'classnames';
-import { useRef } from '@wordpress/element';
+import { useRef, useEffect } from '@wordpress/element';
 import { RichTextComponent } from 'gutenverse-core/components';
 import { u } from 'gutenverse-core/components';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
@@ -19,7 +19,8 @@ const FormInputGdprBlock = compose(
     const {
         attributes,
         setAttributes,
-        clientId
+        clientId,
+        setBlockRef
     } = props;
 
     const {
@@ -31,6 +32,13 @@ const FormInputGdprBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
+
+    useEffect(() => {
+        if (elementRef) {
+            setBlockRef(elementRef);
+        }
+    }, [elementRef]);
+
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     useDynamicScript(elementRef);
@@ -62,7 +70,7 @@ const FormInputGdprBlock = compose(
     return <>
         <CopyElementToolbar {...props} />
         <InputWrapper {...inputData}>
-            <div className={innerClass} ref={elementRef}>
+            <div className={innerClass}>
                 <div hidden
                     name={inputName}
                     className="gutenverse-input"

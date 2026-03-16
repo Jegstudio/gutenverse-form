@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-text",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Text",
 	"title": "Text Input",
 	"description": "Gutenverse Input Text",
 	"category": "gutenverse-form",

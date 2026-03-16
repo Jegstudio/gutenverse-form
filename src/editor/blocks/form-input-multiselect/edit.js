@@ -15,7 +15,8 @@ const FormInputMultiSelectBlock = compose(
 )(props => {
     const {
         attributes,
-        clientId
+        clientId,
+        setBlockRef
     } = props;
 
     const {
@@ -26,6 +27,12 @@ const FormInputMultiSelectBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
+
+    useEffect(() => {
+        if (elementRef) {
+            setBlockRef(elementRef);
+        }
+    }, [elementRef]);
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
@@ -46,7 +53,7 @@ const FormInputMultiSelectBlock = compose(
     return <>
         <CopyElementToolbar {...props} />
         <InputWrapper {...inputData}>
-            <div className="select-wrapper" ref={elementRef}>
+            <div className="select-wrapper">
                 <ChoiceSelect
                     placeholder={inputPlaceholder}
                     options={selectOptions}

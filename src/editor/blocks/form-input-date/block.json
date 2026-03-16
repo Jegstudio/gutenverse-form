@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-date",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Date",
 	"title": "Date Input",
 	"description": "Gutenverse Input Date",
 	"category": "gutenverse-form",

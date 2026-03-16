@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-switch",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Switch",
 	"title": "Switch",
 	"description": "Gutenverse Switch",
 	"category": "gutenverse-form",

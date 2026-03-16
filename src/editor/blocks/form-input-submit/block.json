@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-submit",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Submit",
 	"title": "Submit Button",
 	"description": "Create an interactive and beautiful action button.",
 	"category": "gutenverse-form",

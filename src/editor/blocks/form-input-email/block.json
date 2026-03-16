@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-email",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Email",
 	"title": "Email Input",
 	"description": "Gutenverse Input Email",
 	"category": "gutenverse-form",

@@ -2,7 +2,7 @@ import { compose } from '@wordpress/compose';
 import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
-import { useRef } from '@wordpress/element';
+import { useRef, useEffect } from '@wordpress/element';
 import { u } from 'gutenverse-core/components';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
@@ -15,7 +15,8 @@ const FormInputSwitchBlock = compose(
 )(props => {
     const {
         attributes,
-        clientId
+        clientId,
+        setBlockRef
     } = props;
 
     const {
@@ -26,6 +27,12 @@ const FormInputSwitchBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
+
+    useEffect(() => {
+        if (elementRef) {
+            setBlockRef(elementRef);
+        }
+    }, [elementRef]);
 
     const inputData = {
         ...props,
@@ -54,7 +61,6 @@ const FormInputSwitchBlock = compose(
                     className="gutenverse-input gutenverse-input-switch"
                     type="checkbox"
                     hidden
-                    ref={elementRef}
                 />
                 <span className="switch" data-on={onText} data-off={offText} onClick={handleSwitchOn} />
             </label>
