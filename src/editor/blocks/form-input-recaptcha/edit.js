@@ -1,5 +1,5 @@
 import { compose } from '@wordpress/compose';
-import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { BlockPanelController } from 'gutenverse-core/controls';
@@ -12,14 +12,13 @@ import { recursiveParentBlock } from '../form-input/general/input-wrapper';
 
 
 const FormInputRecaptcha = compose(
-    withMouseMoveEffect,
+    
     withPartialRender,
     withPassRef,
 )(props => {
     const {
         attributes,
-        clientId,
-        setBlockRef
+        clientId
     } = props;
 
     const {

@@ -7,7 +7,7 @@ import { createPortal } from 'react-dom';
 import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import { displayShortcut } from '@wordpress/keycodes';
 import { BlockPanelController, IconLibrary } from 'gutenverse-core/controls';
-import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import { __ } from '@wordpress/i18n';
 import { LogoCircleColor24SVG } from 'gutenverse-core/icons';
@@ -19,7 +19,7 @@ import { renderIcon } from 'gutenverse-core/helper';
 import { recursiveParentBlock } from '../form-input/general/input-wrapper';
 
 const FormInputSubmitBlock = compose(
-    withMouseMoveEffect,
+    
     withPartialRender,
     withPassRef,
 )((props) => {

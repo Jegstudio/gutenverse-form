@@ -1,4 +1,6 @@
 import classnames from 'classnames';
+import { compose } from '@wordpress/compose';
+import { withMouseMoveEffect } from 'gutenverse-core/hoc';
 import { useEffect, useState } from '@wordpress/element';
 import { useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
@@ -29,14 +31,17 @@ export const recursiveParentBlock = clientId => {
     }
 };
 
-const InputWrapper = props => {
+const InputWrapper = compose(
+    withMouseMoveEffect,
+)(props => {
     const {
         attributes,
         clientId,
         panelList,
         type,
         setAttributes,
-        elementRef
+        elementRef,
+        setBlockRef
     } = props;
 
     const {
@@ -77,6 +82,12 @@ const InputWrapper = props => {
         setValidParent(recursiveParentBlock(clientId));
     }, []);
 
+    useEffect(() => {
+        if (elementRef && setBlockRef) {
+            setBlockRef(elementRef);
+        }
+    }, [elementRef]);
+
     const Label = showLabel && <RichText
         className={'input-label'}
         tagName={'label'}
@@ -116,6 +127,6 @@ const InputWrapper = props => {
             </div>
         </div>
     </>;
-};
+});
 
 export default InputWrapper;

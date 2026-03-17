@@ -1,5 +1,5 @@
 import { compose } from '@wordpress/compose';
-import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import classnames from 'classnames';
@@ -9,7 +9,6 @@ import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputCheckboxBlock = compose(
-    withMouseMoveEffect,
     withPartialRender,
     withPassRef,
 )(props => {
@@ -35,17 +34,6 @@ const FormInputCheckboxBlock = compose(
             setBlockRef(elementRef);
         }
     }, [elementRef]);
-
-    useEffect(() => {
-        if (!attributes.mouseMoveEffect?.selector) {
-            props.setAttributes({
-                mouseMoveEffect: {
-                    ...attributes.mouseMoveEffect,
-                    selector: '.gutenverse-input-checkbox'
-                }
-            });
-        }
-    }, []);
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);

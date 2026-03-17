@@ -1,6 +1,6 @@
 import { compose } from '@wordpress/compose';
 import { useRef, useState, useEffect } from '@wordpress/element';
-import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { ChoiceSelect } from 'gutenverse-core/components';
@@ -10,7 +10,7 @@ import { CopyElementToolbar } from 'gutenverse-core/components';
 import { renderIcon } from 'gutenverse-core/helper';
 
 const FormInputSelectBlock = compose(
-    withMouseMoveEffect,
+    
     withPartialRender,
     withPassRef,
 )(props => {
@@ -18,8 +18,7 @@ const FormInputSelectBlock = compose(
 
     const {
         attributes,
-        clientId,
-        setBlockRef
+        clientId
     } = props;
 
     const {
