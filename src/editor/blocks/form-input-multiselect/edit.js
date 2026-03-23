@@ -9,7 +9,6 @@ import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputMultiSelectBlock = compose(
-    
     withPartialRender,
     withPassRef,
 )(props => {
@@ -26,12 +25,6 @@ const FormInputMultiSelectBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
-
-    useEffect(() => {
-        if (elementRef) {
-            setBlockRef(elementRef);
-        }
-    }, [elementRef]);
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);

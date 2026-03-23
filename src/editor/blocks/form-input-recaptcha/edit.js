@@ -12,7 +12,6 @@ import { recursiveParentBlock } from '../form-input/general/input-wrapper';
 
 
 const FormInputRecaptcha = compose(
-    
     withPartialRender,
     withPassRef,
 )(props => {
@@ -26,12 +25,6 @@ const FormInputRecaptcha = compose(
     } = attributes;
 
     const elementRef = useRef();
-
-    useEffect(() => {
-        if (elementRef) {
-            setBlockRef(elementRef);
-        }
-    }, [elementRef]);
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);

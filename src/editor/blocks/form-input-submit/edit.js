@@ -19,7 +19,6 @@ import { renderIcon } from 'gutenverse-core/helper';
 import { recursiveParentBlock } from '../form-input/general/input-wrapper';
 
 const FormInputSubmitBlock = compose(
-    
     withPartialRender,
     withPassRef,
 )((props) => {
@@ -28,7 +27,6 @@ const FormInputSubmitBlock = compose(
         setAttributes,
         displayClass,
         clientId,
-        setBlockRef
     } = props;
 
     const {
@@ -44,12 +42,6 @@ const FormInputSubmitBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
-
-    useEffect(() => {
-        if (elementRef) {
-            setBlockRef(elementRef);
-        }
-    }, [elementRef]);
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);

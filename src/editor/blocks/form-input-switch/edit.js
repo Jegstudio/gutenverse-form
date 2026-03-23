@@ -27,12 +27,6 @@ const FormInputSwitchBlock = compose(
 
     const elementRef = useRef();
 
-    useEffect(() => {
-        if (elementRef) {
-            setBlockRef(elementRef);
-        }
-    }, [elementRef]);
-
     const inputData = {
         ...props,
         type: 'switch',

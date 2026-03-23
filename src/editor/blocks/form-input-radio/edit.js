@@ -3,13 +3,12 @@ import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import classnames from 'classnames';
-import { useRef, useEffect } from '@wordpress/element';
+import { useRef } from '@wordpress/element';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputRadioBlock = compose(
-    
     withPartialRender,
     withPassRef,
 )(props => {
@@ -28,12 +27,6 @@ const FormInputRadioBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
-
-    useEffect(() => {
-        if (elementRef) {
-            setBlockRef(elementRef);
-        }
-    }, [elementRef]);
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);

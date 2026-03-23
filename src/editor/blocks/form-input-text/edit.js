@@ -15,7 +15,6 @@ import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputTextBlock = compose(
-    
     withPartialRender,
     withPassRef,
 )(props => {
@@ -46,12 +45,6 @@ const FormInputTextBlock = compose(
 
     const animationClass = useAnimationEditor(attributes);
     const elementRef = useRef();
-
-    useEffect(() => {
-        if (elementRef) {
-            setBlockRef(elementRef);
-        }
-    }, [elementRef]);
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);

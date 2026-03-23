@@ -45,12 +45,6 @@ const FormInputNumberTelp = compose(
 
     const elementRef = useRef();
 
-    useEffect(() => {
-        if (elementRef) {
-            setBlockRef(elementRef);
-        }
-    }, [elementRef]);
-
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;
 

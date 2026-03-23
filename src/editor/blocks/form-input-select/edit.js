@@ -1,6 +1,6 @@
 import { compose } from '@wordpress/compose';
-import { useRef, useState, useEffect } from '@wordpress/element';
-import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import { useRef, useState } from '@wordpress/element';
+import { withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { ChoiceSelect } from 'gutenverse-core/components';
@@ -10,7 +10,6 @@ import { CopyElementToolbar } from 'gutenverse-core/components';
 import { renderIcon } from 'gutenverse-core/helper';
 
 const FormInputSelectBlock = compose(
-    
     withPartialRender,
     withPassRef,
 )(props => {
@@ -36,12 +35,6 @@ const FormInputSelectBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
-
-    useEffect(() => {
-        if (elementRef) {
-            setBlockRef(elementRef);
-        }
-    }, [elementRef]);
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
