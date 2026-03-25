@@ -39,6 +39,9 @@ class Form_Input_Recaptcha extends Block_Abstract {
 	 * Render view in frontend
 	 */
 	public function render_frontend() {
+		if ( ! empty( trim( $this->block_data->inner_html ) ) && apply_filters( 'gutenverse_force_dynamic', false ) ) {
+			return $this->content;
+		}
 		return $this->render_content();
 	}
 }
