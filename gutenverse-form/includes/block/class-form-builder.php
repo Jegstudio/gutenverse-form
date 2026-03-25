@@ -51,7 +51,7 @@ class Form_Builder extends Block_Abstract {
 			$sticky_data_html = '<div class="guten-data"><div data-var="stickyData' . esc_attr( $id ) . '" data-value=\'' . wp_json_encode( $sticky_data ) . '\'></div></div>';
 		}
 
-		return $sticky_data_html . $this->content;
+		return $sticky_data_html . $this->render_inner_blocks();
 	}
 
 	/**
