@@ -41,7 +41,7 @@ class Blocks {
 	 * Register All Blocks
 	 */
 	public function register_blocks() {
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-builder/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-builder/block.json' );
 		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-checkbox/block.json' );
 		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-date/block.json' );
 		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-email/block.json' );

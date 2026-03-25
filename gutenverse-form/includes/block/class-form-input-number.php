@@ -29,6 +29,9 @@ class Form_Input_Number extends Block_Abstract {
 		$input_placeholder  = isset( $this->attributes['inputPlaceholder'] ) ? $this->attributes['inputPlaceholder'] : 'Number Placeholder';
 		$input_name         = isset( $this->attributes['inputName'] ) ? $this->attributes['inputName'] : 'input-number';
 		$required           = isset( $this->attributes['required'] ) ? $this->attributes['required'] : false;
+		$validation_type    = isset( $this->attributes['validationType'] ) ? $this->attributes['validationType'] : '';
+		$validation_min     = isset( $this->attributes['validationMin'] ) ? $this->attributes['validationMin'] : '';
+		$validation_max     = isset( $this->attributes['validationMax'] ) ? $this->attributes['validationMax'] : '';
 		$validation_warning = isset( $this->attributes['validationWarning'] ) ? $this->attributes['validationWarning'] : 'Input Invalid';
 		$default_logic      = isset( $this->attributes['defaultLogic'] ) ? $this->attributes['defaultLogic'] : '';
 		$display_logic      = isset( $this->attributes['displayLogic'] ) ? $this->attributes['displayLogic'] : array();
@@ -40,6 +43,9 @@ class Form_Input_Number extends Block_Abstract {
 		$validation = array(
 			'type'              => 'number',
 			'required'          => $required,
+			'validationType'    => $validation_type,
+			'validationMin'     => $validation_min,
+			'validationMax'     => $validation_max,
 			'validationWarning' => $validation_warning,
 		);
 
