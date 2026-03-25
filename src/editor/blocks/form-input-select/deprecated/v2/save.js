@@ -3,7 +3,6 @@ import SaveInputWrapper from '../../../form-input/general/deprecated/v2/save-inp
 import isEmpty from 'lodash/isEmpty';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
 import { compose } from '@wordpress/compose';
-import { renderIcon } from 'gutenverse-core/helper';
 
 const save = compose(
     withMouseMoveEffectScript
@@ -47,8 +46,8 @@ const save = compose(
     };
 
     const dropdownVariable = {
-        iconClose : renderIcon(dropDownIconClose, dropDownIconCloseType, dropDownIconCloseSVG),
-        iconOpen  : renderIcon(dropDownIconOpen, dropDownIconOpenType, dropDownIconOpenSVG),
+        iconClose : dropDownIconClose,
+        iconOpen  : dropDownIconOpen,
         useCustomDropdown : useCustomDropdown
     };
 
