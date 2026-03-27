@@ -4,7 +4,7 @@
  * Description: Powerful and intuitive form builder plugin designed to streamline the process of creating and managing forms on your WordPress website.
  * Plugin URI: https://gutenverse.com/
  * Author: Jegstudio
- * Version: 2.5.0
+ * Version: 2.5.1
  * Author URI: https://jegtheme.com/
  * License: GPLv3
  * Text Domain: gutenverse-form
