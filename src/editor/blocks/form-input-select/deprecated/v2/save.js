@@ -25,10 +25,6 @@ const save = compose(
         useCustomDropdown,
         dropDownIconOpen,
         dropDownIconClose,
-        dropDownIconOpenType,
-        dropDownIconCloseType,
-        dropDownIconOpenSVG,
-        dropDownIconCloseSVG,
     } = attributes;
 
     const validation = {
