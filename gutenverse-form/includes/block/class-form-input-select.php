@@ -59,8 +59,8 @@ class Form_Input_Select extends Block_Abstract {
 		);
 
 		$dropdown_variable = array(
-			'iconClose'         => $this->render_icon( $drop_down_icon_close_type, $drop_down_icon_close, $drop_down_icon_close_svg ),
-			'iconOpen'          => $this->render_icon( $drop_down_icon_open_type, $drop_down_icon_open, $drop_down_icon_open_svg ),
+			'iconClose'         => $drop_down_icon_close,
+			'iconOpen'          => $drop_down_icon_open,
 			'useCustomDropdown' => $use_custom_dropdown,
 		);
 
