@@ -22,7 +22,7 @@ class Form_Input_Submit extends Block_Abstract {
 	 *
 	 * @return string
 	 */
-	public function render_content() {
+	public function render_content( $animation_class = '' ) {
 		$content        = isset( $this->attributes['content'] ) ? $this->attributes['content'] : '';
 		$button_type    = isset( $this->attributes['buttonType'] ) ? $this->attributes['buttonType'] : 'default';
 		$button_size    = isset( $this->attributes['buttonSize'] ) ? $this->attributes['buttonSize'] : 'sm';
@@ -33,7 +33,7 @@ class Form_Input_Submit extends Block_Abstract {
 		$icon_position  = isset( $this->attributes['iconPosition'] ) ? $this->attributes['iconPosition'] : 'before';
 		$aria_label     = isset( $this->attributes['ariaLabel'] ) ? $this->attributes['ariaLabel'] : '';
 
-		$button_class = 'guten-button gutenverse-input-submit';
+		$button_class = 'guten-button gutenverse-input-submit' . $animation_class;
 		if ( 'default' !== $button_type ) {
 			$button_class .= ' guten-button-' . $button_type;
 		}
@@ -76,10 +76,10 @@ class Form_Input_Submit extends Block_Abstract {
 		$animation_class = $this->set_animation_classes();
 		$custom_classes  = $this->get_custom_classes();
 
-		$class_name = 'guten-element guten-button-wrapper guten-submit-wrapper ' . $element_id . $display_classes . $animation_class . $custom_classes;
+		$class_name = 'guten-element guten-button-wrapper guten-submit-wrapper ' . $element_id . $display_classes . $custom_classes;
 
 		$html = '<div class="' . esc_attr( trim( $class_name ) ) . '">';
-		$html .= $this->render_content();
+		$html .= $this->render_content( $animation_class );
 		$html .= '</div>';
 
 		return $html;
