@@ -40,7 +40,7 @@ class Form_Input_Switch extends Block_Abstract {
 		$additional_props = '';
 
 		if ( ! empty( $default_logic ) && ! empty( $display_logic ) ) {
-			$additional_props = ' data-display-rule=\'' . wp_json_encode( $display_rule ) . '\'';
+			$additional_props = ' data-display-rule="' . esc_attr( wp_json_encode( $display_rule ) ) . '"';
 		}
 
 		$html  = '<label class="switch-wrapper" for="' . esc_attr( $element_id ) . '">';

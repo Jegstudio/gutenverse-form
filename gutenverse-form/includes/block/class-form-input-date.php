@@ -71,12 +71,12 @@ class Form_Input_Date extends Block_Abstract {
 		$additional_props = '';
 
 		if ( ! empty( $default_logic ) && ! empty( $display_logic ) ) {
-			$additional_props = ' data-display-rule=\'' . wp_json_encode( $display_rule ) . '\'';
+			$additional_props = ' data-display-rule="' . esc_attr( wp_json_encode( $display_rule ) ) . '"';
 		}
 
 		$input_html = '<input
-            data-validation=\'' . wp_json_encode( $validation ) . '\'
-            data-date=\'' . wp_json_encode( $date_setting ) . '\'
+            data-validation="' . esc_attr( wp_json_encode( $validation ) ) . '"
+            data-date="' . esc_attr( wp_json_encode( $date_setting ) ) . '"
             placeholder="' . esc_attr( $input_placeholder ) . '"
             name="' . esc_attr( $input_name ) . '"
             class="gutenverse-input gutenverse-input-date"

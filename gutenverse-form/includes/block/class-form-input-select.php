@@ -67,14 +67,14 @@ class Form_Input_Select extends Block_Abstract {
 		$additional_props = '';
 
 		if ( ! empty( $default_logic ) && ! empty( $display_logic ) ) {
-			$additional_props .= ' data-display-rule=\'' . wp_json_encode( $display_rule ) . '\'';
+			$additional_props .= ' data-display-rule="' . esc_attr( wp_json_encode( $display_rule ) ) . '"';
 		}
 
 		if ( $use_custom_dropdown ) {
-			$additional_props .= ' data-dropdown=\'' . wp_json_encode( $dropdown_variable ) . '\'';
+			$additional_props .= ' data-dropdown="' . esc_attr( wp_json_encode( $dropdown_variable ) ) . '"';
 		}
 
-		$html  = '<select name="' . esc_attr( $input_name ) . '" data-validation=\'' . wp_json_encode( $validation ) . '\' class="gutenverse-input gutenverse-input-select"' . $additional_props . '>';
+		$html  = '<select name="' . esc_attr( $input_name ) . '" data-validation="' . esc_attr( wp_json_encode( $validation ) ) . '" class="gutenverse-input gutenverse-input-select"' . $additional_props . '>';
 		$html .= '<option value="">' . esc_html( $input_placeholder ) . '</option>';
 
 		foreach ( $select_options as $opt ) {

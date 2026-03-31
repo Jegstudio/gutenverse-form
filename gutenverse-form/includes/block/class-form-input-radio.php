@@ -49,11 +49,11 @@ class Form_Input_Radio extends Block_Abstract {
 		$additional_props = '';
 
 		if ( ! empty( $default_logic ) && ! empty( $display_logic ) ) {
-			$additional_props = ' data-display-rule=\'' . wp_json_encode( $display_rule ) . '\'';
+			$additional_props = ' data-display-rule="' . esc_attr( wp_json_encode( $display_rule ) ) . '"';
 		}
 
 		$html  = '<div class="' . esc_attr( $inner_class ) . '">';
-		$html .= '<div hidden name="' . esc_attr( $input_name ) . '" class="gutenverse-input" data-validation=\'' . wp_json_encode( $validation ) . '\'' . $additional_props . '></div>';
+		$html .= '<div hidden name="' . esc_attr( $input_name ) . '" class="gutenverse-input" data-validation="' . esc_attr( wp_json_encode( $validation ) ) . '"' . $additional_props . '></div>';
 
 		foreach ( $radio_options as $item ) {
 			$html .= '<label>';

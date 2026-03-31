@@ -49,7 +49,7 @@ class Form_Input_Gdpr extends Block_Abstract {
 		$additional_props = '';
 
 		if ( ! empty( $default_logic ) && ! empty( $display_logic ) ) {
-			$additional_props = ' data-display-rule=\'' . wp_json_encode( $display_rule ) . '\'';
+			$additional_props = ' data-display-rule="' . esc_attr( wp_json_encode( $display_rule ) ) . '"';
 		}
 
 		$inner_class = 'gutenverse-inner-input ' . $display_block;
@@ -57,7 +57,7 @@ class Form_Input_Gdpr extends Block_Abstract {
 		$html  = '<div class="' . esc_attr( $inner_class ) . '">';
 		$html .= '<div class="guten-gdpr-wrapper">';
 		$html .= '<div class="guten-gdpr-input-wrapper">';
-		$html .= '<input name="' . esc_attr( $input_name ) . '"' . ( $gdpr_value ? ' checked="checked"' : '' ) . ' data-validation=\'' . wp_json_encode( $validation ) . '\'' . $additional_props . ' class="gutenverse-input gutenverse-input-gdpr" type="checkbox" data-value="' . esc_attr( $gdpr_form_value ) . '"/>';
+		$html .= '<input name="' . esc_attr( $input_name ) . '"' . ( $gdpr_value ? ' checked="checked"' : '' ) . ' data-validation="' . esc_attr( wp_json_encode( $validation ) ) . '"' . $additional_props . ' class="gutenverse-input gutenverse-input-gdpr" type="checkbox" data-value="' . esc_attr( $gdpr_form_value ) . '"/>';
 		$html .= '<span class="check"></span>';
 		$html .= '</div>';
 		$html .= '<div class="gdpr-label">' . wp_kses_post( $gdpr_label ) . '</div>';
