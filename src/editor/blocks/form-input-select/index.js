@@ -13,6 +13,16 @@ const { name, attributes, supports } = metadata;
 
 export { metadata, name };
 
+const deprecatedAttributes = {
+    ...attributes,
+    dataDropdown: {
+        type: 'string',
+        source: 'attribute',
+        selector: 'select.gutenverse-input-select',
+        attribute: 'data-dropdown'
+    }
+};
+
 export const settings = {
     icon: <IconFormSelectSVG />,
     edit,
@@ -20,16 +30,16 @@ export const settings = {
     example: example,
     deprecated: [
         {
-            attributes,
+            attributes: deprecatedAttributes,
             supports,
             save: saveV3
         },
         {
-            attributes,
+            attributes: deprecatedAttributes,
             save: saveV2
         },
         {
-            attributes,
+            attributes: deprecatedAttributes,
             save: saveV1
         },
     ]

@@ -25,6 +25,7 @@ const save = compose(
         useCustomDropdown,
         dropDownIconOpen,
         dropDownIconClose,
+        dataDropdown,
     } = attributes;
 
     const validation = {
@@ -49,7 +50,7 @@ const save = compose(
 
     const additionalProps = {
         ['data-display-rule']: !isEmpty(defaultLogic) && !isEmpty(displayLogic) ? JSON.stringify(displayRule) : undefined,
-        ['data-dropdown'] : useCustomDropdown ? JSON.stringify(dropdownVariable) : undefined
+        ['data-dropdown'] : dataDropdown || (useCustomDropdown ? JSON.stringify(dropdownVariable) : undefined)
     };
 
     return (

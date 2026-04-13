@@ -3,7 +3,53 @@ import SaveInputWrapper from '../../../form-input/general/deprecated/v2/save-inp
 import isEmpty from 'lodash/isEmpty';
 import { withMouseMoveEffectScript } from 'gutenverse-core/hoc';
 import { compose } from '@wordpress/compose';
-import { renderIcon } from 'gutenverse-core/helper';
+
+const legacyRenderIcon = (icon, iconType = 'icon', iconSVG = '') => {
+    if (iconType === 'svg' && iconSVG) {
+        try {
+            const svgData = atob(iconSVG);
+
+            return {
+                key: null,
+                ref: null,
+                props: {
+                    children: [
+                        {
+                            type: 'div',
+                            key: null,
+                            ref: null,
+                            props: {
+                                className: 'gutenverse-icon-svg',
+                                dangerouslySetInnerHTML: {
+                                    __html: svgData
+                                }
+                            },
+                            _owner: null
+                        },
+                        false
+                    ]
+                },
+                _owner: null
+            };
+        } catch (e) {
+            return null;
+        }
+    }
+
+    if (icon) {
+        return {
+            type: 'i',
+            key: null,
+            ref: null,
+            props: {
+                className: icon
+            },
+            _owner: null
+        };
+    }
+
+    return null;
+};
 
 const save = compose(
     withMouseMoveEffectScript
@@ -30,6 +76,7 @@ const save = compose(
         dropDownIconCloseType,
         dropDownIconOpenSVG,
         dropDownIconCloseSVG,
+        dataDropdown,
     } = attributes;
 
     const validation = {
@@ -47,14 +94,14 @@ const save = compose(
     };
 
     const dropdownVariable = {
-        iconClose : renderIcon(dropDownIconClose, dropDownIconCloseType, dropDownIconCloseSVG),
-        iconOpen  : renderIcon(dropDownIconOpen, dropDownIconOpenType, dropDownIconOpenSVG),
+        iconClose : legacyRenderIcon(dropDownIconClose, dropDownIconCloseType, dropDownIconCloseSVG),
+        iconOpen  : legacyRenderIcon(dropDownIconOpen, dropDownIconOpenType, dropDownIconOpenSVG),
         useCustomDropdown : useCustomDropdown
     };
 
     const additionalProps = {
         ['data-display-rule']: !isEmpty(defaultLogic) && !isEmpty(displayLogic) ? JSON.stringify(displayRule) : undefined,
-        ['data-dropdown'] : useCustomDropdown ? JSON.stringify(dropdownVariable) : undefined
+        ['data-dropdown'] : dataDropdown || (useCustomDropdown ? JSON.stringify(dropdownVariable) : undefined)
     };
 
     return (

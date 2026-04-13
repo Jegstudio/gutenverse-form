@@ -10,7 +10,32 @@ class GutenverseInputSelect extends Default {
             return i;
         }
 
+        if (iconData.type === 'svg' && iconData.svg) {
+            try {
+                const div = document.createElement('div');
+                div.className = 'gutenverse-icon-svg';
+                div.innerHTML = atob(iconData.svg);
+                return div;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        if (iconData.type === 'icon' && iconData.icon) {
+            const i = document.createElement('i');
+            i.className = iconData.icon;
+            return i;
+        }
+
+        if (iconData.type === 'i' && iconData.props?.className) {
+            const i = document.createElement('i');
+            i.className = iconData.props.className;
+            return i;
+        }
+
         const { props } = iconData;
+        if (!props) return null;
+
         const { children = [] } = props;
         let result = null;
         if (children.length) {

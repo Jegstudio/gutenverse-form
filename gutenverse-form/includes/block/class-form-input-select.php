@@ -21,6 +21,26 @@ class Form_Input_Select extends Block_Abstract {
 	use Form_Input_Wrapper;
 
 	/**
+	 * Get dropdown icon data.
+	 *
+	 * @param string $icon Icon class.
+	 * @param string $type Icon type.
+	 * @param string $svg  SVG data.
+	 *
+	 * @return array|string
+	 */
+	private function get_dropdown_icon_data( $icon, $type, $svg ) {
+		if ( 'svg' === $type && ! empty( $svg ) ) {
+			return array(
+				'type' => 'svg',
+				'svg'  => $svg,
+			);
+		}
+
+		return $icon;
+	}
+
+	/**
 	 * Render content
 	 *
 	 * @return string
@@ -59,8 +79,8 @@ class Form_Input_Select extends Block_Abstract {
 		);
 
 		$dropdown_variable = array(
-			'iconClose'         => $drop_down_icon_close,
-			'iconOpen'          => $drop_down_icon_open,
+			'iconClose'         => $this->get_dropdown_icon_data( $drop_down_icon_close, $drop_down_icon_close_type, $drop_down_icon_close_svg ),
+			'iconOpen'          => $this->get_dropdown_icon_data( $drop_down_icon_open, $drop_down_icon_open_type, $drop_down_icon_open_svg ),
 			'useCustomDropdown' => $use_custom_dropdown,
 		);
 
