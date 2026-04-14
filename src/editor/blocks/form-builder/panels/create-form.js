@@ -26,6 +26,7 @@ export const CreateForm = (props) => {
     });
     const [saving, setSaving] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
+    const [error, setError] = useState('');
 
     const updateValue = (id, value) => {
         setValues((prevValues) => ({
@@ -49,6 +50,7 @@ export const CreateForm = (props) => {
     const openCreateModal = () => {
         setIsEditing(false);
         resetValues();
+        setError('');
         setOpen(true);
     };
 
@@ -58,6 +60,7 @@ export const CreateForm = (props) => {
 
         setIsEditing(true);
         setLoadingData(true);
+        setError('');
         setOpen(true);
 
         apiFetch({
@@ -70,6 +73,7 @@ export const CreateForm = (props) => {
             setLoadingData(false);
         }).catch((err) => {
             console.error(err); // eslint-disable-line no-console
+            setError(err?.message || __('Could not load this form action. Please try again.', 'gutenverse-form'));
             setLoadingData(false);
         });
     };
@@ -79,6 +83,7 @@ export const CreateForm = (props) => {
         if (!formId || saving) return;
 
         setSaving(true);
+        setError('');
         apiFetch({
             path: `/gutenverse-form-client/v1/form-action/${formId}`,
             method: 'DELETE',
@@ -94,12 +99,20 @@ export const CreateForm = (props) => {
         }).catch((err) => {
             setSaving(false);
             setIsDeleteModalOpen(false);
+            setError(err?.message || __('Could not delete this form action. Please try again.', 'gutenverse-form'));
             console.error(err); // eslint-disable-line no-console
         });
     };
 
     const submitFormAction = () => {
+        if (saving) return;
+        if (!values.title || !values.title.trim()) {
+            setError(__('Please enter a form action title before saving.', 'gutenverse-form'));
+            return;
+        }
+
         setSaving(true);
+        setError('');
         const path = isEditing ? '/gutenverse-form-client/v1/form-action/edit' : '/gutenverse-form-client/v1/form-action/create';
         const formId = attributes.formId?.value;
         const formData = isEditing ? { ...values, id: formId } : values;
@@ -135,85 +148,81 @@ export const CreateForm = (props) => {
             }
         }).catch((err) => {
             setSaving(false);
+            setError(err?.message || __('Could not save this form action. Please try again.', 'gutenverse-form'));
             console.error(err); // eslint-disable-line no-console
         });
     };
 
     const hasSelectedForm = !!attributes.formId?.value;
+    const formTitle = attributes.formId?.label || __('Untitled form action', 'gutenverse-form');
+    const adminBase = window.ajaxurl ? window.ajaxurl.replace('admin-ajax.php', '') : '/wp-admin/';
+    const entriesUrl = hasSelectedForm
+        ? `${adminBase}edit.php?post_type=gutenverse-entries&form_id=${attributes.formId.value}`
+        : `${adminBase}edit.php?post_type=gutenverse-entries`;
 
     return (
-        <div className="gutenverse-create-form-action" style={{ marginTop: '10px' }}>
-            {hasSelectedForm && (
-                <div style={{
-                    marginBottom: '15px',
-                    padding: '12px',
-                    backgroundColor: '#f0f6fb',
-                    borderLeft: '4px solid #007cba',
-                    borderRadius: '4px',
-                }}>
-                    <div style={{
-                        fontSize: '10px',
-                        textTransform: 'uppercase',
-                        fontWeight: '700',
-                        color: '#007cba',
-                        marginBottom: '4px',
-                        letterSpacing: '0.05em'
-                    }}>
-                        {__('Connected Action', 'gutenverse-form')}
-                    </div>
-                    <div style={{
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        color: '#1e1e1e',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap'
-                    }}>
-                        {attributes.formId.label || __('(no title)', 'gutenverse-form')}
-                    </div>
-                </div>
-            )}
+        <div className="gutenverse-create-form-action">
+            {error && <div className="gutenverse-form-action-error">{error}</div>}
 
-            <div className="gutenverse-form-action-buttons" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-                {!hasSelectedForm ? (
-                    <div
-                        className={`gutenverse-button create ${saving ? 'disabled' : ''}`}
-                        onClick={!saving ? openCreateModal : undefined}
-                        title={__('Create New Form Action', 'gutenverse-form')}
-                    >
-                        {__('Create New', 'gutenverse-form')}
-                    </div>
-                ) : (
-                    <>
-                        <div
-                            className={`gutenverse-button edit ${saving ? 'disabled' : ''}`}
-                            onClick={!saving ? openEditModal : undefined}
-                            title={__('Edit Selected Form', 'gutenverse-form')}
-                        >
-                            {__('Edit Form', 'gutenverse-form')}
+            {hasSelectedForm ? (
+                <>
+                    <div className="gutenverse-form-action-card">
+                        <div className="gutenverse-form-action-card-header">
+                            <span className="status-dot" />
+                            <span className="status-label">{__('Connected action', 'gutenverse-form')}</span>
                         </div>
-                        <div
-                            className={`gutenverse-button cancel destructive ${saving ? 'disabled' : ''}`}
-                            onClick={() => setIsDeleteModalOpen(true)}
-                            title={__('Delete Selected Form', 'gutenverse-form')}
-                            style={{ backgroundColor: '#d63638', color: '#fff', display: 'flex', alignItems: 'center', gap: '5px' }}
+                        <div className="gutenverse-form-action-title" title={formTitle}>
+                            {formTitle}
+                        </div>
+                        <div className="gutenverse-form-action-meta">
+                            {__('Entries, email, integrations, and submission behavior use this action.', 'gutenverse-form')}
+                        </div>
+                    </div>
+
+                    <div className="gutenverse-form-action-buttons">
+                        <button
+                            type="button"
+                            className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
+                            onClick={!saving ? openEditModal : undefined}
+                            disabled={saving}
+                        >
+                            {__('Edit Action', 'gutenverse-form')}
+                        </button>
+                        <button
+                            type="button"
+                            className={`gutenverse-form-action-button danger ${saving ? 'disabled' : ''}`}
+                            onClick={!saving ? () => setIsDeleteModalOpen(true) : undefined}
+                            disabled={saving}
                         >
                             <IconTrashSVG size={14} />
                             {__('Delete', 'gutenverse-form')}
-                        </div>
-                    </>
-                )}
-            </div>
+                        </button>
+                    </div>
 
-            <a
-                href={window.ajaxurl ? window.ajaxurl.replace('admin-ajax.php', 'admin.php?page=gutenverse-form') : '/wp-admin/admin.php?page=gutenverse-form'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="gutenverse-form-action-list-link"
-                title={__('View Form Entries', 'gutenverse-form')}
-            >
-                {__('View Form Entries', 'gutenverse-form')}
-            </a>
+                    <a
+                        href={entriesUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="gutenverse-form-action-list-link"
+                    >
+                        {__('View entries for this action', 'gutenverse-form')}
+                    </a>
+                </>
+            ) : (
+                <div className="gutenverse-form-action-empty">
+                    <div className="empty-badge">{__('Action required', 'gutenverse-form')}</div>
+                    <div className="empty-title">{__('Submissions need a destination', 'gutenverse-form')}</div>
+                    <p>{__('The form can submit, but without a form action entries are hard to track and confirmation emails will not be sent.', 'gutenverse-form')}</p>
+                    <button
+                        type="button"
+                        className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
+                        onClick={!saving ? openCreateModal : undefined}
+                        disabled={saving}
+                    >
+                        {__('Create Form Action', 'gutenverse-form')}
+                    </button>
+                </div>
+            )}
 
             {open && (
                 <Modal
@@ -223,6 +232,7 @@ export const CreateForm = (props) => {
                     style={{ width: '800px', maxHeight: 'calc(100% - 60px)' }}
                 >
                     <div className="gutenverse-form-modal-content">
+                        {error && <div className="gutenverse-form-action-error modal-error">{error}</div>}
                         {loadingData ? (
                             <div style={{ padding: '20px', textAlign: 'center' }}>
                                 {__('Loading...', 'gutenverse-form')}
@@ -232,12 +242,22 @@ export const CreateForm = (props) => {
                         )}
                     </div>
                     <div className="gutenverse-form-modal-footer" style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                        <div className="gutenverse-button create" onClick={() => submitFormAction()}>
+                        <button
+                            type="button"
+                            className={`gutenverse-button create ${saving ? 'disabled' : ''}`}
+                            onClick={() => submitFormAction()}
+                            disabled={saving}
+                        >
                             {saving ? __('Saving...', 'gutenverse-form') : (isEditing ? __('Update Form', 'gutenverse-form') : __('Create Form', 'gutenverse-form'))}
-                        </div>
-                        <div className="gutenverse-button cancel" onClick={() => setOpen(false)}>
+                        </button>
+                        <button
+                            type="button"
+                            className="gutenverse-button cancel"
+                            onClick={() => setOpen(false)}
+                            disabled={saving}
+                        >
                             {__('Cancel', 'gutenverse-form')}
-                        </div>
+                        </button>
                     </div>
                 </Modal>
             )}

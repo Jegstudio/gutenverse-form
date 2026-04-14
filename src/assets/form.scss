@@ -523,69 +523,191 @@
 }
 
 .gutenverse-create-form-action {
-    margin-bottom: 20px;
-    margin-top: 10px;
+    margin: 10px 0 20px;
+
+    .gutenverse-form-action-error {
+        background: #fcf0f1;
+        border-left: 4px solid #d63638;
+        color: #8a2424;
+        font-size: 12px;
+        line-height: 1.5;
+        margin: 0 0 12px;
+        padding: 10px 12px;
+
+        &.modal-error {
+            margin: 0 0 18px;
+        }
+    }
+
+    .gutenverse-form-action-card,
+    .gutenverse-form-action-empty {
+        background: #fff;
+        border: 1px solid #dcdcde;
+        border-radius: 6px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        margin-bottom: 12px;
+        padding: 14px;
+    }
+
+    .gutenverse-form-action-card {
+        border-top: 3px solid #2271b1;
+    }
+
+    .gutenverse-form-action-card-header {
+        align-items: center;
+        color: #2271b1;
+        display: flex;
+        font-size: 10px;
+        font-weight: 700;
+        gap: 6px;
+        letter-spacing: 0.08em;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+    }
+
+    .status-dot {
+        background: #00a32a;
+        border-radius: 50%;
+        display: inline-block;
+        height: 8px;
+        width: 8px;
+    }
+
+    .gutenverse-form-action-title {
+        color: #1d2327;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.35;
+        margin-bottom: 6px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .gutenverse-form-action-meta,
+    .gutenverse-form-action-empty p {
+        color: #646970;
+        font-size: 12px;
+        line-height: 1.45;
+        margin: 0;
+    }
+
+    .gutenverse-form-action-empty {
+        background: #fff8e5;
+        border-color: #dba617;
+        border-left: 4px solid #dba617;
+        box-shadow: 0 1px 3px rgba(151, 108, 0, 0.14);
+        text-align: left;
+
+        .empty-badge {
+            color: #8a5d00;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .empty-title {
+            color: #1d2327;
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 6px;
+        }
+
+        .gutenverse-form-action-button {
+            margin-top: 14px;
+            width: 100%;
+        }
+
+        p {
+            color: #4d4f55;
+        }
+    }
 
     .gutenverse-form-action-buttons {
-        display: flex;
-        gap: 10px;
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 1fr auto;
         margin-bottom: 12px;
+    }
 
-        .gutenverse-button {
-            flex: 1;
-            justify-content: center;
-            text-align: center;
-            padding: 8px 12px;
-            margin: 0;
-            font-size: 13px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            /* Ensure text truncation works if flex shrinks */
-            min-width: 0;
-            border-radius: 4px;
-            /* Standard WP radius */
+    .gutenverse-form-action-button {
+        align-items: center;
+        border: 1px solid #c3c4c7;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-flex;
+        font-size: 13px;
+        font-weight: 500;
+        gap: 6px;
+        justify-content: center;
+        line-height: 18px;
+        min-height: 40px;
+        padding: 9px 13px;
+        text-decoration: none;
+        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 
-            /* Ensure text truncation works if flex shrinks */
-            min-width: 0;
-            border-radius: 4px;
-            /* Standard WP radius */
+        &.primary {
+            background: #3b57f7;
+            border-color: #3b57f7;
+            color: #fff;
 
-            &.create {
-                background-color: #3B57F7;
+            &:hover,
+            &:focus,
+            &:active {
+                background: #243cc7;
+                border-color: #243cc7;
                 color: #fff;
-                transition: background 0.2s;
+            }
+        }
 
-                &:hover {
-                    background-color: #243cc7;
-                }
+        &.danger {
+            background: #fff;
+            border-color: #d63638;
+            color: #b32d2e;
+
+            svg {
+                flex: 0 0 auto;
             }
 
-            &.edit {
-                background-color: #fff;
-                color: #333;
-                border: 1px solid #c3c4c7;
-
-                &:hover {
-                    background-color: #f0f0f1;
-                    color: #1d2327;
-                    border-color: #8c8f94;
-                }
+            &:hover,
+            &:focus,
+            &:active {
+                background: #d63638;
+                border-color: #d63638;
+                color: #fff;
             }
+        }
+
+        &.disabled,
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.65;
         }
     }
 
     .gutenverse-form-action-list-link {
-        display: block;
-        text-align: center;
-        width: 100%;
+        align-items: center;
+        background: #f6f7f7;
+        border: 1px solid #dcdcde;
+        border-radius: 5px;
         color: #3B57F7;
-        text-decoration: none;
+        display: flex;
         font-size: 13px;
+        justify-content: center;
+        min-height: 38px;
+        text-decoration: none;
+        width: 100%;
 
-        &:hover {
-            text-decoration: underline;
+        &:hover,
+        &:focus {
+            background: #eef3ff;
+            border-color: #b9c6ff;
             color: #243cc7;
+            text-decoration: none;
         }
     }
 }
