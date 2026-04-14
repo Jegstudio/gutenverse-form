@@ -1,5 +1,5 @@
 import { compose } from '@wordpress/compose';
-import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import { withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef, useState, useEffect } from '@wordpress/element';
@@ -122,11 +122,11 @@ const FormInputTextareaBlock = compose(
                         name={inputName}
                         className="gutenverse-input gutenverse-input-textarea"
                         defaultValue={
-                            defaultValueType === "custom"
+                            defaultValueType === 'custom'
                                 ? customDefaultValue
-                                : defaultValueType === "pro-dynamic"
-                                ? dynamicText
-                                : ""
+                                : defaultValueType === 'pro-dynamic'
+                                    ? dynamicText
+                                    : ''
                         }
                         ref={elementRef}
                     />
@@ -137,11 +137,11 @@ const FormInputTextareaBlock = compose(
                     name={inputName}
                     className="gutenverse-input gutenverse-input-textarea"
                     defaultValue={
-                        defaultValueType === "custom"
+                        defaultValueType === 'custom'
                             ? customDefaultValue
-                            : defaultValueType === "pro-dynamic"
-                            ? dynamicText
-                            : ""
+                            : defaultValueType === 'pro-dynamic'
+                                ? dynamicText
+                                : ''
                     }
                     ref={elementRef}
                 />}
