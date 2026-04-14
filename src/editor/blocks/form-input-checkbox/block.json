@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-checkbox",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Checkbox",
 	"title": "Checkbox",
 	"description": "Gutenverse Input Checkbox",
 	"category": "gutenverse-form",

@@ -8,7 +8,7 @@ import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import FormNavigation from '../form-input/general/form-navigation';
 import { displayShortcut } from '@wordpress/keycodes';
 import { BlockPanelController, IconLibrary } from 'gutenverse-core/controls';
-import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import { __ } from '@wordpress/i18n';
 import { LogoCircleColor24SVG } from 'gutenverse-core/icons';
@@ -20,7 +20,6 @@ import { renderIcon } from 'gutenverse-core/helper';
 import { recursiveParentBlock } from '../form-input/general/input-wrapper';
 
 const FormInputSubmitBlock = compose(
-    withMouseMoveEffect,
     withPartialRender,
     withPassRef,
 )((props) => {
@@ -28,7 +27,7 @@ const FormInputSubmitBlock = compose(
         attributes,
         setAttributes,
         displayClass,
-        clientId
+        clientId,
     } = props;
 
     const {
@@ -44,6 +43,7 @@ const FormInputSubmitBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
+
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     useDynamicScript(elementRef);

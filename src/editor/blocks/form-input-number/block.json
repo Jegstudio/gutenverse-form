@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-number",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Number",
 	"title": "Number Input",
 	"description": "Gutenverse Input Number",
 	"category": "gutenverse-form",

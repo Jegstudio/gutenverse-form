@@ -22,6 +22,10 @@ export const settings = {
         {
             attributes,
             save: saveV1
+        },
+        {
+            attributes,
+            save: saveV2
         }
     ]
 };

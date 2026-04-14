@@ -497,15 +497,15 @@ class Api {
 					case 'multiselect':
 					case 'multi-group-select':
 					case 'checkbox':
-						$raw_values     = rest_sanitize_array( $data[ $value_key ] );
+						$raw_values      = rest_sanitize_array( $data[ $value_key ] );
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),
 							'value' => array_map( 'sanitize_text_field', $raw_values ),
 						);
 						break;
 					case 'file':
-						$id         = sanitize_key( $data['id'] );
-						$files      = $request->get_file_params();
+						$id    = sanitize_key( $data['id'] );
+						$files = $request->get_file_params();
 
 						if ( ! isset( $files['form-entry'] ) ) {
 							break;
@@ -677,7 +677,7 @@ class Api {
 			}
 
 			$settings_data = get_option( 'gutenverse-settings', array() );
-			$secret = $settings_data['form_captcha_settings']['captcha_key'] ?? '';
+			$secret        = $settings_data['form_captcha_settings']['captcha_key'] ?? '';
 
 			if ( empty( $secret ) ) {
 				return new WP_REST_Response(
@@ -796,23 +796,23 @@ class Api {
 				$entry_id           = $result['entry_id'];
 
 				if ( isset( $settings_data['form'] ) ) {
-					if ( isset( $settings_data['form']['confirmation'] ) && true !== $form_data_settings['overwrite_default_confirmation'] ) {
-						$form_data_settings = array_merge( $form_data_settings, $settings_data['form']['confirmation'] );
+					if ( isset( $settings_data['form']['confirmation'] ) && true !== ( $form_data['overwrite_default_confirmation'] ?? false ) ) {
+						$form_data = array_merge( $form_data, $settings_data['form']['confirmation'] );
 					}
 
-					if ( isset( $settings_data['form']['notification'] ) && true !== $form_data_settings['overwrite_default_notification'] ) {
-						$form_data_settings = array_merge( $form_data_settings, $settings_data['form']['notification'] );
+					if ( isset( $settings_data['form']['notification'] ) && true !== ( $form_data['overwrite_default_notification'] ?? false ) ) {
+						$form_data = array_merge( $form_data, $settings_data['form']['notification'] );
 					}
 				}
 
-				$mail_list = $this->mail_list( $params['entry-data'], $form_data_settings );
+				$mail_list = $this->mail_list( $params['entry-data'], $form_data );
 
 				if ( ! empty( $mail_list ) ) {
-					$result = ( new Mail() )->send_user_email( $form_id, $form_data_settings, $entry_id, $params, $mail_list );
+					$result = ( new Mail() )->send_user_email( $form_id, $form_data, $entry_id, $params, $mail_list );
 				}
 
-				if ( ! empty( $form_data_settings['admin_confirm'] ) ) {
-					$result = ( new Mail() )->send_admin_email( $form_id, $form_data_settings, $entry_id, $params );
+				if ( ! empty( $form_data['admin_confirm'] ) ) {
+					$result = ( new Mail() )->send_admin_email( $form_id, $form_data, $entry_id, $params );
 				}
 			}
 		}
@@ -906,13 +906,15 @@ class Api {
 		global $wpdb;
 
 		// Get all meta keys that do not start with underscore .
-		$keys = $wpdb->get_col( "
+		$keys = $wpdb->get_col(
+			"
 			SELECT meta_key
 			FROM $wpdb->postmeta
 			WHERE meta_key NOT LIKE '\_%'
 			GROUP BY meta_key
 			ORDER BY meta_key ASC
-		" );
+		"
+		);
 
 		$options = array();
 		foreach ( $keys as $key ) {
@@ -932,7 +934,7 @@ class Api {
 							$exists = false;
 							foreach ( $options as &$option ) {
 								if ( $option['value'] === $field['name'] ) {
-									$exists = true;
+									$exists          = true;
 									$option['label'] = $field['label'] . ' (' . $field['name'] . ')';
 									break;
 								}

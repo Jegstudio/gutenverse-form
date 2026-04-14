@@ -59,20 +59,48 @@ class Blocks {
 	 * Register All Blocks
 	 */
 	public function register_blocks() {
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-builder/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-checkbox/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-date/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-email/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-multiselect/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-number/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-radio/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-select/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-submit/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-switch/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-telp/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-text/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-textarea/block.json' );
-		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-input-gdpr/block.json' );
 		register_block_type( GUTENVERSE_FORM_DIR . '/block/form-notice/block.json' );
+
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-builder/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-checkbox/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-date/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-email/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-multiselect/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-number/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-radio/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-select/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-submit/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-switch/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-telp/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-text/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-textarea/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-gdpr/block.json' );
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-recaptcha/block.json' );
+	}
+
+	/**
+	 * Register dynamic block.
+	 *
+	 * @param string $json .
+	 */
+	private function register_dynamic_block( $json ) {
+		if ( ! file_exists( $json ) ) {
+			return;
+		}
+
+		$block_json = gutenverse_get_json( $json );
+
+		if ( isset( $block_json['class_callback'] ) ) {
+			$instance = new $block_json['class_callback']();
+
+			register_block_type(
+				$json,
+				array(
+					'render_callback' => array( $instance, 'render' ),
+				)
+			);
+		} else {
+			register_block_type( $json );
+		}
 	}
 }

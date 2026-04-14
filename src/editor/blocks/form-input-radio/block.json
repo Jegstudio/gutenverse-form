@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-radio",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Radio",
 	"title": "Radio",
 	"description": "Gutenverse Input Radio",
 	"category": "gutenverse-form",

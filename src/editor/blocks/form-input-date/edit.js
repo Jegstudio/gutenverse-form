@@ -1,6 +1,6 @@
 import { compose } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
-import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import GutenverseInputDate from '../../../frontend/blocks/input-date';
@@ -16,7 +16,6 @@ import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputDateBlock = compose(
-    withMouseMoveEffect,
     withPartialRender,
     withPassRef,
 )(props => {
@@ -133,7 +132,6 @@ const FormInputDateBlock = compose(
                         name={inputName}
                         className="gutenverse-input gutenverse-input-date"
                         type="text"
-                        ref={elementRef}
                     />
                 </div>
                 :
@@ -143,7 +141,6 @@ const FormInputDateBlock = compose(
                     name={inputName}
                     className="gutenverse-input gutenverse-input-date"
                     type="text"
-                    ref={elementRef}
                 />}
         </InputWrapper>
     </>;

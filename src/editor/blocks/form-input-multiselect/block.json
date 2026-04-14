@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-multiselect",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Multiselect",
 	"title": "Multi Select",
 	"description": "Gutenverse Input Multi Select",
 	"category": "gutenverse-form",
