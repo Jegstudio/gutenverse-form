@@ -74,7 +74,6 @@
 .gutenverse-button {
     cursor: pointer;
     line-height: 18px;
-    border-radius: 20px;
     border-radius: 5px;
     background: var(--primary, #3B57F7);
     color: #fff;
@@ -83,10 +82,34 @@
     display: inline-block;
     font-size: 12px;
     margin: 0 4px;
+    text-decoration: none;
+
+    &:hover,
+    &:focus,
+    &:active,
+    &:visited {
+        background: #243cc7;
+        color: #fff;
+        text-decoration: none;
+    }
 
     &.cancel {
         background: #ddd;
         color: #333;
+
+        &:hover,
+        &:focus,
+        &:active,
+        &:visited {
+            background: #c8c8c8;
+            color: #1d2327;
+        }
+    }
+
+    &.disabled,
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.65;
     }
 }
 
@@ -111,10 +134,24 @@
         border-radius: 5px;
         cursor: pointer;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 44px;
 
         &.active {
             color: #3b57f7;
             background: #e7ecfd;
+        }
+
+        span {
+            line-height: 18px;
+        }
+
+        small {
+            color: #686878;
+            font-size: 10px;
+            line-height: 12px;
         }
     }
 }
@@ -337,7 +374,7 @@
     h4 {
         font-size: 16px;
         font-weight: 700;
-        margin: 0 0 20px;
+        margin: 0 0 8px;
         color: #1a1a2e;
         display: flex;
         -webkit-box-align: center;
@@ -357,6 +394,13 @@
         }
     }
 
+    .gutenverse-form-group-description {
+        color: #6b7280;
+        font-size: 12px;
+        line-height: 1.5;
+        margin: 0 0 18px;
+    }
+
     .form-notice-wrapper {
         margin: 0 0 15px 0 !important;
     }
@@ -364,6 +408,118 @@
     >.control-wrapper:first-of-type {
         padding-top: 0;
     }
+}
+
+.gutenverse-placeholder-hint {
+    color: #007cba;
+    display: block;
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+.gutenverse-inline-notice,
+.gutenverse-form-save-error {
+    border-left: 4px solid #3b57f7;
+    background: #f6f7ff;
+    color: #1d2327;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 12px 0;
+    padding: 10px 12px;
+}
+
+.gutenverse-inline-notice.success {
+    border-left-color: #008a20;
+    background: #f0fbf3;
+}
+
+.gutenverse-inline-notice.error,
+.gutenverse-form-save-error {
+    border-left-color: #d63638;
+    background: #fcf0f1;
+}
+
+.gutenverse-form-save-error {
+    margin: 20px 25px 0;
+}
+
+.gutenverse-email-template-manager {
+    margin-top: 10px;
+
+    .gutenverse-button {
+        align-items: center;
+        display: inline-flex;
+        margin: 0;
+    }
+
+    .template-card {
+        align-items: center;
+        background: #f6f7f7;
+        border: 1px solid #dcdcde;
+        border-radius: 5px;
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 12px;
+    }
+
+    .template-label,
+    .template-description {
+        display: block;
+    }
+
+    .template-label {
+        color: #1e1e1e;
+        font-weight: 600;
+    }
+
+    .template-description,
+    .template-id {
+        color: #666;
+        font-size: 11px;
+    }
+
+    .template-id {
+        flex: 0 0 auto;
+    }
+
+    .template-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .cancel {
+            background: #d63638;
+            border-color: #d63638;
+            color: #fff;
+
+            &:hover,
+            &:focus,
+            &:active,
+            &:visited {
+                background: #b92c2e;
+                border-color: #b92c2e;
+                color: #fff;
+            }
+        }
+    }
+}
+
+.gutenverse-form-confirm-content {
+    padding: 0 20px 20px;
+
+    p {
+        font-size: 14px;
+        line-height: 1.5;
+        margin: 0 0 20px;
+    }
+}
+
+.gutenverse-form-confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
 }
 
 .gutenverse-create-form-action {

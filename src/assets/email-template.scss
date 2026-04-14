@@ -152,11 +152,34 @@
         align-items: center;
         gap: 12px;
 
+        .save-state {
+            color: #646970;
+            font-size: 12px;
+            white-space: nowrap;
+
+            &.dirty {
+                color: #996800;
+            }
+
+            &.saved {
+                color: #008a20;
+            }
+        }
+
         .components-button {
             height: 36px; 
             padding: 0 16px;
         }
     }
+}
+
+.email-template-load-error {
+    background: #fcf0f1;
+    border-bottom: 1px solid #f0b8bd;
+    color: #8a2424;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 10px 20px;
 }
 
 .editor-container {
@@ -178,4 +201,37 @@
     bottom: 20px;
     left: 20px;
     z-index: 1000000;
+}
+
+@media (max-width: 782px) {
+    .gutenverse-email-builder-header {
+        flex-wrap: wrap;
+        gap: 8px;
+        min-height: 116px;
+        padding: 10px 14px;
+
+        .header-left,
+        .header-right {
+            flex: 1 1 calc(50% - 8px);
+        }
+
+        .header-center {
+            flex: 1 1 100%;
+            order: 3;
+
+            .title-wrapper {
+                width: 100%;
+            }
+
+            .title-input {
+                max-width: none;
+                min-width: 0;
+
+                input {
+                    font-size: 16px;
+                    text-align: left;
+                }
+            }
+        }
+    }
 }

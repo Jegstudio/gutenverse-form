@@ -10,13 +10,22 @@ import { isEmpty } from 'gutenverse-core/helper';
 import { CardPro } from 'gutenverse-core/components';
 import { Modal, Button } from '@wordpress/components';
 
-const FormGroup = ({ title, children, className = '' }) => {
+const FormGroup = ({ title, description, children, className = '' }) => {
     return (
         <div className={`gutenverse-form-group ${className}`}>
             {title && <h4 className="gutenverse-form-group-title">{title}</h4>}
+            {description && <p className="gutenverse-form-group-description">{description}</p>}
             {children}
         </div>
     );
+};
+
+const InlineNotice = ({ type = 'info', children }) => {
+    if (!children) {
+        return null;
+    }
+
+    return <div className={`gutenverse-inline-notice ${type}`}>{children}</div>;
 };
 
 const TabGeneral = (props) => {
@@ -88,14 +97,20 @@ const TabGeneral = (props) => {
     const extraSettings = formSettings.filter(el => !placedIds.includes(el.Component.props.id));
 
     return <div className="form-tab-body">
-        <FormGroup title={__('Form Configuration', 'gutenverse-form')}>
+        <FormGroup
+            title={__('Form Configuration', 'gutenverse-form')}
+            description={__('Name this action and choose what happens before a visitor can submit.', 'gutenverse-form')}
+        >
             {getControl('title')}
             {getControl('require_login')}
             {getControl('user_browser')}
             {getControl('use_captcha')}
         </FormGroup>
 
-        <FormGroup title={__('Submission Notices', 'gutenverse-form')}>
+        <FormGroup
+            title={__('Submission Notices', 'gutenverse-form')}
+            description={__('These messages appear on the page after the form request finishes.', 'gutenverse-form')}
+        >
             {getControl('form_success_notice')}
             {getControl('form_error_notice')}
         </FormGroup>
@@ -118,24 +133,38 @@ const getAdminUrl = () => {
     return '/wp-admin/';
 };
 
+const decodeEntities = (html) => {
+    if (!html) return '';
+    const txt = document.createElement('textarea');
+    txt.innerHTML = html;
+    return txt.value;
+};
+
+const normalizeTemplateTitle = (title) => {
+    return decodeEntities(title)
+        .replace(/&#8211;|&#8212;|[\u2013\u2014]/g, '-')
+        .replace(/\s+-\s+/g, ' - ')
+        .trim();
+};
+
 const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplates, onRefresh, formTitle }) => {
     const [saving, setSaving] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
     const adminUrl = getAdminUrl();
     const template = emailTemplates ? emailTemplates.find(t => t.value === templateId) : null;
-    const templateTitle = template ? template.label : __('(No Template Found)', 'gutenverse-form');
-
-    const decodeEntities = (html) => {
-        if (!html) return '';
-        const txt = document.createElement('textarea');
-        txt.innerHTML = html;
-        return txt.value;
-    };
+    const templateTitle = template ? normalizeTemplateTitle(template.label) : __('(No Template Found)', 'gutenverse-form');
+    const templateType = fieldName === 'user_email_template'
+        ? __('confirmation', 'gutenverse-form')
+        : __('notification', 'gutenverse-form');
 
     const handleCreate = () => {
         setSaving(true);
+        setMessage('');
+        setError('');
         const type = fieldName === 'user_email_template' ? __('Confirmation', 'gutenverse-form') : __('Notification', 'gutenverse-form');
-        const cleanTitle = (decodeEntities(formTitle) || __('Untitled Form', 'gutenverse-form')).replace(/[\u2013\u2014]/g, '-');
+        const cleanTitle = normalizeTemplateTitle(formTitle) || __('Untitled Form', 'gutenverse-form');
         const name = `${cleanTitle} - ${type}`;
 
         apiFetch({
@@ -149,16 +178,20 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
             if (response && response.id) {
                 updateValue(fieldName, response.id);
                 if (onRefresh) onRefresh();
+                setMessage(__('Template created. Open it to design the email, then save this form action.', 'gutenverse-form'));
             }
             setSaving(false);
         }).catch(err => {
             console.error(err); // eslint-disable-line no-console
+            setError(err?.message || __('Could not create the email template. Please try again.', 'gutenverse-form'));
             setSaving(false);
         });
     };
 
     const handleDelete = () => {
         setSaving(true);
+        setMessage('');
+        setError('');
         apiFetch({
             path: `/wp/v2/gutenverse-email-tpl/${templateId}?force=true`,
             method: 'DELETE',
@@ -167,8 +200,10 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
             if (onRefresh) onRefresh();
             setSaving(false);
             setIsDeleteModalOpen(false);
+            setMessage(__('Template deleted.', 'gutenverse-form'));
         }).catch(err => {
             console.error(err); // eslint-disable-line no-console
+            setError(err?.message || __('Could not delete the email template. Please try again.', 'gutenverse-form'));
             setSaving(false);
             setIsDeleteModalOpen(false);
         });
@@ -176,14 +211,20 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
 
     if (!templateId) {
         return (
-            <div style={{ marginTop: '10px' }}>
-                <div
+            <div className="gutenverse-email-template-manager">
+                <InlineNotice>
+                    {__('Create a dedicated template for this email. Each confirmation and notification keeps its own template.', 'gutenverse-form')}
+                </InlineNotice>
+                <button
+                    type="button"
                     className={`gutenverse-button create ${saving ? 'disabled' : ''}`}
                     onClick={!saving ? handleCreate : undefined}
-                    style={{ cursor: saving ? 'not-allowed' : 'pointer' }}
+                    disabled={saving}
                 >
                     {saving ? __('Creating...', 'gutenverse-form') : __('Create Email Template', 'gutenverse-form')}
-                </div>
+                </button>
+                <InlineNotice type="success">{message}</InlineNotice>
+                <InlineNotice type="error">{error}</InlineNotice>
             </div>
         );
     }
@@ -191,51 +232,46 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
     const editUrl = `${adminUrl}post.php?post=${templateId}&action=edit`;
 
     return (
-        <div style={{ marginTop: '10px' }}>
-            <div style={{
-                padding: '8px 12px',
-                backgroundColor: '#f6f7f7',
-                borderRadius: '4px',
-                marginBottom: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                border: '1px solid #dcdcde'
-            }}>
-                <span style={{ fontWeight: '500', color: '#1e1e1e' }}>{templateTitle}</span>
-                <span style={{ fontSize: '11px', color: '#666' }}>ID: {templateId}</span>
+        <div className="gutenverse-email-template-manager has-template">
+            <InlineNotice>
+                {__('This form action will send this dedicated template only. Other form emails cannot be assigned here.', 'gutenverse-form')}
+            </InlineNotice>
+            <div className="template-card">
+                <div>
+                    <span className="template-label">{templateTitle}</span>
+                    <span className="template-description">
+                        {__('Used for this form', 'gutenverse-form')} {templateType} {__('email', 'gutenverse-form')}
+                    </span>
+                </div>
+                <span className="template-id">ID: {templateId}</span>
             </div>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <div className="template-actions">
                 <a
                     href={editUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="gutenverse-button"
-                    style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
                 >
                     {__('Edit Template', 'gutenverse-form')}
                 </a>
-                <div
+                <button
+                    type="button"
                     className={`gutenverse-button cancel ${saving ? 'disabled' : ''}`}
                     onClick={!saving ? () => setIsDeleteModalOpen(true) : undefined}
-                    style={{
-                        cursor: saving ? 'not-allowed' : 'pointer',
-                        backgroundColor: '#d63638',
-                        color: '#fff',
-                        display: 'inline-flex',
-                        alignItems: 'center'
-                    }}
+                    disabled={saving}
                 >
                     {saving ? __('Deleting...', 'gutenverse-form') : __('Delete', 'gutenverse-form')}
-                </div>
-                <div
+                </button>
+                <button
+                    type="button"
                     className="gutenverse-button"
                     onClick={onRefresh}
-                    style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
                 >
                     {__('Refresh', 'gutenverse-form')}
-                </div>
+                </button>
             </div>
+            <InlineNotice type="success">{message}</InlineNotice>
+            <InlineNotice type="error">{error}</InlineNotice>
 
             {isDeleteModalOpen && (
                 <Modal
@@ -243,11 +279,11 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
                     onRequestClose={() => setIsDeleteModalOpen(false)}
                     className="gutenverse-form-confirm-modal"
                 >
-                    <div style={{ padding: '0 20px 20px' }}>
-                        <p style={{ margin: '0 0 20px 0', fontSize: '14px', lineHeight: '1.5' }}>
+                    <div className="gutenverse-form-confirm-content">
+                        <p>
                             {__('Are you sure you want to permanently delete this email template? This action cannot be undone.', 'gutenverse-form')}
                         </p>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                        <div className="gutenverse-form-confirm-actions">
                             <Button isSecondary onClick={() => setIsDeleteModalOpen(false)}>
                                 {__('Cancel', 'gutenverse-form')}
                             </Button>
@@ -278,7 +314,10 @@ const TabConfirmation = (props) => {
             />
         </div>
         {values.user_confirm && <>
-            <FormGroup title={__('Recipient Settings', 'gutenverse-form')}>
+            <FormGroup
+                title={__('Recipient Settings', 'gutenverse-form')}
+                description={__('Choose which submitted email address receives the confirmation.', 'gutenverse-form')}
+            >
                 {!values.auto_select_email && (
                     <ControlText
                         id={'email_input_name'}
@@ -291,7 +330,10 @@ const TabConfirmation = (props) => {
                 )}
             </FormGroup>
 
-            <FormGroup title={__('Email Details', 'gutenverse-form')}>
+            <FormGroup
+                title={__('Email Details', 'gutenverse-form')}
+                description={__('Set the subject, sender, and reply-to address for the confirmation email.', 'gutenverse-form')}
+            >
                 <ControlSelect
                     id={'user_email_subject_type'}
                     title={__('Subject Type', 'gutenverse-form')}
@@ -358,7 +400,10 @@ const TabConfirmation = (props) => {
                 )}
             </FormGroup>
 
-            <FormGroup title={__('Message Content', 'gutenverse-form')}>
+            <FormGroup
+                title={__('Message Content', 'gutenverse-form')}
+                description={__('Use a quick text message or design a reusable email template.', 'gutenverse-form')}
+            >
                 <ControlSelect
                     id={'user_message_type'}
                     title={__('Message Content Type', 'gutenverse-form')}
@@ -408,7 +453,10 @@ const TabNotification = (props) => {
             />
         </div>
         {values.admin_confirm && <>
-            <FormGroup title={__('Email Details', 'gutenverse-form')}>
+            <FormGroup
+                title={__('Email Details', 'gutenverse-form')}
+                description={__('Set the subject, sender, and reply-to address for the admin notification.', 'gutenverse-form')}
+            >
                 <ControlSelect
                     id={'admin_email_subject_type'}
                     title={__('Subject Type', 'gutenverse-form')}
@@ -475,7 +523,10 @@ const TabNotification = (props) => {
                 )}
             </FormGroup>
 
-            <FormGroup title={__('Recipient Settings', 'gutenverse-form')}>
+            <FormGroup
+                title={__('Recipient Settings', 'gutenverse-form')}
+                description={__('Choose who receives the notification when someone submits this form.', 'gutenverse-form')}
+            >
                 <ControlSelect
                     id={'admin_email_type'}
                     title={__('Recipient Type', 'gutenverse-form')}
@@ -521,7 +572,10 @@ const TabNotification = (props) => {
                 )}
             </FormGroup>
 
-            <FormGroup title={__('Message Content', 'gutenverse-form')}>
+            <FormGroup
+                title={__('Message Content', 'gutenverse-form')}
+                description={__('Use a static note, a submitted field, or a designed email template.', 'gutenverse-form')}
+            >
                 <ControlSelect
                     id={'admin_message_type'}
                     title={__('Message Content Type', 'gutenverse-form')}
@@ -607,16 +661,20 @@ const autoGenerateTags = ({ clientId, values, updateValue }) => {
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
     const [hideFormNotice, setHideFormNotice] = useState(!isEmpty(window['GutenverseConfig']) && window['GutenverseConfig']['hideFormNotice'] ? window['GutenverseConfig']['hideFormNotice'] : false);
+    const values = props.values || {};
 
     const tabs = {
         general: {
             label: __('General', 'gutenverse-form'),
+            status: values.title ? __('Ready', 'gutenverse-form') : '',
         },
         confirmation: {
             label: __('Confirmation', 'gutenverse-form'),
+            status: values.user_confirm ? __('On', 'gutenverse-form') : __('Off', 'gutenverse-form'),
         },
         notification: {
             label: __('Notification', 'gutenverse-form'),
+            status: values.admin_confirm ? __('On', 'gutenverse-form') : __('Off', 'gutenverse-form'),
         },
         pro: {
             label: __('Pro', 'gutenverse-form'),
@@ -629,7 +687,7 @@ export const FormContent = (props) => {
 
     const fetchEmailTemplates = () => {
         apiFetch({ path: '/wp/v2/gutenverse-email-tpl?per_page=100' }).then(posts => {
-            const options = posts.map(post => ({ label: post.title.rendered, value: post.id }));
+            const options = posts.map(post => ({ label: normalizeTemplateTitle(post.title.rendered), value: post.id }));
             setEmailTemplates([{ label: __('Default', 'gutenverse-form'), value: '' }, ...options]);
         });
     };
@@ -652,10 +710,7 @@ export const FormContent = (props) => {
         <>
             {original}
             <br />
-            <span style={{
-                color: '#007cba', display: 'block', marginTop: '5px', fontSize: '11px',
-            }}
-            >
+            <span className="gutenverse-placeholder-hint">
                 {__('Use {{site_title}}, {{form_title}}, {{entry_id}}, or field names from your form inputs.', 'gutenverse-form')}
             </span>
         </>
@@ -733,13 +788,15 @@ export const FormContent = (props) => {
                         <div className={classes} key={key} onClick={() => {
                             changeActive(key);
                         }}>
-                            {item.label}
+                            <span>{item.label}</span>
+                            {item.status && <small>{item.status}</small>}
                         </div>,
                         { ...proPopupProps, item, classes, key }
                     )
                     : (
                         <div className={classes} key={key} onClick={() => changeActive(key)}>
-                            {item.label}
+                            <span>{item.label}</span>
+                            {item.status && <small>{item.status}</small>}
                         </div>
                     );
             })}

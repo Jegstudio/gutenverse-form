@@ -13,6 +13,7 @@ const EditForm = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [postId, setPostId] = useState(null);
+    const [error, setError] = useState('');
 
     const updateValue = (id, value) => {
         setValues((prevValues) => ({
@@ -40,12 +41,26 @@ const EditForm = () => {
             }).then(response => {
                 setValues(response);
                 setLoading(false);
+                setError('');
+            }).catch(err => {
+                setError(err?.message || __('Could not load the form action. Please try again.', 'gutenverse-form'));
+                setLoading(false);
             });
         }
     }, [postId]);
 
     const submitFormAction = () => {
+        if (saving) {
+            return;
+        }
+
+        if (!values.title || !values.title.trim()) {
+            setError(__('Please enter a form action title before saving.', 'gutenverse-form'));
+            return;
+        }
+
         setSaving(true);
+        setError('');
         apiFetch({
             path: 'gutenverse-form-client/v1/form-action/edit',
             method: 'POST',
@@ -58,6 +73,9 @@ const EditForm = () => {
         }).then(() => {
             setSaving(false);
             location.reload();
+        }).catch(err => {
+            setError(err?.message || __('Could not save the form action. Please try again.', 'gutenverse-form'));
+            setSaving(false);
         });
     };
 
@@ -78,16 +96,27 @@ const EditForm = () => {
                     </>
                 </DrawerHeader>
                 <DrawerBody>
+                    {error && <div className="gutenverse-form-save-error">{error}</div>}
                     {loading ? <FormActionSkeleton /> : <FormContent values={values} updateValue={updateValue} />}
                 </DrawerBody>
                 {!loading && <DrawerFooter>
                     <>
-                        <div className="gutenverse-button create" onClick={() => submitFormAction()}>
+                        <button
+                            type="button"
+                            className={`gutenverse-button create ${saving ? 'disabled' : ''}`}
+                            onClick={() => submitFormAction()}
+                            disabled={saving}
+                        >
                             {saving ? __('Saving...', 'gutenverse-form') : __('Edit Form', 'gutenverse-form')}
-                        </div>
-                        <div className="gutenverse-button cancel" onClick={() => closeDrawer()}>
+                        </button>
+                        <button
+                            type="button"
+                            className="gutenverse-button cancel"
+                            onClick={() => closeDrawer()}
+                            disabled={saving}
+                        >
                             {__('Cancel', 'gutenverse-form')}
-                        </div>
+                        </button>
                     </>
                 </DrawerFooter>}
             </DrawerContainer>;

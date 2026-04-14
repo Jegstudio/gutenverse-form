@@ -49,7 +49,10 @@ class Mail {
 			$subject = isset( $form_data['user_email_subject'] ) ? $form_data['user_email_subject'] : get_bloginfo( 'name' );
 		}
 
-		$from = isset( $form_data['user_email_from'] ) ? $form_data['user_email_from'] : null;
+		$from = isset( $form_data['user_email_form'] ) ? $form_data['user_email_form'] : null;
+		if ( ! $from && isset( $form_data['user_email_from'] ) ) {
+			$from = $form_data['user_email_from'];
+		}
 
 		$reply_to_type = isset( $form_data['user_email_reply_to_type'] ) ? $form_data['user_email_reply_to_type'] : 'static';
 		if ( 'dynamic' === $reply_to_type ) {
