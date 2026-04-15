@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-notice",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Notice",
 	"title": "Form Notice",
 	"description": "Form Notice Block",
 	"category": "gutenverse-form",
