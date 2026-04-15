@@ -19,6 +19,29 @@ class Slack {
     }
 
     /**
+     * Get Slack webhook URL from integration settings.
+     *
+     * @return string
+     */
+    private function get_webhook_url() {
+        return $this->settings['webhook_url'] ?? $this->settings['webhookUrl'] ?? '';
+    }
+
+    /**
+     * Get Slack message from integration settings.
+     *
+     * @param array $data Form data.
+     * @param int   $entry_id Entry ID.
+     * @param int   $form_id Form ID.
+     * @return string
+     */
+    private function get_message($data, $entry_id, $form_id) {
+        $message = $this->settings['message'] ?? $this->settings['content'] ?? '';
+
+        return \Gutenverse_Form\Integration::parse_template($message, $data, $entry_id, $form_id);
+    }
+
+    /**
      * Send data to Slack.
      *
      * @param array $data Form data.
@@ -27,21 +50,20 @@ class Slack {
      * @return array|\WP_Error
      */
     public function send($data, $entry_id = 0, $form_id = 0) {
+        $webhook_url = $this->get_webhook_url();
+        $message     = $this->get_message($data, $entry_id, $form_id);
+
+        if (empty($webhook_url) || empty($message)) {
+            return false;
+        }
+
         $body = [
-            'text' => \Gutenverse_Form\Integration::parse_template($this->settings['content'] ?? '', $data, $entry_id, $form_id),
+            'text' => $message,
         ];
 
-        if (!empty($this->settings['username'])) {
-            $body['username'] = $this->settings['username'];
-        }
-
-        if (!empty($this->settings['icon_url'])) {
-            $body['icon_url'] = $this->settings['icon_url'];
-        }
-
-        return wp_remote_post($this->settings['webhookUrl'] ?? '', [
+        return wp_remote_post($webhook_url, [
             'headers' => ['Content-Type' => 'application/json'],
-            'body'    => json_encode(array_filter($body)),
+            'body'    => wp_json_encode($body),
         ]);
     }
 
@@ -86,7 +108,7 @@ class Slack {
 
         if (($global_enabled && $apply_globally) || $local_enabled) {
             $settings = array_merge($global_settings, $local_settings);
-            if (!empty($settings['webhookUrl'])) {
+            if (!empty($settings['webhook_url']) || !empty($settings['webhookUrl'])) {
                 $this->set_settings($settings);
                 $this->send($data, $entry_id, $params['form-id']);
             }
@@ -96,7 +118,7 @@ class Slack {
         if (isset($params['integrations']['actions']) && is_array($params['integrations']['actions'])) {
             foreach ($params['integrations']['actions'] as $action) {
                 if ('slack' === ($action['type'] ?? '')) {
-                    if (!empty($action['webhookUrl'])) {
+                    if (!empty($action['webhook_url']) || !empty($action['webhookUrl'])) {
                         $this->set_settings($action);
                         $this->send($data, $entry_id, $params['form-id']);
                     }
@@ -112,29 +134,17 @@ class Slack {
      */
     public function get_fields() {
         return [
-            'webhookUrl' => [
+            'webhook_url' => [
                 'label'       => __('Slack Webhook URL', 'gutenverse-form'),
                 'description' => __('Enter your Slack Webhook URL', 'gutenverse-form'),
                 'type'        => 'text',
                 'placeholder' => __('https://hooks.slack.com/services/...', 'gutenverse-form'),
             ],
-            'username'   => [
-                'label'       => __('Username', 'gutenverse-form'),
-                'description' => __('Enter Slack Username (Optional)', 'gutenverse-form'),
-                'type'        => 'text',
-                'placeholder' => __('Custom Username', 'gutenverse-form'),
-            ],
-            'icon_url'   => [
-                'label'       => __('Icon URL', 'gutenverse-form'),
-                'description' => __('Enter Slack Icon URL (Optional)', 'gutenverse-form'),
-                'type'        => 'text',
-                'placeholder' => __('Custom Icon URL', 'gutenverse-form'),
-            ],
-            'content'    => [
-                'label'       => __('Content Template', 'gutenverse-form'),
-                'description' => __('Use {field_id} to include form data', 'gutenverse-form'),
+            'message'     => [
+                'label'       => __('Message', 'gutenverse-form'),
+                'description' => __('Enter the Slack message. Use {field_id} to include form data.', 'gutenverse-form'),
                 'type'        => 'textarea',
-                'placeholder' => __('New form entry: {name}', 'gutenverse-form'),
+                'placeholder' => __('Hello, World!', 'gutenverse-form'),
             ],
         ];
     }

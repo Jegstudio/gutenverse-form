@@ -7,6 +7,9 @@
 
 namespace Gutenverse_Form\Integrations;
 
+/**
+ * Whatsapp class
+ */
 class Whatsapp {
 	/**
 	 * Integration settings.
@@ -89,7 +92,7 @@ class Whatsapp {
 			return false;
 		}
 
-		// Replace placeholders in JSON string
+		// Replace placeholders in JSON string.
 		$template_json = \Gutenverse_Form\Integration::parse_template( $template_json, $data, $entry_id, $form_id );
 		$template_data = json_decode( $template_json, true );
 
@@ -101,7 +104,7 @@ class Whatsapp {
 		 * Normalization for custom positional format.
 		 * If 'parameter_format' is set to 'positional', we transform it to Meta's expected format.
 		 */
-		if ( isset( $template_data['parameter_format'] ) && $template_data['parameter_format'] === 'positional' ) {
+		if ( isset( $template_data['parameter_format'] ) && 'positional' === $template_data['parameter_format'] ) {
 			$normalized = array(
 				'name'       => $template_data['name'] ?? '',
 				'language'   => array(
@@ -159,6 +162,11 @@ class Whatsapp {
 
 	/**
 	 * Triggered after form data is stored.
+	 *
+	 * @param int              $entry_id     Stored form entry ID.
+	 * @param array            $params       Submitted form parameters, including entry data, form ID, and block integrations.
+	 * @param array            $form_setting Saved form settings for the submitted form.
+	 * @param \WP_REST_Request $request      REST request instance for the submission.
 	 */
 	public function after_store( $entry_id, $params, $form_setting, $request ) {
 		$data = array();
