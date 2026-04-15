@@ -8,13 +8,12 @@ import { useEffect, useRef, useState } from '@wordpress/element';
 import { isSticky } from 'gutenverse-core/helper';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import { useDisplayEditor } from 'gutenverse-core/hooks';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { dispatch, select, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { PanelTutorial } from 'gutenverse-core/controls';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
-import { createBlock } from '@wordpress/blocks';
 import apiFetch from '@wordpress/api-fetch';
 import { Modal, Button } from '@wordpress/components';
 
@@ -54,11 +53,15 @@ const FormBuilderIcon = ({ add = false }) => {
 
 const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) => {
     const [selectModalOpen, setSelectModalOpen] = useState(false);
+    const [setupOpen, setSetupOpen] = useState(false);
+    const [blankMode, setBlankMode] = useState(false);
+    const [selectedTemplate, setSelectedTemplate] = useState('contact');
+    const [creatingForm, setCreatingForm] = useState(false);
+    const [formName, setFormName] = useState('');
     const [forms, setForms] = useState([]);
     const [selectedForm, setSelectedForm] = useState('');
     const [loadingForms, setLoadingForms] = useState(false);
     const [error, setError] = useState('');
-    const { replaceInnerBlocks } = useDispatch('core/block-editor');
 
     const openSelectModal = () => {
         setSelectModalOpen(true);
@@ -96,64 +99,213 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) =>
         setSelectModalOpen(false);
     };
 
-    const createNewForm = () => {
-        const starterBlocks = [
-            createBlock('gutenverse/form-input-text', {
-                inputLabel: __('Name', 'gutenverse-form'),
-                inputPlaceholder: __('Your name', 'gutenverse-form'),
-                inputName: 'name',
-                required: true
-            }),
-            createBlock('gutenverse/form-input-email', {
-                inputLabel: __('Email', 'gutenverse-form'),
-                inputPlaceholder: __('Your email', 'gutenverse-form'),
-                inputName: 'email',
-                required: true
-            }),
-            createBlock('gutenverse/form-input-textarea', {
-                inputLabel: __('Message', 'gutenverse-form'),
-                inputPlaceholder: __('Your message', 'gutenverse-form'),
-                inputName: 'message',
-                required: true
-            }),
-            createBlock('gutenverse/form-input-submit', {
-                content: __('Submit', 'gutenverse-form')
-            })
-        ];
+    const findFormCategory = (sectionCategories = []) => {
+        let result = null;
 
-        replaceInnerBlocks(clientId, starterBlocks, true);
+        sectionCategories.some(parent => {
+            const childs = parent?.childs || {};
+
+            return Object.keys(childs).some(key => {
+                const child = childs[key];
+                const name = `${child?.name || ''}`.toLowerCase();
+                const slug = `${child?.slug || ''}`.toLowerCase();
+
+                if (name === 'form' || name === 'forms' || slug === 'form' || slug === 'forms') {
+                    result = {
+                        id: child.id,
+                        parent: parent.id
+                    };
+                    return true;
+                }
+
+                return false;
+            });
+        });
+
+        return result;
     };
+
+    const selectFormLibraryFilter = (attempt = 0) => {
+        const libraryStore = select('gutenverse/library');
+        const libraryData = libraryStore?.getLibraryData ? libraryStore.getLibraryData() : {};
+        const modalData = libraryStore?.getModalData ? libraryStore.getModalData() : {};
+        const formCategory = findFormCategory(libraryData?.sectionCategories);
+
+        if (!modalData?.libraryData || !libraryData?.sectionCategories || !formCategory) {
+            if (attempt < 20) {
+                setTimeout(() => selectFormLibraryFilter(attempt + 1), 300);
+            } else {
+                setError(__('Could not find the Form section category in the library.', 'gutenverse-form'));
+                setCreatingForm(false);
+            }
+            return;
+        }
+
+        dispatch('gutenverse/library').setActiveLiblary('section');
+        dispatch('gutenverse/library').setCategories([]);
+        dispatch('gutenverse/library').setAuthor('');
+        dispatch('gutenverse/library').setLicense('');
+        dispatch('gutenverse/library').setStatus('');
+        dispatch('gutenverse/library').setPaging(1);
+        dispatch('gutenverse/library').setCategories(formCategory);
+        setCreatingForm(false);
+    };
+
+    const openFormLibrary = () => {
+        const libraryButton = document.getElementById('gutenverse-library-button');
+
+        if (!libraryButton) {
+            setError(__('The Gutenverse Library button is not available in this editor.', 'gutenverse-form'));
+            setCreatingForm(false);
+            return;
+        }
+
+        setError('');
+        libraryButton.click();
+        selectFormLibraryFilter();
+    };
+
+    const createNewForm = () => {
+        if (creatingForm) {
+            return;
+        }
+
+        setCreatingForm(true);
+
+        if (selectedTemplate === 'blank') {
+            setBlankMode(true);
+            setSetupOpen(false);
+            setError('');
+            setCreatingForm(false);
+            return;
+        }
+
+        if (selectedTemplate === 'library') {
+            openFormLibrary();
+            return;
+        }
+
+        setError(__('Template block data is not connected yet.', 'gutenverse-form'));
+        setCreatingForm(false);
+    };
+
+    const getCreateButtonLabel = () => {
+        if (!creatingForm) {
+            return __('Create Form', 'gutenverse-form');
+        }
+
+        if (selectedTemplate === 'library') {
+            return __('Opening Library...', 'gutenverse-form');
+        }
+
+        return __('Creating Form...', 'gutenverse-form');
+    };
+
+    const templates = [
+        { id: 'blank', label: __('Blank Form', 'gutenverse-form') },
+        { id: 'contact', label: __('Form Contact', 'gutenverse-form') },
+        { id: 'subscribe', label: __('Form Subscribe', 'gutenverse-form') },
+        { id: 'booking', label: __('Form Booking', 'gutenverse-form') },
+        { id: 'appointment', label: __('Form Appointment', 'gutenverse-form') },
+        { id: 'library', label: __('Choose From Library', 'gutenverse-form') },
+    ];
 
     return (
         <div {...blockProps}>
             <NoticeMessages {...attributes} />
-            <div className="guten-form-builder-placeholder">
-                <div className="placeholder-main-icon">
-                    <FormBuilderIcon />
+            {blankMode ? (
+                <InnerBlocks
+                    renderAppender={InnerBlocks.ButtonBlockAppender}
+                    clientId={clientId}
+                />
+            ) : (
+                <div className={`guten-form-builder-placeholder ${setupOpen ? 'is-setup' : ''}`}>
+                    {setupOpen && (
+                        <button type="button" className="placeholder-back" onClick={() => {
+                            setSetupOpen(false);
+                            setError('');
+                        }} disabled={creatingForm}>
+                            <span>&larr;</span>
+                            {__('Back', 'gutenverse-form')}
+                        </button>
+                    )}
+                    <div className="placeholder-main-icon">
+                        <FormBuilderIcon />
+                    </div>
+                    {setupOpen ? (
+                        <>
+                            <h3>{__('New Form Setup', 'gutenverse-form')}</h3>
+                            <p>{__('Set up your form details and select a starting layout.', 'gutenverse-form')}</p>
+                            <input
+                                type="text"
+                                className="placeholder-form-name"
+                                value={formName}
+                                placeholder={__('Enter form name', 'gutenverse-form')}
+                                onChange={event => setFormName(event.target.value)}
+                                disabled={creatingForm}
+                            />
+                            <div className="placeholder-template-grid">
+                                {templates.map(template => (
+                                    <button
+                                        type="button"
+                                        className={classnames('placeholder-template-card', {
+                                            active: selectedTemplate === template.id
+                                        })}
+                                        key={template.id}
+                                        onClick={() => {
+                                            setSelectedTemplate(template.id);
+                                            setError('');
+                                        }}
+                                        disabled={creatingForm}
+                                    >
+                                        <span className="template-preview-box" />
+                                        <strong>{template.label}</strong>
+                                    </button>
+                                ))}
+                            </div>
+                            {error && <p className="placeholder-error">{error}</p>}
+                            <button
+                                type="button"
+                                className={classnames('placeholder-create-button', {
+                                    loading: creatingForm
+                                })}
+                                onClick={createNewForm}
+                                disabled={creatingForm}
+                            >
+                                {getCreateButtonLabel()}
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <h3>{__('Select or Create a Form', 'gutenverse-form')}</h3>
+                            <p>{__('Select an existing form or create a new one to get started.', 'gutenverse-form')}</p>
+                            <div className="placeholder-actions">
+                                <button type="button" className="placeholder-action" onClick={openSelectModal}>
+                                    <span className="placeholder-action-icon">
+                                        <FormBuilderIcon />
+                                    </span>
+                                    <span>
+                                        <strong>{__('Select Existing Form', 'gutenverse-form')}</strong>
+                                        <small>{__('Use a form that you have already created', 'gutenverse-form')}</small>
+                                    </span>
+                                </button>
+                                <button type="button" className="placeholder-action" onClick={() => {
+                                    setSetupOpen(true);
+                                    setError('');
+                                }}>
+                                    <span className="placeholder-action-icon">
+                                        <FormBuilderIcon add />
+                                    </span>
+                                    <span>
+                                        <strong>{__('Create New Form', 'gutenverse-form')}</strong>
+                                        <small>{__('Start a new form directly from the editor', 'gutenverse-form')}</small>
+                                    </span>
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
-                <h3>{__('Select or Create a Form', 'gutenverse-form')}</h3>
-                <p>{__('Select an existing form or create a new one to get started.', 'gutenverse-form')}</p>
-                <div className="placeholder-actions">
-                    <button type="button" className="placeholder-action" onClick={openSelectModal}>
-                        <span className="placeholder-action-icon">
-                            <FormBuilderIcon />
-                        </span>
-                        <span>
-                            <strong>{__('Select Existing Form', 'gutenverse-form')}</strong>
-                            <small>{__('Use a form that you have already created', 'gutenverse-form')}</small>
-                        </span>
-                    </button>
-                    <button type="button" className="placeholder-action" onClick={createNewForm}>
-                        <span className="placeholder-action-icon">
-                            <FormBuilderIcon add />
-                        </span>
-                        <span>
-                            <strong>{__('Create New Form', 'gutenverse-form')}</strong>
-                            <small>{__('Start a new form directly from the editor', 'gutenverse-form')}</small>
-                        </span>
-                    </button>
-                </div>
-            </div>
+            )}
             {selectModalOpen && (
                 <Modal
                     title={__('Select Existing Form', 'gutenverse-form')}
