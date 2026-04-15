@@ -109,7 +109,10 @@ class Form_Builder extends Block_Abstract {
 			$data_attrs .= ' data-id="' . esc_attr( $id ) . '"';
 		}
 
+		$integration = isset( $this->attributes['integration'] ) ? $this->attributes['integration'] : array();
+
 		$html  = '<form style="display:none" class="' . esc_attr( trim( $class_name ) ) . '"' . $data_attrs . '>';
+		$html .= '<input type="hidden" name="gutenverse-form-integrations" value="' . esc_attr( wp_json_encode( $integration ) ) . '">';
 		$html .= $this->render_content();
 		$html .= '</form>';
 

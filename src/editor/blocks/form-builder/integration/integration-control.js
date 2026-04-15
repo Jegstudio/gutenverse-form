@@ -52,17 +52,17 @@ const customStyles = {
 const typeOptions = (customOptions) => {
     const options = [
         { label: __('Whatsapp', 'gutenverse-form'), value: 'whatsapp', pro: false },
-        { label: __('Telegram', 'gutenverse-form'), value: 'telegram', pro: true },
+        { label: __('Telegram', 'gutenverse-form'), value: 'telegram', pro: false },
         { label: __('Discord', 'gutenverse-form'), value: 'discord', pro: false },
-        { label: __('Mail Chimp', 'gutenverse-form'), value: 'mailchimp', pro: true },
+        { label: __('Mail Chimp', 'gutenverse-form'), value: 'mailchimp', pro: false },
         { label: __('Slack', 'gutenverse-form'), value: 'slack', pro: false },
-        { label: __('Webhook', 'gutenverse-form'), value: 'webhook', pro: true },
-        { label: __('GetResponse', 'gutenverse-form'), value: 'get_response', pro: true },
-        { label: __('Drip', 'gutenverse-form'), value: 'drip', pro: true },
-        { label: __('Active Campaign', 'gutenverse-form'), value: 'active_campaign', pro: true },
-        { label: __('Convert Kit', 'gutenverse-form'), value: 'convert_kit', pro: true },
-        { label: __('Mailer', 'gutenverse-form'), value: 'mailer', pro: true },
-        { label: __('Google Sheets', 'gutenverse-form'), value: 'google_sheets', pro: true },
+        { label: __('Webhook', 'gutenverse-form'), value: 'webhook', pro: false },
+        { label: __('GetResponse', 'gutenverse-form'), value: 'get_response', pro: false },
+        { label: __('Drip', 'gutenverse-form'), value: 'drip', pro: false },
+        { label: __('Active Campaign', 'gutenverse-form'), value: 'active_campaign', pro: false },
+        { label: __('Convert Kit', 'gutenverse-form'), value: 'convert_kit', pro: false },
+        { label: __('Mailer', 'gutenverse-form'), value: 'mailer', pro: false },
+        { label: __('Google Sheets', 'gutenverse-form'), value: 'google_sheets', pro: false },
     ];
 
     customOptions.forEach(custom => {

@@ -765,7 +765,7 @@ class Api {
 			$integrations  = array();
 
 			if ( isset( $form_entry['integrations'] ) ) {
-				$integrations = is_string( $form_entry['integrations'] ) ? json_decode( stripslashes( $form_entry['integrations'] ), true ) : $form_entry['integrations'];
+				$integrations = is_string( $form_entry['integrations'] ) ? json_decode( $form_entry['integrations'], true ) : $form_entry['integrations'];
 			}
 
 			$params = array(
