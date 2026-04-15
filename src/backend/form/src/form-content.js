@@ -621,8 +621,6 @@ const TabNotification = (props) => {
     </div>;
 };
 
-
-
 const autoGenerateTags = ({ clientId, values, updateValue }) => {
     if (!clientId || !window.wp || !window.wp.data) return;
 
@@ -661,23 +659,19 @@ const autoGenerateTags = ({ clientId, values, updateValue }) => {
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
     const [hideFormNotice, setHideFormNotice] = useState(!isEmpty(window['GutenverseConfig']) && window['GutenverseConfig']['hideFormNotice'] ? window['GutenverseConfig']['hideFormNotice'] : false);
-    const values = props.values || {};
 
     const tabs = {
         general: {
             label: __('General', 'gutenverse-form'),
-            status: values.title ? __('Ready', 'gutenverse-form') : '',
         },
         confirmation: {
             label: __('Confirmation', 'gutenverse-form'),
-            status: values.user_confirm ? __('On', 'gutenverse-form') : __('Off', 'gutenverse-form'),
         },
         notification: {
             label: __('Notification', 'gutenverse-form'),
-            status: values.admin_confirm ? __('On', 'gutenverse-form') : __('Off', 'gutenverse-form'),
         },
         pro: {
-            label: __('Pro', 'gutenverse-form'),
+            label: __('PRO', 'gutenverse-form'),
             pro: true
         },
     };
@@ -789,14 +783,12 @@ export const FormContent = (props) => {
                             changeActive(key);
                         }}>
                             <span>{item.label}</span>
-                            {item.status && <small>{item.status}</small>}
                         </div>,
                         { ...proPopupProps, item, classes, key }
                     )
                     : (
                         <div className={classes} key={key} onClick={() => changeActive(key)}>
                             <span>{item.label}</span>
-                            {item.status && <small>{item.status}</small>}
                         </div>
                     );
             })}

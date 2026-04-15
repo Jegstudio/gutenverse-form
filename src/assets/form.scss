@@ -121,23 +121,30 @@
 
 .form-tab-header {
     display: flex;
-    gap: 8px;
-    padding: 20px;
-
+    gap: 0;
+    padding: 10px;
+    margin: 20px;
+    background: #fff;
+    border: 1px solid #d9dce2;
+    border-radius: 3px;
 
     .header-item {
         flex-grow: 1;
-        font-size: 12px;
-        line-height: 40px;
-        color: #8181a5;
-        border: 1px solid #e6e6ef;
-        border-radius: 5px;
+        flex-basis: 0;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1;
+        color: #46535f;
+        border: 0;
+        border-radius: 3px;
         cursor: pointer;
         text-align: center;
         display: flex;
-        flex-direction: column;
+        align-items: center;
         justify-content: center;
         min-height: 44px;
+        padding: 0 12px;
+        transition: background 0.2s ease, color 0.2s ease;
 
         &.active {
             color: #3b57f7;
@@ -145,13 +152,7 @@
         }
 
         span {
-            line-height: 18px;
-        }
-
-        small {
-            color: #686878;
-            font-size: 10px;
-            line-height: 12px;
+            line-height: 1.2;
         }
     }
 }
