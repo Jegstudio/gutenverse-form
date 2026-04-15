@@ -15,17 +15,17 @@ class Dynamic_Value {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_filter( 'register_block_type_args', array( $this, 'modify_block_args' ), 10, 2 );
+		add_filter( 'render_block', array( $this, 'inject_dynamic_value' ), 10, 2 );
 	}
 
 	/**
-	 * Modify block type arguments to resolve dynamic default values.
+	 * Inject dynamic default values into rendered block content.
 	 *
-	 * @param array  $args       Block type arguments.
-	 * @param string $block_type Block type name.
-	 * @return array
+	 * @param string $block_content Rendered block HTML.
+	 * @param array  $block         Block data including blockName and attrs.
+	 * @return string
 	 */
-	public function modify_block_args( $args, $block_type ) {
+	public function inject_dynamic_value( $block_content, $block ) {
 		$blocks = array(
 			'gutenverse/form-input-text',
 			'gutenverse/form-input-email',
@@ -34,23 +34,16 @@ class Dynamic_Value {
 			'gutenverse/form-input-mobile',
 		);
 
-		if ( in_array( $block_type, $blocks, true ) ) {
-			$args['render_callback'] = array( $this, 'render_form_input_text' );
+		if ( ! in_array( $block['blockName'], $blocks, true ) ) {
+			return $block_content;
 		}
-		return $args;
-	}
 
-	/**
-	 * Render callback for form-input-text to resolve dynamic values.
-	 *
-	 * @param array  $attributes Block attributes.
-	 * @param string $content    Block content.
-	 * @return string
-	 */
-	public function render_form_input_text( $attributes, $content ) {
 		if ( is_admin() ) {
-			return $content;
+			return $block_content;
 		}
+
+		$attributes = $block['attrs'];
+		$content    = $block_content;
 
 		$default_value_type = isset( $attributes['defaultValueType'] ) ? $attributes['defaultValueType'] : 'custom';
 		$resolved_value     = '';
@@ -65,7 +58,7 @@ class Dynamic_Value {
 		} elseif ( 'user' === $default_value_type ) {
 			$resolved_value = $this->resolve_user_data( $attributes );
 		} else {
-			return $content;
+			return $block_content;
 		}
 
 		// Sanitize the value before injection.
