@@ -6,6 +6,142 @@
     margin-right: auto;
 }
 
+.guten-form-builder-placeholder {
+    align-items: center;
+    border-radius: 6px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    margin: 16px 0;
+    min-height: 520px;
+    padding: 70px 56px;
+    position: relative;
+    text-align: center;
+
+    &::before {
+        border: 1px dashed #dfe3e8;
+        border-radius: inherit;
+        content: "";
+        inset: 0;
+        pointer-events: none;
+        position: absolute;
+    }
+
+    .placeholder-main-icon {
+        align-items: center;
+        background: linear-gradient(180deg, #3b57f7 0%, #4fc3d8 100%);
+        border-radius: 50%;
+        color: #fff;
+        display: flex;
+        height: 76px;
+        justify-content: center;
+        margin-bottom: 28px;
+        width: 76px;
+    }
+
+    h3 {
+        color: #0f1f2c;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.35;
+        margin: 0 0 10px;
+    }
+
+    p {
+        color: #9aa3aa;
+        font-size: 15px;
+        line-height: 1.5;
+        margin: 0 0 36px;
+    }
+
+    .placeholder-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        max-width: 980px;
+        width: 100%;
+    }
+
+    .placeholder-action {
+        align-items: center;
+        background: #fff;
+        border: 1px solid #dfe3e8;
+        border-radius: 6px;
+        color: #0f1f2c;
+        cursor: pointer;
+        display: flex;
+        gap: 24px;
+        min-height: 128px;
+        padding: 28px 36px;
+        text-align: left;
+        transition: background 0.2s ease, border-color 0.2s ease;
+        width: 100%;
+
+        &:hover,
+        &:focus {
+            background: #f8f9fb;
+            border-color: #3b57f7;
+            outline: none;
+        }
+    }
+
+    .placeholder-action-icon {
+        align-items: center;
+        border: 1px solid #dfe3e8;
+        border-radius: 50%;
+        color: #3b57f7;
+        display: flex;
+        flex: 0 0 58px;
+        height: 58px;
+        justify-content: center;
+        width: 58px;
+    }
+
+    strong,
+    small {
+        display: block;
+    }
+
+    strong {
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1.35;
+        margin-bottom: 6px;
+    }
+
+    small {
+        color: #9aa3aa;
+        font-size: 15px;
+        line-height: 1.45;
+    }
+}
+
+.gutenverse-form-select-modal-content {
+    min-width: 360px;
+    padding: 0 0 20px;
+
+    select {
+        max-width: 100%;
+        min-height: 40px;
+        width: 100%;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .gutenverse-form-select-error {
+        color: #d63638;
+        margin-top: 12px;
+    }
+}
+
+.gutenverse-form-select-modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
 .input-warning {
   font-size: 14px !important;
   background: red;
@@ -35,5 +171,18 @@
         max-width: 100%;
         margin-left: 0;
         margin-right: 0;
+    }
+}
+
+@media (max-width: 782px) {
+    .guten-form-builder-placeholder {
+        min-height: 420px;
+        padding: 42px 20px;
+
+        .placeholder-action {
+            gap: 16px;
+            min-height: 110px;
+            padding: 22px 20px;
+        }
     }
 }
