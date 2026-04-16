@@ -38,7 +38,7 @@ class Integration {
 			array('service_name' => 'mailchimp', 'documentation_url' => 'https://mailchimp.com/developer/'),
 			array('service_name' => 'slack', 'documentation_url' => 'https://api.slack.com/'),
 			array('service_name' => 'webhook', 'documentation_url' => 'https://api.slack.com/'),
-			array('service_name' => 'get_response', 'documentation_url' => 'https://api.slack.com/'),
+			array('service_name' => 'get_response', 'documentation_url' => 'https://apidocs.getresponse.com/'),
 			array('service_name' => 'drip', 'documentation_url' => 'https://api.slack.com/'),
 			array('service_name' => 'active_campaign', 'documentation_url' => 'https://api.slack.com/'),
 			array('service_name' => 'convert_kit', 'documentation_url' => 'https://api.slack.com/'),
