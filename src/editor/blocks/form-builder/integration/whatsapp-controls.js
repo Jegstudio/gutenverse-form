@@ -27,6 +27,7 @@ export const WhatsappControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle 
         <>
             <DebouncedTextControl
                 label={__('Business Number ID', 'gutenverse-form')}
+                required={true}
                 value={item.business_number_id}
                 onValueChange={business_number_id => {
                     onUpdateIndexValue({ ...item, business_number_id });
@@ -36,6 +37,7 @@ export const WhatsappControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle 
             />
             <DebouncedTextControl
                 label={__('Access Token', 'gutenverse-form')}
+                required={true}
                 value={item.access_token}
                 onValueChange={access_token => {
                     onUpdateIndexValue({ ...item, access_token });
@@ -45,6 +47,7 @@ export const WhatsappControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle 
             />
             <DebouncedTextControl
                 label={__('Recipient Number', 'gutenverse-form')}
+                required={true}
                 value={item.recipient}
                 onValueChange={recipient => {
                     onUpdateIndexValue({ ...item, recipient });
@@ -54,6 +57,7 @@ export const WhatsappControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle 
             />
             <DebouncedTextControl
                 label={__('Template JSON', 'gutenverse-form')}
+                required={true}
                 value={item.template_json || JSON.stringify(defaultTemplate, null, 2)}
                 onValueChange={template_json => {
                     onUpdateIndexValue({ ...item, template_json });

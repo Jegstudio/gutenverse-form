@@ -6,6 +6,7 @@ export const GetResponseControls = ({ item, onUpdateIndexValue, onUpdateIndexSty
         <>
             <DebouncedTextControl
                 label={__('API Key', 'gutenverse-form')}
+                required={true}
                 value={item.api_key}
                 onValueChange={api_key => {
                     onUpdateIndexValue({ ...item, api_key });
@@ -15,6 +16,7 @@ export const GetResponseControls = ({ item, onUpdateIndexValue, onUpdateIndexSty
             />
             <DebouncedTextControl
                 label={__('Campaign ID', 'gutenverse-form')}
+                required={true}
                 value={item.campaign_id}
                 onValueChange={campaign_id => {
                     onUpdateIndexValue({ ...item, campaign_id });
@@ -24,6 +26,7 @@ export const GetResponseControls = ({ item, onUpdateIndexValue, onUpdateIndexSty
             />
             <DebouncedTextControl
                 label={__('Email', 'gutenverse-form')}
+                required={true}
                 value={item.email}
                 onValueChange={email => {
                     onUpdateIndexValue({ ...item, email });

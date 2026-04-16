@@ -6,6 +6,7 @@ export const TelegramControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle 
         <>
             <DebouncedTextControl
                 label={__('Bot Token', 'gutenverse-form')}
+                required={true}
                 value={item.botToken}
                 onValueChange={botToken => {
                     onUpdateIndexValue({ ...item, botToken });
@@ -15,6 +16,7 @@ export const TelegramControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle 
             />
             <DebouncedTextControl
                 label={__('Chat ID', 'gutenverse-form')}
+                required={true}
                 value={item.chatId}
                 onValueChange={chatId => {
                     onUpdateIndexValue({ ...item, chatId });

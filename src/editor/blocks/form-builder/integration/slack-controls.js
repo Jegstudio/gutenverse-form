@@ -6,6 +6,7 @@ export const SlackControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }) 
         <>
             <DebouncedTextControl
                 label={__('Slack Webhook URL', 'gutenverse-form')}
+                required={true}
                 value={item.webhook_url || item.webhookUrl}
                 onValueChange={webhook_url => {
                     onUpdateIndexValue({ ...item, webhook_url });
@@ -15,6 +16,7 @@ export const SlackControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }) 
             />
             <DebouncedTextControl
                 label={__('Message', 'gutenverse-form')}
+                required={true}
                 value={item.message || item.content}
                 onValueChange={message => {
                     onUpdateIndexValue({ ...item, message });

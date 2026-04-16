@@ -41,17 +41,32 @@ class Discord {
 	 * @return array|\WP_Error
 	 */
 	public function send( $data, $entry_id = 0, $form_id = 0 ) {
+		$webhook_url = esc_url_raw( $this->settings['webhookUrl'] ?? '', array( 'https' ) );
+		$allowed_hosts = array( 'discord.com', 'discordapp.com', 'canary.discord.com', 'ptb.discord.com' );
+		$host = strtolower( (string) wp_parse_url( $webhook_url, PHP_URL_HOST ) );
 		$body = array(
 			'content'    => \Gutenverse_Form\Integration::parse_template( $this->settings['content'] ?? '', $data, $entry_id, $form_id ),
 			'username'   => $this->settings['username'] ?? '',
 			'avatar_url' => $this->settings['avatar_url'] ?? '',
 		);
 
+		$is_allowed_host = false;
+		foreach ( $allowed_hosts as $allowed_host ) {
+			if ( $host === $allowed_host || substr( $host, -strlen( '.' . $allowed_host ) ) === '.' . $allowed_host ) {
+				$is_allowed_host = true;
+				break;
+			}
+		}
+
+		if ( empty( $webhook_url ) || empty( trim( $body['content'] ) ) || ! $is_allowed_host ) {
+			return false;
+		}
+
 		return wp_remote_post(
-			$this->settings['webhookUrl'] ?? '',
+			$webhook_url,
 			array(
 				'headers' => array( 'Content-Type' => 'application/json' ),
-				'body'    => json_encode( array_filter( $body ) ),
+				'body'    => wp_json_encode( array_filter( $body ) ),
 			)
 		);
 	}
@@ -72,46 +87,35 @@ class Discord {
 	 * @param object     $request      REST request object.
 	 */
 	public function after_store( $entry_id, $params, $form_setting, $request ) {
-		// Prepare form data for template parsing
-		$data = array();
-		if ( isset( $params['entry-data'] ) && is_array( $params['entry-data'] ) ) {
-			foreach ( $params['entry-data'] as $item ) {
-				if ( isset( $item['id'] ) && isset( $item['value'] ) ) {
-					$value = $item['value'];
-					if ( is_array( $value ) ) {
-						$value = implode( ', ', $value );
-					}
-					$data[ $item['id'] ] = $value;
-				}
-			}
-		}
-
-		// 1. Process Global & Per-Form Action Settings (from Dashboard -> Form)
+		$data            = \Gutenverse_Form\Integration::prepare_entry_data( $params );
 		$options         = get_option( 'gutenverse_form_integrations', array() );
 		$global_settings = get_option( 'gutenverse_form_discord_settings', array() );
 		$global_enabled  = ! empty( $options['discord'] );
 		$apply_globally  = isset( $global_settings['apply_globally'] ) ? (bool) $global_settings['apply_globally'] : false;
+		$has_local_config = \Gutenverse_Form\Integration::has_local_service_config( 'discord', $form_setting );
+		$local_settings   = \Gutenverse_Form\Integration::get_local_service_settings( 'discord', $form_setting );
+		$local_enabled    = isset( $local_settings['enabled'] ) ? (bool) $local_settings['enabled'] : false;
 
-		$local_settings = isset( $form_setting['integrations']['discord'] ) ? $form_setting['integrations']['discord'] : array();
-		$local_enabled  = isset( $local_settings['enabled'] ) ? (bool) $local_settings['enabled'] : false;
-
-		if ( ( $global_enabled && $apply_globally ) || $local_enabled ) {
+		if ( $global_enabled && $apply_globally && ! $has_local_config ) {
 			$settings = array_merge( $global_settings, $local_settings );
 			if ( ! empty( $settings['webhookUrl'] ) ) {
 				$this->set_settings( $settings );
-				$this->send( $data, $entry_id, $params['form-id'] );
+				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'discord', $this->send( $data, $entry_id, $params['form-id'] ) );
 			}
 		}
 
-		// 2. Process Per-Block Integrations (from hidden input)
-		if ( isset( $params['integrations']['actions'] ) && is_array( $params['integrations']['actions'] ) ) {
-			foreach ( $params['integrations']['actions'] as $action ) {
-				if ( 'discord' === ( $action['type'] ?? '' ) ) {
-					if ( ! empty( $action['webhookUrl'] ) ) {
-						$this->set_settings( $action );
-						$this->send( $data, $entry_id, $params['form-id'] );
-					}
-				}
+		if ( $local_enabled ) {
+			$settings = array_merge( $global_settings, $local_settings );
+			if ( ! empty( $settings['webhookUrl'] ) ) {
+				$this->set_settings( $settings );
+				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'discord', $this->send( $data, $entry_id, $params['form-id'] ) );
+			}
+		}
+
+		foreach ( \Gutenverse_Form\Integration::get_service_actions( 'discord', $params, $form_setting ) as $action ) {
+			if ( ! empty( $action['webhookUrl'] ) ) {
+				$this->set_settings( $action );
+				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'discord', $this->send( $data, $entry_id, $params['form-id'] ) );
 			}
 		}
 	}
@@ -126,6 +130,7 @@ class Discord {
 			'webhookUrl' => array(
 				'label'       => __( 'Discord Webhook URL', 'gutenverse-form' ),
 				'description' => __( 'Enter your Discord Webhook URL', 'gutenverse-form' ),
+				'required'    => true,
 				'type'        => 'text',
 				'placeholder' => __( 'https://discord.com/api/webhooks/...', 'gutenverse-form' ),
 			),
@@ -144,6 +149,7 @@ class Discord {
 			'content'    => array(
 				'label'       => __( 'Content Template', 'gutenverse-form' ),
 				'description' => __( 'Use {field_id} to include form data', 'gutenverse-form' ),
+				'required'    => true,
 				'type'        => 'textarea',
 				'placeholder' => __( 'New form entry: {name}', 'gutenverse-form' ),
 			),

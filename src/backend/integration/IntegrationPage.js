@@ -161,6 +161,8 @@ const TabSetting = ({ onSetup }) => {
 
 const admin_url = window['GutenverseConfig']?.adminUrl || '';
 
+const formatFieldLabel = (field) => field?.required ? `${field.label} *` : field.label;
+
 
 const ServiceSetup = ({ serviceId, title }) => {
     const config = window['GutenverseConfig'] || {};
@@ -204,7 +206,7 @@ const ServiceSetup = ({ serviceId, title }) => {
                         <div key={key} className="setup-field-item">
                             {field.type === 'textarea' ? (
                                 <TextareaControl
-                                    label={field.label}
+                                    label={formatFieldLabel(field)}
                                     value={settings[key] || ''}
                                     onChange={(val) => updateSetting(key, val)}
                                     placeholder={field.placeholder}
@@ -212,7 +214,7 @@ const ServiceSetup = ({ serviceId, title }) => {
                                 />
                             ) : (
                                 <TextControl
-                                    label={field.label}
+                                    label={formatFieldLabel(field)}
                                     value={settings[key] || ''}
                                     onChange={(val) => updateSetting(key, val)}
                                     placeholder={field.placeholder}

@@ -9,7 +9,7 @@ import {
     AlertControl,
     TextControl,
     TextareaControl,
-    ControlHeadingSimple 
+    ControlHeadingSimple
 } from 'gutenverse-core/controls';
 import { Button, Plus, X, Select, classnames, cryptoRandomString, DefaultLayout } from 'gutenverse-core/components';
 import { IconChevronDownSVG } from 'gutenverse-core/icons';
@@ -183,13 +183,13 @@ const ActionItem = ({
                 <div className={'repeater-body'}>
                     {selectType?.pro ? (
                         <LockedIntegrationControl isOpen={open} />
-                    ): 
-                    <IntegrationTypeControl 
-                        item={values[index]}
-                        selectType={selectType}
-                        onUpdateIndexValue={onUpdateIndexValue}
-                        onUpdateIndexStyle={onUpdateIndexStyle}
-                    />
+                    ):
+                        <IntegrationTypeControl
+                            item={values[index]}
+                            selectType={selectType}
+                            onUpdateIndexValue={onUpdateIndexValue}
+                            onUpdateIndexStyle={onUpdateIndexStyle}
+                        />
                     }
                 </div>
             )}
@@ -286,9 +286,9 @@ const ActionControl = ({
             id={`${id}-repeater`}
             label={label}
         />
-            <div className={'control-body'}>
-                <div className={'repeater-wrapper'}>
-                    <div className={'repeater-container'}>
+        <div className={'control-body'}>
+            <div className={'repeater-wrapper'}>
+                <div className={'repeater-container'}>
                     {value.length === 0 ? <ActionItemDummy
                         onValueChange={onValueChange}
                         onLocalChange={onLocalChange}
@@ -296,29 +296,29 @@ const ActionControl = ({
                         setOpenLast={setOpenLast}
                         customOptions={customOptions}
                     /> : value?.map((item, index) =>
-                            <ActionItem
-                                key={item._key === undefined ? `${id}-${index}` : item._key}
-                                id={item._key === undefined ? `${id}-${index}` : item._key}
-                                index={index}
-                                values={value}
-                                elementValue={elementValue}
-                                onValueChange={onValueChange}
-                                onLocalChange={onLocalChange}
-                                titleFormat={titleFormat}
-                                onRemove={() => removeIndex(index)}
-                                open={index === openLast}
-                                setOpen={setOpenLast}
-                                customOptions={customOptions}
-                            />
-                        )}
-                    </div>
+                        <ActionItem
+                            key={item._key === undefined ? `${id}-${index}` : item._key}
+                            id={item._key === undefined ? `${id}-${index}` : item._key}
+                            index={index}
+                            values={value}
+                            elementValue={elementValue}
+                            onValueChange={onValueChange}
+                            onLocalChange={onLocalChange}
+                            titleFormat={titleFormat}
+                            onRemove={() => removeIndex(index)}
+                            open={index === openLast}
+                            setOpen={setOpenLast}
+                            customOptions={customOptions}
+                        />
+                    )}
                 </div>
             </div>
+        </div>
         {value.length !== 0 && <div className={'control-add'}>
-                    <Button isPrimary={true} onClick={addNewItem}>
-                        <Plus />
-                        {__('Add Integration', 'gutenverse-form')}
-                    </Button>
+            <Button isPrimary={true} onClick={addNewItem}>
+                <Plus />
+                {__('Add Integration', 'gutenverse-form')}
+            </Button>
         </div>}
     </div>;
 };
@@ -355,7 +355,7 @@ const IntegrationControl = (props) => {
                 ...global,
                 _key: cryptoRandomString({ length: 6, type: 'alphanumeric' })
             }));
-            
+
             onValueChange({ ...value, actions: globalActions });
             onLocalChange({ ...value, actions: globalActions });
         }

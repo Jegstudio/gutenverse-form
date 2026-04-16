@@ -137,12 +137,14 @@ class Slack {
             'webhook_url' => [
                 'label'       => __('Slack Webhook URL', 'gutenverse-form'),
                 'description' => __('Enter your Slack Webhook URL', 'gutenverse-form'),
+                'required'    => true,
                 'type'        => 'text',
                 'placeholder' => __('https://hooks.slack.com/services/...', 'gutenverse-form'),
             ],
             'message'     => [
                 'label'       => __('Message', 'gutenverse-form'),
                 'description' => __('Enter the Slack message. Use {field_id} to include form data.', 'gutenverse-form'),
+                'required'    => true,
                 'type'        => 'textarea',
                 'placeholder' => __('Hello, World!', 'gutenverse-form'),
             ],

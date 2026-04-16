@@ -6,6 +6,7 @@ export const DiscordControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }
         <>
             <DebouncedTextControl
                 label={__('Discord Webhook URL', 'gutenverse-form')}
+                required={true}
                 value={item.webhookUrl}
                 onValueChange={webhookUrl => {
                     onUpdateIndexValue({ ...item, webhookUrl });
@@ -33,6 +34,7 @@ export const DiscordControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }
             />
             <DebouncedTextControl
                 label={__('Content', 'gutenverse-form')}
+                required={true}
                 value={item.content}
                 onValueChange={content => {
                     onUpdateIndexValue({ ...item, content });

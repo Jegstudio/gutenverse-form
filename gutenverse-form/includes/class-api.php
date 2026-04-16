@@ -1022,25 +1022,11 @@ class Api {
 	 */
 	public function save_integration( $request ) {
 		$params = $request->get_params();
+		$allowed_services = array_column( Integration::get_services(), 'service_name' );
 
 		if ( isset( $params['key'] ) && isset( $params['value'] ) ) {
-			$allowed_services = array(
-				'whatsapp',
-				'telegram',
-				'discord',
-				'mailchimp',
-				'slack',
-				'webhook',
-				'get_response',
-				'drip',
-				'active_campaign',
-				'convert_kit',
-				'mailer',
-				'google_sheets',
-			);
-
 			$key   = sanitize_key( $params['key'] );
-			$value = (bool) $params['value'];
+			$value = rest_sanitize_boolean( $params['value'] );
 
 			if ( in_array( $key, $allowed_services, true ) ) {
 				$options         = get_option( 'gutenverse_form_integrations', array() );
@@ -1061,29 +1047,13 @@ class Api {
 	 */
 	public function save_integration_settings( $request ) {
 		$params = $request->get_params();
+		$allowed_services = array_column( Integration::get_services(), 'service_name' );
 
 		if ( isset( $params['service'] ) && isset( $params['settings'] ) ) {
-			$allowed_services = array(
-				'whatsapp',
-				'telegram',
-				'discord',
-				'mailchimp',
-				'slack',
-				'webhook',
-				'get_response',
-				'drip',
-				'active_campaign',
-				'convert_kit',
-				'mailer',
-				'google_sheets',
-			);
-
 			$service = sanitize_key( $params['service'] );
 
-			if ( in_array( $service, $allowed_services, true ) ) {
-				$settings = $params['settings'];
-				// Sanitize settings based on the service if needed,
-				// but for now we'll just save it as an array.
+			if ( in_array( $service, $allowed_services, true ) && is_array( $params['settings'] ) ) {
+				$settings = $this->sanitize_integration_settings( $service, $params['settings'] );
 				update_option( "gutenverse_form_{$service}_settings", $settings );
 
 				return new WP_REST_Response( array( 'success' => true ), 200 );
@@ -1097,5 +1067,147 @@ class Api {
 			),
 			400
 		);
+	}
+
+	/**
+	 * Sanitize saved integration settings.
+	 *
+	 * @param string $service  Service name.
+	 * @param array  $settings Raw settings.
+	 *
+	 * @return array
+	 */
+	private function sanitize_integration_settings( $service, $settings ) {
+		$sanitized                   = array();
+		$sanitized['apply_globally'] = rest_sanitize_boolean( $settings['apply_globally'] ?? false );
+
+		switch ( $service ) {
+			case 'whatsapp':
+				if ( isset( $settings['business_number_id'] ) ) {
+					$sanitized['business_number_id'] = preg_replace( '/[^0-9]/', '', (string) $settings['business_number_id'] );
+				}
+
+				if ( isset( $settings['access_token'] ) ) {
+					$sanitized['access_token'] = sanitize_text_field( (string) $settings['access_token'] );
+				}
+
+				if ( isset( $settings['recipient'] ) ) {
+					$sanitized['recipient'] = sanitize_text_field( (string) $settings['recipient'] );
+				}
+
+				if ( isset( $settings['template_json'] ) ) {
+					$sanitized['template_json'] = $this->sanitize_json_setting( $settings['template_json'] );
+				}
+				break;
+
+			case 'discord':
+				if ( isset( $settings['webhookUrl'] ) ) {
+					$sanitized['webhookUrl'] = $this->sanitize_allowed_url( $settings['webhookUrl'], array( 'discord.com', 'discordapp.com', 'canary.discord.com', 'ptb.discord.com' ) );
+				}
+
+				if ( isset( $settings['username'] ) ) {
+					$sanitized['username'] = sanitize_text_field( (string) $settings['username'] );
+				}
+
+				if ( isset( $settings['avatar_url'] ) ) {
+					$sanitized['avatar_url'] = esc_url_raw( (string) $settings['avatar_url'], array( 'http', 'https' ) );
+				}
+
+				if ( isset( $settings['content'] ) ) {
+					$sanitized['content'] = sanitize_textarea_field( (string) $settings['content'] );
+				}
+				break;
+
+			default:
+				$sanitized = array_merge( $sanitized, $this->sanitize_recursive_settings( $settings ) );
+				break;
+		}
+
+		return array_filter(
+			$sanitized,
+			function ( $value, $key ) {
+				return 'apply_globally' === $key || '' !== $value || false !== $value;
+			},
+			ARRAY_FILTER_USE_BOTH
+		);
+	}
+
+	/**
+	 * Sanitize arbitrary nested settings while keeping structure.
+	 *
+	 * @param array $settings Raw settings.
+	 *
+	 * @return array
+	 */
+	private function sanitize_recursive_settings( $settings ) {
+		$sanitized = array();
+
+		foreach ( $settings as $key => $value ) {
+			$key = sanitize_key( $key );
+
+			if ( is_array( $value ) ) {
+				$sanitized[ $key ] = $this->sanitize_recursive_settings( $value );
+			} elseif ( is_bool( $value ) ) {
+				$sanitized[ $key ] = rest_sanitize_boolean( $value );
+			} else {
+				$sanitized[ $key ] = sanitize_text_field( (string) $value );
+			}
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Sanitize a JSON textarea setting without stripping its structure.
+	 *
+	 * @param mixed $value Raw JSON value.
+	 *
+	 * @return string
+	 */
+	private function sanitize_json_setting( $value ) {
+		if ( ! is_string( $value ) ) {
+			return '';
+		}
+
+		$decoded = json_decode( wp_unslash( $value ), true );
+		if ( JSON_ERROR_NONE !== json_last_error() || ! is_array( $decoded ) ) {
+			return '';
+		}
+
+		return wp_json_encode( $decoded );
+	}
+
+	/**
+	 * Sanitize a URL and optionally restrict its host.
+	 *
+	 * @param mixed $value         Raw URL.
+	 * @param array $allowed_hosts Allowed hosts.
+	 *
+	 * @return string
+	 */
+	private function sanitize_allowed_url( $value, $allowed_hosts = array() ) {
+		$url = esc_url_raw( (string) $value, array( 'https' ) );
+		if ( empty( $url ) ) {
+			return '';
+		}
+
+		if ( empty( $allowed_hosts ) ) {
+			return $url;
+		}
+
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+		if ( empty( $host ) ) {
+			return '';
+		}
+
+		$host = strtolower( $host );
+		foreach ( $allowed_hosts as $allowed_host ) {
+			$allowed_host = strtolower( $allowed_host );
+			if ( $host === $allowed_host || substr( $host, -strlen( '.' . $allowed_host ) ) === '.' . $allowed_host ) {
+				return $url;
+			}
+		}
+
+		return '';
 	}
 }

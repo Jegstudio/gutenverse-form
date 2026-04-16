@@ -37,24 +37,28 @@ class Whatsapp {
 			'business_number_id' => array(
 				'label'       => __( 'Business Number ID', 'gutenverse-form' ),
 				'description' => __( 'Enter your WhatsApp Business Number ID', 'gutenverse-form' ),
+				'required'    => true,
 				'type'        => 'text',
 				'placeholder' => '1077649588754603',
 			),
 			'access_token'       => array(
 				'label'       => __( 'Access Token', 'gutenverse-form' ),
 				'description' => __( 'Enter your WhatsApp Access Token', 'gutenverse-form' ),
+				'required'    => true,
 				'type'        => 'text',
 				'placeholder' => 'EAAhYKCB...',
 			),
 			'recipient'          => array(
 				'label'       => __( 'Recipient Number', 'gutenverse-form' ),
 				'description' => __( 'Enter recipient phone number or {field_id}', 'gutenverse-form' ),
+				'required'    => true,
 				'type'        => 'text',
 				'placeholder' => '6282237741202',
 			),
 			'template_json'      => array(
 				'label'       => __( 'Template JSON', 'gutenverse-form' ),
 				'description' => __( 'Enter the WhatsApp template JSON', 'gutenverse-form' ),
+				'required'    => true,
 				'type'        => 'textarea',
 				'placeholder' => '{ "name": "order_confirmation", ... }',
 			),
@@ -148,7 +152,7 @@ class Whatsapp {
 					'Authorization' => 'Bearer ' . $access_token,
 					'Content-Type'  => 'application/json',
 				),
-				'body'    => json_encode( $body ),
+				'body'    => wp_json_encode( $body ),
 			)
 		);
 	}
@@ -169,42 +173,30 @@ class Whatsapp {
 	 * @param \WP_REST_Request $request      REST request instance for the submission.
 	 */
 	public function after_store( $entry_id, $params, $form_setting, $request ) {
-		$data = array();
-		if ( isset( $params['entry-data'] ) && is_array( $params['entry-data'] ) ) {
-			foreach ( $params['entry-data'] as $item ) {
-				if ( isset( $item['id'] ) && isset( $item['value'] ) ) {
-					$value = $item['value'];
-					if ( is_array( $value ) ) {
-						$value = implode( ', ', $value );
-					}
-					$data[ $item['id'] ] = $value;
-				}
-			}
-		}
-
-		// 1. Process Global & Per-Form Action Settings
+		$data            = \Gutenverse_Form\Integration::prepare_entry_data( $params );
 		$options         = get_option( 'gutenverse_form_integrations', array() );
 		$global_settings = get_option( 'gutenverse_form_whatsapp_settings', array() );
 		$global_enabled  = ! empty( $options['whatsapp'] );
 		$apply_globally  = isset( $global_settings['apply_globally'] ) ? (bool) $global_settings['apply_globally'] : false;
+		$has_local_config = \Gutenverse_Form\Integration::has_local_service_config( 'whatsapp', $form_setting );
+		$local_settings   = \Gutenverse_Form\Integration::get_local_service_settings( 'whatsapp', $form_setting );
+		$local_enabled    = isset( $local_settings['enabled'] ) ? (bool) $local_settings['enabled'] : false;
 
-		$local_settings = isset( $form_setting['integrations']['whatsapp'] ) ? $form_setting['integrations']['whatsapp'] : array();
-		$local_enabled  = isset( $local_settings['enabled'] ) ? (bool) $local_settings['enabled'] : false;
-
-		if ( ( $global_enabled && $apply_globally ) || $local_enabled ) {
+		if ( $global_enabled && $apply_globally && ! $has_local_config ) {
 			$settings = array_merge( $global_settings, $local_settings );
 			$this->set_settings( $settings );
-			$this->send( $data, $entry_id, $params['form-id'] );
+			\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'whatsapp', $this->send( $data, $entry_id, $params['form-id'] ) );
 		}
 
-		// 2. Process Per-Block Integrations
-		if ( isset( $params['integrations']['actions'] ) && is_array( $params['integrations']['actions'] ) ) {
-			foreach ( $params['integrations']['actions'] as $action ) {
-				if ( 'whatsapp' === ( $action['type'] ?? '' ) ) {
-					$this->set_settings( $action );
-					$this->send( $data, $entry_id, $params['form-id'] );
-				}
-			}
+		if ( $local_enabled ) {
+			$settings = array_merge( $global_settings, $local_settings );
+			$this->set_settings( $settings );
+			\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'whatsapp', $this->send( $data, $entry_id, $params['form-id'] ) );
+		}
+
+		foreach ( \Gutenverse_Form\Integration::get_service_actions( 'whatsapp', $params, $form_setting ) as $action ) {
+			$this->set_settings( $action );
+			\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'whatsapp', $this->send( $data, $entry_id, $params['form-id'] ) );
 		}
 	}
 }

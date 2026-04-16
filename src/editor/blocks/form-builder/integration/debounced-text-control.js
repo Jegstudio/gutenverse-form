@@ -1,8 +1,9 @@
 import { useState, useEffect } from '@wordpress/element';
 import { TextControl, TextareaControl } from 'gutenverse-core/controls';
 
-export const DebouncedTextControl = ({ label, value, onValueChange, placeholder, textArea = false }) => {
+export const DebouncedTextControl = ({ label, value, onValueChange, placeholder, textArea = false, required = false }) => {
     const [ localValue, setLocalValue ] = useState(value);
+    const displayLabel = required ? `${label} *` : label;
 
     useEffect(() => {
         setLocalValue(value);
@@ -19,14 +20,14 @@ export const DebouncedTextControl = ({ label, value, onValueChange, placeholder,
 
     return textArea ? (
         <TextareaControl
-            label={label}
+            label={displayLabel}
             value={localValue}
             onValueChange={setLocalValue}
             placeholder={placeholder}
         />
     ) : (
         <TextControl
-            label={label}
+            label={displayLabel}
             value={localValue}
             onValueChange={setLocalValue}
             placeholder={placeholder}
