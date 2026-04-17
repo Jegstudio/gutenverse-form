@@ -11,7 +11,7 @@ import { isSticky } from 'gutenverse-core/helper';
 import { useRichTextParameter } from 'gutenverse-core/helper';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import { useDisplayEditor } from 'gutenverse-core/hooks';
-import { dispatch, select, useSelect } from '@wordpress/data';
+import { dispatch, select, subscribe, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { PanelTutorial } from 'gutenverse-core/controls';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
@@ -103,7 +103,8 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
     const [creatingForm, setCreatingForm] = useState(false);
     const [error, setError] = useState('');
     const [proPopupActive, setProPopupActive] = useState(false);
-    const { replaceBlocks } = dispatch('core/block-editor');
+    const pendingLibraryImportRef = useRef(null);
+    const { replaceBlocks, removeBlocks } = dispatch('core/block-editor');
     const hasProPluginActive = !!window?.GutenverseConfig?.plugins?.['gutenverse-pro']?.active;
     const hasActiveProLicense = !isEmpty(window?.gprodata);
     const imageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
@@ -164,6 +165,49 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
         setCreatingForm(false);
     };
 
+    useEffect(() => {
+        const unsubscribe = subscribe(() => {
+            const pendingLibraryImport = pendingLibraryImportRef.current;
+
+            if (!pendingLibraryImport) {
+                return;
+            }
+
+            const libraryStore = select('gutenverse/library');
+            const modalData = libraryStore?.getModalData ? libraryStore.getModalData() : {};
+            const isImportingSection = !!modalData?.lockSectionImport;
+
+            if (isImportingSection) {
+                pendingLibraryImport.wasImporting = true;
+                return;
+            }
+
+            if (!pendingLibraryImport.wasImporting) {
+                return;
+            }
+
+            pendingLibraryImportRef.current = null;
+
+            const blockEditorStore = select('core/block-editor');
+            const block = blockEditorStore.getBlock(clientId);
+
+            if (!block) {
+                return;
+            }
+
+            const parentClientId = blockEditorStore.getBlockRootClientId(clientId) || '';
+            const currentBlockCount = blockEditorStore.getBlockOrder(parentClientId).length;
+
+            if (currentBlockCount > pendingLibraryImport.initialBlockCount) {
+                removeBlocks(clientId, false);
+            }
+        });
+
+        return () => {
+            unsubscribe();
+        };
+    }, [clientId, removeBlocks]);
+
     const openFormLibrary = () => {
         const libraryButton = document.getElementById('gutenverse-library-button');
 
@@ -172,6 +216,14 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
             setCreatingForm(false);
             return;
         }
+
+        const blockEditorStore = select('core/block-editor');
+        const parentClientId = blockEditorStore.getBlockRootClientId(clientId) || '';
+
+        pendingLibraryImportRef.current = {
+            initialBlockCount: blockEditorStore.getBlockOrder(parentClientId).length,
+            wasImporting: false,
+        };
 
         setError('');
         libraryButton.click();
@@ -241,10 +293,10 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
 
     const templates = [
         { id: 'blank', label: __('Blank Form', 'gutenverse-form') },
-        { id: 'contact', label: __('Form Contact', 'gutenverse-form') },
-        { id: 'subscribe', label: __('Form Subscribe', 'gutenverse-form') },
-        { id: 'booking', label: __('Form Booking', 'gutenverse-form') },
-        { id: 'appointment', label: __('Form Appointment', 'gutenverse-form'), pro: appointmentTemplateData.pro },
+        { id: 'contact', label: __('Contact Form', 'gutenverse-form') },
+        { id: 'subscribe', label: __('Subscribe Form', 'gutenverse-form') },
+        { id: 'booking', label: __('Booking Form', 'gutenverse-form') },
+        { id: 'appointment', label: __('Appointment Form', 'gutenverse-form'), pro: appointmentTemplateData.pro },
         { id: 'library', label: __('Choose From Library', 'gutenverse-form') },
     ];
 
