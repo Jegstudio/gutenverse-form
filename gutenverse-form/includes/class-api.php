@@ -1118,6 +1118,40 @@ class Api {
 				}
 				break;
 
+			case 'mailchimp':
+				if ( isset( $settings['api_key'] ) ) {
+					$sanitized['api_key'] = sanitize_text_field( (string) $settings['api_key'] );
+				}
+
+				if ( isset( $settings['list_id'] ) ) {
+					$sanitized['list_id'] = sanitize_text_field( (string) $settings['list_id'] );
+				}
+
+				if ( isset( $settings['email'] ) ) {
+					$sanitized['email'] = sanitize_text_field( (string) $settings['email'] );
+				}
+
+				if ( isset( $settings['name'] ) ) {
+					$sanitized['name'] = sanitize_text_field( (string) $settings['name'] );
+				}
+
+				if ( isset( $settings['status'] ) ) {
+					$sanitized['status'] = sanitize_key( (string) $settings['status'] );
+				}
+
+				if ( isset( $settings['status_if_new'] ) ) {
+					$sanitized['status_if_new'] = sanitize_key( (string) $settings['status_if_new'] );
+				}
+
+				if ( isset( $settings['tags'] ) ) {
+					$sanitized['tags'] = $this->sanitize_json_setting( $settings['tags'] );
+				}
+
+				if ( isset( $settings['merge_fields'] ) ) {
+					$sanitized['merge_fields'] = $this->sanitize_json_object_setting( $settings['merge_fields'] );
+				}
+				break;
+
 			default:
 				$sanitized = array_merge( $sanitized, $this->sanitize_recursive_settings( $settings ) );
 				break;
@@ -1171,6 +1205,26 @@ class Api {
 
 		$decoded = json_decode( wp_unslash( $value ), true );
 		if ( JSON_ERROR_NONE !== json_last_error() || ! is_array( $decoded ) ) {
+			return '';
+		}
+
+		return wp_json_encode( $decoded );
+	}
+
+	/**
+	 * Sanitize a JSON textarea setting that must decode to an object.
+	 *
+	 * @param mixed $value Raw JSON value.
+	 *
+	 * @return string
+	 */
+	private function sanitize_json_object_setting( $value ) {
+		if ( ! is_string( $value ) ) {
+			return '';
+		}
+
+		$decoded = json_decode( wp_unslash( $value ), true );
+		if ( JSON_ERROR_NONE !== json_last_error() || ! is_array( $decoded ) || array_values( $decoded ) === $decoded ) {
 			return '';
 		}
 
