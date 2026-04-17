@@ -3,19 +3,19 @@ import { __ } from '@wordpress/i18n';
 
 export const WhatsappControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }) => {
     const defaultTemplate = {
-        name: "whatsapp_confirmation",
-        language: "en_US",
-        category: "confirmation",
-        parameter_format: "positional",
+        name: 'whatsapp_confirmation',
+        language: 'en_US',
+        category: 'confirmation',
+        parameter_format: 'positional',
         components: [
             {
-                type: "body",
-                text: "Hi {{1}}! Your order number is {{2}}. Thank you.",
+                type: 'body',
+                text: 'Hi {{1}}! Your order number is {{2}}. Thank you.',
                 example: {
                     body_text: [
                         [
-                            "{input_id1}",
-                            "{input_id2}"
+                            '{input_id1}',
+                            '{input_id2}'
                         ]
                     ]
                 }

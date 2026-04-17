@@ -1,14 +1,14 @@
 import { compose } from '@wordpress/compose';
 import { parse } from '@wordpress/blocks';
 import { withAnimationStickyV2, withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
-import { useBlockProps, InnerBlocks, InspectorControls } from '@wordpress/block-editor';
-import { Button, Modal } from '@wordpress/components';
+import { useBlockProps, InnerBlocks, InspectorControls, BlockControls } from '@wordpress/block-editor';
 import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 import { BlockPanelController } from 'gutenverse-core/controls';
 import { panelList } from './panels/panel-list';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { isSticky } from 'gutenverse-core/helper';
+import { useRichTextParameter } from 'gutenverse-core/helper';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import { useDisplayEditor } from 'gutenverse-core/hooks';
 import { dispatch, select, useSelect } from '@wordpress/data';
@@ -21,6 +21,12 @@ import appointmentTemplateData from './data/appointment-template.json';
 import bookingTemplateData from './data/booking-template.json';
 import contactTemplateData from './data/contact-template.json';
 import subscribeTemplateData from './data/subscribe-template.json';
+import { Modal, Button, ToolbarGroup, ToolbarButton } from '@wordpress/components';
+
+const BULK_STYLE_PANEL_STATE = {
+    panel: 'setting',
+    section: 2,
+};
 
 const NoticeMessages = ({ successExample = false, errorExample = false }) => {
     return <>
@@ -391,6 +397,11 @@ const FormBuilderBlock = compose(
         attributes,
         setBlockRef,
     } = props;
+    const {
+        panelState,
+        setPanelState,
+        setPanelIsClicked
+    } = useRichTextParameter();
 
     const {
         elementId,
@@ -430,8 +441,32 @@ const FormBuilderBlock = compose(
         }
     }, [elementRef]);
 
+    useEffect(() => {
+        const pendingNavigation = window.gutenverseFormBuilderPanelNavigation;
+
+        if (pendingNavigation?.clientId === clientId) {
+            setPanelState(pendingNavigation.panelState);
+            setPanelIsClicked(false);
+            delete window.gutenverseFormBuilderPanelNavigation;
+        }
+    }, [clientId, setPanelIsClicked, setPanelState]);
+
+    const openBulkStylePanel = () => {
+        setPanelState(BULK_STYLE_PANEL_STATE);
+        setPanelIsClicked(false);
+    };
+
     return <>
         <CopyElementToolbar {...props}/>
+        <BlockControls>
+            <ToolbarGroup>
+                <ToolbarButton
+                    text={__('Sync Input Styles', 'gutenverse-form')}
+                    label={__('Sync Input Styles', 'gutenverse-form')}
+                    onClick={openBulkStylePanel}
+                />
+            </ToolbarGroup>
+        </BlockControls>
         <InspectorControls>
             <PanelTutorial
                 title={__('How to use form builder', 'gutenverse-form')}
@@ -451,8 +486,8 @@ const FormBuilderBlock = compose(
                 ]}
             />
         </InspectorControls>
-        <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
-        <Component blockProps={blockProps} attributes={attributes} clientId={clientId} />
+        <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} panelState={panelState} setPanelIsClicked={setPanelIsClicked} />
+        <Component blockProps={blockProps} attributes={attributes} clientId={clientId} setAttributes={props.setAttributes} />
     </>;
 });
 
