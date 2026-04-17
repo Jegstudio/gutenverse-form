@@ -6,6 +6,7 @@
 	"description": "Gutenverse Input Number",
 	"category": "gutenverse-form",
 	"allowCopyStyle": true,
+	"styleGroup": "form-input-field",
 	"attributes": {
 		"elementId": {
 			"type": "string"
@@ -16,10 +17,12 @@
 		},
 		"showLabel": {
 			"type": "boolean",
+			"copyStyle": true,
 			"default": true
 		},
 		"showHelper": {
 			"type": "boolean",
+			"copyStyle": true,
 			"default": true
 		},
 		"inputHelper": {
