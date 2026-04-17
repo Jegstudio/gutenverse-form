@@ -1,7 +1,10 @@
 import { compose } from '@wordpress/compose';
+import { parse } from '@wordpress/blocks';
 import { withAnimationStickyV2, withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { useBlockProps, InnerBlocks, InspectorControls } from '@wordpress/block-editor';
+import { Button, Modal } from '@wordpress/components';
 import classnames from 'classnames';
+import isEmpty from 'lodash/isEmpty';
 import { BlockPanelController } from 'gutenverse-core/controls';
 import { panelList } from './panels/panel-list';
 import { useEffect, useRef, useState } from '@wordpress/element';
@@ -9,13 +12,15 @@ import { isSticky } from 'gutenverse-core/helper';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import { useDisplayEditor } from 'gutenverse-core/hooks';
 import { dispatch, select, useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { PanelTutorial } from 'gutenverse-core/controls';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
-import apiFetch from '@wordpress/api-fetch';
-import { Modal, Button } from '@wordpress/components';
+import appointmentTemplateData from './data/appointment-template.json';
+import bookingTemplateData from './data/booking-template.json';
+import contactTemplateData from './data/contact-template.json';
+import subscribeTemplateData from './data/subscribe-template.json';
 
 const NoticeMessages = ({ successExample = false, errorExample = false }) => {
     return <>
@@ -51,53 +56,55 @@ const FormBuilderIcon = ({ add = false }) => {
     );
 };
 
-const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) => {
-    const [selectModalOpen, setSelectModalOpen] = useState(false);
+const TEMPLATE_DATA = {
+    appointment: appointmentTemplateData,
+    booking: bookingTemplateData,
+    contact: contactTemplateData,
+    subscribe: subscribeTemplateData
+};
+
+const TemplatePreview = ({ templateId }) => {
+    const imageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
+    const imageSrc = imageBase && (TEMPLATE_DATA[templateId]?.previewImage || (templateId === 'library' ? 'form-builder-library.png' : ''))
+        ? `${imageBase}/${TEMPLATE_DATA[templateId]?.previewImage || 'form-builder-library.png'}`
+        : '';
+
+    if (imageSrc) {
+        return (
+            <div className={classnames('template-preview-box', {
+                [`template-preview-box-${templateId}`]: !!templateId
+            })}>
+                <img
+                    src={imageSrc}
+                    alt={sprintf(__('Form %s preview', 'gutenverse-form'), templateId)}
+                    className="template-preview-image"
+                />
+            </div>
+        );
+    }
+
+    if (templateId === 'blank') {
+        return <div className="template-preview-box template-preview-box-blank" />;
+    }
+
+    return <div className="template-preview-box" />;
+};
+
+const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
     const [setupOpen, setSetupOpen] = useState(false);
     const [blankMode, setBlankMode] = useState(false);
     const [selectedTemplate, setSelectedTemplate] = useState('contact');
     const [creatingForm, setCreatingForm] = useState(false);
-    const [formName, setFormName] = useState('');
-    const [forms, setForms] = useState([]);
-    const [selectedForm, setSelectedForm] = useState('');
-    const [loadingForms, setLoadingForms] = useState(false);
     const [error, setError] = useState('');
-
-    const openSelectModal = () => {
-        setSelectModalOpen(true);
-        setLoadingForms(true);
-        setError('');
-
-        apiFetch({
-            path: 'gutenverse-form-client/v1/form/search',
-            method: 'POST',
-            data: {
-                search: ''
-            }
-        }).then(response => {
-            const nextForms = Array.isArray(response) ? response : [];
-            setForms(nextForms);
-            setSelectedForm(nextForms[0]?.value || '');
-            setLoadingForms(false);
-        }).catch(err => {
-            setError(err?.message || __('Could not load existing forms. Please try again.', 'gutenverse-form'));
-            setLoadingForms(false);
-        });
-    };
-
-    const selectExistingForm = () => {
-        const form = forms.find(item => `${item.value}` === `${selectedForm}`);
-
-        if (!form) {
-            setError(__('Please select a form first.', 'gutenverse-form'));
-            return;
-        }
-
-        setAttributes({
-            formId: form
-        });
-        setSelectModalOpen(false);
-    };
+    const [proPopupActive, setProPopupActive] = useState(false);
+    const { replaceBlocks } = dispatch('core/block-editor');
+    const hasProPluginActive = !!window?.GutenverseConfig?.plugins?.['gutenverse-pro']?.active;
+    const hasActiveProLicense = !isEmpty(window?.gprodata);
+    const imageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
+    const appointmentPreviewImage = imageBase ? `${imageBase}/${appointmentTemplateData.previewImage}` : '';
+    const adminUrl = window?.GutenverseConfig?.adminUrl || '/wp-admin/';
+    const upgradeUrl = window?.GutenverseConfig?.upgradeProUrl || `${adminUrl}admin.php?page=gutenverse&path=license`;
+    const licenseUrl = `${adminUrl}admin.php?page=gutenverse&path=license`;
 
     const findFormCategory = (sectionCategories = []) => {
         let result = null;
@@ -185,6 +192,31 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) =>
             return;
         }
 
+        const templateBlocks = Object.fromEntries(
+            Object.entries(TEMPLATE_DATA).map(([templateId, templateData]) => [templateId, templateData.templateContent])
+        );
+        const selectedTemplateContent = templateBlocks[selectedTemplate];
+
+        if (selectedTemplate === 'appointment' && !hasActiveProLicense) {
+            setCreatingForm(false);
+            setProPopupActive(true);
+            return;
+        }
+
+        if (selectedTemplateContent) {
+            const blocks = parse(selectedTemplateContent);
+
+            if (!blocks.length) {
+                setError(__('Could not prepare the selected template. Please try again.', 'gutenverse-form'));
+                setCreatingForm(false);
+                return;
+            }
+
+            setError('');
+            replaceBlocks(clientId, blocks);
+            return;
+        }
+
         setError(__('Template block data is not connected yet.', 'gutenverse-form'));
         setCreatingForm(false);
     };
@@ -206,12 +238,53 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) =>
         { id: 'contact', label: __('Form Contact', 'gutenverse-form') },
         { id: 'subscribe', label: __('Form Subscribe', 'gutenverse-form') },
         { id: 'booking', label: __('Form Booking', 'gutenverse-form') },
-        { id: 'appointment', label: __('Form Appointment', 'gutenverse-form') },
+        { id: 'appointment', label: __('Form Appointment', 'gutenverse-form'), pro: appointmentTemplateData.pro },
         { id: 'library', label: __('Choose From Library', 'gutenverse-form') },
     ];
 
     return (
         <div {...blockProps}>
+            {proPopupActive && (
+                <Modal
+                    title={__('Appointment Form Template', 'gutenverse-form')}
+                    onRequestClose={() => setProPopupActive(false)}
+                    className="gutenverse-form-template-pro-modal"
+                >
+                    <div className="gutenverse-form-template-pro-content">
+                        {appointmentPreviewImage && (
+                            <div className="gutenverse-form-template-pro-preview">
+                                <img
+                                    src={appointmentPreviewImage}
+                                    alt={__('Appointment Form template preview', 'gutenverse-form')}
+                                />
+                            </div>
+                        )}
+                        <div className="gutenverse-form-template-pro-copy">
+                            <span className="template-pro-pill">{__('PRO Template', 'gutenverse-form')}</span>
+                            <h3>{__('Unlock the Appointment Form layout', 'gutenverse-form')}</h3>
+                            <p>{__('This starter template is available for active Gutenverse PRO licenses. Upgrade or activate your license to use it in the editor.', 'gutenverse-form')}</p>
+                        </div>
+                        <div className="gutenverse-form-template-pro-actions">
+                            <Button
+                                variant="tertiary"
+                                onClick={() => setProPopupActive(false)}
+                            >
+                                {__('Maybe later', 'gutenverse-form')}
+                            </Button>
+                            <Button
+                                variant={hasProPluginActive ? 'primary' : 'secondary'}
+                                href={hasProPluginActive ? licenseUrl : upgradeUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                {hasProPluginActive
+                                    ? __('Activate License', 'gutenverse-form')
+                                    : __('Upgrade to PRO', 'gutenverse-form')}
+                            </Button>
+                        </div>
+                    </div>
+                </Modal>
+            )}
             <NoticeMessages {...attributes} />
             {blankMode ? (
                 <InnerBlocks
@@ -236,29 +309,27 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) =>
                         <>
                             <h3>{__('New Form Setup', 'gutenverse-form')}</h3>
                             <p>{__('Set up your form details and select a starting layout.', 'gutenverse-form')}</p>
-                            <input
-                                type="text"
-                                className="placeholder-form-name"
-                                value={formName}
-                                placeholder={__('Enter form name', 'gutenverse-form')}
-                                onChange={event => setFormName(event.target.value)}
-                                disabled={creatingForm}
-                            />
                             <div className="placeholder-template-grid">
                                 {templates.map(template => (
                                     <button
                                         type="button"
                                         className={classnames('placeholder-template-card', {
-                                            active: selectedTemplate === template.id
+                                            active: selectedTemplate === template.id,
+                                            'pro-locked': template.pro && !hasActiveProLicense
                                         })}
                                         key={template.id}
                                         onClick={() => {
+                                            if (template.pro && !hasActiveProLicense) {
+                                                setProPopupActive(true);
+                                                return;
+                                            }
                                             setSelectedTemplate(template.id);
                                             setError('');
                                         }}
                                         disabled={creatingForm}
                                     >
-                                        <span className="template-preview-box" />
+                                        {template.pro && <span className="template-pro-badge">{__('PRO', 'gutenverse-form')}</span>}
+                                        <TemplatePreview templateId={template.id} />
                                         <strong>{template.label}</strong>
                                     </button>
                                 ))}
@@ -277,18 +348,9 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) =>
                         </>
                     ) : (
                         <>
-                            <h3>{__('Select or Create a Form', 'gutenverse-form')}</h3>
-                            <p>{__('Select an existing form or create a new one to get started.', 'gutenverse-form')}</p>
+                            <h3>{__('Create a Form', 'gutenverse-form')}</h3>
+                            <p>{__('Start a new form here. Each form builder manages its own dedicated form action.', 'gutenverse-form')}</p>
                             <div className="placeholder-actions">
-                                <button type="button" className="placeholder-action" onClick={openSelectModal}>
-                                    <span className="placeholder-action-icon">
-                                        <FormBuilderIcon />
-                                    </span>
-                                    <span>
-                                        <strong>{__('Select Existing Form', 'gutenverse-form')}</strong>
-                                        <small>{__('Use a form that you have already created', 'gutenverse-form')}</small>
-                                    </span>
-                                </button>
                                 <button type="button" className="placeholder-action" onClick={() => {
                                     setSetupOpen(true);
                                     setError('');
@@ -302,39 +364,10 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) =>
                                     </span>
                                 </button>
                             </div>
+                            {error && <p className="placeholder-error">{error}</p>}
                         </>
                     )}
                 </div>
-            )}
-            {selectModalOpen && (
-                <Modal
-                    title={__('Select Existing Form', 'gutenverse-form')}
-                    onRequestClose={() => setSelectModalOpen(false)}
-                    className="gutenverse-form-select-modal"
-                >
-                    <div className="gutenverse-form-select-modal-content">
-                        {loadingForms ? (
-                            <p>{__('Loading forms...', 'gutenverse-form')}</p>
-                        ) : forms.length > 0 ? (
-                            <select value={selectedForm} onChange={event => setSelectedForm(event.target.value)}>
-                                {forms.map(form => (
-                                    <option key={form.value} value={form.value}>{form.label}</option>
-                                ))}
-                            </select>
-                        ) : (
-                            <p>{__('No existing forms found.', 'gutenverse-form')}</p>
-                        )}
-                        {error && <p className="gutenverse-form-select-error">{error}</p>}
-                    </div>
-                    <div className="gutenverse-form-select-modal-footer">
-                        <Button isSecondary onClick={() => setSelectModalOpen(false)}>
-                            {__('Cancel', 'gutenverse-form')}
-                        </Button>
-                        <Button isPrimary onClick={selectExistingForm} disabled={loadingForms || forms.length === 0}>
-                            {__('Select Form', 'gutenverse-form')}
-                        </Button>
-                    </div>
-                </Modal>
             )}
         </div>
     );
@@ -419,7 +452,7 @@ const FormBuilderBlock = compose(
             />
         </InspectorControls>
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
-        <Component blockProps={blockProps} attributes={attributes} clientId={clientId} setAttributes={props.setAttributes} />
+        <Component blockProps={blockProps} attributes={attributes} clientId={clientId} />
     </>;
 });
 
