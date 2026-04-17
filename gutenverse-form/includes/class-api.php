@@ -1118,6 +1118,20 @@ class Api {
 				}
 				break;
 
+			case 'webhook':
+				if ( isset( $settings['webhookUrl'] ) ) {
+					$sanitized['webhookUrl'] = $this->sanitize_allowed_url( $settings['webhookUrl'] );
+				}
+
+				if ( isset( $settings['webhook_url'] ) && empty( $sanitized['webhookUrl'] ) ) {
+					$sanitized['webhookUrl'] = $this->sanitize_allowed_url( $settings['webhook_url'] );
+				}
+
+				if ( isset( $settings['content'] ) ) {
+					$sanitized['content'] = sanitize_textarea_field( (string) $settings['content'] );
+				}
+				break;
+
 			case 'mailchimp':
 				if ( isset( $settings['api_key'] ) ) {
 					$sanitized['api_key'] = sanitize_text_field( (string) $settings['api_key'] );
