@@ -6,6 +6,7 @@
 	"description": "Gutenverse Input GDPR gdpr",
 	"category": "gutenverse-form",
 	"allowCopyStyle": true,
+	"styleGroup": "form-input-choice",
 	"attributes": {
 		"elementId": {
 			"type": "string"
@@ -16,6 +17,7 @@
 		},
 		"showLabel": {
 			"type": "boolean",
+			"copyStyle": true,
 			"default": true
 		},
 		"inputPlaceholder": {
@@ -24,6 +26,7 @@
 		},
 		"showHelper": {
 			"type": "boolean",
+			"copyStyle": true,
 			"default": true
 		},
 		"inputHelper": {

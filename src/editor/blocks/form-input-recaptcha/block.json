@@ -20,6 +20,7 @@
 		},
 		"showLabel": {
 			"type": "boolean",
+			"copyStyle": true,
 			"default": true
 		},
 		"inputLabel": {
@@ -40,6 +41,7 @@
 		},
 		"showHelper": {
 			"type": "boolean",
+			"copyStyle": true,
 			"default": true
 		},
 		"inputHelper": {
