@@ -1127,6 +1127,14 @@ class Api {
 					$sanitized['webhookUrl'] = $this->sanitize_allowed_url( $settings['webhook_url'] );
 				}
 
+				if ( isset( $settings['signingSecret'] ) ) {
+					$sanitized['signingSecret'] = sanitize_text_field( (string) $settings['signingSecret'] );
+				}
+
+				if ( isset( $settings['signing_secret'] ) && empty( $sanitized['signingSecret'] ) ) {
+					$sanitized['signingSecret'] = sanitize_text_field( (string) $settings['signing_secret'] );
+				}
+
 				if ( isset( $settings['content'] ) ) {
 					$sanitized['content'] = sanitize_textarea_field( (string) $settings['content'] );
 				}

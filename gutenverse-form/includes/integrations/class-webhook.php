@@ -42,6 +42,15 @@ class Webhook {
 	}
 
 	/**
+	 * Get webhook signing secret from integration settings.
+	 *
+	 * @return string
+	 */
+	private function get_signing_secret() {
+		return (string) ( $this->settings['signingSecret'] ?? $this->settings['signing_secret'] ?? '' );
+	}
+
+	/**
 	 * Build the webhook message payload.
 	 *
 	 * @param array $data     Form data.
@@ -55,6 +64,23 @@ class Webhook {
 			: __( "New form submission:\n{all_fields}", 'gutenverse-form' );
 
 		return \Gutenverse_Form\Integration::parse_template( $content, $data, $entry_id, $form_id );
+	}
+
+	/**
+	 * Build a request signature for webhook verification.
+	 *
+	 * @param string $payload_json Encoded payload body.
+	 * @param string $timestamp    Unix timestamp as a string.
+	 * @return string
+	 */
+	private function build_signature( $payload_json, $timestamp ) {
+		$secret = $this->get_signing_secret();
+
+		if ( '' === $secret ) {
+			return '';
+		}
+
+		return hash_hmac( 'sha256', $timestamp . '.' . $payload_json, $secret );
 	}
 
 	/**
@@ -86,14 +112,29 @@ class Webhook {
 			'fields'       => $data,
 			'browser_data' => is_array( $browser_data ) ? $browser_data : array(),
 		);
+
+		$payload_json = wp_json_encode( $payload );
+		$timestamp    = (string) time();
+		$signature    = $this->build_signature( $payload_json, $timestamp );
+
+		$headers = array_filter(
+			array(
+				'Content-Type'                   => 'application/json',
+				'X-Gutenverse-Event'             => 'form_submitted',
+				'X-Gutenverse-Signature'         => '' !== $signature ? 'sha256=' . $signature : '',
+				'X-Gutenverse-Timestamp'         => $timestamp,
+				'X-Gutenverse-Signature-Version' => 'v1',
+			),
+			function ( $value ) {
+				return '' !== $value;
+			}
+		);
+
 		return wp_remote_post(
 			$webhook_url,
 			array(
-				'headers' => array(
-					'Content-Type'       => 'application/json',
-					'X-Gutenverse-Event' => 'form_submitted',
-				),
-				'body'    => wp_json_encode( $payload ),
+				'headers' => $headers,
+				'body'    => $payload_json,
 				'timeout' => 15,
 			)
 		);
@@ -170,6 +211,12 @@ class Webhook {
 				'required'    => true,
 				'type'        => 'text',
 				'placeholder' => __( 'https://example.com/wp-json/my-site/v1/form-webhook', 'gutenverse-form' ),
+			),
+			'signingSecret' => array(
+				'label'       => __( 'Signing Secret', 'gutenverse-form' ),
+				'description' => __( 'Use the same secret on the receiving site to verify the X-Gutenverse-Signature header.', 'gutenverse-form' ),
+				'type'        => 'text',
+				'placeholder' => __( 'your-shared-webhook-secret', 'gutenverse-form' ),
 			),
 			'content'    => array(
 				'label'       => __( 'Content Template', 'gutenverse-form' ),

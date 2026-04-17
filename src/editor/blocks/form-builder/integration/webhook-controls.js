@@ -15,6 +15,15 @@ export const WebhookControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }
                 placeholder={'https://example.com/wp-json/my-site/v1/form-webhook'}
             />
             <DebouncedTextControl
+                label={__('Signing Secret', 'gutenverse-form')}
+                value={item.signingSecret || item.signing_secret}
+                onValueChange={signingSecret => {
+                    onUpdateIndexValue({ ...item, signingSecret });
+                    onUpdateIndexStyle({ ...item, signingSecret });
+                }}
+                placeholder={__('your-shared-webhook-secret', 'gutenverse-form')}
+            />
+            <DebouncedTextControl
                 label={__('Content Template', 'gutenverse-form')}
                 value={item.content}
                 onValueChange={content => {
