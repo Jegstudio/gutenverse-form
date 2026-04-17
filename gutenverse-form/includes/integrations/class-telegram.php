@@ -29,7 +29,6 @@ class Telegram {
 	 * @param array $settings Integration settings.
 	 */
 	public function set_settings( $settings ) {
-		gutenverse_rlog('this',$settings);
 		$this->settings = $settings;
 	}
 

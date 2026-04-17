@@ -1,5 +1,6 @@
 # Folders to ignore
 .claude
+.serena
 .idea
 .claude
 build
