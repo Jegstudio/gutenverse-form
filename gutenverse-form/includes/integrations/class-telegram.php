@@ -166,6 +166,7 @@ class Telegram {
 				'description' => __( 'Enter your Telegram bot token from BotFather', 'gutenverse-form' ),
 				'required'    => true,
 				'type'        => 'text',
+				'sensitive'   => true,
 				'placeholder' => __( '123456789:ABCDEF...', 'gutenverse-form' ),
 			),
 			'chatId'    => array(

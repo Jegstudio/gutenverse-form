@@ -210,12 +210,14 @@ class Webhook {
 				'description' => __( 'Enter the external HTTPS endpoint that should receive the form_submitted event.', 'gutenverse-form' ),
 				'required'    => true,
 				'type'        => 'text',
+				'sensitive'   => true,
 				'placeholder' => __( 'https://example.com/wp-json/my-site/v1/form-webhook', 'gutenverse-form' ),
 			),
 			'signingSecret' => array(
 				'label'       => __( 'Signing Secret', 'gutenverse-form' ),
 				'description' => __( 'Use the same secret on the receiving site to verify the X-Gutenverse-Signature header.', 'gutenverse-form' ),
 				'type'        => 'text',
+				'sensitive'   => true,
 				'placeholder' => __( 'your-shared-webhook-secret', 'gutenverse-form' ),
 			),
 			'content'    => array(

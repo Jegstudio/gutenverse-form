@@ -198,7 +198,19 @@ class Form_Validation extends Style_Generator {
 	public function get_form_data( $block ) {
 		if ( 'gutenverse/form-builder' === $block['blockName'] ) {
 			if ( isset( $block['attrs']['formId'] ) ) {
-				$form_id = $block['attrs']['formId']['value'];
+				$form_attr = $block['attrs']['formId'];
+				$form_id   = null;
+
+				if ( is_array( $form_attr ) && isset( $form_attr['value'] ) ) {
+					$form_id = $form_attr['value'];
+				} elseif ( is_scalar( $form_attr ) ) {
+					$form_id = $form_attr;
+				}
+
+				if ( empty( $form_id ) ) {
+					return;
+				}
+
 				if ( ! in_array( $form_id, $this->form_validation_data, true ) ) {
 					$this->form_validation_data[] = $form_id;
 				}

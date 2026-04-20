@@ -79,6 +79,15 @@ class Editor_Assets {
 			if ( ! empty( $enabled_services[ $service_name ] ) ) {
 				$service_settings = get_option( "gutenverse_form_{$service_name}_settings", array() );
 				if ( ! empty( $service_settings['apply_globally'] ) ) {
+					$instance = ( new Integration() )->get_service_instance( $service_name );
+					$fields   = ( $instance && method_exists( $instance, 'get_fields' ) ) ? $instance->get_fields() : array();
+
+					foreach ( $fields as $key => $field ) {
+						if ( ! empty( $field['sensitive'] ) ) {
+							unset( $service_settings[ $key ] );
+						}
+					}
+
 					$global_integrations[] = array_merge(
 						array( 'type' => $service_name ),
 						$service_settings

@@ -110,6 +110,9 @@ class Form_Builder extends Block_Abstract {
 		}
 
 		$integration = isset( $this->attributes['integration'] ) ? $this->attributes['integration'] : array();
+		$post_id     = get_the_ID();
+		$integration['elementId'] = $element_id;
+		$integration = ( new \Gutenverse_Form\Integration() )->hydrate_block_integration_secrets( $integration, (int) $post_id, (string) $element_id );
 
 		$html  = '<form style="display:none" class="' . esc_attr( trim( $class_name ) ) . '"' . $data_attrs . '>';
 		$html .= '<input type="hidden" name="gutenverse-form-integrations" value="' . esc_attr( wp_json_encode( $integration ) ) . '">';

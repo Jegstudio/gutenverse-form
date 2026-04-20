@@ -1,18 +1,21 @@
 import DebouncedTextControl from './debounced-text-control';
 import { __ } from '@wordpress/i18n';
+import { ServerSecretControl } from './server-secret-control';
 
-export const MailChimpControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }) => {
+export const MailChimpControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle, elementId }) => {
     return (
         <>
-            <DebouncedTextControl
+            <ServerSecretControl
+                item={item}
+                fieldKey={'api_key'}
+                service={'mailchimp'}
+                elementId={elementId}
                 label={__('API Key', 'gutenverse-form')}
                 required={true}
-                value={item.api_key}
-                onValueChange={api_key => {
-                    onUpdateIndexValue({ ...item, api_key });
-                    onUpdateIndexStyle({ ...item, api_key });
-                }}
                 placeholder={__('xxxxxx-us1', 'gutenverse-form')}
+                description={__('Stored securely on the server and reused for this form block.', 'gutenverse-form')}
+                onUpdateIndexValue={onUpdateIndexValue}
+                onUpdateIndexStyle={onUpdateIndexStyle}
             />
             <DebouncedTextControl
                 label={__('Audience ID', 'gutenverse-form')}

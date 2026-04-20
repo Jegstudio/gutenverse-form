@@ -1,18 +1,21 @@
 import DebouncedTextControl from './debounced-text-control';
 import { __ } from '@wordpress/i18n';
+import { ServerSecretControl } from './server-secret-control';
 
-export const TelegramControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }) => {
+export const TelegramControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle, elementId }) => {
     return (
         <>
-            <DebouncedTextControl
+            <ServerSecretControl
+                item={item}
+                fieldKey={'botToken'}
+                service={'telegram'}
+                elementId={elementId}
                 label={__('Bot Token', 'gutenverse-form')}
                 required={true}
-                value={item.botToken}
-                onValueChange={botToken => {
-                    onUpdateIndexValue({ ...item, botToken });
-                    onUpdateIndexStyle({ ...item, botToken });
-                }}
                 placeholder={'Your Telegram Bot Token'}
+                description={__('Stored securely on the server and reused for this form block.', 'gutenverse-form')}
+                onUpdateIndexValue={onUpdateIndexValue}
+                onUpdateIndexStyle={onUpdateIndexStyle}
             />
             <DebouncedTextControl
                 label={__('Chat ID', 'gutenverse-form')}

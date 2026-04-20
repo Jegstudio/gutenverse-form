@@ -1,18 +1,21 @@
 import DebouncedTextControl from './debounced-text-control';
 import { __ } from '@wordpress/i18n';
+import { ServerSecretControl } from './server-secret-control';
 
-export const GetResponseControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }) => {
+export const GetResponseControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle, elementId }) => {
     return (
         <>
-            <DebouncedTextControl
+            <ServerSecretControl
+                item={item}
+                fieldKey={'api_key'}
+                service={'get_response'}
+                elementId={elementId}
                 label={__('API Key', 'gutenverse-form')}
                 required={true}
-                value={item.api_key}
-                onValueChange={api_key => {
-                    onUpdateIndexValue({ ...item, api_key });
-                    onUpdateIndexStyle({ ...item, api_key });
-                }}
                 placeholder={__('GetResponse API key', 'gutenverse-form')}
+                description={__('Stored securely on the server and reused for this form block.', 'gutenverse-form')}
+                onUpdateIndexValue={onUpdateIndexValue}
+                onUpdateIndexStyle={onUpdateIndexStyle}
             />
             <DebouncedTextControl
                 label={__('Campaign ID', 'gutenverse-form')}

@@ -1,18 +1,21 @@
 import DebouncedTextControl from './debounced-text-control';
 import { __ } from '@wordpress/i18n';
+import { ServerSecretControl } from './server-secret-control';
 
-export const DiscordControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }) => {
+export const DiscordControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle, elementId }) => {
     return (
         <>
-            <DebouncedTextControl
+            <ServerSecretControl
+                item={item}
+                fieldKey={'webhookUrl'}
+                service={'discord'}
+                elementId={elementId}
                 label={__('Discord Webhook URL', 'gutenverse-form')}
                 required={true}
-                value={item.webhookUrl}
-                onValueChange={webhookUrl => {
-                    onUpdateIndexValue({ ...item, webhookUrl });
-                    onUpdateIndexStyle({ ...item, webhookUrl });
-                }}
                 placeholder={'https://discord.com/api/webhooks/...'}
+                description={__('Stored securely on the server and not written into block content.', 'gutenverse-form')}
+                onUpdateIndexValue={onUpdateIndexValue}
+                onUpdateIndexStyle={onUpdateIndexStyle}
             />
             <DebouncedTextControl
                 label={__('Username', 'gutenverse-form')}

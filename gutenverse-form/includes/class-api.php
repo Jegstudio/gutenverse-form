@@ -113,6 +113,18 @@ class Api {
 
 		register_rest_route(
 			self::ENDPOINT,
+			'integration/block_secret',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'save_block_secret' ),
+				'permission_callback' => function () {
+					return is_user_logged_in();
+				},
+			)
+		);
+
+		register_rest_route(
+			self::ENDPOINT,
 			'form-action/(?P<id>\d+)',
 			array(
 				'methods'             => 'GET',
@@ -1053,7 +1065,12 @@ class Api {
 			$service = sanitize_key( $params['service'] );
 
 			if ( in_array( $service, $allowed_services, true ) && is_array( $params['settings'] ) ) {
-				$settings = $this->sanitize_integration_settings( $service, $params['settings'] );
+				$raw_settings = $this->merge_sensitive_integration_settings(
+					$service,
+					get_option( "gutenverse_form_{$service}_settings", array() ),
+					$params['settings']
+				);
+				$settings = $this->sanitize_integration_settings( $service, $raw_settings );
 				update_option( "gutenverse_form_{$service}_settings", $settings );
 
 				return new WP_REST_Response( array( 'success' => true ), 200 );
@@ -1066,6 +1083,78 @@ class Api {
 				'message' => esc_html__( 'Invalid integration service or settings.', 'gutenverse-form' ),
 			),
 			400
+		);
+	}
+
+	/**
+	 * Save or clear a secret for a form builder block integration action.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function save_block_secret( $request ) {
+		$params     = $request->get_params();
+		$post_id    = isset( $params['postId'] ) ? absint( $params['postId'] ) : 0;
+		$element_id = isset( $params['elementId'] ) ? sanitize_key( $params['elementId'] ) : '';
+		$action_key = isset( $params['actionKey'] ) ? preg_replace( '/[^A-Za-z0-9_\-]/', '', (string) $params['actionKey'] ) : '';
+		$field_key  = isset( $params['fieldKey'] ) ? preg_replace( '/[^A-Za-z0-9_\-]/', '', (string) $params['fieldKey'] ) : '';
+		$value      = isset( $params['value'] ) ? (string) $params['value'] : '';
+		$service    = isset( $params['service'] ) ? sanitize_key( $params['service'] ) : '';
+
+		if ( ! $post_id || empty( $element_id ) || empty( $action_key ) || empty( $field_key ) || empty( $service ) ) {
+			return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Missing secret storage context.', 'gutenverse-form' ) ), 400 );
+		}
+
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Permission denied.', 'gutenverse-form' ) ), 403 );
+		}
+
+		$integration      = new Integration();
+		$allowed_services = array_column( Integration::get_services(), 'service_name' );
+		if ( ! in_array( $service, $allowed_services, true ) ) {
+			return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Invalid integration service.', 'gutenverse-form' ) ), 400 );
+		}
+
+		$sensitive_fields = $integration->get_sensitive_service_fields( $service );
+		if ( ! in_array( $field_key, $sensitive_fields, true ) ) {
+			return new WP_REST_Response( array( 'success' => false, 'message' => __( 'This field is not configured for server-side secret storage.', 'gutenverse-form' ) ), 400 );
+		}
+
+		$secret_map = get_post_meta( $post_id, 'gutenverse_form_block_secrets', true );
+		$secret_map = is_array( $secret_map ) ? $secret_map : array();
+
+		if ( ! isset( $secret_map[ $element_id ] ) || ! is_array( $secret_map[ $element_id ] ) ) {
+			$secret_map[ $element_id ] = array();
+		}
+
+		if ( ! isset( $secret_map[ $element_id ][ $action_key ] ) || ! is_array( $secret_map[ $element_id ][ $action_key ] ) ) {
+			$secret_map[ $element_id ][ $action_key ] = array();
+		}
+
+		if ( '' === trim( $value ) ) {
+			unset( $secret_map[ $element_id ][ $action_key ][ $field_key ] );
+
+			if ( empty( $secret_map[ $element_id ][ $action_key ] ) ) {
+				unset( $secret_map[ $element_id ][ $action_key ] );
+			}
+
+			if ( empty( $secret_map[ $element_id ] ) ) {
+				unset( $secret_map[ $element_id ] );
+			}
+		} else {
+			$secret_map[ $element_id ][ $action_key ][ $field_key ] = $value;
+		}
+
+		update_post_meta( $post_id, 'gutenverse_form_block_secrets', $secret_map );
+
+		return new WP_REST_Response(
+			array(
+				'success' => true,
+				'marker'  => Integration::SERVER_SECRET_MARKER,
+				'hasSavedValue' => '' !== trim( $value ),
+			),
+			200
 		);
 	}
 
@@ -1174,6 +1263,48 @@ class Api {
 				}
 				break;
 
+			case 'google_sheets':
+				if ( isset( $settings['clientEmail'] ) ) {
+					$sanitized['clientEmail'] = sanitize_email( (string) $settings['clientEmail'] );
+				}
+
+				if ( isset( $settings['client_email'] ) && empty( $sanitized['clientEmail'] ) ) {
+					$sanitized['clientEmail'] = sanitize_email( (string) $settings['client_email'] );
+				}
+
+				if ( isset( $settings['privateKey'] ) ) {
+					$sanitized['privateKey'] = trim( (string) $settings['privateKey'] );
+				}
+
+				if ( isset( $settings['private_key'] ) && empty( $sanitized['privateKey'] ) ) {
+					$sanitized['privateKey'] = trim( (string) $settings['private_key'] );
+				}
+
+				if ( isset( $settings['spreadsheetId'] ) ) {
+					$sanitized['spreadsheetId'] = sanitize_text_field( (string) $settings['spreadsheetId'] );
+				}
+
+				if ( isset( $settings['spreadsheet_id'] ) && empty( $sanitized['spreadsheetId'] ) ) {
+					$sanitized['spreadsheetId'] = sanitize_text_field( (string) $settings['spreadsheet_id'] );
+				}
+
+				if ( isset( $settings['sheetName'] ) ) {
+					$sanitized['sheetName'] = sanitize_text_field( (string) $settings['sheetName'] );
+				}
+
+				if ( isset( $settings['sheet_name'] ) && empty( $sanitized['sheetName'] ) ) {
+					$sanitized['sheetName'] = sanitize_text_field( (string) $settings['sheet_name'] );
+				}
+
+				if ( isset( $settings['columnsTemplate'] ) ) {
+					$sanitized['columnsTemplate'] = sanitize_textarea_field( (string) $settings['columnsTemplate'] );
+				}
+
+				if ( isset( $settings['columns_template'] ) && empty( $sanitized['columnsTemplate'] ) ) {
+					$sanitized['columnsTemplate'] = sanitize_textarea_field( (string) $settings['columns_template'] );
+				}
+				break;
+
 			default:
 				$sanitized = array_merge( $sanitized, $this->sanitize_recursive_settings( $settings ) );
 				break;
@@ -1186,6 +1317,50 @@ class Api {
 			},
 			ARRAY_FILTER_USE_BOTH
 		);
+	}
+
+	/**
+	 * Merge submitted settings with already saved sensitive values.
+	 *
+	 * Sensitive values are kept server-side unless the user explicitly changes
+	 * or clears them.
+	 *
+	 * @param string $service           Service name.
+	 * @param array  $existing_settings Existing saved settings.
+	 * @param array  $submitted_settings Submitted settings.
+	 *
+	 * @return array
+	 */
+	private function merge_sensitive_integration_settings( $service, $existing_settings, $submitted_settings ) {
+		$existing_settings  = is_array( $existing_settings ) ? $existing_settings : array();
+		$submitted_settings = is_array( $submitted_settings ) ? $submitted_settings : array();
+		$instance           = ( new Integration() )->get_service_instance( $service );
+		$fields             = ( $instance && method_exists( $instance, 'get_fields' ) ) ? $instance->get_fields() : array();
+		$merged             = array_merge( $existing_settings, $submitted_settings );
+
+		foreach ( $fields as $key => $field ) {
+			if ( empty( $field['sensitive'] ) ) {
+				continue;
+			}
+
+			if ( ! array_key_exists( $key, $submitted_settings ) ) {
+				if ( array_key_exists( $key, $existing_settings ) ) {
+					$merged[ $key ] = $existing_settings[ $key ];
+				}
+				continue;
+			}
+
+			if ( '__gutenverse_clear_secret__' === $submitted_settings[ $key ] ) {
+				$merged[ $key ] = '';
+				continue;
+			}
+
+			if ( '' === (string) $submitted_settings[ $key ] && array_key_exists( $key, $existing_settings ) ) {
+				$merged[ $key ] = $existing_settings[ $key ];
+			}
+		}
+
+		return $merged;
 	}
 
 	/**

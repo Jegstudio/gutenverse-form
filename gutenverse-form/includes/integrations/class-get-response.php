@@ -213,6 +213,7 @@ class Get_Response {
 				'description' => __( 'Enter your GetResponse API key.', 'gutenverse-form' ),
 				'required'    => true,
 				'type'        => 'text',
+				'sensitive'   => true,
 				'placeholder' => __( 'GetResponse API key', 'gutenverse-form' ),
 			),
 			'campaign_id'         => array(

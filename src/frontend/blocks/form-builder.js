@@ -16,16 +16,25 @@ class GutenverseFormValidation extends Default {
         const formBuilder = u(element);
         const formId = formBuilder.data('form-id');
         const { data, missingLabel, isAdmin } = window['GutenverseFormValidationData'];
-        const formData = data.filter(el => el.formId == formId);
+        const matchedFormData = data.find(el => el.formId == formId);
+        const hasAssignedForm = !!formId;
 
         this.__captchaJS(formBuilder);
         this._initDynamicValues(formBuilder);
-        if (formData.length !== 0) {
-            if (formData[0]['require_login'] && !formData[0]['logged_in']) {
+        if (matchedFormData || hasAssignedForm) {
+            const formData = matchedFormData || {
+                formId,
+                require_login: false,
+                logged_in: true,
+                form_success_notice: false,
+                form_error_notice: false
+            };
+
+            if (formData['require_login'] && !formData['logged_in']) {
                 formBuilder.remove();
             } else {
                 formBuilder.attr('style', '');
-                this._onSubmit(formBuilder, formData[0]);
+                this._onSubmit(formBuilder, formData);
             }
             // REMINDER : button classes added here instead of from block save.js, it is done this way to prevent "Block Recovery" issue.
             const buttonUpdates = [];

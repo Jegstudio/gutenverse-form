@@ -46,6 +46,7 @@ class Mailchimp {
 				'description' => __( 'Enter your Mailchimp API key.', 'gutenverse-form' ),
 				'required'    => true,
 				'type'        => 'text',
+				'sensitive'   => true,
 				'placeholder' => __( 'xxxxxx-us1', 'gutenverse-form' ),
 			),
 			'list_id'      => array(

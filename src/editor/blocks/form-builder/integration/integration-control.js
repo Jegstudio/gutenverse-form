@@ -72,8 +72,8 @@ const typeOptions = (customOptions) => {
     return options;
 };
 
-const IntegrationTypeControl = ({ item, selectType, onUpdateIndexValue, onUpdateIndexStyle }) => {
-    const props = { item, onUpdateIndexValue, onUpdateIndexStyle, selectType };
+const IntegrationTypeControl = ({ item, selectType, onUpdateIndexValue, onUpdateIndexStyle, elementId }) => {
+    const props = { item, onUpdateIndexValue, onUpdateIndexStyle, selectType, elementId };
     switch (item.type) {
         case 'whatsapp':
             return <WhatsappControls {...props} />;
@@ -112,7 +112,8 @@ const ActionItem = ({
     onRemove,
     open,
     setOpen,
-    customOptions
+    customOptions,
+    elementId
 }) => {
     const onClickHeader = () => {
         if (open) {
@@ -189,6 +190,7 @@ const ActionItem = ({
                             selectType={selectType}
                             onUpdateIndexValue={onUpdateIndexValue}
                             onUpdateIndexStyle={onUpdateIndexStyle}
+                            elementId={elementId}
                         />
                     }
                 </div>
@@ -241,7 +243,8 @@ const ActionControl = ({
     elementValue,
     onValueChange,
     onLocalChange,
-    customOptions
+    customOptions,
+    elementId
 }) => {
     const id = useInstanceId(ActionControl, 'inspector-integration-action-control');
     const [openLast, setOpenLast] = useState(null);
@@ -309,6 +312,7 @@ const ActionControl = ({
                             open={index === openLast}
                             setOpen={setOpenLast}
                             customOptions={customOptions}
+                            elementId={elementId}
                         />
                     )}
                 </div>
@@ -347,6 +351,7 @@ const IntegrationControl = (props) => {
         onValueChange,
         onLocalChange,
         customOptions = [],
+        elementId,
     } = props;
 
     const id = useInstanceId(IntegrationControl, 'inspector-integration-control');
@@ -355,7 +360,8 @@ const IntegrationControl = (props) => {
         value,
         onValueChange,
         onLocalChange,
-        customOptions
+        customOptions,
+        elementId
     };
 
     // return applyFilters(

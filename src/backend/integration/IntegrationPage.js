@@ -163,6 +163,78 @@ const admin_url = window['GutenverseConfig']?.adminUrl || '';
 
 const formatFieldLabel = (field) => field?.required ? `${field.label} *` : field.label;
 
+const SECRET_CLEAR_SENTINEL = '__gutenverse_clear_secret__';
+
+const SecretField = ({ fieldKey, field, value, onChange }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const hasDraftValue = typeof value === 'string' && value.length > 0 && value !== SECRET_CLEAR_SENTINEL;
+    const hasSavedValue = !!field?.hasSavedValue;
+
+    const description = field.description || __('This value is stored securely and hidden after saving.', 'gutenverse-form');
+
+    return (
+        <div className="setup-secret-field">
+            {!isEditing && hasSavedValue ? (
+                <>
+                    <div className="components-base-control">
+                        <div className="components-base-control__field">
+                            <label className="components-base-control__label">
+                                {formatFieldLabel(field)}
+                            </label>
+                            <p>{__('Credentials saved.', 'gutenverse-form')}</p>
+                            <p className="description">{description}</p>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <Button
+                            variant="secondary"
+                            onClick={() => {
+                                setIsEditing(true);
+                                onChange(fieldKey, '');
+                            }}
+                        >
+                            {__('Change Credentials', 'gutenverse-form')}
+                        </Button>
+                        <Button
+                            variant="tertiary"
+                            isDestructive
+                            onClick={() => {
+                                setIsEditing(true);
+                                onChange(fieldKey, SECRET_CLEAR_SENTINEL);
+                            }}
+                        >
+                            {__('Clear Credentials', 'gutenverse-form')}
+                        </Button>
+                    </div>
+                </>
+            ) : field.type === 'textarea' ? (
+                <TextareaControl
+                    label={formatFieldLabel(field)}
+                    value={value === SECRET_CLEAR_SENTINEL ? '' : (value || '')}
+                    onChange={(val) => onChange(fieldKey, val)}
+                    placeholder={field.placeholder}
+                    help={description}
+                    rows={10}
+                />
+            ) : (
+                <TextControl
+                    label={formatFieldLabel(field)}
+                    value={value === SECRET_CLEAR_SENTINEL ? '' : (value || '')}
+                    onChange={(val) => onChange(fieldKey, val)}
+                    placeholder={field.placeholder}
+                    help={description}
+                    type="password"
+                />
+            )}
+            {isEditing && hasSavedValue && !hasDraftValue && value !== SECRET_CLEAR_SENTINEL && (
+                <p className="description">
+                    {__('Leave this empty to keep the currently saved credential, or paste a new one to replace it.', 'gutenverse-form')}
+                </p>
+            )}
+        </div>
+    );
+};
+
 
 const ServiceSetup = ({ serviceId, title }) => {
     const config = window['GutenverseConfig'] || {};
@@ -204,12 +276,20 @@ const ServiceSetup = ({ serviceId, title }) => {
                     const field = fields[key];
                     return (
                         <div key={key} className="setup-field-item">
-                            {field.type === 'textarea' ? (
+                            {field.sensitive ? (
+                                <SecretField
+                                    fieldKey={key}
+                                    field={field}
+                                    value={settings[key]}
+                                    onChange={updateSetting}
+                                />
+                            ) : field.type === 'textarea' ? (
                                 <TextareaControl
                                     label={formatFieldLabel(field)}
                                     value={settings[key] || ''}
                                     onChange={(val) => updateSetting(key, val)}
                                     placeholder={field.placeholder}
+                                    help={field.description}
                                     rows={10}
                                 />
                             ) : (
@@ -218,6 +298,7 @@ const ServiceSetup = ({ serviceId, title }) => {
                                     value={settings[key] || ''}
                                     onChange={(val) => updateSetting(key, val)}
                                     placeholder={field.placeholder}
+                                    help={field.description}
                                 />
                             )}
                         </div>

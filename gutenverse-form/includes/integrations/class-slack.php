@@ -139,6 +139,7 @@ class Slack {
                 'description' => __('Enter your Slack Webhook URL', 'gutenverse-form'),
                 'required'    => true,
                 'type'        => 'text',
+                'sensitive'   => true,
                 'placeholder' => __('https://hooks.slack.com/services/...', 'gutenverse-form'),
             ],
             'message'     => [

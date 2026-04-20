@@ -46,6 +46,7 @@ class Whatsapp {
 				'description' => __( 'Enter your WhatsApp Access Token', 'gutenverse-form' ),
 				'required'    => true,
 				'type'        => 'text',
+				'sensitive'   => true,
 				'placeholder' => 'EAAhYKCB...',
 			),
 			'recipient'          => array(

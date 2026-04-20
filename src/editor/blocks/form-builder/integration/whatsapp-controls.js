@@ -1,7 +1,8 @@
 import DebouncedTextControl from './debounced-text-control';
 import { __ } from '@wordpress/i18n';
+import { ServerSecretControl } from './server-secret-control';
 
-export const WhatsappControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }) => {
+export const WhatsappControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle, elementId }) => {
     const defaultTemplate = {
         name: 'whatsapp_confirmation',
         language: 'en_US',
@@ -35,15 +36,17 @@ export const WhatsappControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle 
                 }}
                 placeholder={'1077649588754603'}
             />
-            <DebouncedTextControl
+            <ServerSecretControl
+                item={item}
+                fieldKey={'access_token'}
+                service={'whatsapp'}
+                elementId={elementId}
                 label={__('Access Token', 'gutenverse-form')}
                 required={true}
-                value={item.access_token}
-                onValueChange={access_token => {
-                    onUpdateIndexValue({ ...item, access_token });
-                    onUpdateIndexStyle({ ...item, access_token });
-                }}
                 placeholder={'EAAhYKCB...'}
+                description={__('Stored securely on the server and reused for this form block.', 'gutenverse-form')}
+                onUpdateIndexValue={onUpdateIndexValue}
+                onUpdateIndexStyle={onUpdateIndexStyle}
             />
             <DebouncedTextControl
                 label={__('Recipient Number', 'gutenverse-form')}

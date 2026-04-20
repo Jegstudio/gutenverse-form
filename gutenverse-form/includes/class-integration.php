@@ -19,6 +19,11 @@ class Integration {
 	 * Max number of log records stored per service on an entry.
 	 */
 	const MAX_LOG_RECORDS = 20;
+
+	/**
+	 * Marker stored in block attributes when the real secret lives server-side.
+	 */
+	const SERVER_SECRET_MARKER = '__gutenverse_server_secret__';
 	/**
 	 * Init constructor.
 	 */
@@ -82,7 +87,7 @@ class Integration {
 			),
 			array(
 				'service_name'      => 'google_sheets',
-				'documentation_url' => 'https://api.slack.com/',
+				'documentation_url' => 'https://developers.google.com/sheets/api',
 			),
 		);
 	}
@@ -143,8 +148,11 @@ class Integration {
 				if ( $current_service ) {
 					$instance = $this->get_service_instance( $current_service );
 					if ( $instance ) {
-						$config['serviceFields']   = method_exists( $instance, 'get_fields' ) ? $instance->get_fields() : array();
-						$config['serviceSettings'] = method_exists( $instance, 'get_settings' ) ? $instance->get_settings() : array();
+						$fields   = method_exists( $instance, 'get_fields' ) ? $instance->get_fields() : array();
+						$settings = method_exists( $instance, 'get_settings' ) ? $instance->get_settings() : array();
+
+						$config['serviceFields']   = $this->prepare_service_fields_for_ui( $fields, $settings );
+						$config['serviceSettings'] = $this->prepare_service_settings_for_ui( $fields, $settings );
 
 						// Documentation URL.
 						foreach ( $allowed_services as $s ) {
@@ -217,6 +225,139 @@ class Integration {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get sensitive field keys for a service.
+	 *
+	 * @param string $service Service name.
+	 *
+	 * @return array
+	 */
+	public function get_sensitive_service_fields( $service ) {
+		$instance = $this->get_service_instance( $service );
+		$fields   = ( $instance && method_exists( $instance, 'get_fields' ) ) ? $instance->get_fields() : array();
+		$keys     = array();
+
+		foreach ( $fields as $key => $field ) {
+			if ( ! empty( $field['sensitive'] ) ) {
+				$keys[] = $key;
+			}
+		}
+
+		return $keys;
+	}
+
+	/**
+	 * Hydrate server-stored block integration secrets into integration data.
+	 *
+	 * @param array  $integration Integration data from block attributes.
+	 * @param int    $post_id     Current post ID.
+	 * @param string $element_id  Block element ID.
+	 *
+	 * @return array
+	 */
+	public function hydrate_block_integration_secrets( $integration, $post_id, $element_id ) {
+		if ( empty( $integration['actions'] ) || ! is_array( $integration['actions'] ) || $post_id <= 0 || empty( $element_id ) ) {
+			if ( empty( $integration['actions'] ) || ! is_array( $integration['actions'] ) || $post_id <= 0 ) {
+				return $integration;
+			}
+		}
+
+		$secret_map = get_post_meta( $post_id, 'gutenverse_form_block_secrets', true );
+		$secret_map = is_array( $secret_map ) ? $secret_map : array();
+		$element_map = isset( $secret_map[ $element_id ] ) && is_array( $secret_map[ $element_id ] ) ? $secret_map[ $element_id ] : array();
+
+		foreach ( $integration['actions'] as $index => $action ) {
+			if ( empty( $action['type'] ) || empty( $action['_key'] ) ) {
+				continue;
+			}
+
+			$secret_fields = $this->get_sensitive_service_fields( $action['type'] );
+			$action_map    = isset( $element_map[ $action['_key'] ] ) && is_array( $element_map[ $action['_key'] ] ) ? $element_map[ $action['_key'] ] : array();
+
+			if ( empty( $action_map ) ) {
+				$action_map = $this->find_action_secret_map( $secret_map, $action['_key'] );
+			}
+
+			foreach ( $secret_fields as $field_key ) {
+				if ( isset( $action[ $field_key ] ) && self::SERVER_SECRET_MARKER === $action[ $field_key ] && isset( $action_map[ $field_key ] ) ) {
+					$integration['actions'][ $index ][ $field_key ] = $action_map[ $field_key ];
+				}
+			}
+		}
+
+		return $integration;
+	}
+
+	/**
+	 * Find a stored action secret map by action key across all block element IDs.
+	 *
+	 * @param array  $secret_map Full post secret map.
+	 * @param string $action_key Action key.
+	 *
+	 * @return array
+	 */
+	private function find_action_secret_map( $secret_map, $action_key ) {
+		if ( empty( $secret_map ) || empty( $action_key ) ) {
+			return array();
+		}
+
+		foreach ( $secret_map as $element_actions ) {
+			if ( ! is_array( $element_actions ) ) {
+				continue;
+			}
+
+			if ( isset( $element_actions[ $action_key ] ) && is_array( $element_actions[ $action_key ] ) ) {
+				return $element_actions[ $action_key ];
+			}
+		}
+
+		return array();
+	}
+
+	/**
+	 * Prepare field metadata for the admin UI.
+	 *
+	 * @param array $fields   Service fields.
+	 * @param array $settings Saved settings.
+	 *
+	 * @return array
+	 */
+	private function prepare_service_fields_for_ui( $fields, $settings ) {
+		$prepared = array();
+
+		foreach ( $fields as $key => $field ) {
+			$field = is_array( $field ) ? $field : array();
+
+			if ( ! empty( $field['sensitive'] ) ) {
+				$field['hasSavedValue'] = isset( $settings[ $key ] ) && '' !== (string) $settings[ $key ];
+			}
+
+			$prepared[ $key ] = $field;
+		}
+
+		return $prepared;
+	}
+
+	/**
+	 * Remove sensitive values before localizing settings to JS.
+	 *
+	 * @param array $fields   Service fields.
+	 * @param array $settings Saved settings.
+	 *
+	 * @return array
+	 */
+	private function prepare_service_settings_for_ui( $fields, $settings ) {
+		$prepared = is_array( $settings ) ? $settings : array();
+
+		foreach ( $fields as $key => $field ) {
+			if ( ! empty( $field['sensitive'] ) ) {
+				unset( $prepared[ $key ] );
+			}
+		}
+
+		return $prepared;
 	}
 
 	/**
@@ -371,7 +512,15 @@ class Integration {
 		if ( isset( $form_setting['integrations']['actions'] ) && is_array( $form_setting['integrations']['actions'] ) ) {
 			$actions = $form_setting['integrations']['actions'];
 		} elseif ( isset( $params['integrations']['actions'] ) && is_array( $params['integrations']['actions'] ) ) {
-			$actions = $params['integrations']['actions'];
+			$integration = isset( $params['integrations'] ) && is_array( $params['integrations'] ) ? $params['integrations'] : array();
+			$post_id     = isset( $params['post-id'] ) ? (int) $params['post-id'] : 0;
+			$element_id  = isset( $integration['elementId'] ) ? (string) $integration['elementId'] : '';
+
+			if ( $post_id > 0 && '' !== $element_id ) {
+				$integration = ( new self() )->hydrate_block_integration_secrets( $integration, $post_id, $element_id );
+			}
+
+			$actions = isset( $integration['actions'] ) && is_array( $integration['actions'] ) ? $integration['actions'] : array();
 		}
 
 		return array_values(

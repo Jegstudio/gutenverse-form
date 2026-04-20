@@ -449,7 +449,8 @@
 			"copyStyle": true
 		},
 		"inputBgColorNormal": {
-			"type": "object"
+			"type": "object",
+			"copyStyle": true
 		},
 		"inputBgColorHover": {
 			"type": "object",

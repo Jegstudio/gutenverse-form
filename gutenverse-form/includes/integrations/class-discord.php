@@ -132,6 +132,7 @@ class Discord {
 				'description' => __( 'Enter your Discord Webhook URL', 'gutenverse-form' ),
 				'required'    => true,
 				'type'        => 'text',
+				'sensitive'   => true,
 				'placeholder' => __( 'https://discord.com/api/webhooks/...', 'gutenverse-form' ),
 			),
 			'username'   => array(
