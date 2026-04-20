@@ -19,7 +19,7 @@ import {
     IconSettingsSVG,
     IconWarningSVG,
     IconMailchimpSVG } from '../../assets/icon/index';
-import { TextControl, TextareaControl, Button, Notice } from '@wordpress/components';
+import { TextControl, TextareaControl, SelectControl, Button, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
 const services = [
@@ -291,6 +291,14 @@ const ServiceSetup = ({ serviceId, title }) => {
                                     placeholder={field.placeholder}
                                     help={field.description}
                                     rows={10}
+                                />
+                            ) : field.type === 'select' ? (
+                                <SelectControl
+                                    label={formatFieldLabel(field)}
+                                    value={settings[key] || field.default || ''}
+                                    options={field.options || []}
+                                    onChange={(val) => updateSetting(key, val)}
+                                    help={field.description}
                                 />
                             ) : (
                                 <TextControl

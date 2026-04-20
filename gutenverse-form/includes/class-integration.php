@@ -71,7 +71,7 @@ class Integration {
 			),
 			array(
 				'service_name'      => 'drip',
-				'documentation_url' => 'https://api.slack.com/',
+				'documentation_url' => 'https://developer.drip.com/',
 			),
 			array(
 				'service_name'      => 'active_campaign',
@@ -431,11 +431,59 @@ class Integration {
 	 */
 	public static function has_local_service_config( $service, $form_setting ) {
 		$service_settings = self::get_local_service_settings( $service, $form_setting );
-		if ( ! empty( $service_settings ) ) {
+		if ( self::service_settings_have_meaningful_config( $service_settings ) ) {
 			return true;
 		}
 
 		return ! empty( self::get_service_actions( $service, array(), $form_setting ) );
+	}
+
+	/**
+	 * Determine whether saved service settings contain a real local override.
+	 *
+	 * An empty settings object, or one that only stores disabled flags, should
+	 * not block global integration fallbacks.
+	 *
+	 * @param array $settings Service settings.
+	 *
+	 * @return bool
+	 */
+	private static function service_settings_have_meaningful_config( $settings ) {
+		if ( ! is_array( $settings ) || empty( $settings ) ) {
+			return false;
+		}
+
+		if ( ! empty( $settings['enabled'] ) ) {
+			return true;
+		}
+
+		foreach ( $settings as $key => $value ) {
+			if ( in_array( $key, array( 'enabled', 'apply_globally' ), true ) ) {
+				continue;
+			}
+
+			if ( is_array( $value ) ) {
+				if ( self::service_settings_have_meaningful_config( $value ) ) {
+					return true;
+				}
+
+				continue;
+			}
+
+			if ( is_bool( $value ) ) {
+				if ( $value ) {
+					return true;
+				}
+
+				continue;
+			}
+
+			if ( '' !== trim( (string) $value ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
