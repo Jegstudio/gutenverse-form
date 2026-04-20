@@ -298,6 +298,47 @@ class Integration {
 	}
 
 	/**
+	 * Determine whether an action contains any meaningful override values.
+	 *
+	 * @param array $action Action configuration.
+	 *
+	 * @return bool
+	 */
+	private static function action_has_meaningful_config( $action ) {
+		if ( ! is_array( $action ) ) {
+			return false;
+		}
+
+		foreach ( $action as $key => $value ) {
+			if ( in_array( $key, array( 'type', '_key' ), true ) ) {
+				continue;
+			}
+
+			if ( is_array( $value ) ) {
+				if ( ! empty( array_filter( $value ) ) ) {
+					return true;
+				}
+
+				continue;
+			}
+
+			if ( is_bool( $value ) ) {
+				if ( $value ) {
+					return true;
+				}
+
+				continue;
+			}
+
+			if ( '' !== trim( (string) $value ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get per-form settings for a service.
 	 *
 	 * @param string $service      Service name.
@@ -337,7 +378,7 @@ class Integration {
 			array_filter(
 				$actions,
 				function ( $action ) use ( $service ) {
-					return is_array( $action ) && ( $action['type'] ?? '' ) === $service;
+					return is_array( $action ) && ( $action['type'] ?? '' ) === $service && self::action_has_meaningful_config( $action );
 				}
 			)
 		);

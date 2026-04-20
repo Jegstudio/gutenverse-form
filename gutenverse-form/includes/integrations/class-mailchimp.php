@@ -321,7 +321,22 @@ class Mailchimp {
 		}
 
 		foreach ( \Gutenverse_Form\Integration::get_service_actions( 'mailchimp', $params, $form_setting ) as $action ) {
-			$this->set_settings( $action );
+			$settings = $global_settings;
+
+			foreach ( $action as $key => $value ) {
+				if ( is_array( $value ) ) {
+					if ( ! empty( $value ) ) {
+						$settings[ $key ] = $value;
+					}
+					continue;
+				}
+
+				if ( '' !== trim( (string) $value ) ) {
+					$settings[ $key ] = $value;
+				}
+			}
+
+			$this->set_settings( $settings );
 			\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'mailchimp', $this->send( $data, $entry_id, $params['form-id'] ?? 0 ) );
 		}
 	}

@@ -349,18 +349,6 @@ const IntegrationControl = (props) => {
         customOptions = [],
     } = props;
 
-    useEffect(() => {
-        if ((!value.actions || value.actions.length <= 0) && window.GutenverseConfig?.globalIntegrations?.length > 0) {
-            const globalActions = window.GutenverseConfig.globalIntegrations.map(global => ({
-                ...global,
-                _key: cryptoRandomString({ length: 6, type: 'alphanumeric' })
-            }));
-
-            onValueChange({ ...value, actions: globalActions });
-            onLocalChange({ ...value, actions: globalActions });
-        }
-    }, []);
-
     const id = useInstanceId(IntegrationControl, 'inspector-integration-control');
     const parameter = {
         id,
