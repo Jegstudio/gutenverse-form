@@ -19,7 +19,7 @@ import {
     IconSettingsSVG,
     IconWarningSVG,
     IconMailchimpSVG } from '../../assets/icon/index';
-import { TextControl, TextareaControl, Button, Notice } from '@wordpress/components';
+import { TextControl, TextareaControl, SelectControl, Button, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
 const services = [
@@ -162,6 +162,9 @@ const TabSetting = ({ onSetup }) => {
 const admin_url = window['GutenverseConfig']?.adminUrl || '';
 
 const formatFieldLabel = (field) => field?.required ? `${field.label} *` : field.label;
+const renderFieldDescription = (field) => field?.description ? (
+    <p className="setup-field-description">{field.description}</p>
+) : null;
 
 
 const ServiceSetup = ({ serviceId, title }) => {
@@ -205,20 +208,36 @@ const ServiceSetup = ({ serviceId, title }) => {
                     return (
                         <div key={key} className="setup-field-item">
                             {field.type === 'textarea' ? (
-                                <TextareaControl
-                                    label={formatFieldLabel(field)}
-                                    value={settings[key] || ''}
-                                    onChange={(val) => updateSetting(key, val)}
-                                    placeholder={field.placeholder}
-                                    rows={10}
-                                />
+                                <>
+                                    <TextareaControl
+                                        label={formatFieldLabel(field)}
+                                        value={settings[key] || ''}
+                                        onChange={(val) => updateSetting(key, val)}
+                                        placeholder={field.placeholder}
+                                        rows={10}
+                                    />
+                                    {renderFieldDescription(field)}
+                                </>
+                            ) : field.type === 'select' ? (
+                                <>
+                                    <SelectControl
+                                        label={formatFieldLabel(field)}
+                                        value={settings[key] || field.default || ''}
+                                        options={field.options || []}
+                                        onChange={(val) => updateSetting(key, val)}
+                                    />
+                                    {renderFieldDescription(field)}
+                                </>
                             ) : (
-                                <TextControl
-                                    label={formatFieldLabel(field)}
-                                    value={settings[key] || ''}
-                                    onChange={(val) => updateSetting(key, val)}
-                                    placeholder={field.placeholder}
-                                />
+                                <>
+                                    <TextControl
+                                        label={formatFieldLabel(field)}
+                                        value={settings[key] || ''}
+                                        onChange={(val) => updateSetting(key, val)}
+                                        placeholder={field.placeholder}
+                                    />
+                                    {renderFieldDescription(field)}
+                                </>
                             )}
                         </div>
                     );

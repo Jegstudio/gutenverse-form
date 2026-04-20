@@ -1174,6 +1174,56 @@ class Api {
 				}
 				break;
 
+			case 'drip':
+				if ( isset( $settings['api_key'] ) ) {
+					$sanitized['api_key'] = sanitize_text_field( (string) $settings['api_key'] );
+				}
+
+				if ( isset( $settings['account_id'] ) ) {
+					$sanitized['account_id'] = preg_replace( '/[^0-9]/', '', (string) $settings['account_id'] );
+				}
+
+				if ( isset( $settings['email'] ) ) {
+					$sanitized['email'] = sanitize_text_field( (string) $settings['email'] );
+				}
+
+				if ( isset( $settings['first_name'] ) ) {
+					$sanitized['first_name'] = sanitize_text_field( (string) $settings['first_name'] );
+				}
+
+				if ( isset( $settings['last_name'] ) ) {
+					$sanitized['last_name'] = sanitize_text_field( (string) $settings['last_name'] );
+				}
+
+				if ( isset( $settings['tags'] ) ) {
+					$sanitized['tags'] = $this->sanitize_json_setting( $settings['tags'] );
+				}
+
+				if ( isset( $settings['custom_fields'] ) ) {
+					$sanitized['custom_fields'] = $this->sanitize_json_object_setting( $settings['custom_fields'] );
+				}
+
+				if ( isset( $settings['time_zone'] ) ) {
+					$sanitized['time_zone'] = sanitize_text_field( (string) $settings['time_zone'] );
+				}
+
+				if ( isset( $settings['double_optin'] ) ) {
+					$sanitized['double_optin'] = sanitize_text_field( (string) $settings['double_optin'] );
+				}
+
+				if ( isset( $settings['prospect'] ) ) {
+					$sanitized['prospect'] = sanitize_text_field( (string) $settings['prospect'] );
+				}
+
+				if ( isset( $settings['eu_consent'] ) ) {
+					$sanitized['eu_consent'] = sanitize_key( (string) $settings['eu_consent'] );
+				}
+
+				if ( isset( $settings['eu_consent_message'] ) ) {
+					$sanitized['eu_consent_message'] = sanitize_text_field( (string) $settings['eu_consent_message'] );
+				}
+				break;
+
 			default:
 				$sanitized = array_merge( $sanitized, $this->sanitize_recursive_settings( $settings ) );
 				break;
