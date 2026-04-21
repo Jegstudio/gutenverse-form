@@ -437,6 +437,16 @@ class Entries {
 				'high'
 			);
 
+			// Integrations metabox.
+			add_meta_box(
+				'gutenverse-entry-integrations',
+				__( 'Integrations', 'gutenverse-form' ),
+				array( $this, 'integration_data_metabox' ),
+				self::POST_TYPE,
+				'advanced',
+				'default'
+			);
+
 			// Data metabox.
 			add_meta_box(
 				'gutenverse-browser-data',
@@ -455,9 +465,8 @@ class Entries {
 	 * @param - $post post.
 	 */
 	public function entry_data_metabox( $post ) {
-		$entry        = get_post_meta( $post->ID, 'entry-data', true );
-		$integrations = get_post_meta( $post->ID, 'integrations', true );
-		$result       = '<div class="entry-title">Entry ID</div>
+		$entry  = get_post_meta( $post->ID, 'entry-data', true );
+		$result = '<div class="entry-title">Entry ID</div>
 		<div class="entry-data">' . $post->ID . '</div>';
 
 		if ( isset( $entry ) ) {
@@ -480,7 +489,23 @@ class Entries {
 			}
 		}
 
-		if ( ! empty( $integrations ) && isset( $integrations['actions'] ) ) {
+		gutenverse_print_html( $result, 'post' );
+	}
+
+	/**
+	 * Render integrations metabox.
+	 *
+	 * @param \WP_Post $post Current post.
+	 *
+	 * @return void
+	 */
+	public function integration_data_metabox( $post ) {
+		$integrations = get_post_meta( $post->ID, 'integrations', true );
+		$logs         = get_post_meta( $post->ID, 'integration_logs', true );
+		$logs         = is_array( $logs ) ? $logs : array();
+		$result       = '<div class="entry-data">' . esc_html__( 'No integrations were triggered for this entry.', 'gutenverse-form' ) . '</div>';
+
+		if ( ! empty( $integrations ) && isset( $integrations['actions'] ) && is_array( $integrations['actions'] ) ) {
 			$services = array();
 			foreach ( $integrations['actions'] as $action ) {
 				if ( ! empty( $action['type'] ) ) {
@@ -490,14 +515,40 @@ class Entries {
 
 			if ( ! empty( $services ) ) {
 				$retrigger_all_btn = current_user_can( 'manage_options' ) ? ' <button type="button" class="button button-small retrigger-integrations-all" data-entry-id="' . $post->ID . '">' . __( 'Resubmit All', 'gutenverse-form' ) . '</button>' : '';
-				$result           .= '<div class="entry-title">' . __( 'Integrations Triggered', 'gutenverse-form' ) . $retrigger_all_btn . '</div>';
+				$result           = '<div class="entry-title">' . __( 'Triggered Services', 'gutenverse-form' ) . $retrigger_all_btn . '</div>';
 
 				$integration_list = array();
 				foreach ( array_unique( $services ) as $service ) {
-					$retrigger_btn      = current_user_can( 'manage_options' ) ? ' <a href="#" class="retrigger-integration-item" data-entry-id="' . $post->ID . '" data-service="' . $service . '">(' . __( 'Retrigger', 'gutenverse-form' ) . ')</a>' : '';
-					$integration_list[] = '<span class="integration-tag">' . ucfirst( $service ) . $retrigger_btn . '</span>';
+					$latest_log     = isset( $logs[ $service ] ) && is_array( $logs[ $service ] ) ? end( $logs[ $service ] ) : false;
+					$retrigger_btn  = current_user_can( 'manage_options' ) ? ' <a href="#" class="retrigger-integration-item" data-entry-id="' . $post->ID . '" data-service="' . $service . '">(' . __( 'Retrigger', 'gutenverse-form' ) . ')</a>' : '';
+					$status_label   = $latest_log['status'] ?? 'pending';
+					$status_message = $latest_log['message'] ?? __( 'No delivery log yet.', 'gutenverse-form' );
+					$status_code    = isset( $latest_log['context']['status_code'] ) ? (int) $latest_log['context']['status_code'] : 0;
+					$logged_at      = isset( $latest_log['time'] ) ? $latest_log['time'] : '';
+					$body_excerpt   = isset( $latest_log['context']['body'] ) ? $latest_log['context']['body'] : '';
+					$status_class   = 'integration-status-' . sanitize_html_class( $status_label );
+					$status_text    = ucfirst( $status_label ) . ( $status_code > 0 ? ' (' . $status_code . ')' : '' );
+					$detail_id      = 'integration-log-' . $post->ID . '-' . sanitize_html_class( $service );
+
+					$item  = '<div class="entry-data integration-log-item ' . esc_attr( $status_class ) . '">';
+					$item .= '<div><span class="integration-tag">' . esc_html( ucfirst( $service ) ) . $retrigger_btn . '</span> ';
+					$item .= '<button type="button" class="button button-small toggle-integration-status" data-target="' . esc_attr( $detail_id ) . '">' . esc_html( $status_text ) . '</button></div>';
+					$item .= '<div id="' . esc_attr( $detail_id ) . '" class="integration-log-detail" style="display:none; margin-top:8px;">';
+					$item .= '<div><strong>' . esc_html__( 'Message:', 'gutenverse-form' ) . '</strong> ' . esc_html( $status_message ) . '</div>';
+
+					if ( ! empty( $logged_at ) ) {
+						$item .= '<div><strong>' . esc_html__( 'Updated:', 'gutenverse-form' ) . '</strong> ' . esc_html( $logged_at ) . '</div>';
+					}
+
+					if ( ! empty( $body_excerpt ) && 'error' === $status_label ) {
+						$item .= '<div><strong>' . esc_html__( 'Response:', 'gutenverse-form' ) . '</strong> <code>' . esc_html( $body_excerpt ) . '</code></div>';
+					}
+
+					$item .= '</div>';
+					$item .= '</div>';
+					$integration_list[] = $item;
 				}
-				$result .= '<div class="entry-data">' . implode( ' ', $integration_list ) . '</div>';
+				$result .= implode( '', $integration_list );
 			}
 		}
 
@@ -684,6 +735,13 @@ class Entries {
 						$this.removeClass('loading').css('opacity', '1');
 					}
 				});
+			});
+
+			$(document).on('click', '.toggle-integration-status', function(e) {
+				e.preventDefault();
+				var targetId = $(this).data('target');
+				if (!targetId) return;
+				$('#' + targetId).toggle();
 			});
 		});
 		</script>
