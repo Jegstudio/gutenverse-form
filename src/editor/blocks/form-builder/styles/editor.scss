@@ -191,6 +191,7 @@
         background: #fff;
         border: 1px solid #dfe3e8;
         border-radius: 6px;
+        box-shadow: 0 0 0 rgba(59, 87, 247, 0);
         color: #0f1f2c;
         cursor: pointer;
         min-height: 252px;
@@ -198,12 +199,15 @@
         padding: 0;
         position: relative;
         text-align: center;
-        transition: background 0.2s ease, border-color 0.2s ease;
+        transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
         &:hover,
         &:focus {
             background: #f8f9fb;
+            border-color: #3b57f7;
+            box-shadow: 0 12px 28px rgba(59, 87, 247, 0.12);
             outline: none;
+            transform: translateY(-2px);
         }
 
         &.active {
@@ -280,27 +284,6 @@
         margin: -20px 0 20px;
     }
 
-    .placeholder-create-button {
-        background: #3b57f7;
-        border: 0;
-        border-radius: 6px;
-        color: #fff;
-        cursor: pointer;
-        font-size: 18px;
-        font-weight: 700;
-        min-height: 56px;
-        min-width: 194px;
-        padding: 0 34px;
-
-        &:disabled {
-            cursor: wait;
-            opacity: 0.75;
-        }
-
-        &.loading {
-            position: relative;
-        }
-    }
 }
 
 .gutenverse-form-bulk-style-panel {
@@ -452,6 +435,28 @@
         min-height: 420px;
         padding: 42px 20px;
 
+        &.is-setup {
+            min-height: 0;
+            padding-top: 42px;
+            padding-bottom: 36px;
+        }
+
+        .placeholder-main-icon {
+            height: 54px;
+            margin-bottom: 14px;
+            width: 54px;
+        }
+
+        h3 {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            font-size: 14px;
+            margin-bottom: 22px;
+        }
+
         .placeholder-action {
             gap: 16px;
             min-height: 110px;
@@ -459,8 +464,32 @@
         }
 
         .placeholder-template-grid {
+            gap: 18px;
             grid-template-columns: 1fr;
+            margin-bottom: 26px;
         }
+
+        .placeholder-template-card {
+            min-height: 0;
+
+            > strong {
+                font-size: 14px;
+                min-height: 46px;
+                padding: 10px 12px;
+            }
+        }
+
+        .template-preview-box {
+            height: 160px;
+        }
+
+        .template-pro-badge {
+            font-size: 10px;
+            padding: 6px 8px;
+            right: 10px;
+            top: 10px;
+        }
+
     }
 
     .gutenverse-form-template-pro-actions {
@@ -471,6 +500,36 @@
         .components-button {
             justify-content: center;
             width: 100%;
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    .guten-form-builder-placeholder {
+        &.is-setup {
+            min-height: 0;
+            padding-left: 28px;
+            padding-right: 28px;
+            padding-top: 48px;
+            padding-bottom: 44px;
+        }
+
+        .placeholder-template-grid {
+            gap: 20px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            margin-bottom: 32px;
+        }
+
+        .placeholder-template-card {
+            min-height: 220px;
+
+            > strong {
+                min-height: 48px;
+            }
+        }
+
+        .template-preview-box {
+            height: 172px;
         }
     }
 }
