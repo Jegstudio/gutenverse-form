@@ -147,6 +147,23 @@ const normalizeTemplateTitle = (title) => {
         .trim();
 };
 
+const createEmailTemplate = ({ fieldName, formTitle }) => {
+    const type = fieldName === 'user_email_template'
+        ? __('Confirmation', 'gutenverse-form')
+        : __('Notification', 'gutenverse-form');
+    const cleanTitle = normalizeTemplateTitle(formTitle) || __('Untitled Form', 'gutenverse-form');
+    const name = `${cleanTitle} - ${type}`;
+
+    return apiFetch({
+        path: '/wp/v2/gutenverse-email-tpl',
+        method: 'POST',
+        data: {
+            title: name,
+            status: 'publish'
+        }
+    });
+};
+
 const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplates, onRefresh, formTitle }) => {
     const [saving, setSaving] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -163,18 +180,7 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
         setSaving(true);
         setMessage('');
         setError('');
-        const type = fieldName === 'user_email_template' ? __('Confirmation', 'gutenverse-form') : __('Notification', 'gutenverse-form');
-        const cleanTitle = normalizeTemplateTitle(formTitle) || __('Untitled Form', 'gutenverse-form');
-        const name = `${cleanTitle} - ${type}`;
-
-        apiFetch({
-            path: '/wp/v2/gutenverse-email-tpl',
-            method: 'POST',
-            data: {
-                title: name,
-                status: 'publish'
-            }
-        }).then(response => {
+        createEmailTemplate({ fieldName, formTitle }).then(response => {
             if (response && response.id) {
                 updateValue(fieldName, response.id);
                 if (onRefresh) onRefresh();
@@ -659,6 +665,7 @@ const autoGenerateTags = ({ clientId, values, updateValue }) => {
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
     const [hideFormNotice, setHideFormNotice] = useState(!isEmpty(window['GutenverseConfig']) && window['GutenverseConfig']['hideFormNotice'] ? window['GutenverseConfig']['hideFormNotice'] : false);
+    const [templateCreationError, setTemplateCreationError] = useState('');
 
     const tabs = {
         general: {
@@ -710,8 +717,40 @@ export const FormContent = (props) => {
         </>
     );
 
+    const updateValue = (id, value) => {
+        props.updateValue(id, value);
+
+        const shouldCreateUserTemplate = id === 'user_message_type'
+            && value === 'template'
+            && !props.values.user_email_template;
+        const shouldCreateAdminTemplate = id === 'admin_message_type'
+            && value === 'template'
+            && !props.values.admin_email_template;
+
+        if (!shouldCreateUserTemplate && !shouldCreateAdminTemplate) {
+            return;
+        }
+
+        setTemplateCreationError('');
+
+        const fieldName = shouldCreateUserTemplate ? 'user_email_template' : 'admin_email_template';
+
+        createEmailTemplate({
+            fieldName,
+            formTitle: props.values.title
+        }).then((response) => {
+            if (response?.id) {
+                props.updateValue(fieldName, response.id);
+                fetchEmailTemplates();
+            }
+        }).catch((err) => {
+            console.error(err); // eslint-disable-line no-console
+            setTemplateCreationError(err?.message || __('Could not create the email template automatically. You can still create it manually below.', 'gutenverse-form'));
+        });
+    };
+
     const tabProps = {
-        ...props, emailTemplates, metaKeys, placeholderDescription, refreshTemplates: fetchEmailTemplates,
+        ...props, emailTemplates, metaKeys, placeholderDescription, refreshTemplates: fetchEmailTemplates, updateValue,
     };
 
     const changeActive = key => {
@@ -751,6 +790,7 @@ export const FormContent = (props) => {
         changeActive,
     };
     return <div>
+        {templateCreationError && <div className="gutenverse-form-action-error modal-error">{templateCreationError}</div>}
         {!hideFormNotice && <div className="form-notice-wrapper">
             <AlertControl>
                 <>
