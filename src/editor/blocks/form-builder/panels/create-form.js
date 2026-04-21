@@ -2,6 +2,7 @@
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
+import { dispatch } from '@wordpress/data';
 import { Modal, Button } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { IconTrashSVG } from 'gutenverse-core/icons';
@@ -16,7 +17,7 @@ export const CreateForm = (props) => {
         window['GutenverseDashboard'].imgDir = (window['GutenverseConfig'] && window['GutenverseConfig'].gutenverseFormImgDir) ? window['GutenverseConfig'].gutenverseFormImgDir : '';
     }
 
-    const { setAttributes, clientId } = props;
+    const { setAttributes, clientId, compact = false } = props;
     const attributes = props.attributes || props.values || {};
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -27,12 +28,66 @@ export const CreateForm = (props) => {
     const [saving, setSaving] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
     const [error, setError] = useState('');
+    const templatePersistFields = ['user_message_type', 'admin_message_type', 'user_email_template', 'admin_email_template'];
+
+    const persistBuilderAssignment = (nextFormId) => {
+        setAttributes({
+            formId: nextFormId
+                ? {
+                    label: values.title,
+                    value: nextFormId
+                }
+                : {
+                    label: '',
+                    value: ''
+                }
+        });
+
+        // Persist the block attribute change so a refresh does not lose the assignment.
+        setTimeout(() => {
+            const editorDispatch = dispatch('core/editor');
+
+            if (editorDispatch?.savePost) {
+                editorDispatch.savePost();
+            }
+        }, 0);
+    };
+
+    const persistExistingFormAction = (nextValues) => {
+        const formId = attributes.formId?.value;
+
+        if (!formId) {
+            return;
+        }
+
+        apiFetch({
+            path: '/gutenverse-form-client/v1/form-action/edit',
+            method: 'POST',
+            data: {
+                form: {
+                    ...nextValues,
+                    id: formId
+                },
+            }
+        }).catch((err) => {
+            console.error(err); // eslint-disable-line no-console
+            setError(err?.message || __('Could not update this form action automatically. Please save the form action manually.', 'gutenverse-form'));
+        });
+    };
 
     const updateValue = (id, value) => {
-        setValues((prevValues) => ({
-            ...prevValues,
-            [id]: value
-        }));
+        setValues((prevValues) => {
+            const nextValues = {
+                ...prevValues,
+                [id]: value
+            };
+
+            if (templatePersistFields.includes(id) && attributes.formId?.value) {
+                persistExistingFormAction(nextValues);
+            }
+
+            return nextValues;
+        });
     };
 
     const resetValues = () => {
@@ -88,12 +143,7 @@ export const CreateForm = (props) => {
             path: `/gutenverse-form-client/v1/form-action/${formId}`,
             method: 'DELETE',
         }).then(() => {
-            setAttributes({
-                formId: {
-                    label: '',
-                    value: ''
-                }
-            });
+            persistBuilderAssignment('');
             setSaving(false);
             setIsDeleteModalOpen(false);
         }).catch((err) => {
@@ -129,21 +179,11 @@ export const CreateForm = (props) => {
 
             if (isEditing) {
                 if (values.title && attributes.formId?.label !== values.title) {
-                    setAttributes({
-                        formId: {
-                            label: values.title,
-                            value: formId
-                        }
-                    });
+                    persistBuilderAssignment(formId);
                 }
             } else {
                 if (response && !isNaN(response)) {
-                    setAttributes({
-                        formId: {
-                            label: values.title,
-                            value: response
-                        }
-                    });
+                    persistBuilderAssignment(response);
                 }
             }
         }).catch((err) => {
@@ -161,65 +201,76 @@ export const CreateForm = (props) => {
         : `${adminBase}edit.php?post_type=gutenverse-entries`;
 
     return (
-        <div className="gutenverse-create-form-action">
+        <div className={`gutenverse-create-form-action ${compact ? 'is-compact' : ''}`}>
             {error && <div className="gutenverse-form-action-error">{error}</div>}
 
             {hasSelectedForm ? (
                 <>
                     <div className="gutenverse-form-action-card">
-                        <div className="gutenverse-form-action-card-header">
-                            <span className="status-dot" />
-                            <span className="status-label">{__('Connected action', 'gutenverse-form')}</span>
+                        <div className="gutenverse-form-action-summary">
+                            <div className="gutenverse-form-action-card-header">
+                                <span className="status-dot" />
+                                <span className="status-label">{__('Connected action', 'gutenverse-form')}</span>
+                            </div>
+                            <div className="gutenverse-form-action-title" title={formTitle}>
+                                {formTitle}
+                            </div>
+                            {!compact && (
+                                <div className="gutenverse-form-action-meta">
+                                    {__('Entries, email, integrations, and submission behavior use this action.', 'gutenverse-form')}
+                                </div>
+                            )}
                         </div>
-                        <div className="gutenverse-form-action-title" title={formTitle}>
-                            {formTitle}
-                        </div>
-                        <div className="gutenverse-form-action-meta">
-                            {__('Entries, email, integrations, and submission behavior use this action.', 'gutenverse-form')}
+                        <div className="gutenverse-form-action-buttons">
+                            <button
+                                type="button"
+                                className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
+                                onClick={!saving ? openEditModal : undefined}
+                                disabled={saving}
+                            >
+                                {compact ? __('Edit', 'gutenverse-form') : __('Edit Action', 'gutenverse-form')}
+                            </button>
+                            <button
+                                type="button"
+                                className={`gutenverse-form-action-button danger ${saving ? 'disabled' : ''}`}
+                                onClick={!saving ? () => setIsDeleteModalOpen(true) : undefined}
+                                disabled={saving}
+                            >
+                                <IconTrashSVG size={14} />
+                                {compact ? __('Delete', 'gutenverse-form') : __('Delete', 'gutenverse-form')}
+                            </button>
                         </div>
                     </div>
 
-                    <div className="gutenverse-form-action-buttons">
-                        <button
-                            type="button"
-                            className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
-                            onClick={!saving ? openEditModal : undefined}
-                            disabled={saving}
+                    {!compact && (
+                        <a
+                            href={entriesUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="gutenverse-form-action-list-link"
                         >
-                            {__('Edit Action', 'gutenverse-form')}
-                        </button>
-                        <button
-                            type="button"
-                            className={`gutenverse-form-action-button danger ${saving ? 'disabled' : ''}`}
-                            onClick={!saving ? () => setIsDeleteModalOpen(true) : undefined}
-                            disabled={saving}
-                        >
-                            <IconTrashSVG size={14} />
-                            {__('Delete', 'gutenverse-form')}
-                        </button>
-                    </div>
-
-                    <a
-                        href={entriesUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="gutenverse-form-action-list-link"
-                    >
-                        {__('View entries for this action', 'gutenverse-form')}
-                    </a>
+                            {__('View entries for this action', 'gutenverse-form')}
+                        </a>
+                    )}
                 </>
             ) : (
                 <div className="gutenverse-form-action-empty">
-                    <div className="empty-badge">{__('Action required', 'gutenverse-form')}</div>
-                    <div className="empty-title">{__('Submissions need a destination', 'gutenverse-form')}</div>
-                    <p>{__('The form can submit, but without a form action entries are hard to track and confirmation emails will not be sent.', 'gutenverse-form')}</p>
+                    <div className="gutenverse-form-action-summary">
+                        <div className="empty-badge">{__('Action required', 'gutenverse-form')}</div>
+                        <div className="empty-title">
+                            {compact
+                                ? __('Create a form action to receive submissions', 'gutenverse-form')
+                                : __('Submissions need a destination', 'gutenverse-form')}
+                        </div>
+                    </div>
+                    {!compact && <p>{__('The form can submit, but without a form action entries are hard to track and confirmation emails will not be sent.', 'gutenverse-form')}</p>}
                     <button
                         type="button"
                         className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
                         onClick={!saving ? openCreateModal : undefined}
                         disabled={saving}
                     >
-                        {__('Create Form Action', 'gutenverse-form')}
+                        {compact ? __('Create Action', 'gutenverse-form') : __('Create Form Action', 'gutenverse-form')}
                     </button>
                 </div>
             )}

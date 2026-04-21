@@ -505,6 +505,111 @@
             }
         }
     }
+
+    .template-preview-wrapper {
+        background: #fff;
+        border: 1px solid #dcdcde;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        overflow: hidden;
+    }
+
+    .template-preview-header {
+        align-items: center;
+        background: #f6f7f7;
+        border-bottom: 1px solid #dcdcde;
+        color: #1d2327;
+        display: flex;
+        font-size: 12px;
+        font-weight: 600;
+        justify-content: space-between;
+        padding: 10px 12px;
+
+        span:last-child {
+            color: #646970;
+            font-size: 11px;
+            font-weight: 400;
+        }
+    }
+
+    .template-preview-frame {
+        background: #eef2f7;
+        padding: 14px;
+
+        iframe {
+            background: #fff;
+            border: 0;
+            border-radius: 4px;
+            display: block;
+            min-height: 520px;
+            width: 100%;
+        }
+    }
+
+    .email-template-starters {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .email-template-starter {
+        align-items: flex-start;
+        background: #fff;
+        border: 1px solid #dcdcde;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        justify-content: flex-start;
+        min-height: 120px;
+        padding: 14px;
+        text-align: left;
+        white-space: normal;
+
+        strong,
+        span {
+            display: block;
+        }
+
+        strong {
+            color: #1d2327;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        span {
+            color: #646970;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        &:hover,
+        &:focus,
+        &:active {
+            border-color: #3b57f7;
+        }
+    }
+}
+
+@media (max-width: 782px) {
+    .gutenverse-email-template-manager {
+        .template-preview-frame {
+            padding: 10px;
+
+            iframe {
+                min-height: 420px;
+            }
+        }
+
+        .email-template-starters {
+            grid-template-columns: 1fr;
+        }
+
+        .email-template-starter {
+            min-height: 0;
+        }
+    }
 }
 
 .gutenverse-form-confirm-content {
@@ -552,6 +657,10 @@
 
     .gutenverse-form-action-card {
         border-top: 3px solid #2271b1;
+    }
+
+    .gutenverse-form-action-summary {
+        min-width: 0;
     }
 
     .gutenverse-form-action-card-header {
@@ -687,6 +796,137 @@
         &:disabled {
             cursor: not-allowed;
             opacity: 0.65;
+        }
+    }
+
+    .gutenverse-create-form-action.is-compact {
+        .gutenverse-form-action-card,
+        .gutenverse-form-action-empty {
+            border-left-width: 4px;
+            border-radius: 8px;
+            box-shadow: none;
+            margin-bottom: 0;
+            padding: 10px 14px;
+        }
+
+        .gutenverse-form-action-card {
+            background: #f0f6fc;
+            border-color: #c3d9ed;
+            border-left-color: #2271b1;
+            border-top-width: 1px;
+            align-items: center;
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+        }
+
+        .gutenverse-form-action-summary {
+            align-items: flex-start;
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .gutenverse-form-action-card-header {
+            color: #1f5f99;
+            font-size: 10px;
+            gap: 7px;
+            margin-bottom: 4px;
+        }
+
+        .status-dot {
+            height: 7px;
+            width: 7px;
+        }
+
+        .gutenverse-form-action-title {
+            color: #0f1f2c;
+            font-size: 13px;
+            margin-bottom: 0;
+        }
+
+        .gutenverse-form-action-empty {
+            background: #fff8e5;
+            border-color: #e7c469;
+            border-left-color: #dba617;
+            align-items: center;
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+        }
+
+        .empty-badge {
+            margin-bottom: 4px;
+        }
+
+        .empty-title {
+            color: #4a3a03;
+            font-size: 13px;
+            margin-bottom: 0;
+        }
+
+        .gutenverse-form-action-buttons {
+            display: flex;
+            flex: 0 0 auto;
+            gap: 8px;
+            margin-bottom: 0;
+            min-width: 0;
+        }
+
+        .gutenverse-form-action-button {
+            background: #fff;
+            border-color: #c3c4c7;
+            color: #34414e;
+            font-size: 12px;
+            font-weight: 600;
+            min-height: 34px;
+            padding: 7px 12px;
+
+            &.primary {
+                background: #fff;
+                border-color: #2271b1;
+                color: #2271b1;
+
+                &:hover,
+                &:focus,
+                &:active {
+                    background: #2271b1;
+                    border-color: #2271b1;
+                    color: #fff;
+                }
+            }
+
+            &.danger {
+                border-color: #d63638;
+                color: #b32d2e;
+            }
+        }
+
+        .gutenverse-form-action-empty .gutenverse-form-action-button {
+            margin-top: 0;
+            white-space: nowrap;
+            width: auto;
+        }
+    }
+
+    @media (max-width: 782px) {
+        .gutenverse-create-form-action.is-compact {
+            .gutenverse-form-action-card,
+            .gutenverse-form-action-empty {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .gutenverse-form-action-buttons,
+            .gutenverse-form-action-empty .gutenverse-form-action-button {
+                width: 100%;
+            }
+
+            .gutenverse-form-action-buttons {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
         }
     }
 
