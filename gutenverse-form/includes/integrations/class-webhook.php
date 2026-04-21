@@ -161,28 +161,17 @@ class Webhook {
 		$options          = get_option( 'gutenverse_form_integrations', array() );
 		$global_settings  = get_option( 'gutenverse_form_webhook_settings', array() );
 		$global_enabled   = ! empty( $options['webhook'] );
-		$apply_globally   = isset( $global_settings['apply_globally'] ) ? (bool) $global_settings['apply_globally'] : false;
-		$has_local_config = \Gutenverse_Form\Integration::has_local_service_config( 'webhook', $form_setting );
-		$local_settings   = \Gutenverse_Form\Integration::get_local_service_settings( 'webhook', $form_setting );
-		$local_enabled    = isset( $local_settings['enabled'] ) ? (bool) $local_settings['enabled'] : false;
+		$has_request_actions = \Gutenverse_Form\Integration::request_has_integration_actions( $params );
+		$actions          = \Gutenverse_Form\Integration::get_service_actions( 'webhook', $params, $form_setting );
 
-		if ( $global_enabled && $apply_globally && ! $has_local_config ) {
-			$settings = array_merge( $global_settings, $local_settings );
-			if ( ! empty( $settings['webhookUrl'] ) || ! empty( $settings['webhook_url'] ) ) {
-				$this->set_settings( $settings );
+		if ( $global_enabled && ! $has_request_actions ) {
+			if ( ! empty( $global_settings['webhookUrl'] ) || ! empty( $global_settings['webhook_url'] ) ) {
+				$this->set_settings( $global_settings );
 				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'webhook', $this->send( $data, $entry_id, $params['form-id'], $browser_data ) );
 			}
 		}
 
-		if ( $local_enabled ) {
-			$settings = array_merge( $global_settings, $local_settings );
-			if ( ! empty( $settings['webhookUrl'] ) || ! empty( $settings['webhook_url'] ) ) {
-				$this->set_settings( $settings );
-				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'webhook', $this->send( $data, $entry_id, $params['form-id'], $browser_data ) );
-			}
-		}
-
-		foreach ( \Gutenverse_Form\Integration::get_service_actions( 'webhook', $params, $form_setting ) as $action ) {
+		foreach ( $actions as $action ) {
 			$settings = $global_settings;
 
 			foreach ( $action as $key => $value ) {

@@ -101,28 +101,21 @@ class Slack {
         $options         = get_option('gutenverse_form_integrations', []);
         $global_settings = get_option('gutenverse_form_slack_settings', []);
         $global_enabled  = !empty($options['slack']);
-        $apply_globally  = isset($global_settings['apply_globally']) ? (bool) $global_settings['apply_globally'] : false;
+        $has_request_actions = \Gutenverse_Form\Integration::request_has_integration_actions($params);
+        $actions = \Gutenverse_Form\Integration::get_service_actions('slack', $params, $form_setting);
 
-        $local_settings  = isset($form_setting['integrations']['slack']) ? $form_setting['integrations']['slack'] : [];
-        $local_enabled   = isset($local_settings['enabled']) ? (bool) $local_settings['enabled'] : false;
-
-        if (($global_enabled && $apply_globally) || $local_enabled) {
-            $settings = array_merge($global_settings, $local_settings);
-            if (!empty($settings['webhook_url']) || !empty($settings['webhookUrl'])) {
-                $this->set_settings($settings);
+        if ($global_enabled && !$has_request_actions) {
+            if (!empty($global_settings['webhook_url']) || !empty($global_settings['webhookUrl'])) {
+                $this->set_settings($global_settings);
                 $this->send($data, $entry_id, $params['form-id']);
             }
         }
 
         // 2. Process Per-Block Integrations
-        if (isset($params['integrations']['actions']) && is_array($params['integrations']['actions'])) {
-            foreach ($params['integrations']['actions'] as $action) {
-                if ('slack' === ($action['type'] ?? '')) {
-                    if (!empty($action['webhook_url']) || !empty($action['webhookUrl'])) {
-                        $this->set_settings($action);
-                        $this->send($data, $entry_id, $params['form-id']);
-                    }
-                }
+        foreach ($actions as $action) {
+            if (!empty($action['webhook_url']) || !empty($action['webhookUrl'])) {
+                $this->set_settings($action);
+                $this->send($data, $entry_id, $params['form-id']);
             }
         }
     }

@@ -91,28 +91,17 @@ class Discord {
 		$options         = get_option( 'gutenverse_form_integrations', array() );
 		$global_settings = get_option( 'gutenverse_form_discord_settings', array() );
 		$global_enabled  = ! empty( $options['discord'] );
-		$apply_globally  = isset( $global_settings['apply_globally'] ) ? (bool) $global_settings['apply_globally'] : false;
-		$has_local_config = \Gutenverse_Form\Integration::has_local_service_config( 'discord', $form_setting );
-		$local_settings   = \Gutenverse_Form\Integration::get_local_service_settings( 'discord', $form_setting );
-		$local_enabled    = isset( $local_settings['enabled'] ) ? (bool) $local_settings['enabled'] : false;
+		$has_request_actions = \Gutenverse_Form\Integration::request_has_integration_actions( $params );
+		$actions         = \Gutenverse_Form\Integration::get_service_actions( 'discord', $params, $form_setting );
 
-		if ( $global_enabled && $apply_globally && ! $has_local_config ) {
-			$settings = array_merge( $global_settings, $local_settings );
-			if ( ! empty( $settings['webhookUrl'] ) ) {
-				$this->set_settings( $settings );
+		if ( $global_enabled && ! $has_request_actions ) {
+			if ( ! empty( $global_settings['webhookUrl'] ) ) {
+				$this->set_settings( $global_settings );
 				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'discord', $this->send( $data, $entry_id, $params['form-id'] ) );
 			}
 		}
 
-		if ( $local_enabled ) {
-			$settings = array_merge( $global_settings, $local_settings );
-			if ( ! empty( $settings['webhookUrl'] ) ) {
-				$this->set_settings( $settings );
-				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'discord', $this->send( $data, $entry_id, $params['form-id'] ) );
-			}
-		}
-
-		foreach ( \Gutenverse_Form\Integration::get_service_actions( 'discord', $params, $form_setting ) as $action ) {
+		foreach ( $actions as $action ) {
 			if ( ! empty( $action['webhookUrl'] ) ) {
 				$this->set_settings( $action );
 				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'discord', $this->send( $data, $entry_id, $params['form-id'] ) );

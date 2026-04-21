@@ -65,21 +65,15 @@ class Google_Sheets {
 		$options          = get_option( 'gutenverse_form_integrations', array() );
 		$global_settings  = get_option( 'gutenverse_form_google_sheets_settings', array() );
 		$global_enabled   = ! empty( $options['google_sheets'] );
-		$apply_globally   = isset( $global_settings['apply_globally'] ) ? (bool) $global_settings['apply_globally'] : false;
-		$has_local_config = \Gutenverse_Form\Integration::has_local_service_config( 'google_sheets', $form_setting );
-		$local_settings   = \Gutenverse_Form\Integration::get_local_service_settings( 'google_sheets', $form_setting );
-		$local_enabled    = isset( $local_settings['enabled'] ) ? (bool) $local_settings['enabled'] : false;
+		$has_request_actions = \Gutenverse_Form\Integration::request_has_integration_actions( $params );
+		$actions          = \Gutenverse_Form\Integration::get_service_actions( 'google_sheets', $params, $form_setting );
 		$is_admin_refresh = null === $request;
 
-		if ( $global_enabled && $apply_globally && ! $has_local_config ) {
-			$this->sync_entry( array_merge( $global_settings, $local_settings ), $entry_id, $params, $data, $is_admin_refresh );
+		if ( $global_enabled && ! $has_request_actions ) {
+			$this->sync_entry( $global_settings, $entry_id, $params, $data, $is_admin_refresh );
 		}
 
-		if ( $local_enabled ) {
-			$this->sync_entry( array_merge( $global_settings, $local_settings ), $entry_id, $params, $data, $is_admin_refresh );
-		}
-
-		foreach ( \Gutenverse_Form\Integration::get_service_actions( 'google_sheets', $params, $form_setting ) as $action ) {
+		foreach ( $actions as $action ) {
 			$settings = $global_settings;
 
 			foreach ( $action as $key => $value ) {
