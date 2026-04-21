@@ -16,7 +16,7 @@ export const CreateForm = (props) => {
         window['GutenverseDashboard'].imgDir = (window['GutenverseConfig'] && window['GutenverseConfig'].gutenverseFormImgDir) ? window['GutenverseConfig'].gutenverseFormImgDir : '';
     }
 
-    const { setAttributes, clientId } = props;
+    const { setAttributes, clientId, compact = false } = props;
     const attributes = props.attributes || props.values || {};
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -161,65 +161,76 @@ export const CreateForm = (props) => {
         : `${adminBase}edit.php?post_type=gutenverse-entries`;
 
     return (
-        <div className="gutenverse-create-form-action">
+        <div className={`gutenverse-create-form-action ${compact ? 'is-compact' : ''}`}>
             {error && <div className="gutenverse-form-action-error">{error}</div>}
 
             {hasSelectedForm ? (
                 <>
                     <div className="gutenverse-form-action-card">
-                        <div className="gutenverse-form-action-card-header">
-                            <span className="status-dot" />
-                            <span className="status-label">{__('Connected action', 'gutenverse-form')}</span>
+                        <div className="gutenverse-form-action-summary">
+                            <div className="gutenverse-form-action-card-header">
+                                <span className="status-dot" />
+                                <span className="status-label">{__('Connected action', 'gutenverse-form')}</span>
+                            </div>
+                            <div className="gutenverse-form-action-title" title={formTitle}>
+                                {formTitle}
+                            </div>
+                            {!compact && (
+                                <div className="gutenverse-form-action-meta">
+                                    {__('Entries, email, integrations, and submission behavior use this action.', 'gutenverse-form')}
+                                </div>
+                            )}
                         </div>
-                        <div className="gutenverse-form-action-title" title={formTitle}>
-                            {formTitle}
-                        </div>
-                        <div className="gutenverse-form-action-meta">
-                            {__('Entries, email, integrations, and submission behavior use this action.', 'gutenverse-form')}
+                        <div className="gutenverse-form-action-buttons">
+                            <button
+                                type="button"
+                                className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
+                                onClick={!saving ? openEditModal : undefined}
+                                disabled={saving}
+                            >
+                                {compact ? __('Edit', 'gutenverse-form') : __('Edit Action', 'gutenverse-form')}
+                            </button>
+                            <button
+                                type="button"
+                                className={`gutenverse-form-action-button danger ${saving ? 'disabled' : ''}`}
+                                onClick={!saving ? () => setIsDeleteModalOpen(true) : undefined}
+                                disabled={saving}
+                            >
+                                <IconTrashSVG size={14} />
+                                {compact ? __('Delete', 'gutenverse-form') : __('Delete', 'gutenverse-form')}
+                            </button>
                         </div>
                     </div>
 
-                    <div className="gutenverse-form-action-buttons">
-                        <button
-                            type="button"
-                            className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
-                            onClick={!saving ? openEditModal : undefined}
-                            disabled={saving}
+                    {!compact && (
+                        <a
+                            href={entriesUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="gutenverse-form-action-list-link"
                         >
-                            {__('Edit Action', 'gutenverse-form')}
-                        </button>
-                        <button
-                            type="button"
-                            className={`gutenverse-form-action-button danger ${saving ? 'disabled' : ''}`}
-                            onClick={!saving ? () => setIsDeleteModalOpen(true) : undefined}
-                            disabled={saving}
-                        >
-                            <IconTrashSVG size={14} />
-                            {__('Delete', 'gutenverse-form')}
-                        </button>
-                    </div>
-
-                    <a
-                        href={entriesUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="gutenverse-form-action-list-link"
-                    >
-                        {__('View entries for this action', 'gutenverse-form')}
-                    </a>
+                            {__('View entries for this action', 'gutenverse-form')}
+                        </a>
+                    )}
                 </>
             ) : (
                 <div className="gutenverse-form-action-empty">
-                    <div className="empty-badge">{__('Action required', 'gutenverse-form')}</div>
-                    <div className="empty-title">{__('Submissions need a destination', 'gutenverse-form')}</div>
-                    <p>{__('The form can submit, but without a form action entries are hard to track and confirmation emails will not be sent.', 'gutenverse-form')}</p>
+                    <div className="gutenverse-form-action-summary">
+                        <div className="empty-badge">{__('Action required', 'gutenverse-form')}</div>
+                        <div className="empty-title">
+                            {compact
+                                ? __('Create a form action to receive submissions', 'gutenverse-form')
+                                : __('Submissions need a destination', 'gutenverse-form')}
+                        </div>
+                    </div>
+                    {!compact && <p>{__('The form can submit, but without a form action entries are hard to track and confirmation emails will not be sent.', 'gutenverse-form')}</p>}
                     <button
                         type="button"
                         className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
                         onClick={!saving ? openCreateModal : undefined}
                         disabled={saving}
                     >
-                        {__('Create Form Action', 'gutenverse-form')}
+                        {compact ? __('Create Action', 'gutenverse-form') : __('Create Form Action', 'gutenverse-form')}
                     </button>
                 </div>
             )}

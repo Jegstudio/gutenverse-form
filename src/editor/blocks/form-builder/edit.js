@@ -21,6 +21,7 @@ import appointmentTemplateData from './data/appointment-template.json';
 import bookingTemplateData from './data/booking-template.json';
 import contactTemplateData from './data/contact-template.json';
 import subscribeTemplateData from './data/subscribe-template.json';
+import { CreateForm } from './panels/create-form';
 import { Modal, Button, ToolbarGroup, ToolbarButton } from '@wordpress/components';
 
 const BULK_STYLE_PANEL_STATE = {
@@ -35,10 +36,17 @@ const NoticeMessages = ({ successExample = false, errorExample = false }) => {
     </>;
 };
 
-const FormWrapper = ({ blockProps, attributes }) => {
+const FormWrapper = ({ blockProps, attributes, clientId, setAttributes }) => {
+    const hasFormAction = !!attributes?.formId?.value;
+
     return (
         <div {...blockProps}>
             <NoticeMessages {...attributes} />
+            {!hasFormAction && (
+                <div className="gutenverse-form-builder-inline-action">
+                    <CreateForm attributes={attributes} clientId={clientId} setAttributes={setAttributes} compact />
+                </div>
+            )}
             <InnerBlocks />
         </div>
     );
@@ -96,7 +104,7 @@ const TemplatePreview = ({ templateId }) => {
     return <div className="template-preview-box" />;
 };
 
-const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
+const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) => {
     const [blankMode, setBlankMode] = useState(false);
     const [creatingForm, setCreatingForm] = useState(false);
     const [error, setError] = useState('');
@@ -105,6 +113,7 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
     const { replaceBlocks, removeBlocks } = dispatch('core/block-editor');
     const hasProPluginActive = !!window?.GutenverseConfig?.plugins?.['gutenverse-pro']?.active;
     const hasActiveProLicense = !isEmpty(window?.gprodata);
+    const hasFormAction = !!attributes?.formId?.value;
     const imageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
     const appointmentPreviewImage = imageBase ? `${imageBase}/${appointmentTemplateData.previewImage}` : '';
     const adminUrl = window?.GutenverseConfig?.adminUrl || '/wp-admin/';
@@ -330,10 +339,17 @@ const FormPlaceholder = ({ blockProps, attributes, clientId }) => {
             )}
             <NoticeMessages {...attributes} />
             {blankMode ? (
-                <InnerBlocks
-                    renderAppender={InnerBlocks.ButtonBlockAppender}
-                    clientId={clientId}
-                />
+                <>
+                    {!hasFormAction && (
+                        <div className="gutenverse-form-builder-inline-action">
+                            <CreateForm attributes={attributes} clientId={clientId} setAttributes={setAttributes} compact />
+                        </div>
+                    )}
+                    <InnerBlocks
+                        renderAppender={InnerBlocks.ButtonBlockAppender}
+                        clientId={clientId}
+                    />
+                </>
             ) : (
                 <div className="guten-form-builder-placeholder is-setup">
                     <div className="placeholder-main-icon">
