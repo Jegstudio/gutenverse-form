@@ -2,6 +2,7 @@
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
+import { dispatch } from '@wordpress/data';
 import { Modal, Button } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { IconTrashSVG } from 'gutenverse-core/icons';
@@ -27,6 +28,29 @@ export const CreateForm = (props) => {
     const [saving, setSaving] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
     const [error, setError] = useState('');
+
+    const persistBuilderAssignment = (nextFormId) => {
+        setAttributes({
+            formId: nextFormId
+                ? {
+                    label: values.title,
+                    value: nextFormId
+                }
+                : {
+                    label: '',
+                    value: ''
+                }
+        });
+
+        // Persist the block attribute change so a refresh does not lose the assignment.
+        setTimeout(() => {
+            const editorDispatch = dispatch('core/editor');
+
+            if (editorDispatch?.savePost) {
+                editorDispatch.savePost();
+            }
+        }, 0);
+    };
 
     const updateValue = (id, value) => {
         setValues((prevValues) => ({
@@ -88,12 +112,7 @@ export const CreateForm = (props) => {
             path: `/gutenverse-form-client/v1/form-action/${formId}`,
             method: 'DELETE',
         }).then(() => {
-            setAttributes({
-                formId: {
-                    label: '',
-                    value: ''
-                }
-            });
+            persistBuilderAssignment('');
             setSaving(false);
             setIsDeleteModalOpen(false);
         }).catch((err) => {
@@ -129,21 +148,11 @@ export const CreateForm = (props) => {
 
             if (isEditing) {
                 if (values.title && attributes.formId?.label !== values.title) {
-                    setAttributes({
-                        formId: {
-                            label: values.title,
-                            value: formId
-                        }
-                    });
+                    persistBuilderAssignment(formId);
                 }
             } else {
                 if (response && !isNaN(response)) {
-                    setAttributes({
-                        formId: {
-                            label: values.title,
-                            value: response
-                        }
-                    });
+                    persistBuilderAssignment(response);
                 }
             }
         }).catch((err) => {
