@@ -28,6 +28,7 @@ export const CreateForm = (props) => {
     const [saving, setSaving] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
     const [error, setError] = useState('');
+    const templatePersistFields = ['user_message_type', 'admin_message_type', 'user_email_template', 'admin_email_template'];
 
     const persistBuilderAssignment = (nextFormId) => {
         setAttributes({
@@ -52,11 +53,41 @@ export const CreateForm = (props) => {
         }, 0);
     };
 
+    const persistExistingFormAction = (nextValues) => {
+        const formId = attributes.formId?.value;
+
+        if (!formId) {
+            return;
+        }
+
+        apiFetch({
+            path: '/gutenverse-form-client/v1/form-action/edit',
+            method: 'POST',
+            data: {
+                form: {
+                    ...nextValues,
+                    id: formId
+                },
+            }
+        }).catch((err) => {
+            console.error(err); // eslint-disable-line no-console
+            setError(err?.message || __('Could not update this form action automatically. Please save the form action manually.', 'gutenverse-form'));
+        });
+    };
+
     const updateValue = (id, value) => {
-        setValues((prevValues) => ({
-            ...prevValues,
-            [id]: value
-        }));
+        setValues((prevValues) => {
+            const nextValues = {
+                ...prevValues,
+                [id]: value
+            };
+
+            if (templatePersistFields.includes(id) && attributes.formId?.value) {
+                persistExistingFormAction(nextValues);
+            }
+
+            return nextValues;
+        });
     };
 
     const resetValues = () => {

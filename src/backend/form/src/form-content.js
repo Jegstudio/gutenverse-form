@@ -147,19 +147,256 @@ const normalizeTemplateTitle = (title) => {
         .trim();
 };
 
-const createEmailTemplate = ({ fieldName, formTitle }) => {
+const buildEmailTemplateStarter = (starter, fieldName) => {
+    if (starter === 'blank') {
+        return {};
+    }
+
+    const isConfirmation = fieldName === 'user_email_template';
+    const accent = '#3b57f7';
+    const soft = '#f5f7ff';
+    const bodyBase = {
+        id: 'email-body',
+        rows: [],
+        headers: [],
+        footers: [],
+        values: {
+            backgroundColor: '#eef2f7',
+            backgroundImage: {},
+            contentWidth: '620px',
+            contentAlign: 'center',
+            contentVerticalAlign: 'top',
+            fontFamily: {
+                label: 'Arial',
+                value: 'arial,helvetica,sans-serif',
+            },
+            preheaderText: '',
+            linkStyle: {
+                body: true,
+                linkColor: accent,
+                linkHoverColor: '#243cc7',
+                linkUnderline: true,
+                linkHoverUnderline: true,
+            },
+        },
+    };
+
+    const createTextContent = (id, text, extra = {}) => ({
+        id,
+        type: 'text',
+        values: {
+            containerPadding: '0px',
+            anchor: '',
+            color: extra.color || '#334155',
+            textAlign: extra.textAlign || 'left',
+            lineHeight: extra.lineHeight || '170%',
+            fontSize: extra.fontSize || '16px',
+            text,
+        },
+    });
+
+    const createRow = (id, contents, extra = {}) => ({
+        id,
+        cells: [1],
+        columns: [
+            {
+                id: `${id}-col`,
+                contents,
+                values: {
+                    backgroundColor: extra.backgroundColor || '#ffffff',
+                    border: extra.border || {},
+                    borderRadius: extra.borderRadius || '0px',
+                    padding: extra.padding || '0px',
+                },
+            }
+        ],
+        values: {
+            anchor: '',
+            backgroundColor: extra.rowBackgroundColor || 'transparent',
+            columnsBackgroundColor: 'transparent',
+            columnsBorderRadius: '0px',
+            columnsBorder: {},
+            columnsPadding: extra.columnsPadding || '0px',
+            displayCondition: null,
+            hideDesktop: false,
+            hideMobile: false,
+            hideTablet: false,
+            noColumns: false,
+            padding: extra.rowPadding || '0px',
+            selectable: true,
+        },
+    });
+
+    if (starter === 'thank-you') {
+        return {
+            design: {
+                counters: {},
+                body: {
+                    ...bodyBase,
+                    rows: [
+                        createRow(
+                            'thankyou-hero',
+                            [
+                                createTextContent(
+                                    'thankyou-title',
+                                    `<h1 style="margin: 0; font-size: 30px; line-height: 1.25; color: #0f172a; text-align: center;">${isConfirmation ? 'Thank you for your submission' : 'A new form submission is here'}</h1>`,
+                                    { textAlign: 'center', fontSize: '30px', lineHeight: '130%', color: '#0f172a' }
+                                ),
+                                createTextContent(
+                                    'thankyou-copy',
+                                    `<p style="margin: 0;">${isConfirmation ? 'We received your response for <strong>{{form_title}}</strong> and will get back to you soon.' : 'This email was triggered by <strong>{{form_title}}</strong> on <strong>{{site_title}}</strong>.'}</p>`,
+                                    { textAlign: 'center' }
+                                ),
+                                createTextContent(
+                                    'thankyou-note',
+                                    `<p style="margin: 0; font-size: 14px; color: #64748b; text-align: center;">Reference: <strong>{{entry_title}}</strong></p>`,
+                                    { textAlign: 'center', fontSize: '14px', color: '#64748b' }
+                                ),
+                            ],
+                            {
+                                backgroundColor: '#ffffff',
+                                border: { radius: '18px' },
+                                padding: '40px 40px 36px',
+                                rowPadding: '32px 24px',
+                                rowBackgroundColor: soft,
+                            }
+                        ),
+                    ],
+                },
+            },
+            html: `
+                <html>
+                    <body style="margin:0;background:#eef2f7;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;color:#334155;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#f5f7ff;border-radius:24px;">
+                            <tr>
+                                <td style="padding:32px 24px;">
+                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:18px;">
+                                        <tr>
+                                            <td style="padding:40px 40px 36px;text-align:center;">
+                                                <h1 style="margin:0 0 16px;font-size:30px;line-height:1.25;color:#0f172a;">${isConfirmation ? 'Thank you for your submission' : 'A new form submission is here'}</h1>
+                                                <p style="margin:0 0 14px;font-size:16px;line-height:1.7;color:#334155;">${isConfirmation ? 'We received your response for <strong>{{form_title}}</strong> and will get back to you soon.' : 'This email was triggered by <strong>{{form_title}}</strong> on <strong>{{site_title}}</strong>.'}</p>
+                                                <p style="margin:0;font-size:14px;line-height:1.6;color:#64748b;">Reference: <strong>{{entry_title}}</strong></p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </body>
+                </html>
+            `.trim(),
+        };
+    }
+
+    return {
+        design: {
+            counters: {},
+            body: {
+                ...bodyBase,
+                rows: [
+                    createRow(
+                        'data-header',
+                        [
+                            createTextContent(
+                                'data-title',
+                                `<h1 style="margin: 0; font-size: 28px; line-height: 1.25; color: #0f172a;">${isConfirmation ? 'Submission summary' : 'New submission summary'}</h1>`,
+                                { fontSize: '28px', lineHeight: '130%', color: '#0f172a' }
+                            ),
+                            createTextContent(
+                                'data-copy',
+                                '<p style="margin: 0;">Use this starter to organize your key field tags. Replace the sample values below with the field tags from your form.</p>'
+                            ),
+                        ],
+                        {
+                            backgroundColor: '#ffffff',
+                            border: { radius: '18px 18px 0 0' },
+                            padding: '32px 32px 20px',
+                            rowPadding: '24px 24px 0',
+                            rowBackgroundColor: soft,
+                        }
+                    ),
+                    createRow(
+                        'data-table',
+                        [
+                            createTextContent(
+                                'data-list',
+                                `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                                    <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Form</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{form_title}}</strong></td></tr>
+                                    <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Reference</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{entry_title}}</strong></td></tr>
+                                    <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Site</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{site_title}}</strong></td></tr>
+                                    <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Field Tag</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{your_field_tag}}</strong></td></tr>
+                                </table>`,
+                                { fontSize: '15px', lineHeight: '160%' }
+                            ),
+                            createTextContent(
+                                'data-tip',
+                                '<p style="margin: 0; font-size: 13px; color: #64748b;">Tip: select a text block and insert your available field tags from the builder menu on the right.</p>',
+                                { fontSize: '13px', color: '#64748b' }
+                            ),
+                        ],
+                        {
+                            backgroundColor: '#ffffff',
+                            border: { radius: '0 0 18px 18px' },
+                            padding: '0 32px 32px',
+                            rowPadding: '0 24px 24px',
+                            rowBackgroundColor: soft,
+                        }
+                    ),
+                ],
+            },
+        },
+        html: `
+            <html>
+                <body style="margin:0;background:#eef2f7;padding:24px 16px;font-family:Arial,Helvetica,sans-serif;color:#334155;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#f5f7ff;border-radius:24px;">
+                        <tr>
+                            <td style="padding:24px;">
+                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:18px;overflow:hidden;">
+                                    <tr>
+                                        <td style="padding:32px 32px 20px;">
+                                            <h1 style="margin:0 0 12px;font-size:28px;line-height:1.25;color:#0f172a;">${isConfirmation ? 'Submission summary' : 'New submission summary'}</h1>
+                                            <p style="margin:0;font-size:16px;line-height:1.7;color:#334155;">Use this starter to organize your key field tags. Replace the sample values below with the field tags from your form.</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:0 32px 32px;">
+                                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                                                <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Form</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{form_title}}</strong></td></tr>
+                                                <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Reference</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{entry_title}}</strong></td></tr>
+                                                <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Site</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{site_title}}</strong></td></tr>
+                                                <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Field Tag</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{your_field_tag}}</strong></td></tr>
+                                            </table>
+                                            <p style="margin:16px 0 0;font-size:13px;line-height:1.6;color:#64748b;">Tip: replace <strong>{{your_field_tag}}</strong> with one of your form field tags from the builder.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+            </html>
+        `.trim(),
+    };
+};
+
+const createEmailTemplate = ({ fieldName, formTitle, starter = 'blank' }) => {
     const type = fieldName === 'user_email_template'
         ? __('Confirmation', 'gutenverse-form')
         : __('Notification', 'gutenverse-form');
     const cleanTitle = normalizeTemplateTitle(formTitle) || __('Untitled Form', 'gutenverse-form');
     const name = `${cleanTitle} - ${type}`;
+    const starterContent = buildEmailTemplateStarter(starter, fieldName);
 
     return apiFetch({
         path: '/wp/v2/gutenverse-email-tpl',
         method: 'POST',
         data: {
             title: name,
-            status: 'publish'
+            status: 'publish',
+            meta: {
+                gutenverse_email_design: starterContent.design ? JSON.stringify(starterContent.design) : '',
+                gutenverse_email_html: starterContent.html || '',
+            }
         }
     });
 };
@@ -172,15 +409,16 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
     const adminUrl = getAdminUrl();
     const template = emailTemplates ? emailTemplates.find(t => t.value === templateId) : null;
     const templateTitle = template ? normalizeTemplateTitle(template.label) : __('(No Template Found)', 'gutenverse-form');
+    const templateHtml = template?.html || '';
     const templateType = fieldName === 'user_email_template'
         ? __('confirmation', 'gutenverse-form')
         : __('notification', 'gutenverse-form');
 
-    const handleCreate = () => {
+    const handleCreate = (starter = 'blank') => {
         setSaving(true);
         setMessage('');
         setError('');
-        createEmailTemplate({ fieldName, formTitle }).then(response => {
+        createEmailTemplate({ fieldName, formTitle, starter }).then(response => {
             if (response && response.id) {
                 updateValue(fieldName, response.id);
                 if (onRefresh) onRefresh();
@@ -219,16 +457,37 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
         return (
             <div className="gutenverse-email-template-manager">
                 <InlineNotice>
-                    {__('Create a dedicated template for this email. Each confirmation and notification keeps its own template.', 'gutenverse-form')}
+                    {__('Choose how to start this email template. You can begin with a blank canvas or a starter layout and customize it afterward.', 'gutenverse-form')}
                 </InlineNotice>
-                <button
-                    type="button"
-                    className={`gutenverse-button create ${saving ? 'disabled' : ''}`}
-                    onClick={!saving ? handleCreate : undefined}
-                    disabled={saving}
-                >
-                    {saving ? __('Creating...', 'gutenverse-form') : __('Create Email Template', 'gutenverse-form')}
-                </button>
+                <div className="email-template-starters">
+                    <button
+                        type="button"
+                        className={`gutenverse-button email-template-starter ${saving ? 'disabled' : ''}`}
+                        onClick={!saving ? () => handleCreate('blank') : undefined}
+                        disabled={saving}
+                    >
+                        <strong>{__('Start Blank', 'gutenverse-form')}</strong>
+                        <span>{__('Open an empty template and design it from scratch.', 'gutenverse-form')}</span>
+                    </button>
+                    <button
+                        type="button"
+                        className={`gutenverse-button email-template-starter ${saving ? 'disabled' : ''}`}
+                        onClick={!saving ? () => handleCreate('thank-you') : undefined}
+                        disabled={saving}
+                    >
+                        <strong>{__('Thank You Template', 'gutenverse-form')}</strong>
+                        <span>{__('A clean acknowledgement email with a polished thank-you message.', 'gutenverse-form')}</span>
+                    </button>
+                    <button
+                        type="button"
+                        className={`gutenverse-button email-template-starter ${saving ? 'disabled' : ''}`}
+                        onClick={!saving ? () => handleCreate('data') : undefined}
+                        disabled={saving}
+                    >
+                        <strong>{__('Data Summary Template', 'gutenverse-form')}</strong>
+                        <span>{__('A starter layout for showing key submission details and field tags.', 'gutenverse-form')}</span>
+                    </button>
+                </div>
                 <InlineNotice type="success">{message}</InlineNotice>
                 <InlineNotice type="error">{error}</InlineNotice>
             </div>
@@ -251,6 +510,21 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
                 </div>
                 <span className="template-id">ID: {templateId}</span>
             </div>
+            {templateHtml && (
+                <div className="template-preview-wrapper">
+                    <div className="template-preview-header">
+                        <span>{__('Template Preview', 'gutenverse-form')}</span>
+                        <span>{__('Read-only snapshot', 'gutenverse-form')}</span>
+                    </div>
+                    <div className="template-preview-frame">
+                        <iframe
+                            title={__('Email template preview', 'gutenverse-form')}
+                            srcDoc={templateHtml}
+                            sandbox=""
+                        />
+                    </div>
+                </div>
+            )}
             <div className="template-actions">
                 <a
                     href={editUrl}
@@ -665,7 +939,6 @@ const autoGenerateTags = ({ clientId, values, updateValue }) => {
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
     const [hideFormNotice, setHideFormNotice] = useState(!isEmpty(window['GutenverseConfig']) && window['GutenverseConfig']['hideFormNotice'] ? window['GutenverseConfig']['hideFormNotice'] : false);
-    const [templateCreationError, setTemplateCreationError] = useState('');
 
     const tabs = {
         general: {
@@ -688,7 +961,11 @@ export const FormContent = (props) => {
 
     const fetchEmailTemplates = () => {
         apiFetch({ path: '/wp/v2/gutenverse-email-tpl?per_page=100' }).then(posts => {
-            const options = posts.map(post => ({ label: normalizeTemplateTitle(post.title.rendered), value: post.id }));
+            const options = posts.map(post => ({
+                label: normalizeTemplateTitle(post.title.rendered),
+                value: post.id,
+                html: post?.meta?.gutenverse_email_html || '',
+            }));
             setEmailTemplates([{ label: __('Default', 'gutenverse-form'), value: '' }, ...options]);
         });
     };
@@ -717,40 +994,8 @@ export const FormContent = (props) => {
         </>
     );
 
-    const updateValue = (id, value) => {
-        props.updateValue(id, value);
-
-        const shouldCreateUserTemplate = id === 'user_message_type'
-            && value === 'template'
-            && !props.values.user_email_template;
-        const shouldCreateAdminTemplate = id === 'admin_message_type'
-            && value === 'template'
-            && !props.values.admin_email_template;
-
-        if (!shouldCreateUserTemplate && !shouldCreateAdminTemplate) {
-            return;
-        }
-
-        setTemplateCreationError('');
-
-        const fieldName = shouldCreateUserTemplate ? 'user_email_template' : 'admin_email_template';
-
-        createEmailTemplate({
-            fieldName,
-            formTitle: props.values.title
-        }).then((response) => {
-            if (response?.id) {
-                props.updateValue(fieldName, response.id);
-                fetchEmailTemplates();
-            }
-        }).catch((err) => {
-            console.error(err); // eslint-disable-line no-console
-            setTemplateCreationError(err?.message || __('Could not create the email template automatically. You can still create it manually below.', 'gutenverse-form'));
-        });
-    };
-
     const tabProps = {
-        ...props, emailTemplates, metaKeys, placeholderDescription, refreshTemplates: fetchEmailTemplates, updateValue,
+        ...props, emailTemplates, metaKeys, placeholderDescription, refreshTemplates: fetchEmailTemplates,
     };
 
     const changeActive = key => {
@@ -790,7 +1035,6 @@ export const FormContent = (props) => {
         changeActive,
     };
     return <div>
-        {templateCreationError && <div className="gutenverse-form-action-error modal-error">{templateCreationError}</div>}
         {!hideFormNotice && <div className="form-notice-wrapper">
             <AlertControl>
                 <>

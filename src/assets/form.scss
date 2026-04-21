@@ -505,6 +505,111 @@
             }
         }
     }
+
+    .template-preview-wrapper {
+        background: #fff;
+        border: 1px solid #dcdcde;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        overflow: hidden;
+    }
+
+    .template-preview-header {
+        align-items: center;
+        background: #f6f7f7;
+        border-bottom: 1px solid #dcdcde;
+        color: #1d2327;
+        display: flex;
+        font-size: 12px;
+        font-weight: 600;
+        justify-content: space-between;
+        padding: 10px 12px;
+
+        span:last-child {
+            color: #646970;
+            font-size: 11px;
+            font-weight: 400;
+        }
+    }
+
+    .template-preview-frame {
+        background: #eef2f7;
+        padding: 14px;
+
+        iframe {
+            background: #fff;
+            border: 0;
+            border-radius: 4px;
+            display: block;
+            min-height: 520px;
+            width: 100%;
+        }
+    }
+
+    .email-template-starters {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .email-template-starter {
+        align-items: flex-start;
+        background: #fff;
+        border: 1px solid #dcdcde;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        justify-content: flex-start;
+        min-height: 120px;
+        padding: 14px;
+        text-align: left;
+        white-space: normal;
+
+        strong,
+        span {
+            display: block;
+        }
+
+        strong {
+            color: #1d2327;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        span {
+            color: #646970;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        &:hover,
+        &:focus,
+        &:active {
+            border-color: #3b57f7;
+        }
+    }
+}
+
+@media (max-width: 782px) {
+    .gutenverse-email-template-manager {
+        .template-preview-frame {
+            padding: 10px;
+
+            iframe {
+                min-height: 420px;
+            }
+        }
+
+        .email-template-starters {
+            grid-template-columns: 1fr;
+        }
+
+        .email-template-starter {
+            min-height: 0;
+        }
+    }
 }
 
 .gutenverse-form-confirm-content {
