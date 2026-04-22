@@ -661,7 +661,18 @@ class Integration {
 
 			$actions = isset( $integration['actions'] ) && is_array( $integration['actions'] ) ? $integration['actions'] : array();
 		} elseif ( isset( $form_setting['integrations']['actions'] ) && is_array( $form_setting['integrations']['actions'] ) ) {
-			$actions = $form_setting['integrations']['actions'];
+			$integration = array(
+				'actions'   => $form_setting['integrations']['actions'],
+				'elementId' => isset( $form_setting['elementId'] ) ? (string) $form_setting['elementId'] : '',
+			);
+			$post_id     = isset( $params['form-id'] ) ? (int) $params['form-id'] : 0;
+			$element_id  = isset( $integration['elementId'] ) ? (string) $integration['elementId'] : '';
+
+			if ( $post_id > 0 && '' !== $element_id ) {
+				$integration = ( new self() )->hydrate_block_integration_secrets( $integration, $post_id, $element_id );
+			}
+
+			$actions = isset( $integration['actions'] ) && is_array( $integration['actions'] ) ? $integration['actions'] : array();
 		}
 
 		return array_values(
