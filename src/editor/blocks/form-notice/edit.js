@@ -5,8 +5,7 @@ import {
 	withPassRef,
 } from "gutenverse-core/hoc";
 import { panelList } from "./panels/panel-list";
-import { recursiveParentBlock } from "../form-input/general/input-wrapper";
-import { useRef, useMemo, useState, useEffect } from "@wordpress/element";
+import { useRef, useMemo } from "@wordpress/element";
 
 import { useAnimationEditor, useDisplayEditor } from "gutenverse-core/hooks";
 import classnames from "classnames";
@@ -60,11 +59,10 @@ const FormNoticeBlock = compose(
 	useGenerateElementId(clientId, elementId, elementRef);
 	useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
 
-	const { formData, validParentState } = useSelect(
+	const { formData } = useSelect(
 		(select) => {
 			const { getBlockRootClientId, getBlockAttributes } =
 				select("core/block-editor");
-			const isValid = recursiveParentBlock(clientId);
 			const rootClientId = getBlockRootClientId(clientId);
 			let data = null;
 			if (rootClientId) {
@@ -72,17 +70,10 @@ const FormNoticeBlock = compose(
 			}
 			return {
 				formData: data,
-				validParentState: isValid,
 			};
 		},
 		[clientId],
 	);
-
-	const [validParent, setValidParent] = useState(true);
-
-	useEffect(() => {
-		setValidParent(validParentState);
-	}, [validParentState]);
 
 	const displayMessage = useMemo(() => {
 		if (messageSource === "custom") {
@@ -142,14 +133,7 @@ const FormNoticeBlock = compose(
 				elementRef={elementRef}
 			/>
 			<div {...blockProps}>
-				{!validParent && (
-					<h1 className="input-warning">
-						{__(
-							"Please put notice element inside Form Builder",
-							"gutenverse-form",
-						)}
-					</h1>
-				)}
+				<FormNavigation clientId={clientId} helperPlacement="inside" />
 				<div
 					className={classnames(
 						"guten-form-notice-wrapper",

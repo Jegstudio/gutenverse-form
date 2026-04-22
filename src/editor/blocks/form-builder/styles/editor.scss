@@ -359,6 +359,100 @@
     }
 }
 
+.gutenverse-form-builder-helper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border: 1px solid #d9e3ff;
+    border-radius: 8px;
+    background: #f6f9ff;
+
+    .gutenverse-form-builder-helper-copy {
+        min-width: 0;
+    }
+
+    .gutenverse-form-builder-helper-title {
+        color: #011627;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .gutenverse-form-builder-helper-description {
+        color: #667085;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .gutenverse-form-builder-helper-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        width: 100%;
+    }
+
+    .gutenverse-form-builder-helper-option {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid #d9e3ff;
+        border-radius: 8px;
+        background: #fff;
+    }
+
+    .gutenverse-form-builder-helper-option-title {
+        color: #011627;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .gutenverse-form-builder-helper-existing {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .gutenverse-form-builder-helper-option .components-button {
+        justify-content: center;
+        min-height: 32px;
+        padding: 0 12px;
+    }
+
+    .components-base-control {
+        margin-bottom: 0;
+        min-width: 100%;
+    }
+
+    .components-base-control__field {
+        margin-bottom: 0;
+    }
+
+    .components-input-control__label,
+    .components-base-control__label {
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+}
+
+@media (max-width: 782px) {
+    .gutenverse-form-builder-helper {
+        .gutenverse-form-builder-helper-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .components-button {
+            justify-content: center;
+            width: 100%;
+        }
+    }
+}
+
 .guten-flex-container-editor,
 .guten-inner-container-editor {
     > .guten-form-builder {

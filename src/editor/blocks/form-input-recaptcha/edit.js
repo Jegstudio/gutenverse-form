@@ -1,7 +1,7 @@
 import { compose } from '@wordpress/compose';
 import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useRef } from '@wordpress/element';
 import { BlockPanelController } from 'gutenverse-core/controls';
 import FormNavigation from '../form-input/general/form-navigation';
 import classnames from 'classnames';
@@ -9,7 +9,6 @@ import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenve
 import getBlockStyle from './styles/block-style';
 import { useBlockProps } from 'gutenverse-core/components';
 import { __ } from '@wordpress/i18n';
-import { recursiveParentBlock } from '../form-input/general/input-wrapper';
 
 
 const FormInputRecaptcha = compose(
@@ -40,19 +39,11 @@ const FormInputRecaptcha = compose(
         ref: elementRef
     });
 
-    const [validParent, setValidParent] = useState(true);
-
-    useEffect(() => {
-        setValidParent(recursiveParentBlock(clientId));
-    }, []);
-
     return <>
         <FormNavigation clientId={clientId} />
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
-        {!validParent && <h1 className="input-warning">
-            {__('Please put input element inside Form Builder', 'gutenverse-form')}
-        </h1>}
         <div {...blockProps}>
+            <FormNavigation clientId={clientId} helperPlacement="inside" />
             <div className="indicator">
                 <i className="icon gtn gtn-arrow-up-solid"></i>
                 <span>{__('RECAPTCHA', 'gutenverse-form')}</span>

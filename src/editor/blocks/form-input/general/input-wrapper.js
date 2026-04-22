@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import { compose } from '@wordpress/compose';
 import { withMouseMoveEffect } from 'gutenverse-core/hoc';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { useBlockProps, RichText } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
@@ -76,12 +76,6 @@ const InputWrapper = compose(
         ref: elementRef
     });
 
-    const [validParent, setValidParent] = useState(true);
-
-    useEffect(() => {
-        setValidParent(recursiveParentBlock(clientId));
-    }, []);
-
     useEffect(() => {
         if (elementRef && setBlockRef) {
             setBlockRef(elementRef);
@@ -115,9 +109,7 @@ const InputWrapper = compose(
         <FormNavigation clientId={clientId} />
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
         <div  {...blockProps}>
-            {!validParent && <h1 className="input-warning">
-                {__('Please put input element inside Form Builder', 'gutenverse-form')}
-            </h1>}
+            <FormNavigation clientId={clientId} helperPlacement="inside" />
             <div className="label-wrapper">
                 {Label}
                 {Required}
