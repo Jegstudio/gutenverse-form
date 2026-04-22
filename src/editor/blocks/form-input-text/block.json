@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-text",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Text",
 	"title": "Text Input",
 	"description": "Gutenverse Input Text",
 	"category": "gutenverse-form",
@@ -482,12 +483,51 @@
 		"condition": {
 			"type": "object",
 			"default": {}
+		},
+		"flexAlignSelf": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexCustomOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeGrow": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeShrink": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
 		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "texts"],
+	"keywords": [
+		"input",
+		"form",
+		"texts"
+	],
 	"example": {},
-	"style": ["gutenverse-form-frontend-form-input-text-style"]
+	"style": [
+		"gutenverse-form-frontend-form-input-text-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
+	]
 }

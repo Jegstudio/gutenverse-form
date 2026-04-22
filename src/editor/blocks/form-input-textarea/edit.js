@@ -1,9 +1,8 @@
 import { compose } from '@wordpress/compose';
-
-import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
-import { useRef } from '@wordpress/element';
+import { useRef, useEffect } from '@wordpress/element';
 import { IconLibrary } from 'gutenverse-core/controls';
 import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
@@ -14,7 +13,6 @@ import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputTextareaBlock = compose(
-    withMouseMoveEffect,
     withPartialRender,
     withPassRef,
 )(props => {
@@ -44,6 +42,7 @@ const FormInputTextareaBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
+
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     useDynamicScript(elementRef);
@@ -111,7 +110,6 @@ const FormInputTextareaBlock = compose(
                         placeholder={inputPlaceholder}
                         name={inputName}
                         className="gutenverse-input gutenverse-input-textarea"
-                        ref={elementRef}
                     />
                 </div>
                 :
@@ -119,7 +117,6 @@ const FormInputTextareaBlock = compose(
                     placeholder={inputPlaceholder}
                     name={inputName}
                     className="gutenverse-input gutenverse-input-textarea"
-                    ref={elementRef}
                 />}
         </InputWrapper>
     </>;

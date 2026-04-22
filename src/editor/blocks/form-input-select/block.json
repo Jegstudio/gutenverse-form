@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-select",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Select",
 	"title": "Select",
 	"description": "Gutenverse Select",
 	"category": "gutenverse-form",
@@ -460,12 +461,73 @@
 		"dropDownIconCloseSize": {
 			"type": "object",
 			"copyStyle": true
+		},
+		"dropDownDisableIconRemove": {
+			"type": "boolean",
+			"default": false
+		},
+		"dropDownIconRemoveColor": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"dropDownIconRemoveSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"dropDownIconRemoveOffset": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexAlignSelf": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexCustomOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeGrow": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeShrink": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
 		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "selection", "options"],
-	"viewScript": ["gutenverse-form-frontend-input-select-script"],
-	"style": ["gutenverse-form-frontend-form-input-select-style"]
+	"keywords": [
+		"input",
+		"form",
+		"selection",
+		"options"
+	],
+	"viewScript": [
+		"gutenverse-form-frontend-input-select-script"
+	],
+	"style": [
+		"gutenverse-form-frontend-form-input-select-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
+	]
 }

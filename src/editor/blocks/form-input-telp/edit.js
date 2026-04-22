@@ -1,8 +1,8 @@
 import { compose } from '@wordpress/compose';
-import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
-import { useRef } from '@wordpress/element';
+import { useRef, useEffect } from '@wordpress/element';
 import { IconLibrary } from 'gutenverse-core/controls';
 import { useState } from '@wordpress/element';
 import { createPortal } from 'react-dom';
@@ -13,7 +13,7 @@ import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputNumberTelp = compose(
-    withMouseMoveEffect,
+    
     withPartialRender,
     withPassRef,
 )(props => {
@@ -44,6 +44,7 @@ const FormInputNumberTelp = compose(
     } = attributes;
 
     const elementRef = useRef();
+
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;
 
@@ -114,7 +115,6 @@ const FormInputNumberTelp = compose(
                         className="gutenverse-input gutenverse-input-telp"
                         type="tel"
                         pattern={inputPattern}
-                        ref={elementRef}
                     />
                 </div>
                 :
@@ -124,7 +124,6 @@ const FormInputNumberTelp = compose(
                     className="gutenverse-input gutenverse-input-telp"
                     type="tel"
                     pattern={inputPattern}
-                    ref={elementRef}
                 />}
         </InputWrapper>
     </>;

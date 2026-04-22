@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-number",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Number",
 	"title": "Number Input",
 	"description": "Gutenverse Input Number",
 	"category": "gutenverse-form",
@@ -485,12 +486,51 @@
 		"iconBoxShadowFocus": {
 			"type": "object",
 			"copyStyle": true
+		},
+		"flexAlignSelf": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexCustomOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeGrow": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeShrink": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
 		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "numbers"],
+	"keywords": [
+		"input",
+		"form",
+		"numbers"
+	],
 	"example": {},
-	"style": ["gutenverse-form-frontend-form-input-number-style"]
+	"style": [
+		"gutenverse-form-frontend-form-input-number-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
+	]
 }

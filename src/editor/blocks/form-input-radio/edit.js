@@ -1,5 +1,5 @@
 import { compose } from '@wordpress/compose';
-import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import classnames from 'classnames';
@@ -9,7 +9,6 @@ import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputRadioBlock = compose(
-    withMouseMoveEffect,
     withPartialRender,
     withPassRef,
 )(props => {
@@ -56,7 +55,6 @@ const FormInputRadioBlock = compose(
         <InputWrapper {...inputData}>
             <div className={innerClass}>
                 <div hidden
-                    ref={elementRef}
                     name={inputName}
                     className="gutenverse-input"
                     data-validation={JSON.stringify(validation)}

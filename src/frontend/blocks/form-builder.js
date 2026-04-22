@@ -186,7 +186,6 @@ class GutenverseFormValidation extends Default {
         const postId = !isEmpty(window['GutenverseData']) ? window['GutenverseData']['postId'] : 0;
         const hideAfterSubmit = formBuilder.data('hide-after');
         const redirectTo = formBuilder.data('redirect');
-
         formBuilder.on('submit', (e) => {
             e.preventDefault();
             let recaptchaResponse = null;
@@ -392,7 +391,7 @@ class GutenverseFormValidation extends Default {
                 if ('checkbox' === validation.type) {
                     return value.length !== 0;
                 }
-                if (value === '' || value.length === 0) {
+                if (value === '' || value === undefined || value.length === 0) {
                     return false;
                 }
             }

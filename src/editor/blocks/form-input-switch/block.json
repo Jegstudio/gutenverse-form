@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-switch",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Switch",
 	"title": "Switch",
 	"description": "Gutenverse Switch",
 	"category": "gutenverse-form",
@@ -260,12 +261,52 @@
 		"condition": {
 			"type": "object",
 			"default": {}
+		},
+		"flexAlignSelf": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexCustomOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeGrow": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeShrink": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
 		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "switch", "toggle"],
+	"keywords": [
+		"input",
+		"form",
+		"switch",
+		"toggle"
+	],
 	"example": {},
-	"style": ["gutenverse-form-frontend-form-input-switch-style"]
+	"style": [
+		"gutenverse-form-frontend-form-input-switch-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
+	]
 }

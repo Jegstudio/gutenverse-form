@@ -1,8 +1,8 @@
 import { compose } from '@wordpress/compose';
-import { withMouseMoveEffect, withPartialRender, withPassRef } from 'gutenverse-core/hoc';
+import {  withPartialRender, withPassRef } from 'gutenverse-core/hoc';
 import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
-import { useRef } from '@wordpress/element';
+import { useRef, useEffect } from '@wordpress/element';
 import { IconLibrary } from 'gutenverse-core/controls';
 import { useState } from '@wordpress/element';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
@@ -15,7 +15,6 @@ import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 
 const FormInputTextBlock = compose(
-    withMouseMoveEffect,
     withPartialRender,
     withPassRef,
 )(props => {
@@ -120,7 +119,6 @@ const FormInputTextBlock = compose(
                             animationClass
                         )}
                         type="text"
-                        ref={elementRef}
                     />
                 </div>
                 :
@@ -133,7 +131,6 @@ const FormInputTextBlock = compose(
                         animationClass
                     )}
                     type="text"
-                    ref={elementRef}
                 />}
         </InputWrapper>
     </>;

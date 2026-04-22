@@ -92,9 +92,9 @@ const getBlockStyle = (elementId, attributes) => {
                 'name': 'display',
                 'valueType': 'function',
                 'functionName': 'handleSimpleCondition',
-                'functionProps' : {
-                    'valueTrue' : 'none',
-                    'valueFalse' : 'block'
+                'functionProps': {
+                    'valueTrue': 'none',
+                    'valueFalse': 'block'
                 }
             }
         ],
@@ -866,6 +866,218 @@ const getBlockStyle = (elementId, attributes) => {
         'selector': `.${elementId}.guten-element`,
         'attributeType': 'custom',
     });
+
+    /** Position Flex Item */
+    const selector = `.${elementId}.guten-element`;
+
+    // Flex Align Self
+    isNotEmpty(attributes['flexAlignSelf']) && data.push({
+        'type': 'plain',
+        'id': 'flexAlignSelf',
+        'responsive': true,
+        'selector': selector,
+        'properties': [
+            {
+                'name': 'align-self',
+                'valueType': 'direct'
+            }
+        ],
+    });
+    isNotEmpty(attributes['dropDownDisableIconRemove']) && data.push({
+        'type': 'plain',
+        'id': 'dropDownDisableIconRemove',
+        'properties': [
+            {
+                'name': 'display',
+                'valueType': 'static',
+                'staticValue': 'none',
+            }
+        ],
+        'selector': `.${elementId}.guten-element .choices[data-type*=select-one] .choices__button`,
+    });
+
+    isNotEmpty(attributes['dropDownIconRemoveColor']) && data.push({
+        'type': 'color',
+        'id': 'dropDownIconRemoveColor',
+        'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
+        'properties': [
+            {
+                'name': 'background-color',
+                'valueType': 'direct'
+            }
+        ],
+    });
+
+    // Flex Order - responsive handling
+    const flexOrder = attributes['flexOrder'];
+    const flexCustomOrder = attributes['flexCustomOrder'];
+    if (isNotEmpty(flexOrder)) {
+        data.push({
+            'type': 'plain',
+            'id': 'flexOrder',
+            'responsive': true,
+            'selector': selector,
+            'properties': [
+                {
+                    'name': 'order',
+                    'valueType': 'function',
+                    'valueFunc': (value) => {
+                        if (value === 'start') {
+                            return '-9999';
+                        }
+                        if (value === 'end') {
+                            return '9999';
+                        }
+                        return undefined; // Skip 'custom', let flexCustomOrder handle it
+                    }
+                }
+            ],
+        });
+        if (isNotEmpty(flexCustomOrder)) {
+            data.push({
+                'type': 'plain',
+                'id': 'flexCustomOrder',
+                'responsive': true,
+                'selector': selector,
+                'properties': [
+                    {
+                        'name': 'order',
+                        'valueType': 'function',
+                        'valueFunc': (value, deviceType) => {
+                            // Only apply custom order if flexOrder is 'custom' for this device
+                            if (flexOrder[deviceType] === 'custom') {
+                                return value;
+                            }
+                            return undefined;
+                        }
+                    }
+                ],
+            });
+        }
+    }
+
+    // Flex Size (grow/shrink) - responsive handling
+    const flexSize = attributes['flexSize'];
+    const flexSizeGrow = attributes['flexSizeGrow'];
+    const flexSizeShrink = attributes['flexSizeShrink'];
+    if (isNotEmpty(flexSize)) {
+        // Handle grow preset
+        data.push({
+            'type': 'plain',
+            'id': 'flexSize',
+            'responsive': true,
+            'selector': selector,
+            'properties': [
+                {
+                    'name': 'flex-grow',
+                    'valueType': 'function',
+                    'valueFunc': (value) => value === 'grow' ? '1' : undefined
+                }
+            ],
+        });
+        // Handle shrink preset
+        data.push({
+            'type': 'plain',
+            'id': 'flexSize',
+            'responsive': true,
+            'selector': selector,
+            'properties': [
+                {
+                    'name': 'flex-shrink',
+                    'valueType': 'function',
+                    'valueFunc': (value) => value === 'shrink' ? '1' : undefined
+                }
+            ],
+        });
+        // Handle custom grow
+        if (isNotEmpty(flexSizeGrow)) {
+            data.push({
+                'type': 'plain',
+                'id': 'flexSizeGrow',
+                'responsive': true,
+                'selector': selector,
+                'properties': [
+                    {
+                        'name': 'flex-grow',
+                        'valueType': 'direct'
+                    }
+                ],
+            });
+        }
+        // Handle custom shrink
+        if (isNotEmpty(flexSizeShrink)) {
+            data.push({
+                'type': 'plain',
+                'id': 'flexSizeShrink',
+                'responsive': true,
+                'selector': selector,
+                'properties': [
+                    {
+                        'name': 'flex-shrink',
+                        'valueType': 'direct'
+                    }
+                ],
+            });
+        }
+    }
+    isNotEmpty(attributes['dropDownIconRemoveSize']) && isNotEmpty(attributes['dropDownIconRemove']) && data.push(
+        {
+            'type': 'plain',
+            'id': 'dropDownIconRemoveSize',
+            'responsive': true,
+            'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
+            'properties': [
+                {
+                    'name': 'mask-size',
+                    'valueType': 'pattern',
+                    'pattern': '{value}px',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        },
+                    }
+                }
+            ],
+        },
+        {
+            'type': 'plain',
+            'id': 'dropDownIconRemoveSize',
+            'responsive': true,
+            'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
+            'properties': [
+                {
+                    'name': '-webkit-mask-size',
+                    'valueType': 'pattern',
+                    'pattern': '{value}px',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        },
+                    }
+                }
+            ],
+        },
+    );
+    isNotEmpty(attributes['dropDownIconRemoveOffset']) && data.push(
+        {
+            'type': 'plain',
+            'id': 'dropDownIconRemoveOffset',
+            'responsive': true,
+            'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
+            'properties': [
+                {
+                    'name': 'margin-right',
+                    'valueType': 'pattern',
+                    'pattern': '{value}px',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        },
+                    }
+                }
+            ],
+        },
+    );
 
     return [
         ...data,

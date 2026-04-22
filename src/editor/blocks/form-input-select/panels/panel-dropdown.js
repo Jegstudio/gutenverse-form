@@ -1,9 +1,10 @@
 import { __ } from '@wordpress/i18n';
-import { CheckboxControl, ColorControl, IconSVGControl, RangeControl} from 'gutenverse-core/controls';
+import { CheckboxControl, ColorControl, IconSVGControl, RangeControl } from 'gutenverse-core/controls';
 
 export const panelDropdown = props => {
     const {
         useDropDownIcon,
+        dropDownDisableIconRemove,
         elementId
     } = props;
 
@@ -28,7 +29,7 @@ export const panelDropdown = props => {
             liveStyle: [
                 {
                     'type': 'color',
-                    'id' : 'dropDownIconOpenColor',
+                    'id': 'dropDownIconOpenColor',
                     'selector': `.${elementId} .choices.custom-dropdown .choices__inner i, .${elementId} .choices.custom-dropdown .choices__inner svg`,
                     'properties': [
                         {
@@ -111,6 +112,92 @@ export const panelDropdown = props => {
                     'id': 'dropDownIconCloseSize',
                     'responsive': true,
                     'selector': `.${elementId} .choices.custom-dropdown.is-open .choices__inner i, .${elementId} .choices.custom-dropdown.is-open .choices__inner svg`,
+                    'properties': [
+                        {
+                            'name': 'font-size',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                }
+                            }
+                        }
+                    ],
+                }
+            ]
+        },
+        {
+            id: 'dropDownDisableIconRemove',
+            label: __('Disable Remove Icon', 'gutenverse-form'),
+            component: CheckboxControl,
+        },
+        {
+            id: 'dropDownIconRemoveOffset',
+            label: __('Remove Icon Offset', 'gutenverse-form'),
+            show: !dropDownDisableIconRemove,
+            component: RangeControl,
+            min: 1,
+            max: 500,
+            step: 1,
+            allowDeviceControl: true,
+            unit: 'px',
+            liveStyle: [
+                {
+                    'type': 'plain',
+                    'id': 'dropDownIconRemoveOffset',
+                    'responsive': true,
+                    'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
+                    'properties': [
+                        {
+                            'name': 'margin-right',
+                            'valueType': 'pattern',
+                            'pattern': '{value}px',
+                            'patternValues': {
+                                'value': {
+                                    'type': 'direct',
+                                }
+                            }
+                        }
+                    ],
+                }
+            ]
+        },
+        {
+            id: 'dropDownIconRemoveColor',
+            label: __('Remove Icon Color', 'gutenverse-form'),
+            show: !dropDownDisableIconRemove,
+            component: ColorControl,
+            liveStyle: [
+                {
+                    'type': 'color',
+                    'id': 'dropDownIconRemoveColor',
+                    'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
+                    'properties': [
+                        {
+                            'name': 'background-color',
+                            'valueType': 'direct'
+                        }
+                    ],
+                }
+            ]
+        },
+        {
+            id: 'dropDownIconRemoveSize',
+            label: __('Remove Icon Size', 'gutenverse-form'),
+            show: !dropDownDisableIconRemove,
+            component: RangeControl,
+            min: 1,
+            max: 20,
+            step: 1,
+            allowDeviceControl: true,
+            unit: 'px',
+            liveStyle: [
+                {
+                    'type': 'plain',
+                    'id': 'dropDownIconRemoveSize',
+                    'responsive': true,
+                    'selector': `.${elementId}.guten-element.guten-form-input-select .choices[data-type*=select-one] .choices__button`,
                     'properties': [
                         {
                             'name': 'font-size',

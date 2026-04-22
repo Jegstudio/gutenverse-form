@@ -243,7 +243,7 @@ export const FormContent = (props) => {
         setPopupInsufficientTier,
         setInsufficientTierDesc,
         changeActive,
-    }
+    };
     return <div>
         {!hideFormNotice && <div className="form-notice-wrapper">
             <AlertControl>

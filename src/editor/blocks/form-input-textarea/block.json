@@ -1,6 +1,7 @@
 {
 	"apiVersion": 3,
 	"name": "gutenverse/form-input-textarea",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Input_Textarea",
 	"title": "Textarea",
 	"description": "Gutenverse Input Textarea",
 	"category": "gutenverse-form",
@@ -486,12 +487,51 @@
 		"iconBoxShadowFocus": {
 			"type": "object",
 			"copyStyle": true
+		},
+		"flexAlignSelf": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexCustomOrder": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSize": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeGrow": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"flexSizeShrink": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
 		}
 	},
 	"supports": {
 		"className": false
 	},
-	"keywords": ["input", "form", "textarea"],
+	"keywords": [
+		"input",
+		"form",
+		"textarea"
+	],
 	"example": {},
-	"style": ["gutenverse-form-frontend-form-input-textarea-style"]
+	"style": [
+		"gutenverse-form-frontend-form-input-textarea-style"
+	],
+	"usesContext": [
+		"gutenverse/flexDirection"
+	]
 }
