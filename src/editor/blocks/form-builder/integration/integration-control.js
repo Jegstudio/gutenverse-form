@@ -72,6 +72,12 @@ const typeOptions = (customOptions) => {
     return options;
 };
 
+const createIntegrationAction = (base = {}, overrides = {}) => ({
+    ...base,
+    ...overrides,
+    _key: base._key || overrides._key || cryptoRandomString({ length: 6, type: 'alphanumeric' }),
+});
+
 const IntegrationTypeControl = ({ item, selectType, onUpdateIndexValue, onUpdateIndexStyle, elementId }) => {
     const props = { item, onUpdateIndexValue, onUpdateIndexStyle, selectType, elementId };
     switch (item.type) {
@@ -218,10 +224,9 @@ const ActionItemDummy = ({ onValueChange, onLocalChange, repeaterDefault, setOpe
                                 options={typeOptions(customOptions)}
                                 menuPortalTarget={document.body}
                                 onChange={option => {
-                                    const newValue = [{
-                                        ...repeaterDefault,
+                                    const newValue = [createIntegrationAction(repeaterDefault, {
                                         type: option.value,
-                                    }];
+                                    })];
                                     onValueChange(newValue);
                                     onLocalChange(newValue);
                                     setOpenLast(0);
@@ -277,7 +282,7 @@ const ActionControl = ({
 
         const newValue = [
             ...value,
-            repeaterDefault
+            createIntegrationAction(repeaterDefault)
         ];
 
         onValueChange(newValue);

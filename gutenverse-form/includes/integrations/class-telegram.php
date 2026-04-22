@@ -110,7 +110,7 @@ class Telegram {
 		if ( $global_enabled && ! $has_request_actions ) {
 			if ( $this->has_required_settings( $global_settings ) ) {
 				$this->set_settings( $global_settings );
-				$this->send( $data, $entry_id, $form_id );
+				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'telegram', $this->send( $data, $entry_id, $form_id ) );
 			}
 		}
 
@@ -125,7 +125,7 @@ class Telegram {
 
 			if ( $this->has_required_settings( $settings ) ) {
 				$this->set_settings( $settings );
-				$this->send( $data, $entry_id, $form_id );
+				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'telegram', $this->send( $data, $entry_id, $form_id ) );
 			}
 		}
 	}

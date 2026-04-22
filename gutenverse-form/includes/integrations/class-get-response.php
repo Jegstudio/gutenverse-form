@@ -185,12 +185,12 @@ class Get_Response {
 
 		if ( $global_enabled && ! $has_request_actions ) {
 			$this->set_settings( $global_settings );
-			$this->send( $data, $entry_id, $params['form-id'] ?? 0 );
+			\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'get_response', $this->send( $data, $entry_id, $params['form-id'] ?? 0 ) );
 		}
 
 		foreach ( $actions as $action ) {
 			$this->set_settings( $action );
-			$this->send( $data, $entry_id, $params['form-id'] ?? 0 );
+			\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'get_response', $this->send( $data, $entry_id, $params['form-id'] ?? 0 ) );
 		}
 	}
 

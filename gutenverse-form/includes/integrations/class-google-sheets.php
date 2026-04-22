@@ -278,7 +278,7 @@ class Google_Sheets {
 			}
 
 			list( $header, $value_template ) = array_map( 'trim', explode( '=', $line, 2 ) );
-			$header                          = sanitize_key( $header );
+			$header                          = sanitize_text_field( $header );
 
 			if ( '' === $header ) {
 				continue;
@@ -526,6 +526,7 @@ class Google_Sheets {
 				'description' => __( 'Paste the accessKey value shown in your API Spreadsheets documentation example.', 'gutenverse-form' ),
 				'required'    => true,
 				'type'        => 'text',
+				'sensitive'   => true,
 				'placeholder' => '062b1da7839a41aff88c43abf932d4dd',
 			),
 			'secretKey' => array(
@@ -538,9 +539,9 @@ class Google_Sheets {
 			),
 			'columnsTemplate' => array(
 				'label'       => __( 'Column Template', 'gutenverse-form' ),
-				'description' => __( 'Optional. Write one field per line using Column={placeholder}. These values are sent inside the API request body as the "data" object.', 'gutenverse-form' ),
+				'description' => __( 'Optional. Write one API column per line using Column={placeholder}. Example: Name={name}. This becomes the JSON body inside "data", such as {"data":{"Name":"...","Email":"..."}}.', 'gutenverse-form' ),
 				'type'        => 'textarea',
-				'placeholder' => "data={entry_id}\nExample={email}\nmessage={message}",
+				'placeholder' => "Name={name}\nEmail={email}\nMessage={message}",
 			),
 		);
 	}

@@ -53,7 +53,8 @@ export const GoogleSheetsControls = ({ item, onUpdateIndexValue, onUpdateIndexSt
                 onValueChange={columnsTemplate => {
                     updateItem({ columnsTemplate });
                 }}
-                placeholder={'data={entry_id}\nExample={email}\nmessage={message}'}
+                description={__('Write one API column per line using Column={placeholder}. Example: Name={name}. This sends {"data":{"Name":"...","Email":"...","Message":"..."}} to API Spreadsheets.', 'gutenverse-form')}
+                placeholder={'Name={name}\nEmail={email}\nMessage={message}'}
                 textArea={true}
             />
         </>
