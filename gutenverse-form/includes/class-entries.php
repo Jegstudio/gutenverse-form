@@ -559,6 +559,42 @@ class Entries {
 			$result .= implode( '', $integration_list );
 		}
 
+		if ( ! empty( $logs ) && is_array( $logs ) ) {
+			$result .= '<div class="entry-title">' . __( 'Integration Logs', 'gutenverse-form' ) . '</div>';
+
+			foreach ( $logs as $service => $service_logs ) {
+				if ( empty( $service_logs ) || ! is_array( $service_logs ) ) {
+					continue;
+				}
+
+				$result .= '<div class="entry-data"><strong>' . esc_html( ucfirst( str_replace( '_', ' ', (string) $service ) ) ) . '</strong></div>';
+
+				foreach ( array_reverse( $service_logs ) as $record ) {
+					$time    = isset( $record['time'] ) ? esc_html( $record['time'] ) : '';
+					$status  = isset( $record['status'] ) ? esc_html( strtoupper( $record['status'] ) ) : '';
+					$message = isset( $record['message'] ) ? esc_html( $record['message'] ) : '';
+					$context = '';
+
+					if ( ! empty( $record['context'] ) && is_array( $record['context'] ) ) {
+						$context_pairs = array();
+						foreach ( $record['context'] as $key => $value ) {
+							if ( is_array( $value ) ) {
+								$value = implode( ', ', array_map( 'strval', $value ) );
+							}
+
+							$context_pairs[] = esc_html( $key ) . ': ' . esc_html( (string) $value );
+						}
+
+						if ( ! empty( $context_pairs ) ) {
+							$context = '<br/><small>' . implode( ' | ', $context_pairs ) . '</small>';
+						}
+					}
+
+					$result .= '<div class="entry-data">' . $time . ' [' . $status . '] ' . $message . $context . '</div>';
+				}
+			}
+		}
+
 		gutenverse_print_html( $result, 'post' );
 	}
 

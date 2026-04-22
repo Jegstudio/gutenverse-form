@@ -180,24 +180,17 @@ class Get_Response {
 		$options         = get_option( 'gutenverse_form_integrations', array() );
 		$global_settings = get_option( 'gutenverse_form_get_response_settings', array() );
 		$global_enabled  = ! empty( $options['get_response'] );
-		$apply_globally  = isset( $global_settings['apply_globally'] ) ? (bool) $global_settings['apply_globally'] : false;
+		$has_request_actions = \Gutenverse_Form\Integration::request_has_integration_actions( $params );
+		$actions         = \Gutenverse_Form\Integration::get_service_actions( 'get_response', $params, $form_setting );
 
-		$local_settings = isset( $form_setting['integrations']['get_response'] ) ? $form_setting['integrations']['get_response'] : array();
-		$local_enabled  = isset( $local_settings['enabled'] ) ? (bool) $local_settings['enabled'] : false;
-
-		if ( ( $global_enabled && $apply_globally ) || $local_enabled ) {
-			$settings = array_merge( $global_settings, $local_settings );
-			$this->set_settings( $settings );
+		if ( $global_enabled && ! $has_request_actions ) {
+			$this->set_settings( $global_settings );
 			$this->send( $data, $entry_id, $params['form-id'] ?? 0 );
 		}
 
-		if ( isset( $params['integrations']['actions'] ) && is_array( $params['integrations']['actions'] ) ) {
-			foreach ( $params['integrations']['actions'] as $action ) {
-				if ( 'get_response' === ( $action['type'] ?? '' ) ) {
-					$this->set_settings( $action );
-					$this->send( $data, $entry_id, $params['form-id'] ?? 0 );
-				}
-			}
+		foreach ( $actions as $action ) {
+			$this->set_settings( $action );
+			$this->send( $data, $entry_id, $params['form-id'] ?? 0 );
 		}
 	}
 

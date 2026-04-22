@@ -178,24 +178,15 @@ class Whatsapp {
 		$options         = get_option( 'gutenverse_form_integrations', array() );
 		$global_settings = get_option( 'gutenverse_form_whatsapp_settings', array() );
 		$global_enabled  = ! empty( $options['whatsapp'] );
-		$apply_globally  = isset( $global_settings['apply_globally'] ) ? (bool) $global_settings['apply_globally'] : false;
-		$has_local_config = \Gutenverse_Form\Integration::has_local_service_config( 'whatsapp', $form_setting );
-		$local_settings   = \Gutenverse_Form\Integration::get_local_service_settings( 'whatsapp', $form_setting );
-		$local_enabled    = isset( $local_settings['enabled'] ) ? (bool) $local_settings['enabled'] : false;
+		$has_request_actions = \Gutenverse_Form\Integration::request_has_integration_actions( $params );
+		$actions         = \Gutenverse_Form\Integration::get_service_actions( 'whatsapp', $params, $form_setting );
 
-		if ( $global_enabled && $apply_globally && ! $has_local_config ) {
-			$settings = array_merge( $global_settings, $local_settings );
-			$this->set_settings( $settings );
+		if ( $global_enabled && ! $has_request_actions ) {
+			$this->set_settings( $global_settings );
 			\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'whatsapp', $this->send( $data, $entry_id, $params['form-id'] ) );
 		}
 
-		if ( $local_enabled ) {
-			$settings = array_merge( $global_settings, $local_settings );
-			$this->set_settings( $settings );
-			\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'whatsapp', $this->send( $data, $entry_id, $params['form-id'] ) );
-		}
-
-		foreach ( \Gutenverse_Form\Integration::get_service_actions( 'whatsapp', $params, $form_setting ) as $action ) {
+		foreach ( $actions as $action ) {
 			$this->set_settings( $action );
 			\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'whatsapp', $this->send( $data, $entry_id, $params['form-id'] ) );
 		}

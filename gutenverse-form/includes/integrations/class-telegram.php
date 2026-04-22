@@ -104,39 +104,28 @@ class Telegram {
 		$options         = get_option( 'gutenverse_form_integrations', array() );
 		$global_settings = get_option( 'gutenverse_form_telegram_settings', array() );
 		$global_enabled  = ! empty( $options['telegram'] );
-		$apply_globally  = isset( $global_settings['apply_globally'] ) ? (bool) $global_settings['apply_globally'] : false;
+		$has_request_actions = \Gutenverse_Form\Integration::request_has_integration_actions( $params );
+		$actions         = \Gutenverse_Form\Integration::get_service_actions( 'telegram', $params, $form_setting );
 
-		$local_settings = isset( $form_setting['integrations']['telegram'] ) ? $form_setting['integrations']['telegram'] : array();
-		$local_enabled  = isset( $local_settings['enabled'] ) ? (bool) $local_settings['enabled'] : false;
-
-		if ( ( $global_enabled && $apply_globally ) || $local_enabled ) {
-			$settings = array_merge( $global_settings, $local_settings );
-
-			if ( $this->has_required_settings( $settings ) ) {
-				$this->set_settings( $settings );
-				\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'telegram', $this->send( $data, $entry_id, $form_id ) );
+		if ( $global_enabled && ! $has_request_actions ) {
+			if ( $this->has_required_settings( $global_settings ) ) {
+				$this->set_settings( $global_settings );
+				$this->send( $data, $entry_id, $form_id );
 			}
 		}
 
 		// 2. Process Per-Block Integrations.
-		if ( isset( $params['integrations']['actions'] ) && is_array( $params['integrations']['actions'] ) ) {
-			foreach ( $params['integrations']['actions'] as $action ) {
-				if ( 'telegram' !== ( $action['type'] ?? '' ) ) {
-					continue;
+		foreach ( $actions as $action ) {
+			$settings = $global_settings;
+			foreach ( $action as $key => $value ) {
+				if ( ! empty( $value ) ) {
+					$settings[ $key ] = $value;
 				}
+			}
 
-				// Merge global settings as base, then override with any non-empty per-block values.
-				$settings = $global_settings;
-				foreach ( $action as $key => $value ) {
-					if ( ! empty( $value ) ) {
-						$settings[ $key ] = $value;
-					}
-				}
-
-				if ( $this->has_required_settings( $settings ) ) {
-					$this->set_settings( $settings );
-					\Gutenverse_Form\Integration::handle_send_result( $entry_id, 'telegram', $this->send( $data, $entry_id, $form_id ) );
-				}
+			if ( $this->has_required_settings( $settings ) ) {
+				$this->set_settings( $settings );
+				$this->send( $data, $entry_id, $form_id );
 			}
 		}
 	}

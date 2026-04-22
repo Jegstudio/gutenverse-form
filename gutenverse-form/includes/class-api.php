@@ -1347,6 +1347,48 @@ class Api {
 				}
 				break;
 
+			case 'active_campaign':
+				if ( isset( $settings['api_url'] ) ) {
+					$sanitized['api_url'] = $this->sanitize_allowed_url( $settings['api_url'] );
+				}
+
+				if ( isset( $settings['api_key'] ) ) {
+					$sanitized['api_key'] = sanitize_text_field( (string) $settings['api_key'] );
+				}
+
+				if ( isset( $settings['list_id'] ) ) {
+					$sanitized['list_id'] = preg_replace( '/[^0-9]/', '', (string) $settings['list_id'] );
+				}
+
+				if ( isset( $settings['email'] ) ) {
+					$sanitized['email'] = sanitize_text_field( (string) $settings['email'] );
+				}
+
+				if ( isset( $settings['first_name'] ) ) {
+					$sanitized['first_name'] = sanitize_text_field( (string) $settings['first_name'] );
+				}
+
+				if ( isset( $settings['last_name'] ) ) {
+					$sanitized['last_name'] = sanitize_text_field( (string) $settings['last_name'] );
+				}
+
+				if ( isset( $settings['phone'] ) ) {
+					$sanitized['phone'] = sanitize_text_field( (string) $settings['phone'] );
+				}
+
+				if ( isset( $settings['tag_ids'] ) ) {
+					$sanitized['tag_ids'] = $this->sanitize_json_setting( $settings['tag_ids'] );
+				}
+
+				if ( isset( $settings['field_values'] ) ) {
+					$sanitized['field_values'] = $this->sanitize_json_setting( $settings['field_values'] );
+				}
+
+				if ( isset( $settings['automation_id'] ) ) {
+					$sanitized['automation_id'] = preg_replace( '/[^0-9]/', '', (string) $settings['automation_id'] );
+				}
+				break;
+
 			default:
 				$sanitized = array_merge( $sanitized, $this->sanitize_recursive_settings( $settings ) );
 				break;

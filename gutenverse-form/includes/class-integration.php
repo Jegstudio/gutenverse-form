@@ -75,7 +75,7 @@ class Integration {
 			),
 			array(
 				'service_name'      => 'active_campaign',
-				'documentation_url' => 'https://api.slack.com/',
+				'documentation_url' => 'https://developers.activecampaign.com/reference/sync-a-contacts-data',
 			),
 			array(
 				'service_name'      => 'convert_kit',
@@ -439,6 +439,27 @@ class Integration {
 	}
 
 	/**
+	 * Determine whether the current submit payload explicitly includes integration actions.
+	 *
+	 * @param array $params Submission params.
+	 *
+	 * @return bool
+	 */
+	public static function request_has_integration_actions( $params ) {
+		if ( ! isset( $params['integrations']['actions'] ) || ! is_array( $params['integrations']['actions'] ) ) {
+			return false;
+		}
+
+		foreach ( $params['integrations']['actions'] as $action ) {
+			if ( self::action_has_meaningful_config( $action ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Determine whether saved service settings contain a real local override.
 	 *
 	 * An empty settings object, or one that only stores disabled flags, should
@@ -557,9 +578,7 @@ class Integration {
 	public static function get_service_actions( $service, $params, $form_setting ) {
 		$actions = array();
 
-		if ( isset( $form_setting['integrations']['actions'] ) && is_array( $form_setting['integrations']['actions'] ) ) {
-			$actions = $form_setting['integrations']['actions'];
-		} elseif ( isset( $params['integrations']['actions'] ) && is_array( $params['integrations']['actions'] ) ) {
+		if ( self::request_has_integration_actions( $params ) ) {
 			$integration = isset( $params['integrations'] ) && is_array( $params['integrations'] ) ? $params['integrations'] : array();
 			$post_id     = isset( $params['post-id'] ) ? (int) $params['post-id'] : 0;
 			$element_id  = isset( $integration['elementId'] ) ? (string) $integration['elementId'] : '';
@@ -569,6 +588,8 @@ class Integration {
 			}
 
 			$actions = isset( $integration['actions'] ) && is_array( $integration['actions'] ) ? $integration['actions'] : array();
+		} elseif ( isset( $form_setting['integrations']['actions'] ) && is_array( $form_setting['integrations']['actions'] ) ) {
+			$actions = $form_setting['integrations']['actions'];
 		}
 
 		return array_values(
