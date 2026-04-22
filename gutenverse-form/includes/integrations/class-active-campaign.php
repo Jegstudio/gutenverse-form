@@ -690,9 +690,5 @@ class Active_Campaign {
 			$this->log_step( $entry_id, 'skipped', __( 'ActiveCampaign was not enabled in the dashboard and no form action requested it.', 'gutenverse-form' ) );
 			return;
 		}
-
-		if ( $has_request_actions && empty( $actions ) ) {
-			$this->log_step( $entry_id, 'skipped', __( 'ActiveCampaign was not listed in the form submission integration actions.', 'gutenverse-form' ) );
-		}
 	}
 }

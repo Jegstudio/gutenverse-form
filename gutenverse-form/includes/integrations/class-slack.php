@@ -107,7 +107,7 @@ class Slack {
         if ($global_enabled && !$has_request_actions) {
             if (!empty($global_settings['webhook_url']) || !empty($global_settings['webhookUrl'])) {
                 $this->set_settings($global_settings);
-                $this->send($data, $entry_id, $params['form-id']);
+                \Gutenverse_Form\Integration::handle_send_result($entry_id, 'slack', $this->send($data, $entry_id, $params['form-id']));
             }
         }
 
@@ -115,7 +115,7 @@ class Slack {
         foreach ($actions as $action) {
             if (!empty($action['webhook_url']) || !empty($action['webhookUrl'])) {
                 $this->set_settings($action);
-                $this->send($data, $entry_id, $params['form-id']);
+                \Gutenverse_Form\Integration::handle_send_result($entry_id, 'slack', $this->send($data, $entry_id, $params['form-id']));
             }
         }
     }
