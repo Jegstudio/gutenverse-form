@@ -999,24 +999,30 @@
     to { opacity: 0; transform: translateY(-20px); }
 }
 
+.integration-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 .integration-tag {
     background: #f0f0f1;
-    padding: 2px 8px;
-    border-radius: 3px;
+    padding: 8px 10px;
+    border-radius: 6px;
     font-size: 12px;
-    margin-right: 5px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    .integration-tag-label {
+        font-weight: 600;
+        text-transform: capitalize;
+    }
 
     .retrigger-integration-item {
-        font-size: 11px;
-        margin-left: 4px;
-        text-decoration: none;
-        color: #3b57f7;
-
-        &:hover {
-            color: #243cc7;
-            text-decoration: underline;
-        }
+        margin: 0;
+        min-height: 28px;
+        line-height: 1;
     }
 }
 

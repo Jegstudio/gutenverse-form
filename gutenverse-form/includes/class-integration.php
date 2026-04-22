@@ -565,6 +565,78 @@ class Integration {
 	}
 
 	/**
+	 * Get enabled global integration actions in the same shape as block actions.
+	 *
+	 * @return array
+	 */
+	public static function get_global_service_actions() {
+		$options = get_option( 'gutenverse_form_integrations', array() );
+		$actions = array();
+
+		foreach ( self::get_services() as $service ) {
+			$service_name   = $service['service_name'];
+			$global_enabled = ! empty( $options[ $service_name ] );
+
+			if ( ! $global_enabled ) {
+				continue;
+			}
+
+			$settings = get_option( "gutenverse_form_{$service_name}_settings", array() );
+			$action   = array_merge(
+				array(
+					'type' => $service_name,
+				),
+				is_array( $settings ) ? $settings : array()
+			);
+
+			if ( self::action_has_meaningful_config( $action ) ) {
+				$actions[] = $action;
+			}
+		}
+
+		return $actions;
+	}
+
+	/**
+	 * Normalize integrations saved on an entry so entries and retriggers can
+	 * treat builder actions and dashboard fallbacks the same way.
+	 *
+	 * @param array $integrations Saved/request integrations payload.
+	 * @param array $form_setting Saved form settings.
+	 *
+	 * @return array
+	 */
+	public static function normalize_entry_integrations( $integrations, $form_setting ) {
+		$normalized = is_array( $integrations ) ? $integrations : array();
+		$actions    = isset( $normalized['actions'] ) && is_array( $normalized['actions'] ) ? $normalized['actions'] : array();
+
+		if ( ! empty( $actions ) ) {
+			return $normalized;
+		}
+
+		if ( isset( $form_setting['integrations']['actions'] ) && is_array( $form_setting['integrations']['actions'] ) ) {
+			$actions = array_values(
+				array_filter(
+					$form_setting['integrations']['actions'],
+					function ( $action ) {
+						return is_array( $action ) && self::action_has_meaningful_config( $action );
+					}
+				)
+			);
+		}
+
+		if ( empty( $actions ) ) {
+			$actions = self::get_global_service_actions();
+		}
+
+		if ( ! empty( $actions ) ) {
+			$normalized['actions'] = $actions;
+		}
+
+		return $normalized;
+	}
+
+	/**
 	 * Get block action settings for a service.
 	 *
 	 * Prefer the server-side saved form configuration over request payloads.

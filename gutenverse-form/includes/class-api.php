@@ -780,12 +780,17 @@ class Api {
 				$integrations = is_string( $form_entry['integrations'] ) ? json_decode( $form_entry['integrations'], true ) : $form_entry['integrations'];
 			}
 
+			$normalized_integrations = \Gutenverse_Form\Integration::normalize_entry_integrations(
+				is_array( $integrations ) ? $integrations : array(),
+				$form_setting
+			);
+
 			$params = array(
 				'form-id'      => $form_id,
 				'post-id'      => absint( $form_entry['postId'] ?? 0 ),
 				'entry-data'   => $form_data,
 				'browser-data' => $this->get_browser_data( $form_entry ),
-				'integrations' => is_array( $integrations ) ? $integrations : array(),
+				'integrations' => $normalized_integrations,
 			);
 
 			/**
