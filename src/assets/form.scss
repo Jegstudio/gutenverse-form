@@ -330,6 +330,59 @@
             }
         }
     }
+
+    .gutenverse-example-fill {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 0 0 22px;
+        padding: 14px 16px;
+        border: 1px solid #d9e3ff;
+        border-radius: 8px;
+        background: #f6f9ff;
+    }
+
+    .gutenverse-example-fill.is-success {
+        border-color: #ccebdc;
+        background: #f3fbf6;
+    }
+
+    .gutenverse-example-fill-copy {
+        min-width: 0;
+    }
+
+    .gutenverse-example-fill-title {
+        color: #011627;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .gutenverse-example-fill-description {
+        color: #667085;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .gutenverse-example-fill-button {
+        background: #3b57f7;
+        border: 1px solid #3b57f7;
+        border-radius: 6px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        flex-shrink: 0;
+        min-height: 34px;
+        padding: 0 12px;
+
+        &:hover,
+        &:focus {
+            background: #2741d8;
+            border-color: #2741d8;
+        }
+    }
 }
 
 .gutenverse-close {
@@ -593,6 +646,17 @@
 }
 
 @media (max-width: 782px) {
+    .form-tab-body {
+        .gutenverse-example-fill {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .gutenverse-example-fill-button {
+            width: 100%;
+        }
+    }
+
     .gutenverse-email-template-manager {
         .template-preview-frame {
             padding: 10px;

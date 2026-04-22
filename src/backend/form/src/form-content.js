@@ -28,6 +28,34 @@ const InlineNotice = ({ type = 'info', children }) => {
     return <div className={`gutenverse-inline-notice ${type}`}>{children}</div>;
 };
 
+const ExampleFillButton = ({
+    onClick,
+    title = __('Need a quick starting point?', 'gutenverse-form'),
+    description = __('Auto-fill these fields with sample values you can edit afterward.', 'gutenverse-form'),
+    label = __('Use Example Data', 'gutenverse-form'),
+    success = false
+}) => (
+    <div className={`gutenverse-example-fill ${success ? 'is-success' : ''}`}>
+        <div className="gutenverse-example-fill-copy">
+            <div className="gutenverse-example-fill-title">
+                {success ? __('Example data inserted', 'gutenverse-form') : title}
+            </div>
+            <div className="gutenverse-example-fill-description">
+                {success
+                    ? __('You can tweak the values below to match your real setup.', 'gutenverse-form')
+                    : description}
+            </div>
+        </div>
+        <button
+            type="button"
+            className="gutenverse-example-fill-button"
+            onClick={onClick}
+        >
+            {label}
+        </button>
+    </div>
+);
+
 const TabGeneral = (props) => {
     const { values, updateValue } = props;
     const defaultSettings = [
@@ -582,6 +610,25 @@ const TabConfirmation = (props) => {
     const {
         values, updateValue, placeholderDescription,
     } = props;
+    const [exampleFilled, setExampleFilled] = useState(false);
+    const fillConfirmationExample = () => {
+        updateValue('email_input_name', __('input-email', 'gutenverse-form'));
+        updateValue('user_email_form', __('johndoe@gmail.com', 'gutenverse-form'));
+        if (values.user_email_subject_type === 'post_meta') {
+            updateValue('user_email_subject_meta_key', __('custom_email_subject', 'gutenverse-form'));
+        } else {
+            updateValue('user_email_subject', __('Thank you for contacting us', 'gutenverse-form'));
+        }
+        if (values.user_email_reply_to_type === 'dynamic') {
+            updateValue('user_email_reply_to_dynamic', __('email', 'gutenverse-form'));
+        } else {
+            updateValue('user_email_reply_to', __('johndoe@gmail.com', 'gutenverse-form'));
+        }
+        if (!values.user_message_type || values.user_message_type === 'static') {
+            updateValue('user_email_body', __('Hi {{name}}, thanks for your submission.', 'gutenverse-form'));
+        }
+        setExampleFilled(true);
+    };
 
     return <div className="form-tab-body">
         <div style={{ marginBottom: '20px' }}>
@@ -594,6 +641,12 @@ const TabConfirmation = (props) => {
             />
         </div>
         {values.user_confirm && <>
+            <ExampleFillButton
+                onClick={fillConfirmationExample}
+                title={__('Want help filling this email?', 'gutenverse-form')}
+                description={__('Insert a sample confirmation setup so you can edit from a realistic starting point.', 'gutenverse-form')}
+                success={exampleFilled}
+            />
             <FormGroup
                 title={__('Recipient Settings', 'gutenverse-form')}
                 description={__('Choose which submitted email address receives the confirmation.', 'gutenverse-form')}
@@ -721,6 +774,33 @@ const TabConfirmation = (props) => {
 
 const TabNotification = (props) => {
     const { values, updateValue, placeholderDescription } = props;
+    const [exampleFilled, setExampleFilled] = useState(false);
+    const fillNotificationExample = () => {
+        updateValue('admin_email_from', __('johndoe@gmail.com', 'gutenverse-form'));
+        if (values.admin_email_subject_type === 'post_meta') {
+            updateValue('admin_email_subject_meta_key', __('custom_email_subject', 'gutenverse-form'));
+        } else {
+            updateValue('admin_email_subject', __('New form submission received', 'gutenverse-form'));
+        }
+        if (values.admin_email_reply_to_type === 'dynamic') {
+            updateValue('admin_email_reply_to_dynamic', __('email', 'gutenverse-form'));
+        } else {
+            updateValue('admin_email_reply_to', __('johndoe@gmail.com', 'gutenverse-form'));
+        }
+        if (values.admin_email_type === 'dynamic') {
+            if (values.admin_email_source === 'post_meta') {
+                updateValue('admin_email_meta_key', __('assigned_email', 'gutenverse-form'));
+            }
+        } else {
+            updateValue('admin_email_to', __('johndoe@gmail.com, janedoe@gmail.com', 'gutenverse-form'));
+        }
+        if (values.admin_message_type === 'dynamic') {
+            updateValue('admin_message_input_name', __('message', 'gutenverse-form'));
+        } else if (!values.admin_message_type || values.admin_message_type === 'static') {
+            updateValue('admin_note', __('A new entry was submitted on {{site_title}}.', 'gutenverse-form'));
+        }
+        setExampleFilled(true);
+    };
 
     return <div className="form-tab-body">
         <div style={{ marginBottom: '20px' }}>
@@ -733,6 +813,12 @@ const TabNotification = (props) => {
             />
         </div>
         {values.admin_confirm && <>
+            <ExampleFillButton
+                onClick={fillNotificationExample}
+                title={__('Need a notification example?', 'gutenverse-form')}
+                description={__('Insert sample notification values for recipients, subject, sender, and message content.', 'gutenverse-form')}
+                success={exampleFilled}
+            />
             <FormGroup
                 title={__('Email Details', 'gutenverse-form')}
                 description={__('Set the subject, sender, and reply-to address for the admin notification.', 'gutenverse-form')}
