@@ -1,7 +1,8 @@
 import DebouncedTextControl from './debounced-text-control';
 import { __ } from '@wordpress/i18n';
+import { ServerSecretControl } from './server-secret-control';
 
-export const GoogleSheetsControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle }) => {
+export const GoogleSheetsControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle, elementId }) => {
     const updateItem = (changes) => {
         const nextValue = { ...item, ...changes };
         onUpdateIndexValue(nextValue);
@@ -10,21 +11,41 @@ export const GoogleSheetsControls = ({ item, onUpdateIndexValue, onUpdateIndexSt
 
     return (
         <>
-            <DebouncedTextControl
-                label={__('Spreadsheet ID', 'gutenverse-form')}
-                value={item.spreadsheetId || item.spreadsheet_id}
-                onValueChange={spreadsheetId => {
-                    updateItem({ spreadsheetId });
-                }}
-                placeholder={'1AbCdEfGhIjKlMnOpQrStUvWxYz1234567890'}
+            <ServerSecretControl
+                item={item}
+                fieldKey={'endpointUrl'}
+                service={'google_sheets'}
+                elementId={elementId}
+                label={__('API Endpoint URL', 'gutenverse-form')}
+                required={true}
+                placeholder={'https://api.apispreadsheets.com/data/DBryPPnM0GlM5u28/'}
+                description={__('Stored securely on the server and used as the full API Spreadsheets endpoint.', 'gutenverse-form')}
+                onUpdateIndexValue={onUpdateIndexValue}
+                onUpdateIndexStyle={onUpdateIndexStyle}
             />
-            <DebouncedTextControl
-                label={__('Sheet Tab Name', 'gutenverse-form')}
-                value={item.sheetName || item.sheet_name}
-                onValueChange={sheetName => {
-                    updateItem({ sheetName });
-                }}
-                placeholder={__('Form Entries', 'gutenverse-form')}
+            <ServerSecretControl
+                item={item}
+                fieldKey={'accessKey'}
+                service={'google_sheets'}
+                elementId={elementId}
+                label={__('Access Key', 'gutenverse-form')}
+                required={true}
+                placeholder={'062b1da7839a41aff88c43abf932d4dd'}
+                description={__('Stored securely on the server and sent as the accessKey request header.', 'gutenverse-form')}
+                onUpdateIndexValue={onUpdateIndexValue}
+                onUpdateIndexStyle={onUpdateIndexStyle}
+            />
+            <ServerSecretControl
+                item={item}
+                fieldKey={'secretKey'}
+                service={'google_sheets'}
+                elementId={elementId}
+                label={__('Secret Key', 'gutenverse-form')}
+                required={true}
+                placeholder={'ccd2cd6ee8ad1dcf76d844b7434c5154'}
+                description={__('Stored securely on the server and sent as the secretKey request header.', 'gutenverse-form')}
+                onUpdateIndexValue={onUpdateIndexValue}
+                onUpdateIndexStyle={onUpdateIndexStyle}
             />
             <DebouncedTextControl
                 label={__('Column Template', 'gutenverse-form')}
@@ -32,7 +53,7 @@ export const GoogleSheetsControls = ({ item, onUpdateIndexValue, onUpdateIndexSt
                 onValueChange={columnsTemplate => {
                     updateItem({ columnsTemplate });
                 }}
-                placeholder={'entry_id={entry_id}\nsubmitted_at={submitted_at}\nemail={email}\nmessage={message}'}
+                placeholder={'data={entry_id}\nExample={email}\nmessage={message}'}
                 textArea={true}
             />
         </>

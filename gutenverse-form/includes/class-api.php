@@ -1264,36 +1264,28 @@ class Api {
 				break;
 
 			case 'google_sheets':
-				if ( isset( $settings['clientEmail'] ) ) {
-					$sanitized['clientEmail'] = sanitize_email( (string) $settings['clientEmail'] );
+				if ( isset( $settings['endpointUrl'] ) ) {
+					$sanitized['endpointUrl'] = esc_url_raw( (string) $settings['endpointUrl'] );
 				}
 
-				if ( isset( $settings['client_email'] ) && empty( $sanitized['clientEmail'] ) ) {
-					$sanitized['clientEmail'] = sanitize_email( (string) $settings['client_email'] );
+				if ( isset( $settings['endpoint_url'] ) && empty( $sanitized['endpointUrl'] ) ) {
+					$sanitized['endpointUrl'] = esc_url_raw( (string) $settings['endpoint_url'] );
 				}
 
-				if ( isset( $settings['privateKey'] ) ) {
-					$sanitized['privateKey'] = trim( (string) $settings['privateKey'] );
+				if ( isset( $settings['accessKey'] ) ) {
+					$sanitized['accessKey'] = sanitize_text_field( (string) $settings['accessKey'] );
 				}
 
-				if ( isset( $settings['private_key'] ) && empty( $sanitized['privateKey'] ) ) {
-					$sanitized['privateKey'] = trim( (string) $settings['private_key'] );
+				if ( isset( $settings['access_key'] ) && empty( $sanitized['accessKey'] ) ) {
+					$sanitized['accessKey'] = sanitize_text_field( (string) $settings['access_key'] );
 				}
 
-				if ( isset( $settings['spreadsheetId'] ) ) {
-					$sanitized['spreadsheetId'] = sanitize_text_field( (string) $settings['spreadsheetId'] );
+				if ( isset( $settings['secretKey'] ) ) {
+					$sanitized['secretKey'] = trim( (string) $settings['secretKey'] );
 				}
 
-				if ( isset( $settings['spreadsheet_id'] ) && empty( $sanitized['spreadsheetId'] ) ) {
-					$sanitized['spreadsheetId'] = sanitize_text_field( (string) $settings['spreadsheet_id'] );
-				}
-
-				if ( isset( $settings['sheetName'] ) ) {
-					$sanitized['sheetName'] = sanitize_text_field( (string) $settings['sheetName'] );
-				}
-
-				if ( isset( $settings['sheet_name'] ) && empty( $sanitized['sheetName'] ) ) {
-					$sanitized['sheetName'] = sanitize_text_field( (string) $settings['sheet_name'] );
+				if ( isset( $settings['secret_key'] ) && empty( $sanitized['secretKey'] ) ) {
+					$sanitized['secretKey'] = trim( (string) $settings['secret_key'] );
 				}
 
 				if ( isset( $settings['columnsTemplate'] ) ) {
