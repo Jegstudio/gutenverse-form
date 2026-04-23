@@ -34,7 +34,7 @@ export const TelegramControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle,
                     onUpdateIndexValue({ ...item, content });
                     onUpdateIndexStyle({ ...item, content });
                 }}
-                placeholder={__('New form submission:\n{all_fields}', 'gutenverse-form')}
+                placeholder={__('User has submitted a form\nName={input-text-name}\nEmail={input-email}\nMessage={input-textarea}', 'gutenverse-form')}
                 textArea={true}
             />
         </>

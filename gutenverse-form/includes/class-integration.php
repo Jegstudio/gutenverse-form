@@ -83,7 +83,7 @@ class Integration {
 			),
 			array(
 				'service_name'      => 'mailer',
-				'documentation_url' => 'https://api.slack.com/',
+				'documentation_url' => 'https://developers.mailerlite.com/docs/',
 			),
 			array(
 				'service_name'      => 'google_sheets',

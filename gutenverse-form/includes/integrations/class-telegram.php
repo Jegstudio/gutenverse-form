@@ -169,7 +169,7 @@ class Telegram {
 				'label'       => __( 'Content Template', 'gutenverse-form' ),
 				'description' => __( 'Use {field_id}, {all_fields}, {form_id}, {entry_id}, {form_title}, or {site_title}', 'gutenverse-form' ),
 				'type'        => 'textarea',
-				'placeholder' => __( "New form submission:\n{all_fields}", 'gutenverse-form' ),
+				'placeholder' => __( "User has submitted a form\nName={input-text-name}\nEmail={input-email}\nMessage={input-textarea}", 'gutenverse-form' ),
 			),
 		);
 	}

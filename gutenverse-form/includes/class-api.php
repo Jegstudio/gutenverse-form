@@ -1268,6 +1268,28 @@ class Api {
 				}
 				break;
 
+			case 'mailer':
+				if ( isset( $settings['api_key'] ) ) {
+					$sanitized['api_key'] = sanitize_text_field( (string) $settings['api_key'] );
+				}
+
+				if ( isset( $settings['email'] ) ) {
+					$sanitized['email'] = sanitize_text_field( (string) $settings['email'] );
+				}
+
+				if ( isset( $settings['name'] ) ) {
+					$sanitized['name'] = sanitize_text_field( (string) $settings['name'] );
+				}
+
+				if ( isset( $settings['groups'] ) ) {
+					$sanitized['groups'] = $this->sanitize_json_setting( $settings['groups'] );
+				}
+
+				if ( isset( $settings['status'] ) ) {
+					$sanitized['status'] = sanitize_key( (string) $settings['status'] );
+				}
+				break;
+
 			case 'google_sheets':
 				if ( isset( $settings['endpointUrl'] ) ) {
 					$sanitized['endpointUrl'] = esc_url_raw( (string) $settings['endpointUrl'] );

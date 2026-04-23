@@ -25,7 +25,7 @@ export const SlackControls = ({ item, onUpdateIndexValue, onUpdateIndexStyle, el
                     onUpdateIndexValue({ ...item, message });
                     onUpdateIndexStyle({ ...item, message });
                 }}
-                placeholder={__('Hello, World!', 'gutenverse-form')}
+                placeholder={__('User has submitted a form\nName={input-text-name}\nEmail={input-email}\nMessage={input-textarea}', 'gutenverse-form')}
                 textArea={true}
             />
         </>

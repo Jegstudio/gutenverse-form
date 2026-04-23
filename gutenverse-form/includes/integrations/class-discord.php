@@ -141,7 +141,7 @@ class Discord {
 				'description' => __( 'Use {field_id} to include form data', 'gutenverse-form' ),
 				'required'    => true,
 				'type'        => 'textarea',
-				'placeholder' => __( 'New form entry: {name}', 'gutenverse-form' ),
+				'placeholder' => __( "User has submitted a form\nName={input-text-name}\nEmail={input-email}\nMessage={input-textarea}", 'gutenverse-form' ),
 			),
 		);
 	}
