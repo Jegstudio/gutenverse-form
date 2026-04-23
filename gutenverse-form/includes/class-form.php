@@ -244,8 +244,6 @@ class Form {
 									<div class="dashboard-row__actions">
 										<?php if ( ! empty( $primary_location['edit_url'] ) ) : ?>
 											<a href="<?php echo esc_url( $primary_location['edit_url'] ); ?>"><?php esc_html_e( 'Edit Post', 'gutenverse-form' ); ?></a>
-										<?php elseif ( ! empty( $form['edit_url'] ) ) : ?>
-											<a href="<?php echo esc_url( $form['edit_url'] ); ?>"><?php esc_html_e( 'Edit Form', 'gutenverse-form' ); ?></a>
 										<?php endif; ?>
 									</div>
 								</div>
@@ -303,9 +301,7 @@ class Form {
 										</span>
 									</div>
 									<div class="dashboard-row__actions">
-										<?php if ( ! empty( $form['edit_url'] ) ) : ?>
-											<a href="<?php echo esc_url( $form['edit_url'] ); ?>"><?php esc_html_e( 'Edit Form', 'gutenverse-form' ); ?></a>
-										<?php endif; ?>
+										<?php esc_html_e( 'No live post', 'gutenverse-form' ); ?>
 									</div>
 								</div>
 							<?php endforeach; ?>
