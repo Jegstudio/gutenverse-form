@@ -277,7 +277,7 @@ const buildEmailTemplateStarter = (starter, fieldName) => {
                                 ),
                                 createTextContent(
                                     'thankyou-note',
-                                    `<p style="margin: 0; font-size: 14px; color: #64748b; text-align: center;">Reference: <strong>{{entry_title}}</strong></p>`,
+                                    '<p style="margin: 0; font-size: 14px; color: #64748b; text-align: center;">Reference: <strong>{{entry_title}}</strong></p>',
                                     { textAlign: 'center', fontSize: '14px', color: '#64748b' }
                                 ),
                             ],

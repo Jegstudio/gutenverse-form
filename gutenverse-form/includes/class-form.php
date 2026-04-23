@@ -33,7 +33,6 @@ class Form {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ), 99 );
 		add_action( 'admin_footer', array( $this, 'admin_footer' ) );
 		add_action( 'admin_menu', array( $this, 'parent_menu' ) );
-		add_action( 'admin_menu', array( $this, 'reorder_submenu' ), 99 );
 		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'custom_column' ), 10, 2 );
 		add_filter( 'post_row_actions', array( $this, 'action_row' ), 10, 2 );
 		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'set_custom_column' ) );
@@ -61,53 +60,18 @@ class Form {
 			self::POST_TYPE,
 			array( $this, 'render_dashboard_page' )
 		);
-	}
 
-	/**
-	 * Reorder Form submenu items so dashboard stays at the top.
-	 */
-	public function reorder_submenu() {
-		global $submenu;
+		remove_submenu_page(
+			self::POST_TYPE,
+			'edit.php?post_type=' . Entries::POST_TYPE
+		);
 
-		if ( empty( $submenu[ self::POST_TYPE ] ) || ! is_array( $submenu[ self::POST_TYPE ] ) ) {
-			return;
-		}
-
-		$ordered = array();
-		$entries = array();
-
-		foreach ( $submenu[ self::POST_TYPE ] as $item ) {
-			$slug = isset( $item[2] ) ? $item[2] : '';
-
-			if ( self::POST_TYPE === $slug ) {
-				$ordered['dashboard'] = $item;
-				continue;
-			}
-
-			if ( 'edit.php?post_type=' . Entries::POST_TYPE === $slug ) {
-				$ordered['entries'] = $item;
-				continue;
-			}
-
-			if ( 'form_integration' === $slug ) {
-				$ordered['integration'] = $item;
-				continue;
-			}
-
-			$entries[] = $item;
-		}
-
-		$submenu[ self::POST_TYPE ] = array_values(
-			array_merge(
-				array_filter(
-					array(
-						$ordered['dashboard'] ?? null,
-						$ordered['entries'] ?? null,
-						$ordered['integration'] ?? null,
-					)
-				),
-				$entries
-			)
+		add_submenu_page(
+			self::POST_TYPE,
+			esc_html__( 'Entries', 'gutenverse-form' ),
+			esc_html__( 'Entries', 'gutenverse-form' ),
+			'manage_options',
+			'edit.php?post_type=' . Entries::POST_TYPE
 		);
 	}
 
@@ -115,18 +79,18 @@ class Form {
 	 * Render dashboard page under Form admin menu.
 	 */
 	public function render_dashboard_page() {
-		$forms = self::get_all_form_dashboard_data();
-		$total_entries = array_sum(
+		$forms             = self::get_all_form_dashboard_data();
+		$total_entries     = array_sum(
 			array_map(
-				static function( $form ) {
+				static function ( $form ) {
 					return (int) $form['total_entries'];
 				},
 				$forms
 			)
 		);
-		$total_locations = array_sum(
+		$total_locations   = array_sum(
 			array_map(
-				static function( $form ) {
+				static function ( $form ) {
 					return (int) $form['location_count'];
 				},
 				$forms
@@ -134,19 +98,19 @@ class Form {
 		);
 		$entries_last_week = array_sum(
 			array_map(
-				static function( $form ) {
+				static function ( $form ) {
 					return (int) $form['entries_last_week'];
 				},
 				$forms
 			)
 		);
-		$forms_by_entries = wp_list_sort( $forms, 'total_entries', 'DESC' );
-		$forms_by_recent  = wp_list_sort( $forms, 'last_entry_timestamp', 'DESC' );
-		$forms_by_usage   = wp_list_sort( $forms, 'location_count', 'DESC' );
-		$entry_trend      = self::get_entry_trend_data( 7 );
-		$needs_attention  = self::get_forms_needing_attention( $forms, 3 );
-		$unused_forms     = self::get_unused_form_actions( $forms, 3 );
-		$top_sources      = self::get_top_entry_sources( $forms, 3 );
+		$forms_by_entries  = wp_list_sort( $forms, 'total_entries', 'DESC' );
+		$forms_by_recent   = wp_list_sort( $forms, 'last_entry_timestamp', 'DESC' );
+		$forms_by_usage    = wp_list_sort( $forms, 'location_count', 'DESC' );
+		$entry_trend       = self::get_entry_trend_data( 7 );
+		$needs_attention   = self::get_forms_needing_attention( $forms, 3 );
+		$unused_forms      = self::get_unused_form_actions( $forms, 3 );
+		$top_sources       = self::get_top_entry_sources( $forms, 3 );
 		?>
 		<div class="wrap gutenverse-form-admin-dashboard">
 			<div class="gutenverse-form-admin-dashboard__hero">
@@ -180,18 +144,18 @@ class Form {
 				</div>
 			<?php else : ?>
 				<?php
-				$trend_max = max(
+				$trend_max    = max(
 					array_map(
-						static function( $trend_item ) {
+						static function ( $trend_item ) {
 							return (int) $trend_item['count'];
 						},
 						$entry_trend
 					)
 				);
-				$trend_max = max( 1, $trend_max );
+				$trend_max    = max( 1, $trend_max );
 				$recent_forms = array_filter(
 					array_slice( $forms_by_recent, 0, 3 ),
-					static function( $form ) {
+					static function ( $form ) {
 						return ! empty( $form['last_entry_timestamp'] );
 					}
 				);
@@ -431,7 +395,7 @@ class Form {
 	public function action_row( $actions, $post ) {
 		if ( self::POST_TYPE === $post->post_type ) {
 			unset( $actions['view'] );
-			$dashboard_url       = admin_url( 'admin.php?page=' . self::POST_TYPE );
+			$dashboard_url        = admin_url( 'admin.php?page=' . self::POST_TYPE );
 			$actions['dashboard'] = sprintf(
 				'<a href="%1$s">%2$s</a>',
 				esc_url( $dashboard_url ),
@@ -634,7 +598,7 @@ class Form {
 		$entries_last_week = 0;
 		$last_entry_date   = '';
 		$last_entry_ts     = 0;
-		$week_cutoff       = strtotime( '-7 days', current_time( 'timestamp' ) );
+		$week_cutoff       = time() - WEEK_IN_SECONDS;
 
 		foreach ( $entry_query as $index => $entry_post ) {
 			$entry_time = get_post_time( 'U', true, $entry_post );
@@ -663,15 +627,15 @@ class Form {
 
 			if ( $index < 5 ) {
 				$latest_entries[] = array(
-					'id'             => $entry_post->ID,
-					'title'          => get_the_title( $entry_post ),
-					'date'           => get_the_date( '', $entry_post ),
-					'edit_url'       => get_edit_post_link( $entry_post->ID, 'raw' ),
-					'source_title'   => $post_item ? get_the_title( $post_item ) : '',
-					'source_type'    => $post_type ? $post_type->labels->singular_name : '',
-					'source_view'    => $post_item ? get_permalink( $post_item ) : '',
-					'source_edit'    => $post_item ? get_edit_post_link( $post_item->ID, 'raw' ) : '',
-					'source_status'  => $post_item ? get_post_status( $post_item ) : '',
+					'id'            => $entry_post->ID,
+					'title'         => get_the_title( $entry_post ),
+					'date'          => get_the_date( '', $entry_post ),
+					'edit_url'      => get_edit_post_link( $entry_post->ID, 'raw' ),
+					'source_title'  => $post_item ? get_the_title( $post_item ) : '',
+					'source_type'   => $post_type ? $post_type->labels->singular_name : '',
+					'source_view'   => $post_item ? get_permalink( $post_item ) : '',
+					'source_edit'   => $post_item ? get_edit_post_link( $post_item->ID, 'raw' ) : '',
+					'source_status' => $post_item ? get_post_status( $post_item ) : '',
 				);
 			}
 		}
@@ -688,36 +652,36 @@ class Form {
 			}
 
 			$top_sources[] = array(
-				'id'        => $source_post->ID,
-				'title'     => get_the_title( $source_post ),
-				'type'      => $type_object ? $type_object->labels->singular_name : $source_post->post_type,
-				'count'     => (int) $source_post_map[ $source_id ],
-				'status'    => get_post_status( $source_post ),
-				'view_url'  => get_permalink( $source_post ),
-				'edit_url'  => get_edit_post_link( $source_post->ID, 'raw' ),
+				'id'       => $source_post->ID,
+				'title'    => get_the_title( $source_post ),
+				'type'     => $type_object ? $type_object->labels->singular_name : $source_post->post_type,
+				'count'    => (int) $source_post_map[ $source_id ],
+				'status'   => get_post_status( $source_post ),
+				'view_url' => get_permalink( $source_post ),
+				'edit_url' => get_edit_post_link( $source_post->ID, 'raw' ),
 			);
 		}
 
 		$locations = self::get_form_locations( $id );
 
 		return array(
-			'id'                 => (int) $id,
-			'title'              => get_the_title( $id ),
-			'created'            => get_the_date( '', $post ),
-			'modified'           => get_the_modified_date( '', $post ),
-			'edit_url'           => get_edit_post_link( $id, 'raw' ),
-			'entries_url'        => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE . '&form_id=' . $id ),
-			'export_url'         => rest_url( '/gutenverse-form-client/v1/form-action/export/' . $id . '?_wpnonce=' . wp_create_nonce( 'wp_rest' ) ),
-			'total_entries'      => count( $entry_query ),
-			'entries_last_week'  => $entries_last_week,
-			'last_entry_date'    => $last_entry_date,
+			'id'                   => (int) $id,
+			'title'                => get_the_title( $id ),
+			'created'              => get_the_date( '', $post ),
+			'modified'             => get_the_modified_date( '', $post ),
+			'edit_url'             => get_edit_post_link( $id, 'raw' ),
+			'entries_url'          => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE . '&form_id=' . $id ),
+			'export_url'           => rest_url( '/gutenverse-form-client/v1/form-action/export/' . $id . '?_wpnonce=' . wp_create_nonce( 'wp_rest' ) ),
+			'total_entries'        => count( $entry_query ),
+			'entries_last_week'    => $entries_last_week,
+			'last_entry_date'      => $last_entry_date,
 			'last_entry_timestamp' => $last_entry_ts,
-			'location_count'     => count( $locations ),
-			'locations'          => $locations,
-			'top_sources'        => $top_sources,
-			'latest_entries'     => $latest_entries,
-			'available_inputs'   => isset( $form_action['available_inputs'] ) ? array_values( $form_action['available_inputs'] ) : array(),
-			'settings'           => array(
+			'location_count'       => count( $locations ),
+			'locations'            => $locations,
+			'top_sources'          => $top_sources,
+			'latest_entries'       => $latest_entries,
+			'available_inputs'     => isset( $form_action['available_inputs'] ) ? array_values( $form_action['available_inputs'] ) : array(),
+			'settings'             => array(
 				'require_login' => ! empty( $form_action['require_login'] ),
 				'user_confirm'  => ! empty( $form_action['user_confirm'] ),
 				'admin_confirm' => ! empty( $form_action['admin_confirm'] ),
@@ -764,7 +728,7 @@ class Form {
 	 */
 	private static function get_entry_trend_data( $days = 7 ) {
 		$days       = max( 1, (int) $days );
-		$start_date = gmdate( 'Y-m-d 00:00:00', strtotime( '-' . ( $days - 1 ) . ' days', current_time( 'timestamp', true ) ) );
+		$start_date = gmdate( 'Y-m-d 00:00:00', strtotime( '-' . ( $days - 1 ) . ' days', time() ) );
 		$entries    = get_posts(
 			array(
 				'post_type'      => Entries::POST_TYPE,
@@ -782,8 +746,8 @@ class Form {
 		$buckets    = array();
 
 		for ( $i = $days - 1; $i >= 0; --$i ) {
-			$key              = gmdate( 'Y-m-d', strtotime( '-' . $i . ' days', current_time( 'timestamp', true ) ) );
-			$buckets[ $key ]  = 0;
+			$key             = gmdate( 'Y-m-d', strtotime( '-' . $i . ' days', time() ) );
+			$buckets[ $key ] = 0;
 		}
 
 		foreach ( $entries as $entry ) {
@@ -847,7 +811,7 @@ class Form {
 	private static function get_unused_form_actions( $forms, $limit = 5 ) {
 		$unused = array_filter(
 			$forms,
-			static function( $form ) {
+			static function ( $form ) {
 				return empty( $form['location_count'] );
 			}
 		);
@@ -889,7 +853,7 @@ class Form {
 
 		uasort(
 			$sources,
-			static function( $left, $right ) {
+			static function ( $left, $right ) {
 				return (int) $right['count'] <=> (int) $left['count'];
 			}
 		);
@@ -936,14 +900,14 @@ class Form {
 				continue;
 			}
 
-			$type_object  = get_post_type_object( $post->post_type );
+			$type_object = get_post_type_object( $post->post_type );
 			$locations[] = array(
-				'id'        => (int) $post->ID,
-				'title'     => get_the_title( $post ) ? get_the_title( $post ) : __( '(no title)', 'gutenverse-form' ),
-				'type'      => $type_object ? $type_object->labels->singular_name : $post->post_type,
-				'status'    => get_post_status( $post ),
-				'view_url'  => get_permalink( $post ),
-				'edit_url'  => get_edit_post_link( $post->ID, 'raw' ),
+				'id'       => (int) $post->ID,
+				'title'    => get_the_title( $post ) ? get_the_title( $post ) : __( '(no title)', 'gutenverse-form' ),
+				'type'     => $type_object ? $type_object->labels->singular_name : $post->post_type,
+				'status'   => get_post_status( $post ),
+				'view_url' => get_permalink( $post ),
+				'edit_url' => get_edit_post_link( $post->ID, 'raw' ),
 			);
 		}
 
