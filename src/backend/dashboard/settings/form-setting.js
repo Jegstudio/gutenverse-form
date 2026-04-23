@@ -1,7 +1,8 @@
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { ControlText, ControlTextarea, ControlCheckbox } from 'gutenverse-core/backend';
 import { applyFilters } from '@wordpress/hooks';
+import apiFetch from '@wordpress/api-fetch';
 
 const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData }) => {
     const {
@@ -172,12 +173,132 @@ const FormReCaptcha = ({ settingValues, updateSettingValues, saving, saveData })
     </div>;
 };
 
+const FormDashboard = () => {
+    const [forms, setForms] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        apiFetch({
+            path: '/gutenverse-form-client/v1/form-action/dashboard',
+            method: 'GET',
+        }).then((response) => {
+            setForms(Array.isArray(response) ? response : []);
+            setLoading(false);
+        }).catch((err) => {
+            setError(err?.message || __('Could not load the form dashboard.', 'gutenverse-form'));
+            setLoading(false);
+        });
+    }, []);
+
+    if (loading) {
+        return <div className="gutenverse-form-dashboard-page-empty">{__('Loading form dashboard...', 'gutenverse-form')}</div>;
+    }
+
+    if (error) {
+        return <div className="gutenverse-form-dashboard-page-empty is-error">{error}</div>;
+    }
+
+    if (!forms.length) {
+        return <div className="gutenverse-form-dashboard-page-empty">{__('No forms found yet.', 'gutenverse-form')}</div>;
+    }
+
+    return <div className="gutenverse-form-dashboard-page">
+        <div className="gutenverse-form-dashboard-page-hero">
+            <div>
+                <h2>{__('Form Dashboard', 'gutenverse-form')}</h2>
+                <p>{__('Open a form quickly, review total entries, and jump straight to the post or page where the form is used.', 'gutenverse-form')}</p>
+            </div>
+            <div className="gutenverse-form-dashboard-page-overview">
+                <div className="overview-item">
+                    <strong>{forms.length}</strong>
+                    <span>{__('Forms', 'gutenverse-form')}</span>
+                </div>
+                <div className="overview-item">
+                    <strong>{forms.reduce((total, form) => total + (form.total_entries || 0), 0)}</strong>
+                    <span>{__('Total Entries', 'gutenverse-form')}</span>
+                </div>
+            </div>
+        </div>
+        <div className="gutenverse-form-dashboard-page-list">
+            {forms.map((form) => {
+                const primaryLocation = form.locations?.[0];
+
+                return <div key={form.id} className="gutenverse-form-dashboard-page-card">
+                    <div className="card-header">
+                        <div>
+                            <h3>{form.title}</h3>
+                            <span>{form.modified ? `${__('Updated', 'gutenverse-form')} ${form.modified}` : ''}</span>
+                        </div>
+                        <div className="card-actions">
+                            {primaryLocation?.edit_url && <a href={primaryLocation.edit_url} className="gutenverse-button">{__('Edit Post', 'gutenverse-form')}</a>}
+                            {form.entries_url && <a href={form.entries_url} className="gutenverse-button is-secondary">{__('View Entries', 'gutenverse-form')}</a>}
+                        </div>
+                    </div>
+                    <div className="card-metrics">
+                        <div className="metric-box">
+                            <strong>{form.total_entries || 0}</strong>
+                            <span>{__('Total Entries', 'gutenverse-form')}</span>
+                        </div>
+                        <div className="metric-box">
+                            <strong>{form.entries_last_week || 0}</strong>
+                            <span>{__('Last 7 Days', 'gutenverse-form')}</span>
+                        </div>
+                        <div className="metric-box">
+                            <strong>{form.location_count || 0}</strong>
+                            <span>{__('Locations', 'gutenverse-form')}</span>
+                        </div>
+                        <div className="metric-box">
+                            <strong>{form.last_entry_date || '-'}</strong>
+                            <span>{__('Last Entry', 'gutenverse-form')}</span>
+                        </div>
+                    </div>
+                    <div className="card-grid">
+                        <div className="card-panel">
+                            <div className="panel-heading">{__('Where this form is used', 'gutenverse-form')}</div>
+                            {form.locations?.length ? form.locations.map((location) => (
+                                <div key={location.id} className="location-row">
+                                    <div>
+                                        <strong>{location.title}</strong>
+                                        <span>{`${location.type} • ${location.status}`}</span>
+                                    </div>
+                                    <div className="location-actions">
+                                        {location.view_url && <a href={location.view_url}>{__('View', 'gutenverse-form')}</a>}
+                                        {location.edit_url && <a href={location.edit_url}>{__('Edit', 'gutenverse-form')}</a>}
+                                    </div>
+                                </div>
+                            )) : <div className="empty-copy">{__('No linked post or page detected yet.', 'gutenverse-form')}</div>}
+                        </div>
+                        <div className="card-panel">
+                            <div className="panel-heading">{__('Recent entries', 'gutenverse-form')}</div>
+                            {form.latest_entries?.length ? form.latest_entries.map((entry) => (
+                                <div key={entry.id} className="location-row">
+                                    <div>
+                                        <strong>{entry.title}</strong>
+                                        <span>{entry.source_title ? `${entry.date} • ${entry.source_title}` : entry.date}</span>
+                                    </div>
+                                    <div className="location-actions">
+                                        {entry.edit_url && <a href={entry.edit_url}>{__('Open Entry', 'gutenverse-form')}</a>}
+                                    </div>
+                                </div>
+                            )) : <div className="empty-copy">{__('No entries have been submitted yet.', 'gutenverse-form')}</div>}
+                        </div>
+                    </div>
+                </div>;
+            })}
+        </div>
+    </div>;
+};
+
 const FormSetting = (props) => {
-    const [formActive, setFormActive] = useState('confirmation');
+    const [formActive, setFormActive] = useState('dashboard');
 
     let form = '';
 
     switch (formActive) {
+        case 'dashboard':
+            form = <FormDashboard />;
+            break;
         case 'confirmation':
             form = <FormConfirmation {...props} />;
             break;
@@ -194,6 +315,7 @@ const FormSetting = (props) => {
     return <>
         <FormReCaptcha {...props} />
         <div className="form-setting">
+            <div className={`${formActive === 'dashboard' ? 'active' : ''}`} onClick={() => setFormActive('dashboard')}>{__('Dashboard', 'gutenverse-form')}</div>
             <div className={`${formActive === 'confirmation' ? 'active' : ''}`} onClick={() => setFormActive('confirmation')}>{__('User Confirmation', 'gutenverse-form')}</div>
             <div className={`${formActive === 'notification' ? 'active' : ''}`} onClick={() => setFormActive('notification')}>{__('Admin Notification', 'gutenverse-form')}</div>
         </div>
