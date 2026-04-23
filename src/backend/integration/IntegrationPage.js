@@ -32,7 +32,7 @@ const services = [
     { id: 'get_response', title: 'GetResponse', description: __('Connect your forms to GetResponse marketing automation.', 'gutenverse-form'), icon: <IconGetResponseSVG /> },
     { id: 'drip', title: 'Drip', description: __('Sync form data with Drip CRM and marketing platform.', 'gutenverse-form'), icon: <IconDripSVG /> },
     { id: 'active_campaign', title: 'Active Campaign', description: __('Automate your marketing with ActiveCampaign integration.', 'gutenverse-form'), icon: <IconActiveCampaignSVG /> },
-    { id: 'convert_kit', title: 'Convert Kit', description: __('Grow your audience with ConvertKit integration.', 'gutenverse-form'), icon: <IconConvertKitSVG /> },
+    { id: 'convert_kit', title: 'Kit (Convert Kit)', description: __('Grow your audience with Kit integration.', 'gutenverse-form'), icon: <IconConvertKitSVG /> },
     { id: 'mailer', title: 'Mailer', description: __('Connect form data to your MailerLite account.', 'gutenverse-form'), icon: <IconMailerLiteSVG /> },
     { id: 'google_sheets', title: 'Google Sheets', description: __('Save form submissions directly to Google Sheets.', 'gutenverse-form'), icon: <IconGoogleSheetSVG /> },
 ];

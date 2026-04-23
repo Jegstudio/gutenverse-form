@@ -79,7 +79,7 @@ class Integration {
 			),
 			array(
 				'service_name'      => 'convert_kit',
-				'documentation_url' => 'https://api.slack.com/',
+				'documentation_url' => 'https://developers.kit.com/v4',
 			),
 			array(
 				'service_name'      => 'mailer',

@@ -60,7 +60,7 @@ const typeOptions = (customOptions) => {
         { label: __('GetResponse', 'gutenverse-form'), value: 'get_response', pro: false },
         { label: __('Drip', 'gutenverse-form'), value: 'drip', pro: false },
         { label: __('Active Campaign', 'gutenverse-form'), value: 'active_campaign', pro: false },
-        { label: __('Convert Kit', 'gutenverse-form'), value: 'convert_kit', pro: false },
+        { label: __('Kit', 'gutenverse-form'), value: 'convert_kit', pro: false },
         { label: __('MailerLite', 'gutenverse-form'), value: 'mailer', pro: false },
         { label: __('Google Sheets', 'gutenverse-form'), value: 'google_sheets', pro: false },
     ];

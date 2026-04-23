@@ -1374,6 +1374,28 @@ class Api {
 				}
 				break;
 
+			case 'convert_kit':
+				if ( isset( $settings['api_key'] ) ) {
+					$sanitized['api_key'] = sanitize_text_field( (string) $settings['api_key'] );
+				}
+
+				if ( isset( $settings['email'] ) ) {
+					$sanitized['email'] = sanitize_text_field( (string) $settings['email'] );
+				}
+
+				if ( isset( $settings['first_name'] ) ) {
+					$sanitized['first_name'] = sanitize_text_field( (string) $settings['first_name'] );
+				}
+
+				if ( isset( $settings['form_id'] ) ) {
+					$sanitized['form_id'] = sanitize_text_field( (string) $settings['form_id'] );
+				}
+
+				if ( isset( $settings['tag_ids'] ) ) {
+					$sanitized['tag_ids'] = $this->sanitize_json_setting( $settings['tag_ids'] );
+				}
+				break;
+
 			case 'active_campaign':
 				if ( isset( $settings['api_url'] ) ) {
 					$sanitized['api_url'] = $this->sanitize_allowed_url( $settings['api_url'] );
