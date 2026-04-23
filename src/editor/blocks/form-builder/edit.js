@@ -22,7 +22,7 @@ import bookingTemplateData from './data/booking-template.json';
 import contactTemplateData from './data/contact-template.json';
 import subscribeTemplateData from './data/subscribe-template.json';
 import { CreateForm } from './panels/create-form';
-import { Modal, Button, ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import { Modal, Button, ToolbarGroup, ToolbarButton, PanelBody } from '@wordpress/components';
 
 const BULK_STYLE_PANEL_STATE = {
     panel: 'setting',
@@ -484,16 +484,17 @@ const FormBuilderBlock = compose(
                         title: __('Adding inputs', 'gutenverse-form'),
                         description: __('Click the + symbol on form builder block, then search for inputs you need (checkbox, text, email, etc). Also don\'t forget to add a submit button.', 'gutenverse-form')
                     },
-                    {
-                        title: __('Create your form configuration', 'gutenverse-form'),
-                        description: __('In the Form Setting panel below, click Create New to create a form action directly from here. Your email configuration is managed inside the form action.', 'gutenverse-form')
-                    },
-                    {
-                        title: __('Edit your form configuration', 'gutenverse-form'),
-                        description: __('If a form action is already linked, click Edit Form to update its settings, including confirmation and notification emails.', 'gutenverse-form')
-                    }
                 ]}
             />
+            <div className="gutenverse-form-action-inspector">
+                <CreateForm
+                    attributes={attributes}
+                    clientId={clientId}
+                    setAttributes={props.setAttributes}
+                    compact
+                    showEntriesLink
+                />
+            </div>
         </InspectorControls>
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} panelState={panelState} setPanelIsClicked={setPanelIsClicked} />
         <Component blockProps={blockProps} attributes={attributes} clientId={clientId} setAttributes={props.setAttributes} />
