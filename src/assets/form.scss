@@ -972,6 +972,11 @@
             white-space: nowrap;
             width: auto;
         }
+
+        .gutenverse-form-action-list-link {
+            margin-top: 8px;
+            min-height: 34px;
+        }
     }
 
     @media (max-width: 782px) {
@@ -1015,6 +1020,11 @@
             text-decoration: none;
         }
     }
+}
+
+.gutenverse-form-action-inspector {
+    padding-left: 12px;
+    padding-right: 12px;
 }
 
 #gutenverse-form-toast {

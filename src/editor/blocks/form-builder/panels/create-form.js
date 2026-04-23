@@ -17,7 +17,7 @@ export const CreateForm = (props) => {
         window['GutenverseDashboard'].imgDir = (window['GutenverseConfig'] && window['GutenverseConfig'].gutenverseFormImgDir) ? window['GutenverseConfig'].gutenverseFormImgDir : '';
     }
 
-    const { setAttributes, clientId, compact = false } = props;
+    const { setAttributes, clientId, compact = false, showEntriesLink = !compact } = props;
     const attributes = props.attributes || props.values || {};
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -242,7 +242,7 @@ export const CreateForm = (props) => {
                         </div>
                     </div>
 
-                    {!compact && (
+                    {showEntriesLink && (
                         <a
                             href={entriesUrl}
                             target="_blank"
