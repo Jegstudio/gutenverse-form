@@ -1,9 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { BlockControls, InspectorControls } from '@wordpress/block-editor';
-import { ToolbarGroup, ToolbarButton, Button, SelectControl } from '@wordpress/components';
+import { ToolbarGroup, ToolbarButton, Button, DropdownMenu } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { cloneBlock, createBlock } from '@wordpress/blocks';
-import { useEffect, useState } from '@wordpress/element';
 
 const findFormBuilders = (blocks = [], acc = []) => {
     blocks.forEach((block) => {
@@ -21,13 +20,6 @@ const findFormBuilders = (blocks = [], acc = []) => {
 
 const FormBuilderHelper = ({ clientId, currentBlock, formBuilders }) => {
     const { insertBlocks, removeBlocks, replaceBlocks, selectBlock } = useDispatch('core/block-editor');
-    const [selectedFormBuilder, setSelectedFormBuilder] = useState(formBuilders[0]?.clientId || '');
-
-    useEffect(() => {
-        if (!selectedFormBuilder && formBuilders[0]?.clientId) {
-            setSelectedFormBuilder(formBuilders[0].clientId);
-        }
-    }, [formBuilders, selectedFormBuilder]);
 
     if (!currentBlock) {
         return null;
@@ -43,67 +35,47 @@ const FormBuilderHelper = ({ clientId, currentBlock, formBuilders }) => {
         replaceBlocks(clientId, formBuilderBlock);
     };
 
-    const addToExistingForm = () => {
-        if (!selectedFormBuilder) {
+    const addToExistingForm = (targetFormBuilderId) => {
+        if (!targetFormBuilderId) {
             return;
         }
 
-        insertBlocks(cloneBlock(currentBlock), undefined, selectedFormBuilder);
+        insertBlocks(cloneBlock(currentBlock), undefined, targetFormBuilderId);
         removeBlocks(clientId, false);
-        selectBlock(selectedFormBuilder);
+        selectBlock(targetFormBuilderId);
     };
 
+    const formBuilderOptions = formBuilders.map((builder, index) => ({
+        title: builder.attributes?.formId?.label || builder.attributes?.elementId || `${__('Form Builder', 'gutenverse-form')} ${index + 1}`,
+        onClick: () => addToExistingForm(builder.clientId),
+    }));
+
     return (
-        <div className="gutenverse-form-builder-helper">
-            <div className="gutenverse-form-builder-helper-copy">
-                <div className="gutenverse-form-builder-helper-title">
-                    {__('This block needs a Form Builder', 'gutenverse-form')}
-                </div>
-                <div className="gutenverse-form-builder-helper-description">
-                    {__('Create a new form, or insert this block into an existing one.', 'gutenverse-form')}
+        <div className="gutenverse-form-builder-notice">
+            <div className="gutenverse-form-builder-notice-content">
+                <div className="gutenverse-form-builder-notice-copy">
+                    <div className="gutenverse-form-builder-notice-title">{__('Input is outside a form container', 'gutenverse-form')}</div>
                 </div>
             </div>
-            <div className="gutenverse-form-builder-helper-actions">
-                <div className="gutenverse-form-builder-helper-option is-create">
-                    <div className="gutenverse-form-builder-helper-option-title">
-                        {__('Create New Form', 'gutenverse-form')}
-                    </div>
-                    <Button
-                        variant="primary"
-                        onClick={createNewForm}
-                    >
-                        {__('Create New Form', 'gutenverse-form')}
-                    </Button>
-                </div>
-                <div className="gutenverse-form-builder-helper-option is-existing">
-                    <div className="gutenverse-form-builder-helper-option-title">
-                        {__('Add To Existing Form', 'gutenverse-form')}
-                    </div>
-                    <div className="gutenverse-form-builder-helper-existing">
-                        <SelectControl
-                            label={__('Choose Existing Form', 'gutenverse-form')}
-                            value={selectedFormBuilder}
-                            options={formBuilders.length > 0
-                                ? formBuilders.map((builder, index) => ({
-                                    label: builder.attributes?.formId?.label || builder.attributes?.elementId || `${__('Form Builder', 'gutenverse-form')} ${index + 1}`,
-                                    value: builder.clientId
-                                }))
-                                : [{
-                                    label: __('No existing form on this page yet', 'gutenverse-form'),
-                                    value: ''
-                                }]}
-                            onChange={setSelectedFormBuilder}
-                            disabled={formBuilders.length === 0}
-                        />
-                        <Button
-                            variant="secondary"
-                            onClick={addToExistingForm}
-                            disabled={!selectedFormBuilder}
-                        >
-                            {__('Insert Into Selected Form', 'gutenverse-form')}
-                        </Button>
-                    </div>
-                </div>
+            <div className="gutenverse-form-builder-notice-actions">
+                <Button
+                    variant="primary"
+                    className="gutenverse-form-builder-notice-create"
+                    onClick={createNewForm}
+                >
+                    {__('Create New Form', 'gutenverse-form')}
+                </Button>
+                <DropdownMenu
+                    className="gutenverse-form-builder-notice-dropdown"
+                    icon={null}
+                    label={__('Connect to Form', 'gutenverse-form')}
+                    text={__('Connect to Form', 'gutenverse-form')}
+                    controls={formBuilderOptions}
+                    toggleProps={{
+                        className: 'gutenverse-form-builder-notice-connect',
+                        disabled: formBuilderOptions.length === 0,
+                    }}
+                />
             </div>
         </div>
     );
