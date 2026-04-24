@@ -255,23 +255,48 @@ export const CreateForm = (props) => {
                 </>
             ) : (
                 <div className="gutenverse-form-action-empty">
-                    <div className="gutenverse-form-action-summary">
-                        <div className="empty-badge">{__('Action required', 'gutenverse-form')}</div>
-                        <div className="empty-title">
-                            {compact
-                                ? __('Create a form action to receive submissions', 'gutenverse-form')
-                                : __('Submissions need a destination', 'gutenverse-form')}
+                    <div className="gutenverse-form-action-empty-main">
+                        <div className="gutenverse-form-action-summary">
+                            {compact ? (
+                                <>
+                                    <div className="gutenverse-form-action-empty-copy">
+                                        <div className="gutenverse-form-action-empty-header">
+                                            <div className="empty-badge">{__('Action required', 'gutenverse-form')}</div>
+                                        </div>
+                                        <div className="empty-title">
+                                            {__('Create a form action to receive submissions.', 'gutenverse-form')}
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="empty-badge">{__('Action required', 'gutenverse-form')}</div>
+                                    <div className="empty-title">{__('Submissions need a destination', 'gutenverse-form')}</div>
+                                </>
+                            )}
                         </div>
+                        {compact && (
+                            <button
+                                type="button"
+                                className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
+                                onClick={!saving ? openCreateModal : undefined}
+                                disabled={saving}
+                            >
+                                {__('Create Action', 'gutenverse-form')}
+                            </button>
+                        )}
                     </div>
                     {!compact && <p>{__('The form can submit, but without a form action entries are hard to track and confirmation emails will not be sent.', 'gutenverse-form')}</p>}
-                    <button
-                        type="button"
-                        className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
-                        onClick={!saving ? openCreateModal : undefined}
-                        disabled={saving}
-                    >
-                        {compact ? __('Create Action', 'gutenverse-form') : __('Create Form Action', 'gutenverse-form')}
-                    </button>
+                    {!compact && (
+                        <button
+                            type="button"
+                            className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
+                            onClick={!saving ? openCreateModal : undefined}
+                            disabled={saving}
+                        >
+                            {__('Create Form Action', 'gutenverse-form')}
+                        </button>
+                    )}
                 </div>
             )}
 
