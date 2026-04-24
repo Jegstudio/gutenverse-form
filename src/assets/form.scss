@@ -719,10 +719,6 @@
         padding: 14px;
     }
 
-    .gutenverse-form-action-card {
-        border-top: 3px solid #2271b1;
-    }
-
     .gutenverse-form-action-summary {
         min-width: 0;
     }
@@ -769,13 +765,11 @@
     .gutenverse-form-action-empty {
         background: #fff8e5;
         border-color: #dba617;
-        border-left: 4px solid #dba617;
-        box-shadow: 0 1px 3px rgba(151, 108, 0, 0.14);
         text-align: left;
 
         .empty-badge {
             color: #8a5d00;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 700;
             letter-spacing: 0.08em;
             line-height: 1.2;
@@ -785,15 +779,14 @@
 
         .empty-title {
             color: #1d2327;
-            font-size: 15px;
-            font-weight: 700;
+            font-size: 12px;
+            font-weight: 400;
             line-height: 1.35;
             margin-bottom: 6px;
         }
 
         .gutenverse-form-action-button {
             margin-top: 14px;
-            width: 100%;
         }
 
         p {
@@ -802,24 +795,24 @@
     }
 
     .gutenverse-form-action-buttons {
-        display: grid;
+        display: flex;
         gap: 8px;
-        grid-template-columns: 1fr auto;
+        margin-top: 14px;
         margin-bottom: 12px;
     }
 
     .gutenverse-form-action-button {
+        min-width: 80px;
         align-items: center;
         border: 1px solid #c3c4c7;
         border-radius: 5px;
         cursor: pointer;
         display: inline-flex;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 500;
         gap: 6px;
         justify-content: center;
         line-height: 18px;
-        min-height: 40px;
         padding: 9px 13px;
         text-decoration: none;
         transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
@@ -912,22 +905,61 @@
 
         .gutenverse-form-action-empty {
             background: #fff8e5;
-            border-color: #e7c469;
-            border-left-color: #dba617;
+            border: 1px solid #fde68a;
+            border-left: 1px solid #fde68a;
+            border-radius: 4px;
+            box-shadow: none;
+            display: block;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .gutenverse-form-action-empty-main {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .gutenverse-form-action-empty .gutenverse-form-action-summary {
+            align-items: flex-start;
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .gutenverse-form-action-empty-copy {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .gutenverse-form-action-empty-header {
             align-items: center;
             display: flex;
-            gap: 12px;
-            justify-content: space-between;
+            gap: 8px;
+            justify-content: flex-start;
         }
 
-        .empty-badge {
-            margin-bottom: 4px;
-        }
-
-        .empty-title {
-            color: #4a3a03;
-            font-size: 13px;
+        .gutenverse-form-action-empty .empty-badge {
+            color: #92400e;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            line-height: 1.2;
             margin-bottom: 0;
+            text-transform: uppercase;
+        }
+
+        .gutenverse-form-action-empty .empty-title {
+            color: #4b5563;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-bottom: 0;
+            max-width: 400px;
         }
 
         .gutenverse-form-action-buttons {
@@ -944,7 +976,6 @@
             color: #34414e;
             font-size: 12px;
             font-weight: 600;
-            min-height: 34px;
             padding: 7px 12px;
 
             &.primary {
@@ -968,9 +999,28 @@
         }
 
         .gutenverse-form-action-empty .gutenverse-form-action-button {
+            align-self: center;
+            background: #2563eb;
+            border-color: #2563eb;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.2;
             margin-top: 0;
-            white-space: nowrap;
+            min-height: 0;
+            min-width: 0;
+            padding: 10px 20px;
+            white-space: normal;
             width: auto;
+
+            &:hover,
+            &:focus,
+            &:active {
+                background: #1d4ed8;
+                border-color: #1d4ed8;
+                color: #fff;
+            }
         }
 
         .gutenverse-form-action-list-link {
@@ -981,14 +1031,16 @@
 
     @media (max-width: 782px) {
         .gutenverse-create-form-action.is-compact {
-            .gutenverse-form-action-card,
-            .gutenverse-form-action-empty {
+            .gutenverse-form-action-card {
                 align-items: flex-start;
                 flex-direction: column;
             }
 
-            .gutenverse-form-action-buttons,
-            .gutenverse-form-action-empty .gutenverse-form-action-button {
+            .gutenverse-form-action-empty {
+                padding: 20px;
+            }
+
+            .gutenverse-form-action-buttons {
                 width: 100%;
             }
 
