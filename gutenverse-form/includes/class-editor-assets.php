@@ -69,7 +69,7 @@ class Editor_Assets {
 			'noticeVersions' => array( '1.0.0' ),
 		);
 
-		// Global Integrations
+		// Global Integrations.
 		$global_integrations = array();
 		$enabled_services    = get_option( 'gutenverse_form_integrations', array() );
 		$available_services  = Integration::get_services();

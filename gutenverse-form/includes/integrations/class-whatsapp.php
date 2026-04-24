@@ -174,12 +174,12 @@ class Whatsapp {
 	 * @param \WP_REST_Request $request      REST request instance for the submission.
 	 */
 	public function after_store( $entry_id, $params, $form_setting, $request ) {
-		$data            = \Gutenverse_Form\Integration::prepare_entry_data( $params );
-		$options         = get_option( 'gutenverse_form_integrations', array() );
-		$global_settings = get_option( 'gutenverse_form_whatsapp_settings', array() );
-		$global_enabled  = ! empty( $options['whatsapp'] );
+		$data                = \Gutenverse_Form\Integration::prepare_entry_data( $params );
+		$options             = get_option( 'gutenverse_form_integrations', array() );
+		$global_settings     = get_option( 'gutenverse_form_whatsapp_settings', array() );
+		$global_enabled      = ! empty( $options['whatsapp'] );
 		$has_request_actions = \Gutenverse_Form\Integration::request_has_integration_actions( $params );
-		$actions         = \Gutenverse_Form\Integration::get_service_actions( 'whatsapp', $params, $form_setting );
+		$actions             = \Gutenverse_Form\Integration::get_service_actions( 'whatsapp', $params, $form_setting );
 
 		if ( $global_enabled && ! $has_request_actions ) {
 			$this->set_settings( $global_settings );

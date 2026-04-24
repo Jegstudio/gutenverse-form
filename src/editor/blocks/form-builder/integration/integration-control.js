@@ -2,29 +2,9 @@ import { useState, useEffect } from '@wordpress/element';
 import { useInstanceId } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
-import { 
-    CheckboxControl, 
-    SelectControl, 
-    SwitchControl, 
-    AlertControl,
-    TextControl,
-    TextareaControl,
-    ControlHeadingSimple
-} from 'gutenverse-core/controls';
+import { ControlHeadingSimple } from 'gutenverse-core/controls';
 import { Button, Plus, X, Select, classnames, cryptoRandomString, DefaultLayout } from 'gutenverse-core/components';
 import { IconChevronDownSVG } from 'gutenverse-core/icons';
-import { WhatsappControls } from './whatsapp-controls';
-import { TelegramControls } from './telegram-controls';
-import { DiscordControls } from './discord-controls';
-import { MailChimpControls } from './mailchimp-controls';
-import { SlackControls } from './slack-controls';
-import { WebhookControls } from './webhook-controls';
-import { GetResponseControls } from './get-response-controls';
-import { DripControls } from './drip-controls';
-import { ActiveCampaignControls } from './active-campaign-controls';
-import { ConvertKitControls } from './convert-kit-controls';
-import { MailerControls } from './mailer-controls';
-import { GoogleSheetsControls } from './google-sheets-controls';
 
 const customStyles = {
     input: () => ({ padding: 0, margin: 0 }),
@@ -78,38 +58,6 @@ const createIntegrationAction = (base = {}, overrides = {}) => ({
     _key: base._key || overrides._key || cryptoRandomString({ length: 6, type: 'alphanumeric' }),
 });
 
-const IntegrationTypeControl = ({ item, selectType, onUpdateIndexValue, onUpdateIndexStyle, elementId }) => {
-    const props = { item, onUpdateIndexValue, onUpdateIndexStyle, selectType, elementId };
-    switch (item.type) {
-        case 'whatsapp':
-            return <WhatsappControls {...props} />;
-        case 'telegram':
-            return <TelegramControls {...props} />;
-        case 'discord':
-            return <DiscordControls {...props} />;
-        case 'mailchimp':
-            return <MailChimpControls {...props} />;
-        case 'slack':
-            return <SlackControls {...props} />;
-        case 'webhook':
-            return <WebhookControls {...props} />;
-        case 'get_response':
-            return <GetResponseControls {...props} />;
-        case 'drip':
-            return <DripControls {...props} />;
-        case 'active_campaign':
-            return <ActiveCampaignControls {...props} />;
-        case 'convert_kit':
-            return <ConvertKitControls {...props} />;
-        case 'mailer':
-            return <MailerControls {...props} />;
-        case 'google_sheets':
-            return <GoogleSheetsControls {...props} />;
-        default:
-            return null;
-    }
-};
-
 const ActionItem = ({
     values,
     index,
@@ -158,6 +106,24 @@ const ActionItem = ({
         </div>;
     };
 
+    const IntegrationOption = (item,
+        selectType,
+        onUpdateIndexValue,
+        onUpdateIndexStyle,
+        elementId
+    ) => {
+        return applyFilters(
+            'gutenverse.integration.options',
+            <LockedIntegrationControl isOpen={open} />,
+            {
+                item,
+                selectType,
+                onUpdateIndexValue,
+                onUpdateIndexStyle,
+                elementId
+            }
+        );
+    };
 
     return (
         <div className={itemClass}>
@@ -188,17 +154,13 @@ const ActionItem = ({
             </div>
             {open && (
                 <div className={'repeater-body'}>
-                    {selectType?.pro ? (
-                        <LockedIntegrationControl isOpen={open} />
-                    ):
-                        <IntegrationTypeControl
-                            item={values[index]}
-                            selectType={selectType}
-                            onUpdateIndexValue={onUpdateIndexValue}
-                            onUpdateIndexStyle={onUpdateIndexStyle}
-                            elementId={elementId}
-                        />
-                    }
+                    <IntegrationOption
+                        item={values[index]}
+                        selectType={selectType}
+                        onUpdateIndexValue={onUpdateIndexValue}
+                        onUpdateIndexStyle={onUpdateIndexStyle}
+                        elementId={elementId}
+                    />
                 </div>
             )}
         </div>
@@ -368,12 +330,6 @@ const IntegrationControl = (props) => {
         customOptions,
         elementId
     };
-
-    // return applyFilters(
-    //     'gutenverse.integration.options',
-    //     integrationOption(parameter),
-    //     parameter
-    // );
 
     return integrationOption(parameter);
 };
