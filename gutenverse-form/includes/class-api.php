@@ -1038,7 +1038,12 @@ class Api {
 	 * @return WP_Rest_Response.
 	 */
 	public function save_integration( $request ) {
-		$params = $request->get_params();
+		$delegated = apply_filters( 'gutenverse_form_save_integration_response', null, $request, $this );
+		if ( $delegated instanceof \WP_REST_Response ) {
+			return $delegated;
+		}
+
+		$params           = $request->get_params();
 		$allowed_services = array_column( Integration::get_services(), 'service_name' );
 
 		if ( isset( $params['key'] ) && isset( $params['value'] ) ) {
@@ -1053,6 +1058,14 @@ class Api {
 				return new WP_REST_Response( array( 'success' => true ), 200 );
 			}
 		}
+		return new WP_REST_Response(
+			array(
+				'success' => false,
+				'message' => esc_html__( 'Integrations are available in Gutenverse Pro.', 'gutenverse-form' ),
+				'code'    => 'gutenverse_form_integration_pro_required',
+			),
+			403
+		);
 	}
 
 	/**
@@ -1063,7 +1076,12 @@ class Api {
 	 * @return WP_REST_Response
 	 */
 	public function save_integration_settings( $request ) {
-		$params = $request->get_params();
+		$delegated = apply_filters( 'gutenverse_form_save_integration_settings_response', null, $request, $this );
+		if ( $delegated instanceof \WP_REST_Response ) {
+			return $delegated;
+		}
+
+		$params           = $request->get_params();
 		$allowed_services = array_column( Integration::get_services(), 'service_name' );
 
 		if ( isset( $params['service'] ) && isset( $params['settings'] ) ) {
@@ -1075,7 +1093,7 @@ class Api {
 					get_option( "gutenverse_form_{$service}_settings", array() ),
 					$params['settings']
 				);
-				$settings = $this->sanitize_integration_settings( $service, $raw_settings );
+				$settings     = $this->sanitize_integration_settings( $service, $raw_settings );
 				update_option( "gutenverse_form_{$service}_settings", $settings );
 
 				return new WP_REST_Response( array( 'success' => true ), 200 );
@@ -1085,9 +1103,10 @@ class Api {
 		return new WP_REST_Response(
 			array(
 				'success' => false,
-				'message' => esc_html__( 'Invalid integration service or settings.', 'gutenverse-form' ),
+				'message' => esc_html__( 'Integrations are available in Gutenverse Pro.', 'gutenverse-form' ),
+				'code'    => 'gutenverse_form_integration_pro_required',
 			),
-			400
+			403
 		);
 	}
 
@@ -1099,6 +1118,11 @@ class Api {
 	 * @return WP_REST_Response
 	 */
 	public function save_block_secret( $request ) {
+		$delegated = apply_filters( 'gutenverse_form_save_block_secret_response', null, $request, $this );
+		if ( $delegated instanceof \WP_REST_Response ) {
+			return $delegated;
+		}
+
 		$params     = $request->get_params();
 		$post_id    = isset( $params['postId'] ) ? absint( $params['postId'] ) : 0;
 		$element_id = isset( $params['elementId'] ) ? sanitize_key( $params['elementId'] ) : '';
@@ -1108,22 +1132,46 @@ class Api {
 		$service    = isset( $params['service'] ) ? sanitize_key( $params['service'] ) : '';
 
 		if ( ! $post_id || empty( $element_id ) || empty( $action_key ) || empty( $field_key ) || empty( $service ) ) {
-			return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Missing secret storage context.', 'gutenverse-form' ) ), 400 );
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __( 'Missing secret storage context.', 'gutenverse-form' ),
+				),
+				400
+			);
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Permission denied.', 'gutenverse-form' ) ), 403 );
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __( 'Permission denied.', 'gutenverse-form' ),
+				),
+				403
+			);
 		}
 
 		$integration      = new Integration();
 		$allowed_services = array_column( Integration::get_services(), 'service_name' );
 		if ( ! in_array( $service, $allowed_services, true ) ) {
-			return new WP_REST_Response( array( 'success' => false, 'message' => __( 'Invalid integration service.', 'gutenverse-form' ) ), 400 );
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __( 'Invalid integration service.', 'gutenverse-form' ),
+				),
+				400
+			);
 		}
 
 		$sensitive_fields = $integration->get_sensitive_service_fields( $service );
 		if ( ! in_array( $field_key, $sensitive_fields, true ) ) {
-			return new WP_REST_Response( array( 'success' => false, 'message' => __( 'This field is not configured for server-side secret storage.', 'gutenverse-form' ) ), 400 );
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __( 'This field is not configured for server-side secret storage.', 'gutenverse-form' ),
+				),
+				400
+			);
 		}
 
 		$secret_map = get_post_meta( $post_id, 'gutenverse_form_block_secrets', true );
@@ -1155,11 +1203,11 @@ class Api {
 
 		return new WP_REST_Response(
 			array(
-				'success' => true,
-				'marker'  => Integration::SERVER_SECRET_MARKER,
-				'hasSavedValue' => '' !== trim( $value ),
+				'success' => false,
+				'message' => esc_html__( 'Integrations are available in Gutenverse Pro.', 'gutenverse-form' ),
+				'code'    => 'gutenverse_form_integration_pro_required',
 			),
-			200
+			403
 		);
 	}
 
@@ -1323,7 +1371,7 @@ class Api {
 					$sanitized['columnsTemplate'] = sanitize_textarea_field( (string) $settings['columns_template'] );
 				}
 				break;
-				
+
 			case 'drip':
 				if ( isset( $settings['api_key'] ) ) {
 					$sanitized['api_key'] = sanitize_text_field( (string) $settings['api_key'] );

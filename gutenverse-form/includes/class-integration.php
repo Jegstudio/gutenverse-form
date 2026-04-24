@@ -24,6 +24,15 @@ class Integration {
 	 * Marker stored in block attributes when the real secret lives server-side.
 	 */
 	const SERVER_SECRET_MARKER = '__gutenverse_server_secret__';
+
+	/**
+	 * Check whether the Pro integration runtime is available.
+	 *
+	 * @return bool
+	 */
+	public static function has_pro_integration_runtime() {
+		return (bool) apply_filters( 'gutenverse_form_has_integration_pro', false );
+	}
 	/**
 	 * Init constructor.
 	 */
@@ -131,6 +140,8 @@ class Integration {
 				if ( ! isset( $config['imgDir'] ) ) {
 					$config['imgDir'] = '';
 				}
+				$config['hasIntegrationPro']     = self::has_pro_integration_runtime();
+				$config['integrationUpgradeUrl'] = apply_filters( 'gutenverse_form_integration_upgrade_url', admin_url( 'admin.php?page=gutenverse-dashboard#/upgrade-pro' ) );
 
 				if ( ! current_user_can( 'manage_options' ) ) {
 					return;
@@ -215,6 +226,12 @@ class Integration {
 	 * @return object|null
 	 */
 	public function get_service_instance( $service ) {
+		$instance = apply_filters( 'gutenverse_form_get_service_instance', null, $service );
+
+		if ( is_object( $instance ) ) {
+			return $instance;
+		}
+
 		$class_name = str_replace( '_', ' ', $service );
 		$class_name = ucwords( $class_name );
 		$class_name = str_replace( ' ', '_', $class_name );

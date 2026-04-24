@@ -37,6 +37,9 @@ const services = [
     { id: 'google_sheets', title: 'Google Sheets', description: __('Save form submissions directly to Google Sheets.', 'gutenverse-form'), icon: <IconGoogleSheetSVG /> },
 ];
 
+const hasIntegrationPro = !!window['GutenverseConfig']?.hasIntegrationPro;
+const integrationUpgradeUrl = window['GutenverseConfig']?.integrationUpgradeUrl || '';
+
 const DisableModal = ({ isOpen, onConfirm, onCancel }) => {
     if (!isOpen) return null;
 
@@ -64,11 +67,48 @@ const DisableModal = ({ isOpen, onConfirm, onCancel }) => {
     );
 };
 
+const UpgradeModal = ({ isOpen, onClose }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="gutenverse-modal-overlay" onClick={onClose}>
+            <div className="gutenverse-modal-content" onClick={(e) => e.stopPropagation()}>
+                <button className="modal-close" onClick={onClose}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                </button>
+                <div className="modal-body">
+                    <div className="modal-header">
+                        <IconWarningSVG />
+                    </div>
+                    <h2>{__('Unlock Integrations in Pro', 'gutenverse-form')}</h2>
+                    <p>{__('Integration automations, secret storage, and provider setup are available in Gutenverse Pro.', 'gutenverse-form')}</p>
+                </div>
+                <div className="modal-footer">
+                    {integrationUpgradeUrl && (
+                        <a className="button-disable" href={integrationUpgradeUrl}>
+                            {__('Upgrade to Pro', 'gutenverse-form')}
+                        </a>
+                    )}
+                    <button className="button-cancel" onClick={onClose}>{__('Close', 'gutenverse-form')}</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
     const isActive = !!status;
 
     const handleToggle = () => {
+        if (!hasIntegrationPro) {
+            setIsUpgradeOpen(true);
+            return;
+        }
+
         if (isActive) {
             setIsModalOpen(true);
         } else {
@@ -103,6 +143,11 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                     {isActive && (
                         <button
                             onClick={() => {
+                                if (!hasIntegrationPro) {
+                                    setIsUpgradeOpen(true);
+                                    return;
+                                }
+
                                 window.location.href = admin_url + 'admin.php?page=form_integration&service=' + service.id;
                             }}
                             className="setup-link-button"
@@ -117,6 +162,10 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                 isOpen={isModalOpen} 
                 onConfirm={confirmDisable} 
                 onCancel={() => setIsModalOpen(false)} 
+            />
+            <UpgradeModal
+                isOpen={isUpgradeOpen}
+                onClose={() => setIsUpgradeOpen(false)}
             />
         </>
     );
@@ -262,6 +311,14 @@ const ServiceSetup = ({ serviceId, title }) => {
     const updateSetting = (key, value) => {
         setSettings((prev) => ({ ...prev, [key]: value }));
     };
+
+    if (!hasIntegrationPro) {
+        return (
+            <div className="form-tab-body pro-tab">
+                <CardPro />
+            </div>
+        );
+    }
 
     return (
         <div className="service-setup-content">
