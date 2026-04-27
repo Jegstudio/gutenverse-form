@@ -107,16 +107,23 @@ class Form {
 		$forms_by_entries  = wp_list_sort( $forms, 'total_entries', 'DESC' );
 		$forms_by_recent   = wp_list_sort( $forms, 'last_entry_timestamp', 'DESC' );
 		$forms_by_usage    = wp_list_sort( $forms, 'location_count', 'DESC' );
-		$entry_trend       = self::get_entry_trend_data( 7 );
+		$trend_contexts    = array(
+			7  => self::get_entry_trend_chart_context( 7 ),
+			30 => self::get_entry_trend_chart_context( 30 ),
+		);
 		$needs_attention   = self::get_forms_needing_attention( $forms, 3 );
 		$unused_forms      = self::get_unused_form_actions( $forms, 3 );
 		$top_sources       = self::get_top_entry_sources( $forms, 3 );
+		$entries_url       = admin_url( 'edit.php?post_type=' . Entries::POST_TYPE );
 		?>
 		<div class="wrap gutenverse-form-admin-dashboard">
 			<div class="gutenverse-form-admin-dashboard__hero">
-				<div>
+				<div class="gutenverse-form-admin-dashboard__intro">
 					<h1><?php esc_html_e( 'Form Dashboard', 'gutenverse-form' ); ?></h1>
 					<p><?php esc_html_e( 'Track submission performance and jump into the most relevant form locations when something needs quick attention.', 'gutenverse-form' ); ?></p>
+					<div class="dashboard-actions">
+						<a class="dashboard-button dashboard-button--primary" href="<?php echo esc_url( $entries_url ); ?>"><?php esc_html_e( 'View Entries', 'gutenverse-form' ); ?></a>
+					</div>
 				</div>
 				<div class="gutenverse-form-admin-dashboard__summary">
 					<div class="summary-card">
@@ -133,7 +140,7 @@ class Form {
 					</div>
 					<div class="summary-card">
 						<strong><?php echo esc_html( count( $forms ) ); ?></strong>
-						<span><?php esc_html_e( 'Tracked Form Actions', 'gutenverse-form' ); ?></span>
+						<span><?php esc_html_e( 'Tracked Forms', 'gutenverse-form' ); ?></span>
 					</div>
 				</div>
 			</div>
@@ -144,15 +151,8 @@ class Form {
 				</div>
 			<?php else : ?>
 				<?php
-				$trend_max    = max(
-					array_map(
-						static function ( $trend_item ) {
-							return (int) $trend_item['count'];
-						},
-						$entry_trend
-					)
-				);
-				$trend_max    = max( 1, $trend_max );
+				$chart_top    = 32;
+				$chart_base   = 168;
 				$recent_forms = array_filter(
 					array_slice( $forms_by_recent, 0, 3 ),
 					static function ( $form ) {
@@ -161,40 +161,71 @@ class Form {
 				);
 				?>
 				<div class="gutenverse-form-admin-dashboard__list dashboard-grid">
-					<div class="dashboard-panel dashboard-panel--wide">
+					<div class="dashboard-panel dashboard-panel--wide dashboard-panel--chart">
 						<div class="dashboard-block__header">
 							<div>
-								<h2><?php esc_html_e( 'This Week', 'gutenverse-form' ); ?></h2>
-								<div class="dashboard-form-card__meta"><?php esc_html_e( 'Daily entries for the last 7 days.', 'gutenverse-form' ); ?></div>
-							</div>
-						</div>
-						<div class="trend-chart trend-chart--compact">
-							<div class="trend-chart__bars">
-								<?php foreach ( $entry_trend as $trend_item ) : ?>
-									<?php
-									$count   = (int) $trend_item['count'];
-									$height  = max( 10, (int) round( ( $count / $trend_max ) * 100 ) );
-									$tooltip = sprintf(
-										/* translators: 1: day label, 2: count */
-										__( '%1$s: %2$s entries', 'gutenverse-form' ),
-										$trend_item['label'],
-										$count
-									);
-									?>
-									<div class="trend-chart__item">
-										<div class="trend-chart__value"><?php echo esc_html( $count ); ?></div>
-										<div class="trend-chart__bar-wrap" title="<?php echo esc_attr( $tooltip ); ?>" aria-label="<?php echo esc_attr( $tooltip ); ?>">
-											<div class="trend-chart__bar" style="height: <?php echo esc_attr( $height ); ?>%;"></div>
-										</div>
-										<div class="trend-chart__label"><?php echo esc_html( $trend_item['label'] ); ?></div>
+								<?php foreach ( array_keys( $trend_contexts ) as $range ) : ?>
+									<h2 class="trend-range-copy <?php echo 7 === $range ? 'active' : ''; ?>" data-trend-range-copy="<?php echo esc_attr( $range ); ?>">
+										<?php
+										printf(
+											/* translators: %s: number of days */
+											esc_html__( 'Last %s Days', 'gutenverse-form' ),
+											esc_html( $range )
+										);
+										?>
+									</h2>
+									<div class="dashboard-form-card__meta trend-range-copy <?php echo 7 === $range ? 'active' : ''; ?>" data-trend-range-copy="<?php echo esc_attr( $range ); ?>">
+										<?php
+										printf(
+											/* translators: %s: number of days */
+											esc_html__( 'Daily entries for the last %s days.', 'gutenverse-form' ),
+											esc_html( $range )
+										);
+										?>
 									</div>
 								<?php endforeach; ?>
 							</div>
+							<div class="dashboard-range-toggle" aria-label="<?php esc_attr_e( 'Chart date range', 'gutenverse-form' ); ?>">
+								<button type="button" class="active" data-trend-range="7"><?php esc_html_e( '7 days', 'gutenverse-form' ); ?></button>
+								<button type="button" data-trend-range="30"><?php esc_html_e( '30 days', 'gutenverse-form' ); ?></button>
+							</div>
+						</div>
+						<div class="trend-chart trend-chart--compact">
+							<?php foreach ( $trend_contexts as $range => $trend_context ) : ?>
+								<div class="trend-chart__range <?php echo 7 === $range ? 'active' : ''; ?>" data-trend-range-panel="<?php echo esc_attr( $range ); ?>">
+									<div class="trend-chart__line" role="img" aria-label="<?php echo esc_attr( sprintf( __( 'Daily entries for the last %s days', 'gutenverse-form' ), $range ) ); ?>">
+										<div class="trend-chart__legend">
+											<span class="trend-chart__legend-item"><span class="trend-chart__legend-swatch"></span><?php esc_html_e( 'Entries', 'gutenverse-form' ); ?></span>
+										</div>
+										<svg class="trend-chart__svg" viewBox="0 0 700 220" preserveAspectRatio="none" focusable="false" aria-hidden="true">
+											<path class="trend-chart__axis" d="M54 32V168H676"></path>
+											<?php foreach ( $trend_context['ticks'] as $tick ) : ?>
+												<?php
+												$tick_y = $chart_base - ( ( $tick / $trend_context['max'] ) * ( $chart_base - $chart_top ) );
+												?>
+												<path class="trend-chart__grid-line" d="M54 <?php echo esc_attr( round( $tick_y, 2 ) ); ?>H676"></path>
+												<text class="trend-chart__y-label" x="42" y="<?php echo esc_attr( round( $tick_y + 4, 2 ) ); ?>"><?php echo esc_html( $tick ); ?></text>
+											<?php endforeach; ?>
+											<polyline class="trend-chart__stroke" points="<?php echo esc_attr( $trend_context['line_points'] ); ?>"></polyline>
+											<?php foreach ( $trend_context['points'] as $point ) : ?>
+												<circle class="trend-chart__point" cx="<?php echo esc_attr( $point['x'] ); ?>" cy="<?php echo esc_attr( $point['y'] ); ?>" r="4">
+													<title><?php echo esc_html( $point['tooltip'] ); ?></title>
+												</circle>
+												<?php if ( $point['show_label'] ) : ?>
+													<text class="trend-chart__x-label" x="<?php echo esc_attr( $point['x'] ); ?>" y="202"><?php echo esc_html( $point['label'] ); ?></text>
+												<?php endif; ?>
+											<?php endforeach; ?>
+										</svg>
+									</div>
+								</div>
+							<?php endforeach; ?>
 						</div>
 					</div>
 
-					<div class="dashboard-panel">
-						<h3><?php esc_html_e( 'Needs Attention', 'gutenverse-form' ); ?></h3>
+					<div class="dashboard-panel dashboard-panel--attention">
+						<div class="dashboard-panel__title">
+							<h3><?php esc_html_e( 'Needs Attention', 'gutenverse-form' ); ?></h3>
+						</div>
 						<?php if ( empty( $needs_attention ) ) : ?>
 							<p class="empty-note"><?php esc_html_e( 'Nothing urgent detected right now.', 'gutenverse-form' ); ?></p>
 						<?php else : ?>
@@ -216,7 +247,9 @@ class Form {
 					</div>
 
 					<div class="dashboard-panel">
-						<h3><?php esc_html_e( 'Top Entry Sources', 'gutenverse-form' ); ?></h3>
+						<div class="dashboard-panel__title">
+							<h3><?php esc_html_e( 'Top Entry Sources', 'gutenverse-form' ); ?></h3>
+						</div>
 						<?php if ( empty( $top_sources ) ) : ?>
 							<p class="empty-note"><?php esc_html_e( 'Entry source data will appear after submissions are linked to posts or pages.', 'gutenverse-form' ); ?></p>
 						<?php else : ?>
@@ -246,7 +279,9 @@ class Form {
 					</div>
 
 					<div class="dashboard-panel">
-						<h3><?php esc_html_e( 'Unused Form Actions', 'gutenverse-form' ); ?></h3>
+						<div class="dashboard-panel__title">
+							<h3><?php esc_html_e( 'Unused Form Actions', 'gutenverse-form' ); ?></h3>
+						</div>
 						<?php if ( empty( $unused_forms ) ) : ?>
 							<p class="empty-note"><?php esc_html_e( 'Every tracked form action is currently used somewhere.', 'gutenverse-form' ); ?></p>
 						<?php else : ?>
@@ -265,7 +300,7 @@ class Form {
 										</span>
 									</div>
 									<div class="dashboard-row__actions">
-										<?php esc_html_e( 'No live post', 'gutenverse-form' ); ?>
+										<span class="status-badge"><?php esc_html_e( 'No live post', 'gutenverse-form' ); ?></span>
 									</div>
 								</div>
 							<?php endforeach; ?>
@@ -273,7 +308,9 @@ class Form {
 					</div>
 
 					<div class="dashboard-panel">
-						<h3><?php esc_html_e( 'Top Forms', 'gutenverse-form' ); ?></h3>
+						<div class="dashboard-panel__title">
+							<h3><?php esc_html_e( 'Top Forms', 'gutenverse-form' ); ?></h3>
+						</div>
 						<?php foreach ( array_slice( $forms_by_entries, 0, 3 ) as $form ) : ?>
 							<?php $primary_location = ! empty( $form['locations'][0] ) ? $form['locations'][0] : null; ?>
 							<div class="dashboard-row">
@@ -299,8 +336,10 @@ class Form {
 						<?php endforeach; ?>
 					</div>
 
-					<div class="dashboard-panel">
-						<h3><?php esc_html_e( 'Recent Activity', 'gutenverse-form' ); ?></h3>
+					<div class="dashboard-panel dashboard-panel--wide">
+						<div class="dashboard-panel__title">
+							<h3><?php esc_html_e( 'Recent Activity', 'gutenverse-form' ); ?></h3>
+						</div>
 						<?php if ( empty( $recent_forms ) ) : ?>
 							<p class="empty-note"><?php esc_html_e( 'No recent entry activity yet.', 'gutenverse-form' ); ?></p>
 						<?php else : ?>
@@ -332,40 +371,92 @@ class Form {
 			<?php endif; ?>
 		</div>
 		<style>
-			.gutenverse-form-admin-dashboard{max-width:1180px;margin-top:16px}
-			.gutenverse-form-admin-dashboard__hero,.dashboard-form-card{background:#fff;border:1px solid #dcdcde;border-radius:14px;box-shadow:0 8px 24px rgba(15,23,42,.05);padding:18px}
-			.gutenverse-form-admin-dashboard__hero{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}
-			.gutenverse-form-admin-dashboard__hero h1{margin:0 0 8px;font-size:28px;line-height:1.15}
-			.gutenverse-form-admin-dashboard__hero p{margin:0;color:#5f6c7b;font-size:13px;line-height:1.55;max-width:640px}
-			.gutenverse-form-admin-dashboard__summary{display:grid;gap:10px}
-			.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(4,minmax(110px,1fr));min-width:480px}
-			.summary-card{background:linear-gradient(180deg,#f8fbff 0%,#eef4ff 100%);border:1px solid #d8e5ff;border-radius:10px;padding:12px 14px}
-			.summary-card strong{display:block;color:#243cc7;font-size:24px;line-height:1.05;margin-bottom:4px}
-			.summary-card span,.dashboard-form-card__meta,.dashboard-row span,.empty-note{display:block;color:#667085;font-size:12px;line-height:1.4}
-			.gutenverse-form-admin-dashboard__list{display:grid;gap:12px}
-			.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
-			.dashboard-panel{background:#f8fafc;border:1px solid #e4e7ec;border-radius:10px;padding:14px}
+			.gutenverse-form-admin-dashboard{max-width:1180px;margin:18px 20px 40px 0;color:#1f2937}
+			.gutenverse-form-admin-dashboard *{box-sizing:border-box}
+			.gutenverse-form-admin-dashboard__hero,.dashboard-panel{background:#fff;border:1px solid #d9dee8;border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.05)}
+			.gutenverse-form-admin-dashboard__hero{display:grid;grid-template-columns:minmax(260px,1fr) minmax(560px,680px);gap:18px;align-items:center;margin-bottom:18px;padding:14px 16px}
+			.gutenverse-form-admin-dashboard__intro{display:grid;gap:7px;min-width:0}
+			.gutenverse-form-admin-dashboard__hero h1{color:#111827;font-size:22px;font-weight:700;line-height:1.15;margin:0}
+			.gutenverse-form-admin-dashboard__hero p{color:#5f6c7b;font-size:13px;line-height:1.4;margin:0;max-width:620px}
+			.dashboard-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:3px}
+			.dashboard-button{align-items:center;background:#fff;border:1px solid #c8d0dc;border-radius:5px;color:#344054;display:inline-flex;font-size:13px;font-weight:600;line-height:1;min-height:32px;padding:8px 12px;text-decoration:none;transition:background .15s ease,border-color .15s ease,color .15s ease}
+			.dashboard-button:hover,.dashboard-button:focus{background:#f8fafc;border-color:#98a2b3;color:#111827;text-decoration:none}
+			.dashboard-button--primary{background:#2563eb;border-color:#2563eb;color:#fff}
+			.dashboard-button--primary:hover,.dashboard-button--primary:focus{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
+			.gutenverse-form-admin-dashboard__summary{display:grid;gap:8px;grid-template-columns:repeat(4,minmax(0,1fr))}
+			.summary-card{align-items:flex-start;background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);border:1px solid #dce6f6;border-radius:8px;display:flex;flex-direction:column;gap:6px;justify-content:center;min-height:64px;padding:10px 12px}
+			.summary-card strong{color:#1d4ed8;display:block;font-size:24px;font-weight:800;line-height:1;margin:0}
+			.summary-card span,.dashboard-form-card__meta,.dashboard-row span,.empty-note{color:#667085;display:block;font-size:13px;line-height:1.45}
+			.gutenverse-form-admin-dashboard__list{display:grid;gap:16px}
+			.dashboard-grid{align-items:start;grid-template-columns:repeat(2,minmax(0,1fr))}
+			.dashboard-panel{overflow:hidden;padding:0}
 			.dashboard-panel--wide{grid-column:1 / -1}
-			.dashboard-block__header{margin-bottom:10px}
-			.dashboard-block__header h2{margin:0 0 4px;font-size:20px;line-height:1.2}
-			.trend-chart{background:linear-gradient(180deg,#fbfcff 0%,#f3f7ff 100%);border:1px solid #d8e5ff;border-radius:12px;padding:12px}
-			.trend-chart__bars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:end;min-height:120px}
-			.trend-chart__item{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
-			.trend-chart__value{color:#243cc7;font-size:12px;font-weight:700;line-height:1}
-			.trend-chart__bar-wrap{display:flex;align-items:flex-end;height:78px;width:100%;max-width:48px;padding:0 4px}
-			.trend-chart__bar{width:100%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#4d6bff 0%,#243cc7 100%);box-shadow:0 5px 12px rgba(36,60,199,.16);min-height:8px}
-			.trend-chart__label{color:#667085;font-size:11px;line-height:1.25;text-align:center}
-			.dashboard-panel h3{margin:0 0 10px;color:#243cc7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-			.dashboard-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid #e4e7ec}
-			.dashboard-row:first-of-type{padding-top:0;border-top:0}
-			.dashboard-row strong{display:block;color:#101828;font-size:13px;line-height:1.3;margin-bottom:1px}
-			.dashboard-row__actions{display:flex;flex-wrap:wrap;gap:8px}
-			.dashboard-row__actions a{color:#243cc7;text-decoration:none;font-size:11px;font-weight:600}
-			.gutenverse-form-admin-dashboard__empty{background:#fff;border:1px solid #dcdcde;border-radius:12px;padding:18px 20px;color:#50575e;font-size:14px;line-height:1.6}
-			@media (max-width:1280px){.gutenverse-form-admin-dashboard__hero{align-items:flex-start}.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(2,minmax(120px,1fr));min-width:260px}}
-			@media (max-width:1100px){.dashboard-grid{grid-template-columns:1fr}.trend-chart__bars{gap:8px}.trend-chart__bar-wrap{max-width:42px}}
-			@media (max-width:782px){.gutenverse-form-admin-dashboard__hero,.dashboard-row{display:grid}.gutenverse-form-admin-dashboard__summary,.dashboard-grid,.trend-chart__bars{grid-template-columns:1fr}.trend-chart__bars{min-height:0}.trend-chart__item{display:grid;grid-template-columns:42px 1fr 54px;align-items:center;gap:10px}.trend-chart__value{order:1}.trend-chart__bar-wrap{order:2;max-width:none;width:100%;height:14px;padding:0}.trend-chart__bar{height:100% !important;border-radius:999px}.trend-chart__label{order:3;text-align:right}}
+			.dashboard-panel--attention{border-color:#d7deea}
+			.dashboard-block__header,.dashboard-panel__title{align-items:flex-start;background:#fff;border-bottom:1px solid #edf0f5;display:flex;justify-content:space-between;padding:18px 20px 14px}
+			.dashboard-block__header h2{color:#111827;font-size:20px;font-weight:700;line-height:1.2;margin:0 0 5px}
+			.dashboard-panel h3{color:#1d4ed8;font-size:11px;font-weight:800;letter-spacing:.09em;line-height:1.2;margin:0;text-transform:uppercase}
+			.trend-range-copy{display:none}
+			.trend-range-copy.active{display:block}
+			.dashboard-range-toggle{background:#f8fafc;border:1px solid #d7deea;border-radius:6px;display:flex;gap:2px;padding:3px}
+			.dashboard-range-toggle button{background:transparent;border:0;border-radius:4px;color:#475467;cursor:pointer;font-size:12px;font-weight:700;line-height:1;padding:7px 10px}
+			.dashboard-range-toggle button:hover,.dashboard-range-toggle button:focus{background:#eef4ff;color:#1d4ed8}
+			.dashboard-range-toggle button.active{background:#2563eb;color:#fff}
+			.trend-chart{background:#fff;padding:18px 20px 20px}
+			.dashboard-panel--chart .trend-chart{padding:18px 20px 22px}
+			.trend-chart__range{display:none}
+			.trend-chart__range.active{display:block}
+			.trend-chart__line{background:#fff;border:1px solid #d7deea;border-radius:4px;margin:0 auto;max-width:820px;min-height:276px;padding:14px 16px 12px}
+			.trend-chart__legend{align-items:center;display:flex;gap:16px;justify-content:flex-end;margin-bottom:8px}
+			.trend-chart__legend-item{align-items:center;color:#1f2937;display:inline-flex;font-size:12px;gap:7px;line-height:1.2}
+			.trend-chart__legend-swatch{background:#2563eb;border:1px solid #1d4ed8;display:inline-block;height:13px;width:18px}
+			.trend-chart__svg{display:block;height:220px;overflow:visible;width:100%}
+			.trend-chart__axis{fill:none;stroke:#8c98a6;stroke-width:1}
+			.trend-chart__grid-line{fill:none;stroke:#d8dde6;stroke-width:1}
+			.trend-chart__stroke{fill:none;stroke:#2563eb;stroke-linecap:round;stroke-linejoin:round;stroke-width:2}
+			.trend-chart__point{fill:#2563eb;stroke:#2563eb;stroke-width:2}
+			.trend-chart__x-label,.trend-chart__y-label{fill:#344054;font-size:11px}
+			.trend-chart__x-label{text-anchor:middle}
+			.trend-chart__y-label{text-anchor:end}
+			.dashboard-row{align-items:center;border-top:1px solid #edf0f5;display:grid;gap:16px;grid-template-columns:minmax(0,1fr) auto;min-height:64px;padding:13px 20px}
+			.dashboard-panel__title + .dashboard-row{border-top:0}
+			.dashboard-row strong{color:#111827;display:block;font-size:14px;font-weight:700;line-height:1.35;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+			.dashboard-row__actions{align-items:center;color:#667085;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;min-width:96px}
+			.dashboard-row__actions a{background:#f8fafc;border:1px solid #d7deea;border-radius:4px;color:#1d4ed8;font-size:12px;font-weight:700;line-height:1;padding:7px 9px;text-decoration:none}
+			.dashboard-row__actions a:hover,.dashboard-row__actions a:focus{background:#eff6ff;border-color:#bfdbfe;color:#1e40af;text-decoration:none}
+			.status-badge{background:#f8fafc;border:1px solid #d7deea;border-radius:999px;color:#475467;display:inline-flex;font-size:12px;font-weight:600;line-height:1;padding:7px 10px;white-space:nowrap}
+			.empty-note{margin:0;padding:18px 20px}
+			.gutenverse-form-admin-dashboard__empty{background:#fff;border:1px solid #d9dee8;border-radius:8px;color:#50575e;font-size:14px;line-height:1.6;padding:18px 20px}
+			@media (max-width:1280px){.gutenverse-form-admin-dashboard__hero{grid-template-columns:1fr}.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(4,minmax(0,1fr))}}
+			@media (max-width:1100px){.dashboard-grid{grid-template-columns:1fr}.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+			@media (max-width:782px){.gutenverse-form-admin-dashboard{margin-right:10px}.gutenverse-form-admin-dashboard__hero{padding:16px}.gutenverse-form-admin-dashboard__summary,.dashboard-grid{grid-template-columns:1fr}.dashboard-actions{display:grid}.dashboard-button{justify-content:center}.dashboard-block__header{display:grid;gap:12px}.dashboard-range-toggle{width:max-content}.trend-chart{padding:14px}.trend-chart__line{min-height:230px;padding:12px 10px}.trend-chart__legend{justify-content:flex-start}.trend-chart__svg{height:190px}.trend-chart__x-label,.trend-chart__y-label{font-size:10px}.dashboard-row{grid-template-columns:1fr}.dashboard-row strong{white-space:normal}.dashboard-row__actions{justify-content:flex-start}}
 		</style>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				var dashboard = document.querySelector('.gutenverse-form-admin-dashboard');
+
+				if (!dashboard) {
+					return;
+				}
+
+				dashboard.querySelectorAll('[data-trend-range]').forEach(function(button) {
+					button.addEventListener('click', function() {
+						var range = button.getAttribute('data-trend-range');
+
+						dashboard.querySelectorAll('[data-trend-range]').forEach(function(item) {
+							item.classList.toggle('active', item === button);
+						});
+
+						dashboard.querySelectorAll('[data-trend-range-panel]').forEach(function(panel) {
+							panel.classList.toggle('active', panel.getAttribute('data-trend-range-panel') === range);
+						});
+
+						dashboard.querySelectorAll('[data-trend-range-copy]').forEach(function(copy) {
+							copy.classList.toggle('active', copy.getAttribute('data-trend-range-copy') === range);
+						});
+					});
+				});
+			});
+		</script>
 		<?php
 	}
 
@@ -767,6 +858,76 @@ class Form {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Get chart-ready entry trend data.
+	 *
+	 * @param integer $days Number of days.
+	 *
+	 * @return array
+	 */
+	private static function get_entry_trend_chart_context( $days ) {
+		$entry_trend  = self::get_entry_trend_data( $days );
+		$trend_max    = max(
+			array_map(
+				static function ( $trend_item ) {
+					return (int) $trend_item['count'];
+				},
+				$entry_trend
+			)
+		);
+		$trend_max    = max( 1, $trend_max );
+		$trend_points = array();
+		$chart_width  = 700;
+		$chart_top    = 32;
+		$chart_base   = 168;
+		$chart_left   = 54;
+		$chart_right  = 676;
+		$trend_total  = count( $entry_trend );
+
+		foreach ( $entry_trend as $index => $trend_item ) {
+			$count = (int) $trend_item['count'];
+			$x     = 1 === $trend_total ? ( $chart_width / 2 ) : $chart_left + ( ( $chart_right - $chart_left ) * ( $index / ( $trend_total - 1 ) ) );
+			$y     = $chart_base - ( ( $count / $trend_max ) * ( $chart_base - $chart_top ) );
+
+			$trend_points[] = array(
+				'x'          => round( $x, 2 ),
+				'y'          => round( $y, 2 ),
+				'count'      => $count,
+				'label'      => $trend_item['label'],
+				'show_label' => 7 === (int) $days || 0 === $index || 0 === $index % 5 || $index === $trend_total - 1,
+				'tooltip'    => sprintf(
+					/* translators: 1: day label, 2: count */
+					__( '%1$s: %2$s entries', 'gutenverse-form' ),
+					$trend_item['label'],
+					$count
+				),
+			);
+		}
+
+		$line_points = implode(
+			' ',
+			array_map(
+				static function ( $point ) {
+					return $point['x'] . ',' . $point['y'];
+				},
+				$trend_points
+			)
+		);
+
+		return array(
+			'max'         => $trend_max,
+			'ticks'       => array_unique(
+				array(
+					0,
+					(int) ceil( $trend_max / 2 ),
+					$trend_max,
+				)
+			),
+			'points'      => $trend_points,
+			'line_points' => $line_points,
+		);
 	}
 
 	/**
