@@ -382,7 +382,7 @@ class Entries {
 						'menu_name'          => esc_html__( 'Entries', 'gutenverse-form' ),
 						'add_new'            => esc_html__( 'New Entries', 'gutenverse-form' ),
 						'add_new_item'       => esc_html__( 'Create Entry', 'gutenverse-form' ),
-						'edit_item'          => esc_html__( 'View Entry Option', 'gutenverse-form' ),
+						'edit_item'          => esc_html__( 'View Entry', 'gutenverse-form' ),
 						'new_item'           => esc_html__( 'New Entry', 'gutenverse-form' ),
 						'view_item'          => esc_html__( 'View Entry', 'gutenverse-form' ),
 						'search_items'       => esc_html__( 'Search Entry', 'gutenverse-form' ),
@@ -466,28 +466,20 @@ class Entries {
 	 */
 	public function entry_data_metabox( $post ) {
 		$entry  = get_post_meta( $post->ID, 'entry-data', true );
-		$result = '<div class="entry-title">Entry ID</div>
-		<div class="entry-data">' . $post->ID . '</div>';
+		$result = '<div class="gutenverse-entry-detail-list">';
 
-		if ( isset( $entry ) ) {
+		if ( is_array( $entry ) ) {
 			foreach ( $entry as $item ) {
-				$value = is_array( $item['value'] ) ? array_map( 'esc_html', $item['value'] ) : $item['value'];
-				?>
-				<div class="entry-title"><?php echo esc_html__( 'Input ID : ', 'gutenverse-form' ) . esc_html( $item['id'] ); ?></div>
-				<div class="entry-data">
-					<?php
-					if ( is_array( $value ) ) {
-						echo esc_html( '<span>' . implode( ', ', $value ) . ' </span>' );
-					} elseif ( filter_var( $value, FILTER_VALIDATE_URL ) ) {
-						echo esc_html( '<a href="' . esc_url( $value ) . '" target="_blank">' . esc_html( $value ) . '</a>' );
-					} else {
-						echo esc_html( $value );
-					}
-					?>
-				</div>
-				<?php
+				$result .= $this->entry_detail_item(
+					esc_html__( 'Input ID', 'gutenverse-form' ),
+					$this->entry_value_html( isset( $item['value'] ) ? $item['value'] : '' ),
+					isset( $item['id'] ) ? $item['id'] : ''
+				);
 			}
 		}
+
+		$result .= $this->entry_detail_item( esc_html__( 'Entry ID', 'gutenverse-form' ), esc_html( $post->ID ) );
+		$result .= '</div>';
 
 		gutenverse_print_html( $result, 'post' );
 	}
@@ -506,7 +498,7 @@ class Entries {
 
 		if ( ! empty( $services ) ) {
 			$retrigger_all_btn = current_user_can( 'manage_options' ) ? ' <button type="button" class="button button-small retrigger-integrations-all" data-entry-id="' . $post->ID . '">' . __( 'Resubmit All', 'gutenverse-form' ) . '</button>' : '';
-			$result           .= '<div class="entry-title">' . __( 'Integrations Triggered', 'gutenverse-form' ) . $retrigger_all_btn . '</div>';
+			$result           .= '<div class="gutenverse-entry-section"><div class="entry-title">' . __( 'Integrations Triggered', 'gutenverse-form' ) . $retrigger_all_btn . '</div>';
 
 			$integration_list = array();
 			foreach ( $services as $service ) {
@@ -516,18 +508,18 @@ class Entries {
 					: '';
 				$integration_list[] = '<div class="integration-tag"><span class="integration-tag-label">' . esc_html( $service_label ) . '</span>' . $retrigger_btn . '</div>';
 			}
-			$result .= '<div class="entry-data integration-tag-list">' . implode( '', $integration_list ) . '</div>';
+			$result .= '<div class="entry-data integration-tag-list">' . implode( '', $integration_list ) . '</div></div>';
 		}
 
 		if ( ! empty( $logs ) && is_array( $logs ) ) {
-			$result .= '<div class="entry-title">' . __( 'Integration Logs', 'gutenverse-form' ) . '</div>';
+			$result .= '<div class="gutenverse-entry-section integration-log-section"><div class="entry-title">' . __( 'Integration Logs', 'gutenverse-form' ) . '</div>';
 
 			foreach ( $logs as $service => $service_logs ) {
 				if ( empty( $service_logs ) || ! is_array( $service_logs ) ) {
 					continue;
 				}
 
-				$result .= '<div class="entry-data"><strong>' . esc_html( ucfirst( str_replace( '_', ' ', (string) $service ) ) ) . '</strong></div>';
+				$result .= '<div class="entry-data integration-log-service"><strong>' . esc_html( ucfirst( str_replace( '_', ' ', (string) $service ) ) ) . '</strong></div>';
 
 				foreach ( array_reverse( $service_logs ) as $record ) {
 					$time    = isset( $record['time'] ) ? esc_html( $record['time'] ) : '';
@@ -550,13 +542,15 @@ class Entries {
 						}
 					}
 
-					$result .= '<div class="entry-data">' . $time . ' [' . $status . '] ' . $message . $context . '</div>';
+					$result .= '<div class="entry-data integration-log-item">' . $time . ' <span class="integration-log-status">[' . $status . ']</span> ' . $message . $context . '</div>';
 				}
 			}
+
+			$result .= '</div>';
 		}
 
 		if ( '' === $result ) {
-			$result = '<div class="entry-data">' . __( 'No integrations were recorded for this entry.', 'gutenverse-form' ) . '</div>';
+			$result = '<div class="entry-data entry-data-empty">' . __( 'No integrations were recorded for this entry.', 'gutenverse-form' ) . '</div>';
 		}
 
 		gutenverse_print_html( $result, 'post' );
@@ -594,6 +588,42 @@ class Entries {
 	}
 
 	/**
+	 * Render a label/value row for the entry detail metaboxes.
+	 *
+	 * @param string $label Label text.
+	 * @param string $value Value HTML.
+	 * @param string $meta  Optional secondary label.
+	 *
+	 * @return string
+	 */
+	private function entry_detail_item( $label, $value, $meta = '' ) {
+		$meta_html = $meta ? '<span class="entry-title-meta">' . esc_html( $meta ) . '</span>' : '';
+
+		return '<div class="gutenverse-entry-detail-item"><div class="entry-title"><span>' . esc_html( $label ) . '</span>' . $meta_html . '</div><div class="entry-data">' . $value . '</div></div>';
+	}
+
+	/**
+	 * Normalize entry values for display.
+	 *
+	 * @param mixed $value Entry value.
+	 *
+	 * @return string
+	 */
+	private function entry_value_html( $value ) {
+		if ( is_array( $value ) ) {
+			return esc_html( implode( ', ', array_map( 'strval', $value ) ) );
+		}
+
+		$value = (string) $value;
+
+		if ( filter_var( $value, FILTER_VALIDATE_URL ) ) {
+			return '<a href="' . esc_url( $value ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $value ) . '</a>';
+		}
+
+		return esc_html( $value );
+	}
+
+	/**
 	 * Add Entry metaboxes
 	 *
 	 * @param - $post post.
@@ -605,15 +635,15 @@ class Entries {
 			$form_title = get_the_title( $form_id );
 			$form_link  = admin_url( '/edit.php?post_type=' . self::POST_TYPE . '&form_id=' . $form_id );
 
-			$result = '<div class="entry-title">Form ID</div>
-			<div class="entry-data">' . $form_id . '</div>
-			<div class="entry-title">Form Action</div>
-			<div class="entry-data"><a href="' . $form_link . '">' . $form_title . '</a></div>';
+			$result = '<div class="gutenverse-entry-detail-list">';
+			$result .= $this->entry_detail_item( esc_html__( 'Form ID', 'gutenverse-form' ), esc_html( $form_id ) );
+			$result .= $this->entry_detail_item( esc_html__( 'Form Action', 'gutenverse-form' ), '<a href="' . esc_url( $form_link ) . '">' . esc_html( $form_title ) . '</a>' );
+			$result .= '</div>';
 		} else {
-			$result = '<div class="entry-title">Form ID</div>
-			<div class="entry-data">' . __( 'Form is not set', 'gutenverse-form' ) . '</div>
-			<div class="entry-title">Form Action</div>
-			<div class="entry-data">' . __( 'Not found', 'gutenverse-form' ) . '</div>';
+			$result = '<div class="gutenverse-entry-detail-list">';
+			$result .= $this->entry_detail_item( esc_html__( 'Form ID', 'gutenverse-form' ), esc_html__( 'Form is not set', 'gutenverse-form' ) );
+			$result .= $this->entry_detail_item( esc_html__( 'Form Action', 'gutenverse-form' ), esc_html__( 'Not found', 'gutenverse-form' ) );
+			$result .= '</div>';
 		}
 
 		gutenverse_print_html( $result, 'post' );
@@ -626,16 +656,16 @@ class Entries {
 	 */
 	public function browser_data_metabox( $post ) {
 		$browser = get_post_meta( $post->ID, 'browser-data', true );
-		$result  = '<div class="entry-title">IP Address</div>
-		<div class="entry-data">disabled</div>
-		<div class="entry-title">Browser Data</div>
-		<div class="entry-data">disabled</div>';
+		$result  = '<div class="gutenverse-entry-detail-list">';
+		$result .= $this->entry_detail_item( esc_html__( 'IP Address', 'gutenverse-form' ), esc_html__( 'Disabled', 'gutenverse-form' ) );
+		$result .= $this->entry_detail_item( esc_html__( 'Browser Data', 'gutenverse-form' ), esc_html__( 'Disabled', 'gutenverse-form' ) );
+		$result .= '</div>';
 
 		if ( ! empty( $browser ) ) {
-			$result = '<div class="entry-title">IP Address</div>
-			<div class="entry-data">' . $browser['ip'] . '</div>
-			<div class="entry-title">Browser Data</div>
-			<div class="entry-data">' . $browser['user_agent'] . '</div>';
+			$result  = '<div class="gutenverse-entry-detail-list">';
+			$result .= $this->entry_detail_item( esc_html__( 'IP Address', 'gutenverse-form' ), esc_html( isset( $browser['ip'] ) ? $browser['ip'] : '' ) );
+			$result .= $this->entry_detail_item( esc_html__( 'Browser Data', 'gutenverse-form' ), esc_html( isset( $browser['user_agent'] ) ? $browser['user_agent'] : '' ) );
+			$result .= '</div>';
 		}
 
 		gutenverse_print_html( $result, 'post' );

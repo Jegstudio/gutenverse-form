@@ -4,15 +4,250 @@
 @import "gutenverse-core/src/assets/skeleton";
 @import "gutenverse-core/src/assets/pro";
 
-.entry-title {
-    background-color: #f5f7fe;
-    padding: 10px 14px;
-    font-weight: 600;
-}
+.post-type-gutenverse-entries {
+    #poststuff {
+        #post-body-content {
+            margin-bottom: 18px;
+        }
 
-.entry-data {
-    padding: 10px 14px;
-    border: 1px solid #f5f7fe;
+        #titlediv {
+            #title {
+                border-color: #d9dee8;
+                border-radius: 6px;
+                box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+                color: #111827;
+                font-size: 18px;
+                min-height: 42px;
+                padding: 8px 12px;
+            }
+        }
+    }
+
+    .postbox {
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+        overflow: hidden;
+
+        .postbox-header {
+            background: #ffffff;
+            border-bottom: 1px solid #edf0f5;
+
+            h2.hndle {
+                color: #111827;
+                font-size: 13px;
+                font-weight: 700;
+                line-height: 1.4;
+                padding: 12px 14px;
+            }
+        }
+
+        .inside {
+            margin: 0;
+            padding: 14px;
+        }
+    }
+
+    .gutenverse-entry-detail-list {
+        background: #ffffff;
+        border: 1px solid #e2e7f0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .gutenverse-entry-detail-item {
+        display: grid;
+        grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+
+        &:not(:last-child) {
+            border-bottom: 1px solid #edf0f5;
+        }
+    }
+
+    .entry-title,
+    .entry-data {
+        align-items: center;
+        box-sizing: border-box;
+        display: flex;
+        min-height: 50px;
+        padding: 13px 16px;
+    }
+
+    .entry-title {
+        background: #f8fafc;
+        border-right: 1px solid #edf0f5;
+        color: #344054;
+        flex-direction: column;
+        font-size: 12px;
+        font-weight: 700;
+        gap: 3px;
+        justify-content: center;
+        text-transform: uppercase;
+
+        .entry-title-meta {
+            color: #667085;
+            display: block;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 1.4;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            text-transform: none;
+        }
+    }
+
+    .entry-data {
+        background: #ffffff;
+        color: #1f2937;
+        font-size: 13px;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+
+        a {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+
+            &:hover,
+            &:focus {
+                color: #1d4ed8;
+                text-decoration: underline;
+            }
+        }
+
+        &.entry-data-empty {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            color: #667085;
+            justify-content: center;
+        }
+    }
+
+    .gutenverse-entry-section {
+        background: #ffffff;
+        border: 1px solid #e2e7f0;
+        border-radius: 8px;
+        overflow: hidden;
+
+        &:not(:last-child) {
+            margin-bottom: 14px;
+        }
+
+        > .entry-title {
+            align-items: center;
+            background: #f8fafc;
+            border-bottom: 1px solid #edf0f5;
+            border-right: 0;
+            flex-direction: row;
+            justify-content: space-between;
+            min-height: 48px;
+            text-transform: none;
+        }
+
+        > .entry-data {
+            min-height: 0;
+        }
+    }
+
+    .integration-tag-list {
+        align-items: flex-start;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .integration-tag {
+        align-items: center;
+        background: #f8fafc;
+        border: 1px solid #dbe3ef;
+        border-radius: 6px;
+        display: inline-flex;
+        font-size: 12px;
+        gap: 10px;
+        padding: 8px 10px;
+
+        .integration-tag-label {
+            color: #1f2937;
+            font-weight: 700;
+            text-transform: capitalize;
+        }
+
+        .retrigger-integration-item {
+            border-radius: 4px;
+            line-height: 1;
+            margin: 0;
+            min-height: 28px;
+        }
+    }
+
+    .integration-log-section {
+        .integration-log-service {
+            background: #ffffff;
+            border-bottom: 1px solid #edf0f5;
+            color: #111827;
+            font-weight: 700;
+            min-height: 42px;
+        }
+
+        .integration-log-item {
+            border-bottom: 1px solid #edf0f5;
+            color: #344054;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 12px;
+
+            &:last-child {
+                border-bottom: 0;
+            }
+
+            small {
+                color: #667085;
+                display: block;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+                margin-top: 5px;
+            }
+        }
+
+        .integration-log-status {
+            color: #8a5d00;
+            font-weight: 700;
+        }
+    }
+
+    #side-sortables {
+        .gutenverse-entry-detail-item {
+            grid-template-columns: 1fr;
+        }
+
+        .entry-title {
+            align-items: flex-start;
+            border-bottom: 1px solid #edf0f5;
+            border-right: 0;
+            min-height: 0;
+            padding-bottom: 9px;
+            padding-top: 11px;
+        }
+
+        .entry-data {
+            min-height: 42px;
+            padding-bottom: 12px;
+            padding-top: 12px;
+        }
+    }
+
+    @media (max-width: 782px) {
+        .gutenverse-entry-detail-item {
+            grid-template-columns: 1fr;
+        }
+
+        .entry-title {
+            align-items: flex-start;
+            border-bottom: 1px solid #edf0f5;
+            border-right: 0;
+            min-height: 0;
+        }
+    }
 }
 
 .gutenverse-drawer-container {
