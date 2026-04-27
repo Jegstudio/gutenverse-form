@@ -52,7 +52,7 @@ class Frontend_Toolbar {
 				'id'     => 'form-integration',
 				'parent' => $parent,
 				'title'  => esc_html__( 'Integrations', 'gutenverse-form' ),
-				'href'   => admin_url( 'admin.php?page=form_integration' ),
+				'href'   => admin_url( 'admin.php?page=gutenverse-dashboard&path=settings&settings=form&sub-menu=form_integrations' ),
 			)
 		);
 	}

@@ -106,21 +106,24 @@ const ActionItem = ({
         </div>;
     };
 
-    const IntegrationOption = (item,
-        selectType,
-        onUpdateIndexValue,
-        onUpdateIndexStyle,
-        elementId
+    const IntegrationOption = (
+        {
+            item,
+            selectType,
+            onUpdateIndexValue,
+            onUpdateIndexStyle,
+            elementId
+        }
     ) => {
         return applyFilters(
             'gutenverse.integration.options',
             <LockedIntegrationControl isOpen={open} />,
             {
-                item,
-                selectType,
-                onUpdateIndexValue,
-                onUpdateIndexStyle,
-                elementId
+                item:item,
+                selectType:selectType,
+                onUpdateIndexValue:onUpdateIndexValue,
+                onUpdateIndexStyle:onUpdateIndexStyle,
+                elementId:elementId
             }
         );
     };

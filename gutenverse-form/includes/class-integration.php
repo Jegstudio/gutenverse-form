@@ -38,6 +38,7 @@ class Integration {
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'integration_menu' ) );
+		add_action( 'admin_menu', array( $this, 'remove_legacy_integration_submenu' ), 99 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		$this->init_integrations();
@@ -206,6 +207,15 @@ class Integration {
 			'form_integration',
 			array( $this, 'integration_page' )
 		);
+	}
+
+	/**
+	 * Hide the legacy Form > Integration submenu entry.
+	 *
+	 * The page remains registered so existing direct links and setup flows keep working.
+	 */
+	public function remove_legacy_integration_submenu() {
+		remove_submenu_page( Form::POST_TYPE, 'form_integration' );
 	}
 
 	/**

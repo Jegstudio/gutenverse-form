@@ -1,10 +1,10 @@
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
-import { CardPro } from 'gutenverse-core/components';
-import { InfoIcon } from 'gutenverse-core/icons';
-import { 
+import { ButtonUpgradePro, EscListener } from 'gutenverse-core/components';
+import { IconCloseSVG, InfoIcon } from 'gutenverse-core/icons';
+import {
     IconGoogleSheetSVG,
     IconMailerLiteSVG,
     IconTelegramSVG,
@@ -18,9 +18,10 @@ import {
     IconSlackSVG,
     IconSettingsSVG,
     IconWarningSVG,
-    IconMailchimpSVG } from '../../assets/icon/index';
+    IconMailchimpSVG } from '../../../assets/icon/index';
 import { TextControl, TextareaControl, SelectControl, Button, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
+import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
 
 const services = [
     { id: 'whatsapp', title: 'Whatsapp', description: __('Send form notifications directly to your WhatsApp.', 'gutenverse-form'), icon: <IconWhatsAppSVG /> },
@@ -37,8 +38,21 @@ const services = [
     { id: 'google_sheets', title: 'Google Sheets', description: __('Save form submissions directly to Google Sheets.', 'gutenverse-form'), icon: <IconGoogleSheetSVG /> },
 ];
 
-const hasIntegrationPro = !!window['GutenverseConfig']?.hasIntegrationPro;
-const integrationUpgradeUrl = window['GutenverseConfig']?.integrationUpgradeUrl || '';
+const integrationConfig = window['GutenverseConfig'] || window['GutenverseDashboard'] || {};
+const hasIntegrationPro = !!integrationConfig?.hasIntegrationPro;
+const integrationUpgradeUrl = integrationConfig?.integrationUpgradeUrl || '';
+const admin_url = integrationConfig?.adminUrl || '';
+const integrationLicenseType = ['professional'];
+const dashboardIntegrationUrl = `${admin_url}admin.php?page=gutenverse-dashboard&path=settings&settings=form&sub-menu=form_integrations`;
+const integrationSetupUrl = (serviceId = '') => `${admin_url}admin.php?page=form_integration${serviceId ? `&service=${serviceId}` : ''}`;
+const appendTrackingParams = (url) => {
+    if (!url) {
+        return null;
+    }
+
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}utm_source=gutenverse&utm_medium=dashboard&utm_client_site=${clientUrl}&utm_client_theme=${activeTheme}`;
+};
 
 const DisableModal = ({ isOpen, onConfirm, onCancel }) => {
     if (!isOpen) return null;
@@ -68,37 +82,66 @@ const DisableModal = ({ isOpen, onConfirm, onCancel }) => {
 };
 
 const UpgradeModal = ({ isOpen, onClose }) => {
+    const popupRef = useRef(null);
+    const popupImageDir = (window['GutenverseDashboard']?.imgDir || integrationConfig?.imgDir || '').replace(/\/$/, '');
+    const upgradeLink = upgradeProUrl || integrationUpgradeUrl;
+
+    useEffect(() => {
+        if (!isOpen) {
+            return undefined;
+        }
+
+        const handleClickOutside = (event) => {
+            if (popupRef.current && !popupRef.current.contains(event.target)) {
+                onClose();
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isOpen, onClose]);
+
     if (!isOpen) return null;
 
     return (
-        <div className="gutenverse-modal-overlay" onClick={onClose}>
-            <div className="gutenverse-modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close" onClick={onClose}>
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                </button>
-                <div className="modal-body">
-                    <div className="modal-header">
-                        <IconWarningSVG />
-                    </div>
-                    <h2>{__('Unlock Integrations in Pro', 'gutenverse-form')}</h2>
-                    <p>{__('Integration automations, secret storage, and provider setup are available in Gutenverse Pro.', 'gutenverse-form')}</p>
-                </div>
-                <div className="modal-footer">
-                    {integrationUpgradeUrl && (
-                        <a className="button-disable" href={integrationUpgradeUrl}>
-                            {__('Upgrade to Pro', 'gutenverse-form')}
-                        </a>
+        <>
+            <EscListener execute={onClose} />
+            <div className="popup-pro">
+                <div className="popup-content" ref={popupRef}>
+                    {popupImageDir && (
+                        <>
+                            <img className="image popup-image-background" src={`${popupImageDir}/pop-up-bg-popup-banner.png`} />
+                            <img className="image popup-image-mockup" src={`${popupImageDir}/pop-up-mockup-pro.png`} />
+                            <img className="image popup-image-cube" src={`${popupImageDir}/pop-up-3d-cube-2.png`} />
+                            <img className="image popup-image-element1" src={`${popupImageDir}/pop-up-icon-element.png`} />
+                            <img className="image popup-image-element2" src={`${popupImageDir}/pop-up-icon-element-2.png`} />
+                            <img className="image popup-image-element3" src={`${popupImageDir}/pop-up-icon-element-3.png`} />
+                            <img className="image popup-image-arrow" src={`${popupImageDir}/banner-arrow-blue.png`} />
+                        </>
                     )}
-                    <button className="button-cancel" onClick={onClose}>{__('Close', 'gutenverse-form')}</button>
+                    <div className="close" onClick={onClose}>
+                        <IconCloseSVG size={20} />
+                    </div>
+                    <div className="content">
+                        <h3 className="details">
+                            {__('Form integrations require Gutenverse Pro with the Professional license tier or higher.', 'gutenverse-form')}
+                        </h3>
+                        <ButtonUpgradePro
+                            location="popup"
+                            isBanner={true}
+                            link={appendTrackingParams(upgradeLink)}
+                            customStyles={{ height: '16px', padding: '12px 25px 12px 30px' }}
+                            licenseType={integrationLicenseType}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
-const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
+const IntegrationItem = ({ service, status, onToggle }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
     const isActive = !!status;
@@ -123,7 +166,11 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
 
     return (
         <>
-            <div className={classnames('integration-item', { active: isActive })}>
+            <div className={classnames('integration-item', {
+                active: isActive,
+                locked: !hasIntegrationPro,
+            })}>
+                {!hasIntegrationPro && <p className="pro-label">{__('PRO', 'gutenverse-form')}</p>}
                 <div className="item-header">
                     <div className="item-icon">
                         {service.icon}
@@ -136,9 +183,9 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                 <div className="item-footer">
                     <div className="item-toggle-wrap">
                         <div className={classnames('gutenverse-toggle', { active: isActive })} onClick={handleToggle}>
+                            <span className="toggle-label">{isActive ? __('ON', 'gutenverse-form') : __('OFF', 'gutenverse-form')}</span>
                             <div className="toggle-handle" />
                         </div>
-                        <span className="toggle-label">{isActive ? __('ON', 'gutenverse-form') : __('OFF', 'gutenverse-form')}</span>
                     </div>
                     {isActive && (
                         <button
@@ -148,7 +195,7 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                                     return;
                                 }
 
-                                window.location.href = admin_url + 'admin.php?page=form_integration&service=' + service.id;
+                                window.location.href = integrationSetupUrl(service.id);
                             }}
                             className="setup-link-button"
                         >
@@ -158,10 +205,10 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                     )}
                 </div>
             </div>
-            <DisableModal 
-                isOpen={isModalOpen} 
-                onConfirm={confirmDisable} 
-                onCancel={() => setIsModalOpen(false)} 
+            <DisableModal
+                isOpen={isModalOpen}
+                onConfirm={confirmDisable}
+                onCancel={() => setIsModalOpen(false)}
             />
             <UpgradeModal
                 isOpen={isUpgradeOpen}
@@ -172,7 +219,7 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
 };
 
 const TabSetting = ({ onSetup }) => {
-    const [integrations, setIntegrations] = useState(window['GutenverseConfig']?.integrations || {});
+    const [integrations, setIntegrations] = useState(integrationConfig?.integrations || {});
     const [saving, setSaving] = useState(null);
 
     const onToggle = (id, value) => {
@@ -192,7 +239,7 @@ const TabSetting = ({ onSetup }) => {
     return (
         <div className="form-tab-body">
             <div className="integration-list">
-                <p><span><InfoIcon /></span>{__('Enable integrations here as dashboard fallbacks. They run only when a form submission does not send explicit integration actions from the Form Builder.', 'gutenverse-form')}</p>
+                <p><span><InfoIcon /></span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings.', 'gutenverse-form')}</p>
                 {services.map((service) => (
                     <IntegrationItem
                         key={service.id}
@@ -207,8 +254,6 @@ const TabSetting = ({ onSetup }) => {
         </div>
     );
 };
-
-const admin_url = window['GutenverseConfig']?.adminUrl || '';
 
 const formatFieldLabel = (field) => field?.required ? `${field.label} *` : field.label;
 
@@ -286,7 +331,7 @@ const SecretField = ({ fieldKey, field, value, onChange }) => {
 
 
 const ServiceSetup = ({ serviceId, title }) => {
-    const config = window['GutenverseConfig'] || {};
+    const config = integrationConfig;
     const fields = config.serviceFields || {};
     const [settings, setSettings] = useState(config.serviceSettings || {});
     const [isSaving, setIsSaving] = useState(false);
@@ -311,14 +356,6 @@ const ServiceSetup = ({ serviceId, title }) => {
     const updateSetting = (key, value) => {
         setSettings((prev) => ({ ...prev, [key]: value }));
     };
-
-    if (!hasIntegrationPro) {
-        return (
-            <div className="form-tab-body pro-tab">
-                <CardPro />
-            </div>
-        );
-    }
 
     return (
         <div className="service-setup-content">
@@ -394,29 +431,8 @@ const ServiceSetup = ({ serviceId, title }) => {
     );
 };
 
-const TabAdvanced = () => {
-    return (
-        <div className="form-tab-body pro-tab">
-            <CardPro />
-        </div>
-    );
-};
-
 const IntegrationPage = () => {
-    const [tab, setActiveTab] = useState('setting');
     const [currentService, setCurrentService] = useState(window['GutenverseConfig']?.currentService || '');
-
-    const tabs = {
-        setting: {
-            label: __('Setting', 'gutenverse-form'),
-        },
-        advanced: {
-            label: __('Advanced', 'gutenverse-form'),
-            pro: true,
-        },
-    };
-
-    const filteredTabs = applyFilters('gutenverse.form.integration.tabs', tabs);
 
     if (currentService) {
         const service = services.find(s => s.id === currentService);
@@ -425,7 +441,7 @@ const IntegrationPage = () => {
                 <div className="integration-header">
                     <h1>{service ? service.title : __('Integration', 'gutenverse-form')}</h1>
                     <button className="back-button" onClick={() => {
-                        window.location.href = admin_url + 'admin.php?page=form_integration';
+                        window.location.href = dashboardIntegrationUrl;
                     }}>
                         {__('Back to list', 'gutenverse-form')}
                     </button>
@@ -442,44 +458,13 @@ const IntegrationPage = () => {
         <TabSetting onSetup={setCurrentService} />,
     );
 
-    const AdvancedTab = applyFilters(
-        'gutenverse.form.integration.tab.advanced',
-        <TabAdvanced />,
-    );
-
     return (
         <>
-            <div className="gutenverse-form-integration-header">
-                <h1>{__('Form Integration', 'gutenverse-form')}</h1>
-                <p>{__('Connect your form with external services to automate data and workflows.', 'gutenverse-form')}</p>
-            </div>
             <div className="gutenverse-form-integration-wrap">
 
-                <div className="form-tab-header">
-                    {Object.keys(filteredTabs).map((key) => {
-                        const item = filteredTabs[key];
-                        const classes = classnames('header-item', {
-                            active: key === tab,
-                            pro: item.pro,
-                        });
+                {SettingTab}
 
-                        const tabButton = (
-                            <div className={classes} key={key} onClick={() => setActiveTab(key)}>
-                                {item.label}
-                                {item.pro && <span className="pro-badge">{__('Pro', 'gutenverse-form')}</span>}
-                            </div>
-                        );
-
-                        return item.pro
-                            ? applyFilters('gutenverse-form.integration.tab-pro-button', tabButton, { key, item, classes, setActiveTab })
-                            : tabButton;
-                    })}
-                </div>
-
-                {tab === 'setting' && SettingTab}
-                {tab === 'advanced' && AdvancedTab}
-
-                {applyFilters(`gutenverse.form.integration.content.${tab}`, null)}
+                {applyFilters('gutenverse.form.integration.content.setting', null)}
             </div>
         </>
     );
