@@ -28,6 +28,7 @@ class Entries {
 	public function __construct() {
 		add_action( 'init', array( $this, 'post_type' ), 9 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ) );
+		add_action( 'admin_notices', array( $this, 'form_action_migration_notice' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
 		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'custom_column' ), 10, 2 );
 		add_action( 'pre_get_posts', array( $this, 'custom_column_query' ) );
@@ -59,6 +60,55 @@ class Entries {
 				GUTENVERSE_FORM_VERSION
 			);
 		}
+	}
+
+	/**
+	 * Render form action migration notice on entries list page.
+	 */
+	public function form_action_migration_notice() {
+		$screen = get_current_screen();
+
+		if ( ! $screen || 'edit-' . self::POST_TYPE !== $screen->id ) {
+			return;
+		}
+
+		Form::render_form_action_migration_notice();
+		?>
+		<style>
+			.gutenverse-form-action-migration-notice{align-items:flex-start;background:#eef4ff;border:1px solid #93c5fd;border-radius:8px;color:#1f2937;display:flex;gap:16px;justify-content:space-between;margin:10px 20px 18px 0;padding:16px 18px 16px 20px;position:relative}
+			.gutenverse-form-action-migration-notice:before{background:#2563eb;border-radius:8px 0 0 8px;bottom:-1px;content:"";display:block;left:-1px;position:absolute;top:-1px;width:4px}
+			.gutenverse-form-action-migration-notice.is-hidden{display:none}
+			.gutenverse-form-action-migration-notice strong{color:#111827;display:block;font-size:14px;font-weight:800;line-height:1.35;margin:0 0 5px}
+			.gutenverse-form-action-migration-notice p{color:#475467;font-size:13px;line-height:1.45;margin:0;max-width:820px}
+			.gutenverse-form-action-migration-notice button{align-items:center;background:#fff;border:1px solid #bfdbfe;border-radius:4px;color:#475467;cursor:pointer;display:inline-flex;font-size:18px;height:28px;justify-content:center;line-height:1;margin:-2px -2px 0 0;padding:0;width:28px}
+			.gutenverse-form-action-migration-notice button:hover,.gutenverse-form-action-migration-notice button:focus{background:#dbeafe;border-color:#60a5fa;color:#1d4ed8;outline:none}
+		</style>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				var notices = document.querySelectorAll('[data-form-action-migration-notice]');
+
+				notices.forEach(function(notice) {
+					var dismiss = notice.querySelector('[data-form-action-migration-dismiss]');
+
+					if (dismiss) {
+						dismiss.addEventListener('click', function() {
+							var data = new window.FormData();
+
+							notice.classList.add('is-hidden');
+							data.append('action', 'gutenverse_form_action_migration_notice_close');
+							data.append('nonce', dismiss.getAttribute('data-nonce'));
+
+							window.fetch(window.ajaxurl, {
+								method: 'POST',
+								credentials: 'same-origin',
+								body: data
+							});
+						});
+					}
+				});
+			});
+		</script>
+		<?php
 	}
 
 	/**

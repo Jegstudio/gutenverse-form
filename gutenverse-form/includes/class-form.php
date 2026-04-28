@@ -33,6 +33,7 @@ class Form {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ), 99 );
 		add_action( 'admin_footer', array( $this, 'admin_footer' ) );
 		add_action( 'admin_menu', array( $this, 'parent_menu' ) );
+		add_action( 'wp_ajax_gutenverse_form_action_migration_notice_close', array( $this, 'close_form_action_migration_notice' ) );
 		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( $this, 'custom_column' ), 10, 2 );
 		add_filter( 'post_row_actions', array( $this, 'action_row' ), 10, 2 );
 		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( $this, 'set_custom_column' ) );
@@ -117,6 +118,7 @@ class Form {
 		$entries_url       = admin_url( 'edit.php?post_type=' . Entries::POST_TYPE );
 		?>
 		<div class="wrap gutenverse-form-admin-dashboard">
+			<?php self::render_form_action_migration_notice(); ?>
 			<div class="gutenverse-form-admin-dashboard__hero">
 				<div class="gutenverse-form-admin-dashboard__intro">
 					<h1><?php esc_html_e( 'Form Dashboard', 'gutenverse-form' ); ?></h1>
@@ -197,7 +199,7 @@ class Form {
 										<div class="trend-chart__legend">
 											<span class="trend-chart__legend-item"><span class="trend-chart__legend-swatch"></span><?php esc_html_e( 'Entries', 'gutenverse-form' ); ?></span>
 										</div>
-										<svg class="trend-chart__svg" viewBox="0 0 700 220" preserveAspectRatio="none" focusable="false" aria-hidden="true">
+										<svg class="trend-chart__svg" viewBox="0 0 700 220" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true">
 											<path class="trend-chart__axis" d="M54 32V168H676"></path>
 											<?php foreach ( $trend_context['ticks'] as $tick ) : ?>
 												<?php
@@ -222,128 +224,95 @@ class Form {
 						</div>
 					</div>
 
-					<div class="dashboard-panel dashboard-panel--attention">
-						<div class="dashboard-panel__title">
-							<h3><?php esc_html_e( 'Needs Attention', 'gutenverse-form' ); ?></h3>
-						</div>
-						<?php if ( empty( $needs_attention ) ) : ?>
-							<p class="empty-note"><?php esc_html_e( 'Nothing urgent detected right now.', 'gutenverse-form' ); ?></p>
-						<?php else : ?>
-							<?php foreach ( $needs_attention as $form ) : ?>
-								<?php $primary_location = ! empty( $form['locations'][0] ) ? $form['locations'][0] : null; ?>
-								<div class="dashboard-row">
-									<div>
-										<strong><?php echo esc_html( $form['title'] ); ?></strong>
-										<span><?php echo esc_html( $form['attention_reason'] ); ?></span>
-									</div>
-									<div class="dashboard-row__actions">
-										<?php if ( ! empty( $primary_location['edit_url'] ) ) : ?>
-											<a href="<?php echo esc_url( $primary_location['edit_url'] ); ?>"><?php esc_html_e( 'Edit Post', 'gutenverse-form' ); ?></a>
-										<?php endif; ?>
-									</div>
-								</div>
-							<?php endforeach; ?>
-						<?php endif; ?>
-					</div>
-
-					<div class="dashboard-panel">
-						<div class="dashboard-panel__title">
-							<h3><?php esc_html_e( 'Top Entry Sources', 'gutenverse-form' ); ?></h3>
-						</div>
-						<?php if ( empty( $top_sources ) ) : ?>
-							<p class="empty-note"><?php esc_html_e( 'Entry source data will appear after submissions are linked to posts or pages.', 'gutenverse-form' ); ?></p>
-						<?php else : ?>
-							<?php foreach ( $top_sources as $source ) : ?>
-								<div class="dashboard-row">
-									<div>
-										<strong><?php echo esc_html( $source['title'] ); ?></strong>
-										<span>
-											<?php
-											printf(
-												/* translators: 1: entry count, 2: source type */
-												esc_html__( '%1$s entries • %2$s', 'gutenverse-form' ),
-												esc_html( $source['count'] ),
-												esc_html( $source['type'] )
-											);
-											?>
-										</span>
-									</div>
-									<div class="dashboard-row__actions">
-										<?php if ( ! empty( $source['edit_url'] ) ) : ?>
-											<a href="<?php echo esc_url( $source['edit_url'] ); ?>"><?php esc_html_e( 'Edit', 'gutenverse-form' ); ?></a>
-										<?php endif; ?>
-									</div>
-								</div>
-							<?php endforeach; ?>
-						<?php endif; ?>
-					</div>
-
-					<div class="dashboard-panel">
-						<div class="dashboard-panel__title">
-							<h3><?php esc_html_e( 'Unused Form Actions', 'gutenverse-form' ); ?></h3>
-						</div>
-						<?php if ( empty( $unused_forms ) ) : ?>
-							<p class="empty-note"><?php esc_html_e( 'Every tracked form action is currently used somewhere.', 'gutenverse-form' ); ?></p>
-						<?php else : ?>
-							<?php foreach ( $unused_forms as $form ) : ?>
-								<div class="dashboard-row">
-									<div>
-										<strong><?php echo esc_html( $form['title'] ); ?></strong>
-										<span>
-											<?php
-											printf(
-												/* translators: %s: modified date */
-												esc_html__( 'No live location • Updated %s', 'gutenverse-form' ),
-												esc_html( $form['modified'] )
-											);
-											?>
-										</span>
-									</div>
-									<div class="dashboard-row__actions">
-										<span class="status-badge"><?php esc_html_e( 'No live post', 'gutenverse-form' ); ?></span>
-									</div>
-								</div>
-							<?php endforeach; ?>
-						<?php endif; ?>
-					</div>
-
-					<div class="dashboard-panel">
-						<div class="dashboard-panel__title">
-							<h3><?php esc_html_e( 'Top Forms', 'gutenverse-form' ); ?></h3>
-						</div>
-						<?php foreach ( array_slice( $forms_by_entries, 0, 3 ) as $form ) : ?>
-							<?php $primary_location = ! empty( $form['locations'][0] ) ? $form['locations'][0] : null; ?>
-							<div class="dashboard-row">
-								<div>
-									<strong><?php echo esc_html( $form['title'] ); ?></strong>
-									<span>
-										<?php
-										printf(
-											/* translators: 1: total entries, 2: last 7 days count */
-											esc_html__( '%1$s total • %2$s this week', 'gutenverse-form' ),
-											esc_html( $form['total_entries'] ),
-											esc_html( $form['entries_last_week'] )
-										);
-										?>
-									</span>
-								</div>
-								<div class="dashboard-row__actions">
-									<?php if ( ! empty( $primary_location['edit_url'] ) ) : ?>
-										<a href="<?php echo esc_url( $primary_location['edit_url'] ); ?>"><?php esc_html_e( 'Edit', 'gutenverse-form' ); ?></a>
-									<?php endif; ?>
-								</div>
+					<div class="dashboard-masonry">
+						<div class="dashboard-panel dashboard-panel--attention">
+							<div class="dashboard-panel__title">
+								<h3><?php esc_html_e( 'Needs Attention', 'gutenverse-form' ); ?></h3>
 							</div>
-						<?php endforeach; ?>
-					</div>
-
-					<div class="dashboard-panel dashboard-panel--wide">
-						<div class="dashboard-panel__title">
-							<h3><?php esc_html_e( 'Recent Activity', 'gutenverse-form' ); ?></h3>
+							<?php if ( empty( $needs_attention ) ) : ?>
+								<p class="empty-note"><?php esc_html_e( 'Nothing urgent detected right now.', 'gutenverse-form' ); ?></p>
+							<?php else : ?>
+								<?php foreach ( $needs_attention as $form ) : ?>
+									<?php $primary_location = ! empty( $form['locations'][0] ) ? $form['locations'][0] : null; ?>
+									<div class="dashboard-row">
+										<div>
+											<strong><?php echo esc_html( $form['title'] ); ?></strong>
+											<span><?php echo esc_html( $form['attention_reason'] ); ?></span>
+										</div>
+										<div class="dashboard-row__actions">
+											<?php if ( ! empty( $primary_location['edit_url'] ) ) : ?>
+												<a href="<?php echo esc_url( $primary_location['edit_url'] ); ?>"><?php esc_html_e( 'Edit Post', 'gutenverse-form' ); ?></a>
+											<?php endif; ?>
+										</div>
+									</div>
+								<?php endforeach; ?>
+							<?php endif; ?>
 						</div>
-						<?php if ( empty( $recent_forms ) ) : ?>
-							<p class="empty-note"><?php esc_html_e( 'No recent entry activity yet.', 'gutenverse-form' ); ?></p>
-						<?php else : ?>
-							<?php foreach ( $recent_forms as $form ) : ?>
+
+						<div class="dashboard-panel">
+							<div class="dashboard-panel__title">
+								<h3><?php esc_html_e( 'Top Entry Sources', 'gutenverse-form' ); ?></h3>
+							</div>
+							<?php if ( empty( $top_sources ) ) : ?>
+								<p class="empty-note"><?php esc_html_e( 'Entry source data will appear after submissions are linked to posts or pages.', 'gutenverse-form' ); ?></p>
+							<?php else : ?>
+								<?php foreach ( $top_sources as $source ) : ?>
+									<div class="dashboard-row">
+										<div>
+											<strong><?php echo esc_html( $source['title'] ); ?></strong>
+											<span>
+												<?php
+												printf(
+													/* translators: 1: entry count, 2: source type */
+													esc_html__( '%1$s entries • %2$s', 'gutenverse-form' ),
+													esc_html( $source['count'] ),
+													esc_html( $source['type'] )
+												);
+												?>
+											</span>
+										</div>
+										<div class="dashboard-row__actions">
+											<?php if ( ! empty( $source['edit_url'] ) ) : ?>
+												<a href="<?php echo esc_url( $source['edit_url'] ); ?>"><?php esc_html_e( 'Edit', 'gutenverse-form' ); ?></a>
+											<?php endif; ?>
+										</div>
+									</div>
+								<?php endforeach; ?>
+							<?php endif; ?>
+						</div>
+
+						<?php if ( ! empty( $unused_forms ) ) : ?>
+							<div class="dashboard-panel">
+								<div class="dashboard-panel__title">
+									<h3><?php esc_html_e( 'Unused Form Actions', 'gutenverse-form' ); ?></h3>
+								</div>
+								<?php foreach ( $unused_forms as $form ) : ?>
+									<div class="dashboard-row">
+										<div>
+											<strong><?php echo esc_html( $form['title'] ); ?></strong>
+											<span>
+												<?php
+												printf(
+													/* translators: %s: modified date */
+													esc_html__( 'No live location • Updated %s', 'gutenverse-form' ),
+													esc_html( $form['modified'] )
+												);
+												?>
+											</span>
+										</div>
+										<div class="dashboard-row__actions">
+											<span class="status-badge"><?php esc_html_e( 'No live post', 'gutenverse-form' ); ?></span>
+										</div>
+									</div>
+								<?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+
+						<div class="dashboard-panel">
+							<div class="dashboard-panel__title">
+								<h3><?php esc_html_e( 'Top Forms', 'gutenverse-form' ); ?></h3>
+							</div>
+							<?php foreach ( array_slice( $forms_by_entries, 0, 3 ) as $form ) : ?>
 								<?php $primary_location = ! empty( $form['locations'][0] ) ? $form['locations'][0] : null; ?>
 								<div class="dashboard-row">
 									<div>
@@ -351,9 +320,10 @@ class Form {
 										<span>
 											<?php
 											printf(
-												/* translators: %s: last entry date */
-												esc_html__( 'Last entry: %s', 'gutenverse-form' ),
-												esc_html( $form['last_entry_date'] )
+												/* translators: 1: total entries, 2: last 7 days count */
+												esc_html__( '%1$s total • %2$s this week', 'gutenverse-form' ),
+												esc_html( $form['total_entries'] ),
+												esc_html( $form['entries_last_week'] )
 											);
 											?>
 										</span>
@@ -365,7 +335,39 @@ class Form {
 									</div>
 								</div>
 							<?php endforeach; ?>
-						<?php endif; ?>
+						</div>
+
+						<div class="dashboard-panel">
+							<div class="dashboard-panel__title">
+								<h3><?php esc_html_e( 'Recent Activity', 'gutenverse-form' ); ?></h3>
+							</div>
+							<?php if ( empty( $recent_forms ) ) : ?>
+								<p class="empty-note"><?php esc_html_e( 'No recent entry activity yet.', 'gutenverse-form' ); ?></p>
+							<?php else : ?>
+								<?php foreach ( $recent_forms as $form ) : ?>
+									<?php $primary_location = ! empty( $form['locations'][0] ) ? $form['locations'][0] : null; ?>
+									<div class="dashboard-row">
+										<div>
+											<strong><?php echo esc_html( $form['title'] ); ?></strong>
+											<span>
+												<?php
+												printf(
+													/* translators: %s: last entry date */
+													esc_html__( 'Last entry: %s', 'gutenverse-form' ),
+													esc_html( $form['last_entry_date'] )
+												);
+												?>
+											</span>
+										</div>
+										<div class="dashboard-row__actions">
+											<?php if ( ! empty( $primary_location['edit_url'] ) ) : ?>
+												<a href="<?php echo esc_url( $primary_location['edit_url'] ); ?>"><?php esc_html_e( 'Edit', 'gutenverse-form' ); ?></a>
+											<?php endif; ?>
+										</div>
+									</div>
+								<?php endforeach; ?>
+							<?php endif; ?>
+						</div>
 					</div>
 				</div>
 			<?php endif; ?>
@@ -374,6 +376,13 @@ class Form {
 			.gutenverse-form-admin-dashboard{max-width:1180px;margin:18px 20px 40px 0;color:#1f2937}
 			.gutenverse-form-admin-dashboard *{box-sizing:border-box}
 			.gutenverse-form-admin-dashboard__hero,.dashboard-panel{background:#fff;border:1px solid #d9dee8;border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.05)}
+			.gutenverse-form-action-migration-notice{align-items:flex-start;background:#eef4ff;border:1px solid #93c5fd;border-radius:8px;color:#1f2937;display:flex;gap:16px;justify-content:space-between;margin-bottom:18px;padding:16px 18px 16px 20px;position:relative}
+			.gutenverse-form-action-migration-notice:before{background:#2563eb;border-radius:8px 0 0 8px;bottom:-1px;content:"";display:block;left:-1px;position:absolute;top:-1px;width:4px}
+			.gutenverse-form-action-migration-notice.is-hidden{display:none}
+			.gutenverse-form-action-migration-notice strong{color:#111827;display:block;font-size:14px;font-weight:800;line-height:1.35;margin:0 0 5px}
+			.gutenverse-form-action-migration-notice p{color:#475467;font-size:13px;line-height:1.45;margin:0;max-width:820px}
+			.gutenverse-form-action-migration-notice button{align-items:center;background:#fff;border:1px solid #bfdbfe;border-radius:4px;color:#475467;cursor:pointer;display:inline-flex;font-size:18px;height:28px;justify-content:center;line-height:1;margin:-2px -2px 0 0;padding:0;width:28px}
+			.gutenverse-form-action-migration-notice button:hover,.gutenverse-form-action-migration-notice button:focus{background:#dbeafe;border-color:#60a5fa;color:#1d4ed8;outline:none}
 			.gutenverse-form-admin-dashboard__hero{display:grid;grid-template-columns:minmax(260px,1fr) minmax(560px,680px);gap:18px;align-items:center;margin-bottom:18px;padding:14px 16px}
 			.gutenverse-form-admin-dashboard__intro{display:grid;gap:7px;min-width:0}
 			.gutenverse-form-admin-dashboard__hero h1{color:#111827;font-size:22px;font-weight:700;line-height:1.15;margin:0}
@@ -389,6 +398,8 @@ class Form {
 			.summary-card span,.dashboard-form-card__meta,.dashboard-row span,.empty-note{color:#667085;display:block;font-size:13px;line-height:1.45}
 			.gutenverse-form-admin-dashboard__list{display:grid;gap:16px}
 			.dashboard-grid{align-items:start;grid-template-columns:repeat(2,minmax(0,1fr))}
+			.dashboard-masonry{column-count:2;column-gap:16px;grid-column:1 / -1}
+			.dashboard-masonry .dashboard-panel{break-inside:avoid;display:inline-block;margin:0 0 16px;width:100%}
 			.dashboard-panel{overflow:hidden;padding:0}
 			.dashboard-panel--wide{grid-column:1 / -1}
 			.dashboard-panel--attention{border-color:#d7deea}
@@ -424,11 +435,11 @@ class Form {
 			.dashboard-row__actions a{background:#f8fafc;border:1px solid #d7deea;border-radius:4px;color:#1d4ed8;font-size:12px;font-weight:700;line-height:1;padding:7px 9px;text-decoration:none}
 			.dashboard-row__actions a:hover,.dashboard-row__actions a:focus{background:#eff6ff;border-color:#bfdbfe;color:#1e40af;text-decoration:none}
 			.status-badge{background:#f8fafc;border:1px solid #d7deea;border-radius:999px;color:#475467;display:inline-flex;font-size:12px;font-weight:600;line-height:1;padding:7px 10px;white-space:nowrap}
-			.empty-note{margin:0;padding:18px 20px}
+			.empty-note{align-items:center;display:flex;margin:0;min-height:64px;padding:13px 20px}
 			.gutenverse-form-admin-dashboard__empty{background:#fff;border:1px solid #d9dee8;border-radius:8px;color:#50575e;font-size:14px;line-height:1.6;padding:18px 20px}
 			@media (max-width:1280px){.gutenverse-form-admin-dashboard__hero{grid-template-columns:1fr}.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(4,minmax(0,1fr))}}
-			@media (max-width:1100px){.dashboard-grid{grid-template-columns:1fr}.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
-			@media (max-width:782px){.gutenverse-form-admin-dashboard{margin-right:10px}.gutenverse-form-admin-dashboard__hero{padding:16px}.gutenverse-form-admin-dashboard__summary,.dashboard-grid{grid-template-columns:1fr}.dashboard-actions{display:grid}.dashboard-button{justify-content:center}.dashboard-block__header{display:grid;gap:12px}.dashboard-range-toggle{width:max-content}.trend-chart{padding:14px}.trend-chart__line{min-height:230px;padding:12px 10px}.trend-chart__legend{justify-content:flex-start}.trend-chart__svg{height:190px}.trend-chart__x-label,.trend-chart__y-label{font-size:10px}.dashboard-row{grid-template-columns:1fr}.dashboard-row strong{white-space:normal}.dashboard-row__actions{justify-content:flex-start}}
+			@media (max-width:1100px){.dashboard-grid{grid-template-columns:1fr}.dashboard-masonry{column-count:1}.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+			@media (max-width:782px){.gutenverse-form-admin-dashboard{margin-right:10px}.gutenverse-form-admin-dashboard__hero{padding:16px}.gutenverse-form-admin-dashboard__summary,.dashboard-grid{grid-template-columns:1fr}.dashboard-masonry{column-count:1}.dashboard-actions{display:grid}.dashboard-button{justify-content:center}.dashboard-block__header{display:grid;gap:12px}.dashboard-range-toggle{width:max-content}.trend-chart{padding:14px}.trend-chart__line{min-height:230px;padding:12px 10px}.trend-chart__legend{justify-content:flex-start}.trend-chart__svg{height:190px}.trend-chart__x-label,.trend-chart__y-label{font-size:10px}.dashboard-row{grid-template-columns:1fr}.dashboard-row strong{white-space:normal}.dashboard-row__actions{justify-content:flex-start}}
 		</style>
 		<script>
 			document.addEventListener('DOMContentLoaded', function() {
@@ -436,6 +447,25 @@ class Form {
 
 				if (!dashboard) {
 					return;
+				}
+
+				var notice = dashboard.querySelector('[data-form-action-migration-notice]');
+				var dismiss = dashboard.querySelector('[data-form-action-migration-dismiss]');
+
+				if (notice && dismiss) {
+					dismiss.addEventListener('click', function() {
+						var data = new window.FormData();
+
+						notice.classList.add('is-hidden');
+						data.append('action', 'gutenverse_form_action_migration_notice_close');
+						data.append('nonce', dismiss.getAttribute('data-nonce'));
+
+						window.fetch(window.ajaxurl, {
+							method: 'POST',
+							credentials: 'same-origin',
+							body: data
+						});
+					});
 				}
 
 				dashboard.querySelectorAll('[data-trend-range]').forEach(function(button) {
@@ -458,6 +488,40 @@ class Form {
 			});
 		</script>
 		<?php
+	}
+
+	/**
+	 * Render form action migration notice.
+	 */
+	public static function render_form_action_migration_notice() {
+		if ( get_option( 'gutenverse_form_action_migration_notice' ) ) {
+			return;
+		}
+		?>
+		<div class="gutenverse-form-action-migration-notice" data-form-action-migration-notice>
+			<div>
+				<strong><?php esc_html_e( 'Form actions have moved to Form Builder', 'gutenverse-form' ); ?></strong>
+				<p><?php esc_html_e( 'Form actions are now bound to each Form Builder block and can be created, edited, or deleted directly from the Form Builder. They are no longer managed from this admin dashboard.', 'gutenverse-form' ); ?></p>
+			</div>
+			<button type="button" aria-label="<?php esc_attr_e( 'Dismiss notice', 'gutenverse-form' ); ?>" data-form-action-migration-dismiss data-nonce="<?php echo esc_attr( wp_create_nonce( 'gutenverse_form_action_migration_notice_close' ) ); ?>">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Close form action migration notice.
+	 */
+	public function close_form_action_migration_notice() {
+		check_ajax_referer( 'gutenverse_form_action_migration_notice_close', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error();
+		}
+
+		update_option( 'gutenverse_form_action_migration_notice', true, false );
+		wp_send_json_success();
 	}
 
 	/**
