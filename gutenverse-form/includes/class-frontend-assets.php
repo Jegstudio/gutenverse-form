@@ -22,6 +22,18 @@ class Frontend_Assets {
 		add_filter( 'gutenverse_include_frontend', array( $this, 'load_conditional_scripts' ) );
 		add_filter( 'gutenverse_include_frontend', array( $this, 'load_conditional_styles' ) );
 		add_filter( 'gutenverse_conditional_script_attributes', array( $this, 'font_icon_conditional_load' ), null, 3 );
+		add_action( 'gutenverse_loop_blocks', array( $this, 'enqueue_frontend_style' ) );
+	}
+
+	/**
+	 * Queue the base frontend style when Gutenverse blocks exist so WordPress can inline it.
+	 *
+	 * @param array $block Parsed block data.
+	 */
+	public function enqueue_frontend_style( $block ) {
+		if ( isset( $block['blockName'] ) && 0 === strpos( $block['blockName'], 'gutenverse/form' ) ) {
+			wp_enqueue_style( 'gutenverse-form-frontend-form-input-general-style' );
+		}
 	}
 
 	/**
@@ -105,7 +117,10 @@ class Frontend_Assets {
 				GUTENVERSE_FORM_URL . '/assets/js/frontend/' . $block . '.js',
 				$include,
 				GUTENVERSE_FORM_VERSION,
-				true
+				array(
+					'in_footer' => true,
+					'strategy'  => 'defer',
+				)
 			);
 		}
 	}
@@ -121,6 +136,12 @@ class Frontend_Assets {
 			GUTENVERSE_FORM_URL . '/assets/css/general-input.css',
 			array(),
 			GUTENVERSE_FORM_VERSION
+		);
+
+		wp_style_add_data(
+			'gutenverse-form-frontend-form-input-general-style',
+			'path',
+			GUTENVERSE_FORM_DIR . '/assets/css/general-input.css'
 		);
 
 		$blocks = array(
@@ -142,11 +163,19 @@ class Frontend_Assets {
 		);
 
 		foreach ( $blocks as $block ) {
+			$handle = 'gutenverse-form-frontend-' . $block . '-style';
+
 			wp_register_style(
 				'gutenverse-form-frontend-' . $block . '-style',
 				GUTENVERSE_FORM_URL . '/assets/css/frontend/' . $block . '.css',
 				array( 'gutenverse-form-frontend-form-input-general-style' ),
 				GUTENVERSE_FORM_VERSION
+			);
+
+			wp_style_add_data(
+				$handle,
+				'path',
+				GUTENVERSE_FORM_DIR . '/assets/css/frontend/' . $block . '.css'
 			);
 		}
 	}
