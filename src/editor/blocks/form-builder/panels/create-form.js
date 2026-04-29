@@ -210,11 +210,18 @@ export const CreateForm = (props) => {
                         <div className="gutenverse-form-action-summary">
                             <div className="gutenverse-form-action-card-header">
                                 <span className="status-dot" />
-                                <span className="status-label">{__('Connected action', 'gutenverse-form')}</span>
+                                <span className="status-label">
+                                    {compact ? __('Connected Form Action', 'gutenverse-form') : __('Connected action', 'gutenverse-form')}
+                                </span>
                             </div>
                             <div className="gutenverse-form-action-title" title={formTitle}>
                                 {formTitle}
                             </div>
+                            {compact && (
+                                <div className="gutenverse-form-action-meta">
+                                    {__('This form sends submissions to the connected form.', 'gutenverse-form')}
+                                </div>
+                            )}
                             {!compact && (
                                 <div className="gutenverse-form-action-meta">
                                     {__('Entries, email, integrations, and submission behavior use this action.', 'gutenverse-form')}
@@ -228,7 +235,7 @@ export const CreateForm = (props) => {
                                 onClick={!saving ? openEditModal : undefined}
                                 disabled={saving}
                             >
-                                {compact ? __('Edit', 'gutenverse-form') : __('Edit Action', 'gutenverse-form')}
+                                {compact ? __('Edit Form Action', 'gutenverse-form') : __('Edit Action', 'gutenverse-form')}
                             </button>
                             <button
                                 type="button"
@@ -236,8 +243,8 @@ export const CreateForm = (props) => {
                                 onClick={!saving ? () => setIsDeleteModalOpen(true) : undefined}
                                 disabled={saving}
                             >
-                                <IconTrashSVG size={14} />
-                                {compact ? __('Delete', 'gutenverse-form') : __('Delete', 'gutenverse-form')}
+                                {!compact && <IconTrashSVG size={14} />}
+                                {compact ? __('Delete Action', 'gutenverse-form') : __('Delete', 'gutenverse-form')}
                             </button>
                         </div>
                     </div>
@@ -249,7 +256,7 @@ export const CreateForm = (props) => {
                             rel="noopener noreferrer"
                             className="gutenverse-form-action-list-link"
                         >
-                            {__('View entries for this action', 'gutenverse-form')}
+                            {compact ? __('View Form Entries', 'gutenverse-form') : __('View entries for this action', 'gutenverse-form')}
                         </a>
                     )}
                 </>
@@ -259,11 +266,10 @@ export const CreateForm = (props) => {
                         <div className="gutenverse-form-action-summary">
                             {compact ? (
                                 <>
+                                    <span className="gutenverse-form-action-empty-icon">i</span>
                                     <div className="gutenverse-form-action-empty-copy">
-                                        <div className="gutenverse-form-action-empty-header">
-                                            <div className="empty-badge">{__('Action required', 'gutenverse-form')}</div>
-                                        </div>
-                                        <div className="empty-title">
+                                        <div className="empty-title">{__('Action Required', 'gutenverse-form')}</div>
+                                        <div className="empty-description">
                                             {__('Create a form action to receive submissions.', 'gutenverse-form')}
                                         </div>
                                     </div>
@@ -282,7 +288,7 @@ export const CreateForm = (props) => {
                                 onClick={!saving ? openCreateModal : undefined}
                                 disabled={saving}
                             >
-                                {__('Create Action', 'gutenverse-form')}
+                                {__('Create Form Action', 'gutenverse-form')}
                             </button>
                         )}
                     </div>

@@ -1091,25 +1091,22 @@
         }
     }
 
-    .gutenverse-create-form-action.is-compact {
+    &.is-compact {
         .gutenverse-form-action-card,
         .gutenverse-form-action-empty {
-            border-left-width: 4px;
-            border-radius: 8px;
+            border-radius: 6px;
             box-shadow: none;
             margin-bottom: 0;
-            padding: 10px 14px;
         }
 
         .gutenverse-form-action-card {
-            background: #f0f6fc;
-            border-color: #c3d9ed;
-            border-left-color: #2271b1;
-            border-top-width: 1px;
-            align-items: center;
+            align-items: stretch;
+            background: #fbfbff;
+            border: 1px solid #3b57f7;
             display: flex;
-            gap: 12px;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 20px;
+            padding: 15px;
         }
 
         .gutenverse-form-action-summary {
@@ -1121,61 +1118,93 @@
         }
 
         .gutenverse-form-action-card-header {
-            color: #1f5f99;
-            font-size: 10px;
-            gap: 7px;
-            margin-bottom: 4px;
+            color: #071521;
+            font-size: 13px;
+            font-weight: 700;
+            gap: 8px;
+            letter-spacing: 0;
+            line-height: 1.2;
+            margin-bottom: 14px;
+            text-transform: none;
         }
 
         .status-dot {
-            height: 7px;
-            width: 7px;
+            background: #0fc64c;
+            height: 8px;
+            width: 8px;
         }
 
         .gutenverse-form-action-title {
-            color: #0f1f2c;
+            background: #dbe7ff;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: #3b57f7;
+            display: inline-block;
             font-size: 13px;
+            font-weight: 600;
+            line-height: 1.2;
             margin-bottom: 0;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            padding: 9px 16px;
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        .gutenverse-form-action-card .gutenverse-form-action-meta {
+            color: #5b4f42;
+            font-size: 12px;
+            line-height: 1.45;
+            margin-top: 16px;
+            max-width: 100%;
         }
 
         .gutenverse-form-action-empty {
             background: #fff8e5;
-            border: 1px solid #fde68a;
-            border-left: 1px solid #fde68a;
-            border-radius: 4px;
+            border: 1px solid #f4dfa8;
+            border-radius: 6px;
             box-shadow: none;
             display: block;
-            padding: 24px;
-            text-align: center;
+            padding: 26px 28px 24px;
+            text-align: left;
         }
 
         .gutenverse-form-action-empty-main {
+            align-items: stretch;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            align-items: center;
+            gap: 20px;
         }
 
         .gutenverse-form-action-empty .gutenverse-form-action-summary {
             align-items: flex-start;
-            display: flex;
-            flex-direction: row;
+            display: grid;
             gap: 8px;
+            grid-template-columns: 22px minmax(0, 1fr);
             text-align: left;
         }
 
-        .gutenverse-form-action-empty-copy {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-start;
+        .gutenverse-form-action-empty-icon {
+            align-items: center;
+            background: #ffc107;
+            border-radius: 50%;
+            color: #fff;
+            display: inline-flex;
+            flex: 0 0 16px;
+            font-size: 13px;
+            font-weight: 700;
+            height: 16px;
+            justify-content: center;
+            line-height: 1;
+            margin-top: 3px;
+            width: 16px;
         }
 
-        .gutenverse-form-action-empty-header {
-            align-items: center;
+        .gutenverse-form-action-empty-copy {
+            align-items: flex-start;
             display: flex;
-            gap: 8px;
-            justify-content: flex-start;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .gutenverse-form-action-empty .empty-badge {
@@ -1189,85 +1218,122 @@
         }
 
         .gutenverse-form-action-empty .empty-title {
-            color: #4b5563;
+            color: #071521;
             font-size: 14px;
-            font-weight: 400;
-            line-height: 1.5;
+            font-weight: 700;
+            line-height: 1.2;
             margin-bottom: 0;
             max-width: 400px;
         }
 
+        .gutenverse-form-action-empty .empty-description {
+            color: #5b4f42;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.45;
+            max-width: 260px;
+        }
+
         .gutenverse-form-action-buttons {
-            display: flex;
+            display: grid;
             flex: 0 0 auto;
-            gap: 8px;
+            gap: 12px;
+            grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
             margin-bottom: 0;
+            margin-top: 0;
             min-width: 0;
+            width: 100%;
         }
 
         .gutenverse-form-action-button {
-            background: #fff;
-            border-color: #c3c4c7;
-            color: #34414e;
-            font-size: 12px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: #fff;
+            font-size: 10px;
             font-weight: 600;
-            padding: 7px 12px;
+            line-height: 1.2;
+            min-width: 0;
+            padding: 11px 6px;
+            white-space: nowrap;
+            width: 100%;
 
             &.primary {
-                background: #fff;
-                border-color: #2271b1;
-                color: #2271b1;
+                background: #3b57f7;
+                border-color: #3b57f7;
+                color: #fff;
 
                 &:hover,
                 &:focus,
                 &:active {
-                    background: #2271b1;
-                    border-color: #2271b1;
+                    background: #243cc7;
+                    border-color: #243cc7;
                     color: #fff;
                 }
             }
 
             &.danger {
-                border-color: #d63638;
-                color: #b32d2e;
+                background: #ef2f2f;
+                border-color: #ef2f2f;
+                color: #fff;
+
+                &:hover,
+                &:focus,
+                &:active {
+                    background: #d82626;
+                    border-color: #d82626;
+                    color: #fff;
+                }
             }
         }
 
         .gutenverse-form-action-empty .gutenverse-form-action-button {
-            align-self: center;
-            background: #2563eb;
-            border-color: #2563eb;
+            align-self: stretch;
+            background: #3b57f7;
+            border-color: #3b57f7;
             border-radius: 4px;
             color: #fff;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
             line-height: 1.2;
             margin-top: 0;
-            min-height: 0;
             min-width: 0;
-            padding: 10px 20px;
+            margin-left: 30px;
+            padding: 11px 18px;
             white-space: normal;
-            width: auto;
+            width: calc(100% - 36px);
 
             &:hover,
             &:focus,
             &:active {
-                background: #1d4ed8;
-                border-color: #1d4ed8;
+                background: #243cc7;
+                border-color: #243cc7;
                 color: #fff;
             }
         }
 
         .gutenverse-form-action-list-link {
-            margin-top: 8px;
-            min-height: 34px;
+            background: #fff;
+            border: 1px solid #3b57f7;
+            border-radius: 4px;
+            color: #3b57f7;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 18px;
+            min-height: 42px;
+
+            &:hover,
+            &:focus {
+                background: #eef3ff;
+                border-color: #243cc7;
+                color: #243cc7;
+            }
         }
     }
 
     @media (max-width: 782px) {
-        .gutenverse-create-form-action.is-compact {
+        &.is-compact {
             .gutenverse-form-action-card {
-                align-items: flex-start;
+                align-items: stretch;
                 flex-direction: column;
             }
 
@@ -1276,12 +1342,9 @@
             }
 
             .gutenverse-form-action-buttons {
-                width: 100%;
-            }
-
-            .gutenverse-form-action-buttons {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+                width: 100%;
             }
         }
     }
