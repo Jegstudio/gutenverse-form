@@ -80,564 +80,10 @@ class Form {
 	 * Render dashboard page under Form admin menu.
 	 */
 	public function render_dashboard_page() {
-		$forms             = self::get_all_form_dashboard_data();
-		$total_entries     = array_sum(
-			array_map(
-				static function ( $form ) {
-					return (int) $form['total_entries'];
-				},
-				$forms
-			)
-		);
-		$total_locations   = array_sum(
-			array_map(
-				static function ( $form ) {
-					return (int) $form['location_count'];
-				},
-				$forms
-			)
-		);
-		$entries_last_week = array_sum(
-			array_map(
-				static function ( $form ) {
-					return (int) $form['entries_last_week'];
-				},
-				$forms
-			)
-		);
-		$forms_by_entries  = wp_list_sort( $forms, 'total_entries', 'DESC' );
-		$forms_by_recent   = wp_list_sort( $forms, 'last_entry_timestamp', 'DESC' );
-		$forms_by_usage    = wp_list_sort( $forms, 'location_count', 'DESC' );
-		$trend_contexts    = array(
-			7  => self::get_entry_trend_chart_context( 7 ),
-			30 => self::get_entry_trend_chart_context( 30 ),
-		);
-		$needs_attention   = self::get_forms_needing_attention( $forms, 3 );
-		$unused_forms      = self::get_unused_form_actions( $forms, 3 );
-		$top_sources       = self::get_top_entry_sources( $forms, 3 );
-		$entries_url       = admin_url( 'edit.php?post_type=' . Entries::POST_TYPE );
 		?>
-		<div
-			class="wrap gutenverse-form-admin-dashboard"
-			data-form-action-rest-base="<?php echo esc_url( rest_url( '/gutenverse-form-client/v1/form-action/' ) ); ?>"
-			data-form-action-rest-nonce="<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>"
-		>
-			<?php self::render_form_action_migration_notice(); ?>
-			<div class="gutenverse-form-admin-dashboard__hero">
-				<div class="gutenverse-form-admin-dashboard__intro">
-					<h1><?php esc_html_e( 'Form Dashboard', 'gutenverse-form' ); ?></h1>
-					<p><?php esc_html_e( 'Track submission performance and jump into the most relevant form locations when something needs quick attention.', 'gutenverse-form' ); ?></p>
-					<div class="dashboard-actions">
-						<a class="dashboard-button dashboard-button--primary" href="<?php echo esc_url( $entries_url ); ?>"><?php esc_html_e( 'View Entries', 'gutenverse-form' ); ?></a>
-					</div>
-				</div>
-				<div class="gutenverse-form-admin-dashboard__summary">
-					<div class="summary-card">
-						<strong><?php echo esc_html( $total_entries ); ?></strong>
-						<span><?php esc_html_e( 'Total Entries', 'gutenverse-form' ); ?></span>
-					</div>
-					<div class="summary-card">
-						<strong><?php echo esc_html( $entries_last_week ); ?></strong>
-						<span><?php esc_html_e( 'Entries In Last 7 Days', 'gutenverse-form' ); ?></span>
-					</div>
-					<div class="summary-card">
-						<strong><?php echo esc_html( $total_locations ); ?></strong>
-						<span><?php esc_html_e( 'Live Locations', 'gutenverse-form' ); ?></span>
-					</div>
-					<div class="summary-card">
-						<strong><?php echo esc_html( count( $forms ) ); ?></strong>
-						<span><?php esc_html_e( 'Tracked Forms', 'gutenverse-form' ); ?></span>
-					</div>
-				</div>
-			</div>
-
-			<?php if ( empty( $forms ) ) : ?>
-				<div class="gutenverse-form-admin-dashboard__empty">
-					<?php esc_html_e( 'No forms found yet.', 'gutenverse-form' ); ?>
-				</div>
-			<?php else : ?>
-				<?php
-				$chart_top    = 32;
-				$chart_base   = 168;
-				$recent_forms = array_filter(
-					array_slice( $forms_by_recent, 0, 3 ),
-					static function ( $form ) {
-						return ! empty( $form['last_entry_timestamp'] );
-					}
-				);
-				?>
-				<div class="gutenverse-form-admin-dashboard__list dashboard-grid">
-					<div class="dashboard-panel dashboard-panel--wide dashboard-panel--chart">
-						<div class="dashboard-block__header">
-							<div>
-								<?php foreach ( array_keys( $trend_contexts ) as $range ) : ?>
-									<h2 class="trend-range-copy <?php echo 7 === $range ? 'active' : ''; ?>" data-trend-range-copy="<?php echo esc_attr( $range ); ?>">
-										<?php
-										printf(
-											/* translators: %s: number of days */
-											esc_html__( 'Last %s Days', 'gutenverse-form' ),
-											esc_html( $range )
-										);
-										?>
-									</h2>
-									<div class="dashboard-form-card__meta trend-range-copy <?php echo 7 === $range ? 'active' : ''; ?>" data-trend-range-copy="<?php echo esc_attr( $range ); ?>">
-										<?php
-										printf(
-											/* translators: %s: number of days */
-											esc_html__( 'Daily entries for the last %s days.', 'gutenverse-form' ),
-											esc_html( $range )
-										);
-										?>
-									</div>
-								<?php endforeach; ?>
-							</div>
-							<div class="dashboard-range-toggle" aria-label="<?php esc_attr_e( 'Chart date range', 'gutenverse-form' ); ?>">
-								<button type="button" class="active" data-trend-range="7"><?php esc_html_e( '7 days', 'gutenverse-form' ); ?></button>
-								<button type="button" data-trend-range="30"><?php esc_html_e( '30 days', 'gutenverse-form' ); ?></button>
-							</div>
-						</div>
-						<div class="trend-chart trend-chart--compact">
-							<?php foreach ( $trend_contexts as $range => $trend_context ) : ?>
-								<div class="trend-chart__range <?php echo 7 === $range ? 'active' : ''; ?>" data-trend-range-panel="<?php echo esc_attr( $range ); ?>">
-									<div class="trend-chart__line" role="img" aria-label="<?php echo esc_attr( sprintf( __( 'Daily entries for the last %s days', 'gutenverse-form' ), $range ) ); ?>">
-										<div class="trend-chart__legend">
-											<span class="trend-chart__legend-item"><span class="trend-chart__legend-swatch"></span><?php esc_html_e( 'Entries', 'gutenverse-form' ); ?></span>
-										</div>
-										<svg class="trend-chart__svg" viewBox="0 0 700 220" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true">
-											<path class="trend-chart__axis" d="M54 32V168H676"></path>
-											<?php foreach ( $trend_context['ticks'] as $tick ) : ?>
-												<?php
-												$tick_y = $chart_base - ( ( $tick / $trend_context['max'] ) * ( $chart_base - $chart_top ) );
-												?>
-												<path class="trend-chart__grid-line" d="M54 <?php echo esc_attr( round( $tick_y, 2 ) ); ?>H676"></path>
-												<text class="trend-chart__y-label" x="42" y="<?php echo esc_attr( round( $tick_y + 4, 2 ) ); ?>"><?php echo esc_html( $tick ); ?></text>
-											<?php endforeach; ?>
-											<polyline class="trend-chart__stroke" points="<?php echo esc_attr( $trend_context['line_points'] ); ?>"></polyline>
-											<?php foreach ( $trend_context['points'] as $point ) : ?>
-												<circle class="trend-chart__point" cx="<?php echo esc_attr( $point['x'] ); ?>" cy="<?php echo esc_attr( $point['y'] ); ?>" r="4">
-													<title><?php echo esc_html( $point['tooltip'] ); ?></title>
-												</circle>
-												<?php if ( $point['show_label'] ) : ?>
-													<text class="trend-chart__x-label" x="<?php echo esc_attr( $point['x'] ); ?>" y="202"><?php echo esc_html( $point['label'] ); ?></text>
-												<?php endif; ?>
-											<?php endforeach; ?>
-										</svg>
-									</div>
-								</div>
-							<?php endforeach; ?>
-						</div>
-					</div>
-
-					<div class="dashboard-masonry">
-						<div class="dashboard-panel dashboard-panel--attention">
-							<div class="dashboard-panel__title">
-								<h3><?php esc_html_e( 'Needs Attention', 'gutenverse-form' ); ?></h3>
-							</div>
-							<?php if ( empty( $needs_attention ) ) : ?>
-								<p class="empty-note"><?php esc_html_e( 'Nothing urgent detected right now.', 'gutenverse-form' ); ?></p>
-							<?php else : ?>
-								<?php foreach ( $needs_attention as $form ) : ?>
-									<?php $primary_location = ! empty( $form['locations'][0] ) ? $form['locations'][0] : null; ?>
-									<div class="dashboard-row">
-										<div>
-											<strong><?php echo esc_html( $form['title'] ); ?></strong>
-											<span><?php echo esc_html( $form['attention_reason'] ); ?></span>
-										</div>
-										<div class="dashboard-row__actions">
-											<?php if ( ! empty( $primary_location['edit_url'] ) ) : ?>
-												<a href="<?php echo esc_url( $primary_location['edit_url'] ); ?>"><?php esc_html_e( 'Edit Post', 'gutenverse-form' ); ?></a>
-											<?php endif; ?>
-										</div>
-									</div>
-								<?php endforeach; ?>
-							<?php endif; ?>
-						</div>
-
-						<div class="dashboard-panel">
-							<div class="dashboard-panel__title">
-								<h3><?php esc_html_e( 'Top Entry Sources', 'gutenverse-form' ); ?></h3>
-							</div>
-							<?php if ( empty( $top_sources ) ) : ?>
-								<p class="empty-note"><?php esc_html_e( 'Entry source data will appear after submissions are linked to posts or pages.', 'gutenverse-form' ); ?></p>
-							<?php else : ?>
-								<?php foreach ( $top_sources as $source ) : ?>
-									<div class="dashboard-row">
-										<div>
-											<strong><?php echo esc_html( $source['title'] ); ?></strong>
-											<span>
-												<?php
-												printf(
-													/* translators: 1: entry count, 2: source type */
-													esc_html__( '%1$s entries • %2$s', 'gutenverse-form' ),
-													esc_html( $source['count'] ),
-													esc_html( $source['type'] )
-												);
-												?>
-											</span>
-										</div>
-										<div class="dashboard-row__actions">
-											<?php if ( ! empty( $source['edit_url'] ) ) : ?>
-												<a href="<?php echo esc_url( $source['edit_url'] ); ?>"><?php esc_html_e( 'Edit', 'gutenverse-form' ); ?></a>
-											<?php endif; ?>
-										</div>
-									</div>
-								<?php endforeach; ?>
-							<?php endif; ?>
-						</div>
-
-						<?php if ( ! empty( $unused_forms ) ) : ?>
-							<div class="dashboard-panel" data-unused-form-actions-panel>
-								<div class="dashboard-panel__title">
-									<h3><?php esc_html_e( 'Unused Form Actions', 'gutenverse-form' ); ?></h3>
-								</div>
-								<?php foreach ( $unused_forms as $form ) : ?>
-									<div class="dashboard-row" data-unused-form-action-row>
-										<div>
-											<strong><?php echo esc_html( $form['title'] ); ?></strong>
-											<span>
-												<?php
-												printf(
-													/* translators: %s: modified date */
-													esc_html__( 'No live location • Updated %s', 'gutenverse-form' ),
-													esc_html( $form['modified'] )
-												);
-												?>
-											</span>
-										</div>
-										<div class="dashboard-row__actions">
-											<span class="status-badge"><?php esc_html_e( 'No live post', 'gutenverse-form' ); ?></span>
-											<button
-												type="button"
-												class="dashboard-row-delete"
-												data-delete-unused-form-action="<?php echo esc_attr( $form['id'] ); ?>"
-												data-form-action-title="<?php echo esc_attr( $form['title'] ); ?>"
-												aria-label="<?php esc_attr_e( 'Delete unused form action', 'gutenverse-form' ); ?>"
-												title="<?php esc_attr_e( 'Delete unused form action', 'gutenverse-form' ); ?>"
-											>
-												<svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-													<polyline points="3 6 5 6 21 6"></polyline>
-													<path d="M19 6l-1 14H6L5 6"></path>
-													<path d="M10 11v6"></path>
-													<path d="M14 11v6"></path>
-													<path d="M9 6V4h6v2"></path>
-												</svg>
-											</button>
-										</div>
-									</div>
-								<?php endforeach; ?>
-							</div>
-						<?php endif; ?>
-
-						<div class="dashboard-panel">
-							<div class="dashboard-panel__title">
-								<h3><?php esc_html_e( 'Top Forms', 'gutenverse-form' ); ?></h3>
-							</div>
-							<?php foreach ( array_slice( $forms_by_entries, 0, 3 ) as $form ) : ?>
-								<?php $primary_location = ! empty( $form['locations'][0] ) ? $form['locations'][0] : null; ?>
-								<div class="dashboard-row">
-									<div>
-										<strong><?php echo esc_html( $form['title'] ); ?></strong>
-										<span>
-											<?php
-											printf(
-												/* translators: 1: total entries, 2: last 7 days count */
-												esc_html__( '%1$s total • %2$s this week', 'gutenverse-form' ),
-												esc_html( $form['total_entries'] ),
-												esc_html( $form['entries_last_week'] )
-											);
-											?>
-										</span>
-									</div>
-									<div class="dashboard-row__actions">
-										<?php if ( ! empty( $primary_location['edit_url'] ) ) : ?>
-											<a href="<?php echo esc_url( $primary_location['edit_url'] ); ?>"><?php esc_html_e( 'Edit', 'gutenverse-form' ); ?></a>
-										<?php endif; ?>
-									</div>
-								</div>
-							<?php endforeach; ?>
-						</div>
-
-						<div class="dashboard-panel">
-							<div class="dashboard-panel__title">
-								<h3><?php esc_html_e( 'Recent Activity', 'gutenverse-form' ); ?></h3>
-							</div>
-							<?php if ( empty( $recent_forms ) ) : ?>
-								<p class="empty-note"><?php esc_html_e( 'No recent entry activity yet.', 'gutenverse-form' ); ?></p>
-							<?php else : ?>
-								<?php foreach ( $recent_forms as $form ) : ?>
-									<?php $primary_location = ! empty( $form['locations'][0] ) ? $form['locations'][0] : null; ?>
-									<div class="dashboard-row">
-										<div>
-											<strong><?php echo esc_html( $form['title'] ); ?></strong>
-											<span>
-												<?php
-												printf(
-													/* translators: %s: last entry date */
-													esc_html__( 'Last entry: %s', 'gutenverse-form' ),
-													esc_html( $form['last_entry_date'] )
-												);
-												?>
-											</span>
-										</div>
-										<div class="dashboard-row__actions">
-											<?php if ( ! empty( $primary_location['edit_url'] ) ) : ?>
-												<a href="<?php echo esc_url( $primary_location['edit_url'] ); ?>"><?php esc_html_e( 'Edit', 'gutenverse-form' ); ?></a>
-											<?php endif; ?>
-										</div>
-									</div>
-								<?php endforeach; ?>
-							<?php endif; ?>
-						</div>
-					</div>
-				</div>
-			<?php endif; ?>
-			<div class="dashboard-delete-modal" data-unused-form-delete-modal aria-hidden="true">
-				<div class="dashboard-delete-modal__backdrop" data-unused-form-delete-cancel></div>
-				<div class="dashboard-delete-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="unused-form-delete-title">
-					<h3 id="unused-form-delete-title"><?php esc_html_e( 'Delete unused form action?', 'gutenverse-form' ); ?></h3>
-					<p data-unused-form-delete-message><?php esc_html_e( 'This form action has no live post and cannot be reassigned. Deleting it cannot be undone.', 'gutenverse-form' ); ?></p>
-					<p class="dashboard-delete-modal__error" data-unused-form-delete-error></p>
-					<div class="dashboard-delete-modal__actions">
-						<button type="button" class="dashboard-button" data-unused-form-delete-cancel><?php esc_html_e( 'Cancel', 'gutenverse-form' ); ?></button>
-						<button type="button" class="dashboard-delete-modal__confirm" data-unused-form-delete-confirm><?php esc_html_e( 'Delete', 'gutenverse-form' ); ?></button>
-					</div>
-				</div>
-			</div>
+		<div class="wrap">
+			<div id="gutenverse-form-dashboard"></div>
 		</div>
-		<style>
-			.gutenverse-form-admin-dashboard{max-width:1180px;margin:18px 20px 40px 0;color:#1f2937}
-			.gutenverse-form-admin-dashboard *{box-sizing:border-box}
-			.gutenverse-form-admin-dashboard__hero,.dashboard-panel{background:#fff;border:1px solid #d9dee8;border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.05)}
-			.gutenverse-form-action-migration-notice{align-items:flex-start;background:#eef4ff;border:1px solid #93c5fd;border-radius:8px;color:#1f2937;display:flex;gap:16px;justify-content:space-between;margin-bottom:18px;padding:16px 18px 16px 20px;position:relative}
-			.gutenverse-form-action-migration-notice:before{background:#2563eb;border-radius:8px 0 0 8px;bottom:-1px;content:"";display:block;left:-1px;position:absolute;top:-1px;width:4px}
-			.gutenverse-form-action-migration-notice.is-hidden{display:none}
-			.gutenverse-form-action-migration-notice strong{color:#111827;display:block;font-size:14px;font-weight:800;line-height:1.35;margin:0 0 5px}
-			.gutenverse-form-action-migration-notice p{color:#475467;font-size:13px;line-height:1.45;margin:0;max-width:820px}
-			.gutenverse-form-action-migration-notice button{align-items:center;background:#fff;border:1px solid #bfdbfe;border-radius:4px;color:#475467;cursor:pointer;display:inline-flex;font-size:18px;height:28px;justify-content:center;line-height:1;margin:-2px -2px 0 0;padding:0;width:28px}
-			.gutenverse-form-action-migration-notice button:hover,.gutenverse-form-action-migration-notice button:focus{background:#dbeafe;border-color:#60a5fa;color:#1d4ed8;outline:none}
-			.gutenverse-form-admin-dashboard__hero{display:grid;grid-template-columns:minmax(260px,1fr) minmax(560px,680px);gap:18px;align-items:center;margin-bottom:18px;padding:14px 16px}
-			.gutenverse-form-admin-dashboard__intro{display:grid;gap:7px;min-width:0}
-			.gutenverse-form-admin-dashboard__hero h1{color:#111827;font-size:22px;font-weight:700;line-height:1.15;margin:0}
-			.gutenverse-form-admin-dashboard__hero p{color:#5f6c7b;font-size:13px;line-height:1.4;margin:0;max-width:620px}
-			.dashboard-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:3px}
-			.dashboard-button{align-items:center;background:#fff;border:1px solid #c8d0dc;border-radius:5px;color:#344054;cursor:pointer;display:inline-flex;font-size:13px;font-weight:600;line-height:1;min-height:32px;padding:8px 12px;text-decoration:none;transition:background .15s ease,border-color .15s ease,color .15s ease}
-			.dashboard-button:hover,.dashboard-button:focus{background:#f8fafc;border-color:#98a2b3;color:#111827;text-decoration:none}
-			.dashboard-button--primary{background:#2563eb;border-color:#2563eb;color:#fff}
-			.dashboard-button--primary:hover,.dashboard-button--primary:focus{background:#1d4ed8;border-color:#1d4ed8;color:#fff}
-			.gutenverse-form-admin-dashboard__summary{display:grid;gap:8px;grid-template-columns:repeat(4,minmax(0,1fr))}
-			.summary-card{align-items:flex-start;background:linear-gradient(180deg,#fff 0%,#f8fafc 100%);border:1px solid #dce6f6;border-radius:8px;display:flex;flex-direction:column;gap:6px;justify-content:center;min-height:64px;padding:10px 12px}
-			.summary-card strong{color:#1d4ed8;display:block;font-size:24px;font-weight:800;line-height:1;margin:0}
-			.summary-card span,.dashboard-form-card__meta,.dashboard-row span,.empty-note{color:#667085;display:block;font-size:13px;line-height:1.45}
-			.gutenverse-form-admin-dashboard__list{display:grid;gap:16px}
-			.dashboard-grid{align-items:start;grid-template-columns:repeat(2,minmax(0,1fr))}
-			.dashboard-masonry{column-count:2;column-gap:16px;grid-column:1 / -1}
-			.dashboard-masonry .dashboard-panel{break-inside:avoid;display:inline-block;margin:0 0 16px;width:100%}
-			.dashboard-panel{overflow:hidden;padding:0}
-			.dashboard-panel--wide{grid-column:1 / -1}
-			.dashboard-panel--attention{border-color:#d7deea}
-			.dashboard-block__header,.dashboard-panel__title{align-items:flex-start;background:#fff;border-bottom:1px solid #edf0f5;display:flex;justify-content:space-between;padding:18px 20px 14px}
-			.dashboard-block__header h2{color:#111827;font-size:20px;font-weight:700;line-height:1.2;margin:0 0 5px}
-			.dashboard-panel h3{color:#1d4ed8;font-size:11px;font-weight:800;letter-spacing:.09em;line-height:1.2;margin:0;text-transform:uppercase}
-			.trend-range-copy{display:none}
-			.trend-range-copy.active{display:block}
-			.dashboard-range-toggle{background:#f8fafc;border:1px solid #d7deea;border-radius:6px;display:flex;gap:2px;padding:3px}
-			.dashboard-range-toggle button{background:transparent;border:0;border-radius:4px;color:#475467;cursor:pointer;font-size:12px;font-weight:700;line-height:1;padding:7px 10px}
-			.dashboard-range-toggle button:hover,.dashboard-range-toggle button:focus{background:#eef4ff;color:#1d4ed8}
-			.dashboard-range-toggle button.active{background:#2563eb;color:#fff}
-			.trend-chart{background:#fff;padding:18px 20px 20px}
-			.dashboard-panel--chart .trend-chart{padding:18px 20px 22px}
-			.trend-chart__range{display:none}
-			.trend-chart__range.active{display:block}
-			.trend-chart__line{background:#fff;border:1px solid #d7deea;border-radius:4px;margin:0 auto;max-width:820px;min-height:276px;padding:14px 16px 12px}
-			.trend-chart__legend{align-items:center;display:flex;gap:16px;justify-content:flex-end;margin-bottom:8px}
-			.trend-chart__legend-item{align-items:center;color:#1f2937;display:inline-flex;font-size:12px;gap:7px;line-height:1.2}
-			.trend-chart__legend-swatch{background:#2563eb;border:1px solid #1d4ed8;display:inline-block;height:13px;width:18px}
-			.trend-chart__svg{display:block;height:220px;overflow:visible;width:100%}
-			.trend-chart__axis{fill:none;stroke:#8c98a6;stroke-width:1}
-			.trend-chart__grid-line{fill:none;stroke:#d8dde6;stroke-width:1}
-			.trend-chart__stroke{fill:none;stroke:#2563eb;stroke-linecap:round;stroke-linejoin:round;stroke-width:2}
-			.trend-chart__point{fill:#2563eb;stroke:#2563eb;stroke-width:2}
-			.trend-chart__x-label,.trend-chart__y-label{fill:#344054;font-size:11px}
-			.trend-chart__x-label{text-anchor:middle}
-			.trend-chart__y-label{text-anchor:end}
-			.dashboard-row{align-items:center;border-top:1px solid #edf0f5;display:grid;gap:16px;grid-template-columns:minmax(0,1fr) auto;min-height:64px;padding:13px 20px}
-			.dashboard-panel__title + .dashboard-row{border-top:0}
-			.dashboard-row strong{color:#111827;display:block;font-size:14px;font-weight:700;line-height:1.35;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-			.dashboard-row__actions{align-items:center;color:#667085;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;min-width:96px}
-			.dashboard-row__actions a{background:#f8fafc;border:1px solid #d7deea;border-radius:4px;color:#1d4ed8;font-size:12px;font-weight:700;line-height:1;padding:7px 9px;text-decoration:none}
-			.dashboard-row__actions a:hover,.dashboard-row__actions a:focus{background:#eff6ff;border-color:#bfdbfe;color:#1e40af;text-decoration:none}
-			.dashboard-row-delete{align-items:center;background:#dc2626;border:1px solid #dc2626;border-radius:4px;color:#fff;cursor:pointer;display:inline-flex;height:32px;justify-content:center;line-height:1;padding:0;transition:background .15s ease,border-color .15s ease,color .15s ease;width:32px}
-			.dashboard-row-delete svg{display:block;height:16px;width:16px}
-			.dashboard-row-delete:hover,.dashboard-row-delete:focus{background:#b91c1c;border-color:#b91c1c;color:#fff;outline:none}
-			.dashboard-row-delete[disabled]{cursor:default;opacity:.65}
-			.status-badge{color:#667085;display:inline-flex;font-size:12px;font-weight:700;line-height:1;white-space:nowrap}
-			.empty-note{align-items:center;display:flex;margin:0;min-height:64px;padding:13px 20px}
-			.gutenverse-form-admin-dashboard__empty{background:#fff;border:1px solid #d9dee8;border-radius:8px;color:#50575e;font-size:14px;line-height:1.6;padding:18px 20px}
-			.dashboard-delete-modal{align-items:center;display:none;inset:0;justify-content:center;position:fixed;z-index:100000}
-			.dashboard-delete-modal.is-open{display:flex}
-			.dashboard-delete-modal__backdrop{background:rgba(15,23,42,.42);inset:0;position:absolute}
-			.dashboard-delete-modal__dialog{background:#fff;border:1px solid #d9dee8;border-radius:8px;box-shadow:0 18px 48px rgba(15,23,42,.22);max-width:420px;padding:22px;position:relative;width:calc(100% - 40px)}
-			.dashboard-delete-modal__dialog h3{color:#111827;font-size:18px;font-weight:800;line-height:1.25;margin:0 0 10px;text-transform:none;letter-spacing:0}
-			.dashboard-delete-modal__dialog p{color:#667085;font-size:13px;line-height:1.55;margin:0 0 18px}
-			.dashboard-delete-modal__error{color:#dc2626;display:none;font-weight:700}
-			.dashboard-delete-modal__error.is-visible{display:block}
-			.dashboard-delete-modal__actions{display:flex;gap:10px;justify-content:flex-end}
-			.dashboard-delete-modal__confirm{background:#dc2626;border:1px solid #dc2626;border-radius:5px;color:#fff;cursor:pointer;font-size:13px;font-weight:700;line-height:1;min-height:32px;padding:8px 12px}
-			.dashboard-delete-modal__confirm:hover,.dashboard-delete-modal__confirm:focus{background:#b91c1c;border-color:#b91c1c;color:#fff;outline:none}
-			.dashboard-delete-modal__confirm[disabled]{cursor:default;opacity:.65}
-			@media (max-width:1280px){.gutenverse-form-admin-dashboard__hero{grid-template-columns:1fr}.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(4,minmax(0,1fr))}}
-			@media (max-width:1100px){.dashboard-grid{grid-template-columns:1fr}.dashboard-masonry{column-count:1}.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
-			@media (max-width:782px){.gutenverse-form-admin-dashboard{margin-right:10px}.gutenverse-form-admin-dashboard__hero{padding:16px}.gutenverse-form-admin-dashboard__summary,.dashboard-grid{grid-template-columns:1fr}.dashboard-masonry{column-count:1}.dashboard-actions{display:grid}.dashboard-button{justify-content:center}.dashboard-block__header{display:grid;gap:12px}.dashboard-range-toggle{width:max-content}.trend-chart{padding:14px}.trend-chart__line{min-height:230px;padding:12px 10px}.trend-chart__legend{justify-content:flex-start}.trend-chart__svg{height:190px}.trend-chart__x-label,.trend-chart__y-label{font-size:10px}.dashboard-row{grid-template-columns:1fr}.dashboard-row strong{white-space:normal}.dashboard-row__actions{justify-content:flex-start}}
-		</style>
-		<script>
-			document.addEventListener('DOMContentLoaded', function() {
-				var dashboard = document.querySelector('.gutenverse-form-admin-dashboard');
-
-				if (!dashboard) {
-					return;
-				}
-
-				var notice = dashboard.querySelector('[data-form-action-migration-notice]');
-				var dismiss = dashboard.querySelector('[data-form-action-migration-dismiss]');
-
-				if (notice && dismiss) {
-					dismiss.addEventListener('click', function() {
-						var data = new window.FormData();
-
-						notice.classList.add('is-hidden');
-						data.append('action', 'gutenverse_form_action_migration_notice_close');
-						data.append('nonce', dismiss.getAttribute('data-nonce'));
-
-						window.fetch(window.ajaxurl, {
-							method: 'POST',
-							credentials: 'same-origin',
-							body: data
-						});
-					});
-				}
-
-				var deleteModal = dashboard.querySelector('[data-unused-form-delete-modal]');
-				var deleteMessage = dashboard.querySelector('[data-unused-form-delete-message]');
-				var deleteError = dashboard.querySelector('[data-unused-form-delete-error]');
-				var deleteConfirm = dashboard.querySelector('[data-unused-form-delete-confirm]');
-				var pendingDelete = null;
-
-				function closeDeleteModal() {
-					if (!deleteModal || (deleteConfirm && deleteConfirm.disabled)) {
-						return;
-					}
-
-					pendingDelete = null;
-					deleteModal.classList.remove('is-open');
-					deleteModal.setAttribute('aria-hidden', 'true');
-					if (deleteError) {
-						deleteError.classList.remove('is-visible');
-						deleteError.textContent = '';
-					}
-				}
-
-				dashboard.querySelectorAll('[data-unused-form-delete-cancel]').forEach(function(button) {
-					button.addEventListener('click', closeDeleteModal);
-				});
-
-				dashboard.querySelectorAll('[data-delete-unused-form-action]').forEach(function(button) {
-					button.addEventListener('click', function() {
-						var actionTitle = button.getAttribute('data-form-action-title') || '';
-
-						if (!deleteModal || !deleteConfirm) {
-							return;
-						}
-
-						pendingDelete = {
-							button: button,
-							actionId: button.getAttribute('data-delete-unused-form-action'),
-							restBase: dashboard.getAttribute('data-form-action-rest-base'),
-							restNonce: dashboard.getAttribute('data-form-action-rest-nonce'),
-							row: button.closest('[data-unused-form-action-row]'),
-							panel: button.closest('[data-unused-form-actions-panel]')
-						};
-
-						if (deleteMessage) {
-							deleteMessage.textContent = actionTitle
-								? <?php echo wp_json_encode( __( 'Delete unused form action "%s"? This cannot be undone.', 'gutenverse-form' ) ); ?>.replace('%s', actionTitle)
-								: <?php echo wp_json_encode( __( 'This form action has no live post and cannot be reassigned. Deleting it cannot be undone.', 'gutenverse-form' ) ); ?>;
-						}
-
-						deleteModal.classList.add('is-open');
-						deleteModal.setAttribute('aria-hidden', 'false');
-						deleteConfirm.focus();
-					});
-				});
-
-				if (deleteConfirm) {
-					deleteConfirm.addEventListener('click', function() {
-						if (!pendingDelete || !pendingDelete.actionId || !pendingDelete.restBase || !pendingDelete.restNonce) {
-							return;
-						}
-
-						pendingDelete.button.disabled = true;
-						deleteConfirm.disabled = true;
-						deleteConfirm.textContent = <?php echo wp_json_encode( __( 'Deleting...', 'gutenverse-form' ) ); ?>;
-						if (deleteError) {
-							deleteError.classList.remove('is-visible');
-							deleteError.textContent = '';
-						}
-
-						window.fetch(pendingDelete.restBase + pendingDelete.actionId, {
-							method: 'DELETE',
-							credentials: 'same-origin',
-							headers: {
-								'X-WP-Nonce': pendingDelete.restNonce
-							}
-						}).then(function(response) {
-							if (!response.ok) {
-								throw new Error(<?php echo wp_json_encode( __( 'Could not delete this form action. Please try again.', 'gutenverse-form' ) ); ?>);
-							}
-
-							if (pendingDelete.row) {
-								pendingDelete.row.remove();
-							}
-
-							if (pendingDelete.panel && !pendingDelete.panel.querySelector('[data-unused-form-action-row]')) {
-								pendingDelete.panel.remove();
-							}
-
-							deleteConfirm.disabled = false;
-							deleteConfirm.textContent = <?php echo wp_json_encode( __( 'Delete', 'gutenverse-form' ) ); ?>;
-							closeDeleteModal();
-						}).catch(function(error) {
-							if (pendingDelete && pendingDelete.button) {
-								pendingDelete.button.disabled = false;
-							}
-							deleteConfirm.disabled = false;
-							deleteConfirm.textContent = <?php echo wp_json_encode( __( 'Delete', 'gutenverse-form' ) ); ?>;
-							if (deleteError) {
-								deleteError.textContent = error && error.message ? error.message : <?php echo wp_json_encode( __( 'Could not delete this form action. Please try again.', 'gutenverse-form' ) ); ?>;
-								deleteError.classList.add('is-visible');
-							}
-						});
-					});
-				}
-
-				dashboard.querySelectorAll('[data-trend-range]').forEach(function(button) {
-					button.addEventListener('click', function() {
-						var range = button.getAttribute('data-trend-range');
-
-						dashboard.querySelectorAll('[data-trend-range]').forEach(function(item) {
-							item.classList.toggle('active', item === button);
-						});
-
-						dashboard.querySelectorAll('[data-trend-range-panel]').forEach(function(panel) {
-							panel.classList.toggle('active', panel.getAttribute('data-trend-range-panel') === range);
-						});
-
-						dashboard.querySelectorAll('[data-trend-range-copy]').forEach(function(copy) {
-							copy.classList.toggle('active', copy.getAttribute('data-trend-range-copy') === range);
-						});
-					});
-				});
-			});
-		</script>
 		<?php
 	}
 
@@ -753,7 +199,7 @@ class Form {
 	public function enqueue_script() {
 		$screen = get_current_screen();
 
-		if ( self::POST_TYPE === $screen->post_type ) {
+		if ( self::POST_TYPE === $screen->post_type || ( isset( $_GET['page'] ) && self::POST_TYPE === $_GET['page'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$include = ( include GUTENVERSE_FORM_DIR . '/lib/dependencies/form.asset.php' )['dependencies'];
 
 			wp_register_script(
@@ -791,6 +237,12 @@ class Form {
 		$config['hideFormNotice']    = get_option( 'gutenverse_form_action_notice' );
 		$config['hideFormProNotice'] = get_option( 'gutenverse_form_pro_notice' );
 		$config['placeholders']      = Placeholder::get_available_placeholders();
+		$config['formDashboard']     = array(
+			'entriesUrl'                    => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE ),
+			'migrationNoticeHidden'         => (bool) get_option( 'gutenverse_form_action_migration_notice' ),
+			'migrationNoticeDismissNonce'   => wp_create_nonce( 'gutenverse_form_action_migration_notice_close' ),
+			'formActionRestBase'            => rest_url( '/gutenverse-form-client/v1/form-action/' ),
+		);
 
 		return $config;
 	}
@@ -1023,6 +475,63 @@ class Form {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Get dashboard summary data for the React admin dashboard.
+	 *
+	 * @return array
+	 */
+	public static function get_form_dashboard_summary() {
+		$forms             = self::get_all_form_dashboard_data();
+		$forms_by_entries  = wp_list_sort( $forms, 'total_entries', 'DESC' );
+		$forms_by_recent   = wp_list_sort( $forms, 'last_entry_timestamp', 'DESC' );
+		$forms_by_usage    = wp_list_sort( $forms, 'location_count', 'DESC' );
+		$recent_forms      = array_filter(
+			array_slice( $forms_by_recent, 0, 3 ),
+			static function ( $form ) {
+				return ! empty( $form['last_entry_timestamp'] );
+			}
+		);
+
+		return array(
+			'forms'           => $forms,
+			'totalEntries'    => array_sum(
+				array_map(
+					static function ( $form ) {
+						return (int) $form['total_entries'];
+					},
+					$forms
+				)
+			),
+			'totalLocations'  => array_sum(
+				array_map(
+					static function ( $form ) {
+						return (int) $form['location_count'];
+					},
+					$forms
+				)
+			),
+			'entriesLastWeek' => array_sum(
+				array_map(
+					static function ( $form ) {
+						return (int) $form['entries_last_week'];
+					},
+					$forms
+				)
+			),
+			'formsByEntries'  => array_values( $forms_by_entries ),
+			'formsByRecent'   => array_values( $forms_by_recent ),
+			'formsByUsage'    => array_values( $forms_by_usage ),
+			'trendContexts'   => array(
+				7  => self::get_entry_trend_chart_context( 7 ),
+				30 => self::get_entry_trend_chart_context( 30 ),
+			),
+			'needsAttention'  => self::get_forms_needing_attention( $forms, 3 ),
+			'unusedForms'     => self::get_unused_form_actions( $forms, 3 ),
+			'topSources'      => self::get_top_entry_sources( $forms, 3 ),
+			'recentForms'     => array_values( $recent_forms ),
+		);
 	}
 
 	/**

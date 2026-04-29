@@ -237,7 +237,7 @@ class Api {
 	 * @return WP_REST_Response
 	 */
 	public function get_form_dashboard() {
-		return rest_ensure_response( Form::get_all_form_dashboard_data() );
+		return rest_ensure_response( Form::get_form_dashboard_summary() );
 	}
 
 	/**
