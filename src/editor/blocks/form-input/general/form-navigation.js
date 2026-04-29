@@ -53,7 +53,11 @@ const FormBuilderHelper = ({ clientId, currentBlock, formBuilders }) => {
     return (
         <div className="gutenverse-form-builder-notice">
             <div className="gutenverse-form-builder-notice-content">
-                <span className="gutenverse-form-builder-notice-icon" aria-hidden="true">i</span>
+                <span className="gutenverse-form-builder-notice-icon" aria-hidden="true">
+                    <svg width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 3C3.13428 3 0 6.13541 0 10C0 13.8668 3.13428 17 7 17C10.8657 17 14 13.8668 14 10C14 6.13541 10.8657 3 7 3ZM7 6.10484C7.65473 6.10484 8.18548 6.6356 8.18548 7.29032C8.18548 7.94505 7.65473 8.47581 7 8.47581C6.34527 8.47581 5.81452 7.94505 5.81452 7.29032C5.81452 6.6356 6.34527 6.10484 7 6.10484ZM8.58064 13.2742C8.58064 13.4612 8.42899 13.6129 8.24193 13.6129H5.75806C5.57101 13.6129 5.41935 13.4612 5.41935 13.2742V12.5968C5.41935 12.4097 5.57101 12.2581 5.75806 12.2581H6.09677V10.4516H5.75806C5.57101 10.4516 5.41935 10.3 5.41935 10.1129V9.43548C5.41935 9.24843 5.57101 9.09677 5.75806 9.09677H7.56452C7.75157 9.09677 7.90323 9.24843 7.90323 9.43548V12.2581H8.24193C8.42899 12.2581 8.58064 12.4097 8.58064 12.5968V13.2742Z" fill="#FFC908" />
+                    </svg>
+                </span>
                 <div className="gutenverse-form-builder-notice-copy">
                     <div className="gutenverse-form-builder-notice-title">{__('Input is outside a Form Builder', 'gutenverse-form')}</div>
                     <div className="gutenverse-form-builder-notice-description">{__('Create a new form, or insert this block into an existing one.', 'gutenverse-form')}</div>
