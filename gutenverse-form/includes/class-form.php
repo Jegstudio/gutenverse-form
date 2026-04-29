@@ -388,7 +388,7 @@ class Form {
 			.gutenverse-form-admin-dashboard__hero h1{color:#111827;font-size:22px;font-weight:700;line-height:1.15;margin:0}
 			.gutenverse-form-admin-dashboard__hero p{color:#5f6c7b;font-size:13px;line-height:1.4;margin:0;max-width:620px}
 			.dashboard-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:3px}
-			.dashboard-button{align-items:center;background:#fff;border:1px solid #c8d0dc;border-radius:5px;color:#344054;display:inline-flex;font-size:13px;font-weight:600;line-height:1;min-height:32px;padding:8px 12px;text-decoration:none;transition:background .15s ease,border-color .15s ease,color .15s ease}
+			.dashboard-button{align-items:center;background:#fff;border:1px solid #c8d0dc;border-radius:5px;color:#344054;cursor:pointer;display:inline-flex;font-size:13px;font-weight:600;line-height:1;min-height:32px;padding:8px 12px;text-decoration:none;transition:background .15s ease,border-color .15s ease,color .15s ease}
 			.dashboard-button:hover,.dashboard-button:focus{background:#f8fafc;border-color:#98a2b3;color:#111827;text-decoration:none}
 			.dashboard-button--primary{background:#2563eb;border-color:#2563eb;color:#fff}
 			.dashboard-button--primary:hover,.dashboard-button--primary:focus{background:#1d4ed8;border-color:#1d4ed8;color:#fff}

@@ -121,6 +121,13 @@ class Init {
 	public $integration;
 
 	/**
+	 * Hold Daily Summary Instance.
+	 *
+	 * @var Daily_Summary
+	 */
+	public $daily_summary;
+
+	/**
 	 * Singleton page for Init Class
 	 *
 	 * @return Gutenverse
@@ -144,6 +151,7 @@ class Init {
 		add_action( 'plugins_loaded', array( $this, 'framework_loaded' ), 99 );
 		add_filter( 'gutenverse_companion_plugin_list', array( $this, 'plugin_name' ) );
 		register_activation_hook( GUTENVERSE_FORM_FILE, array( $this, 'set_activation_transient' ) );
+		register_deactivation_hook( GUTENVERSE_FORM_FILE, array( 'Gutenverse_Form\Daily_Summary', 'clear_event' ) );
 	}
 
 	/**
@@ -151,6 +159,7 @@ class Init {
 	 */
 	public function set_activation_transient() {
 		set_transient( 'gutenverse_redirect', 1, 30 );
+		Daily_Summary::schedule_event();
 	}
 
 	/**
@@ -361,6 +370,7 @@ class Init {
 		$this->dashboard      = new Dashboard();
 		$this->email_template = new Email_Template();
 		$this->integration    = new Integration();
+		$this->daily_summary  = new Daily_Summary();
 	}
 
 	/**

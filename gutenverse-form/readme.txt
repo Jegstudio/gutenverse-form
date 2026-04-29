@@ -208,6 +208,7 @@ Gutenverse Form is designed to be compatible with other Gutenberg plugins. We ha
 == Changelog ==
 = 2.6.1 =
 ##### New & Improvements
+* add daily form dashboard summary email for site admins
 * add alignment placeholder ini input style
 
 ##### Bug Fixes

@@ -13,5 +13,5 @@ module.exports = [
     dashboard,
     frontendModular,
     emailTemplate,
-    integration,
+    // integration,
 ];
