@@ -49,6 +49,9 @@
 		"formId": {
 			"type": "object"
 		},
+		"openFormActionOnMount": {
+			"type": "boolean"
+		},
 		"hideAfterSubmit": {
 			"type": "boolean"
 		},

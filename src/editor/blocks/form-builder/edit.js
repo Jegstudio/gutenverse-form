@@ -44,7 +44,13 @@ const FormWrapper = ({ blockProps, attributes, clientId, setAttributes }) => {
             <NoticeMessages {...attributes} />
             {!hasFormAction && (
                 <div className="gutenverse-form-builder-inline-action">
-                    <CreateForm attributes={attributes} clientId={clientId} setAttributes={setAttributes} compact />
+                    <CreateForm
+                        attributes={attributes}
+                        clientId={clientId}
+                        setAttributes={setAttributes}
+                        compact
+                        autoOpenCreate={attributes.openFormActionOnMount}
+                    />
                 </div>
             )}
             <InnerBlocks />
@@ -342,7 +348,13 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) =>
                 <>
                     {!hasFormAction && (
                         <div className="gutenverse-form-builder-inline-action">
-                            <CreateForm attributes={attributes} clientId={clientId} setAttributes={setAttributes} compact />
+                            <CreateForm
+                                attributes={attributes}
+                                clientId={clientId}
+                                setAttributes={setAttributes}
+                                compact
+                                autoOpenCreate={attributes.openFormActionOnMount}
+                            />
                         </div>
                     )}
                     <InnerBlocks

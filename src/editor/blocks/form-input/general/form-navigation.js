@@ -28,11 +28,14 @@ const FormBuilderHelper = ({ clientId, currentBlock, formBuilders }) => {
     const createNewForm = () => {
         const formBuilderBlock = createBlock(
             'gutenverse/form-builder',
-            {},
+            {
+                openFormActionOnMount: true,
+            },
             [cloneBlock(currentBlock)]
         );
 
         replaceBlocks(clientId, formBuilderBlock);
+        selectBlock(formBuilderBlock.clientId);
     };
 
     const addToExistingForm = (targetFormBuilderId) => {

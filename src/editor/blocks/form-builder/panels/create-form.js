@@ -1,6 +1,6 @@
 
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { dispatch } from '@wordpress/data';
 import { Modal, Button } from '@wordpress/components';
@@ -19,6 +19,7 @@ export const CreateForm = (props) => {
 
     const { setAttributes, clientId, compact = false, showEntriesLink = !compact } = props;
     const attributes = props.attributes || props.values || {};
+    const autoOpenCreate = !!props.autoOpenCreate;
     const [open, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -28,6 +29,7 @@ export const CreateForm = (props) => {
     const [saving, setSaving] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
     const [error, setError] = useState('');
+    const autoOpenHandled = useRef(false);
     const templatePersistFields = ['user_message_type', 'admin_message_type', 'user_email_template', 'admin_email_template'];
 
     const persistBuilderAssignment = (nextFormId) => {
@@ -108,6 +110,19 @@ export const CreateForm = (props) => {
         setError('');
         setOpen(true);
     };
+
+    useEffect(() => {
+        if (!autoOpenCreate || autoOpenHandled.current || attributes.formId?.value) {
+            return;
+        }
+
+        autoOpenHandled.current = true;
+        openCreateModal();
+
+        if (setAttributes) {
+            setAttributes({ openFormActionOnMount: false });
+        }
+    }, [autoOpenCreate, attributes.formId?.value]);
 
     const openEditModal = () => {
         const formId = attributes.formId?.value;
