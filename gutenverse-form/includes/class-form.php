@@ -117,7 +117,11 @@ class Form {
 		$top_sources       = self::get_top_entry_sources( $forms, 3 );
 		$entries_url       = admin_url( 'edit.php?post_type=' . Entries::POST_TYPE );
 		?>
-		<div class="wrap gutenverse-form-admin-dashboard">
+		<div
+			class="wrap gutenverse-form-admin-dashboard"
+			data-form-action-rest-base="<?php echo esc_url( rest_url( '/gutenverse-form-client/v1/form-action/' ) ); ?>"
+			data-form-action-rest-nonce="<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>"
+		>
 			<?php self::render_form_action_migration_notice(); ?>
 			<div class="gutenverse-form-admin-dashboard__hero">
 				<div class="gutenverse-form-admin-dashboard__intro">
@@ -282,12 +286,12 @@ class Form {
 						</div>
 
 						<?php if ( ! empty( $unused_forms ) ) : ?>
-							<div class="dashboard-panel">
+							<div class="dashboard-panel" data-unused-form-actions-panel>
 								<div class="dashboard-panel__title">
 									<h3><?php esc_html_e( 'Unused Form Actions', 'gutenverse-form' ); ?></h3>
 								</div>
 								<?php foreach ( $unused_forms as $form ) : ?>
-									<div class="dashboard-row">
+									<div class="dashboard-row" data-unused-form-action-row>
 										<div>
 											<strong><?php echo esc_html( $form['title'] ); ?></strong>
 											<span>
@@ -302,6 +306,22 @@ class Form {
 										</div>
 										<div class="dashboard-row__actions">
 											<span class="status-badge"><?php esc_html_e( 'No live post', 'gutenverse-form' ); ?></span>
+											<button
+												type="button"
+												class="dashboard-row-delete"
+												data-delete-unused-form-action="<?php echo esc_attr( $form['id'] ); ?>"
+												data-form-action-title="<?php echo esc_attr( $form['title'] ); ?>"
+												aria-label="<?php esc_attr_e( 'Delete unused form action', 'gutenverse-form' ); ?>"
+												title="<?php esc_attr_e( 'Delete unused form action', 'gutenverse-form' ); ?>"
+											>
+												<svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+													<polyline points="3 6 5 6 21 6"></polyline>
+													<path d="M19 6l-1 14H6L5 6"></path>
+													<path d="M10 11v6"></path>
+													<path d="M14 11v6"></path>
+													<path d="M9 6V4h6v2"></path>
+												</svg>
+											</button>
 										</div>
 									</div>
 								<?php endforeach; ?>
@@ -371,6 +391,18 @@ class Form {
 					</div>
 				</div>
 			<?php endif; ?>
+			<div class="dashboard-delete-modal" data-unused-form-delete-modal aria-hidden="true">
+				<div class="dashboard-delete-modal__backdrop" data-unused-form-delete-cancel></div>
+				<div class="dashboard-delete-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="unused-form-delete-title">
+					<h3 id="unused-form-delete-title"><?php esc_html_e( 'Delete unused form action?', 'gutenverse-form' ); ?></h3>
+					<p data-unused-form-delete-message><?php esc_html_e( 'This form action has no live post and cannot be reassigned. Deleting it cannot be undone.', 'gutenverse-form' ); ?></p>
+					<p class="dashboard-delete-modal__error" data-unused-form-delete-error></p>
+					<div class="dashboard-delete-modal__actions">
+						<button type="button" class="dashboard-button" data-unused-form-delete-cancel><?php esc_html_e( 'Cancel', 'gutenverse-form' ); ?></button>
+						<button type="button" class="dashboard-delete-modal__confirm" data-unused-form-delete-confirm><?php esc_html_e( 'Delete', 'gutenverse-form' ); ?></button>
+					</div>
+				</div>
+			</div>
 		</div>
 		<style>
 			.gutenverse-form-admin-dashboard{max-width:1180px;margin:18px 20px 40px 0;color:#1f2937}
@@ -434,9 +466,25 @@ class Form {
 			.dashboard-row__actions{align-items:center;color:#667085;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;min-width:96px}
 			.dashboard-row__actions a{background:#f8fafc;border:1px solid #d7deea;border-radius:4px;color:#1d4ed8;font-size:12px;font-weight:700;line-height:1;padding:7px 9px;text-decoration:none}
 			.dashboard-row__actions a:hover,.dashboard-row__actions a:focus{background:#eff6ff;border-color:#bfdbfe;color:#1e40af;text-decoration:none}
-			.status-badge{background:#f8fafc;border:1px solid #d7deea;border-radius:999px;color:#475467;display:inline-flex;font-size:12px;font-weight:600;line-height:1;padding:7px 10px;white-space:nowrap}
+			.dashboard-row-delete{align-items:center;background:#dc2626;border:1px solid #dc2626;border-radius:4px;color:#fff;cursor:pointer;display:inline-flex;height:32px;justify-content:center;line-height:1;padding:0;transition:background .15s ease,border-color .15s ease,color .15s ease;width:32px}
+			.dashboard-row-delete svg{display:block;height:16px;width:16px}
+			.dashboard-row-delete:hover,.dashboard-row-delete:focus{background:#b91c1c;border-color:#b91c1c;color:#fff;outline:none}
+			.dashboard-row-delete[disabled]{cursor:default;opacity:.65}
+			.status-badge{color:#667085;display:inline-flex;font-size:12px;font-weight:700;line-height:1;white-space:nowrap}
 			.empty-note{align-items:center;display:flex;margin:0;min-height:64px;padding:13px 20px}
 			.gutenverse-form-admin-dashboard__empty{background:#fff;border:1px solid #d9dee8;border-radius:8px;color:#50575e;font-size:14px;line-height:1.6;padding:18px 20px}
+			.dashboard-delete-modal{align-items:center;display:none;inset:0;justify-content:center;position:fixed;z-index:100000}
+			.dashboard-delete-modal.is-open{display:flex}
+			.dashboard-delete-modal__backdrop{background:rgba(15,23,42,.42);inset:0;position:absolute}
+			.dashboard-delete-modal__dialog{background:#fff;border:1px solid #d9dee8;border-radius:8px;box-shadow:0 18px 48px rgba(15,23,42,.22);max-width:420px;padding:22px;position:relative;width:calc(100% - 40px)}
+			.dashboard-delete-modal__dialog h3{color:#111827;font-size:18px;font-weight:800;line-height:1.25;margin:0 0 10px;text-transform:none;letter-spacing:0}
+			.dashboard-delete-modal__dialog p{color:#667085;font-size:13px;line-height:1.55;margin:0 0 18px}
+			.dashboard-delete-modal__error{color:#dc2626;display:none;font-weight:700}
+			.dashboard-delete-modal__error.is-visible{display:block}
+			.dashboard-delete-modal__actions{display:flex;gap:10px;justify-content:flex-end}
+			.dashboard-delete-modal__confirm{background:#dc2626;border:1px solid #dc2626;border-radius:5px;color:#fff;cursor:pointer;font-size:13px;font-weight:700;line-height:1;min-height:32px;padding:8px 12px}
+			.dashboard-delete-modal__confirm:hover,.dashboard-delete-modal__confirm:focus{background:#b91c1c;border-color:#b91c1c;color:#fff;outline:none}
+			.dashboard-delete-modal__confirm[disabled]{cursor:default;opacity:.65}
 			@media (max-width:1280px){.gutenverse-form-admin-dashboard__hero{grid-template-columns:1fr}.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(4,minmax(0,1fr))}}
 			@media (max-width:1100px){.dashboard-grid{grid-template-columns:1fr}.dashboard-masonry{column-count:1}.gutenverse-form-admin-dashboard__summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 			@media (max-width:782px){.gutenverse-form-admin-dashboard{margin-right:10px}.gutenverse-form-admin-dashboard__hero{padding:16px}.gutenverse-form-admin-dashboard__summary,.dashboard-grid{grid-template-columns:1fr}.dashboard-masonry{column-count:1}.dashboard-actions{display:grid}.dashboard-button{justify-content:center}.dashboard-block__header{display:grid;gap:12px}.dashboard-range-toggle{width:max-content}.trend-chart{padding:14px}.trend-chart__line{min-height:230px;padding:12px 10px}.trend-chart__legend{justify-content:flex-start}.trend-chart__svg{height:190px}.trend-chart__x-label,.trend-chart__y-label{font-size:10px}.dashboard-row{grid-template-columns:1fr}.dashboard-row strong{white-space:normal}.dashboard-row__actions{justify-content:flex-start}}
@@ -464,6 +512,109 @@ class Form {
 							method: 'POST',
 							credentials: 'same-origin',
 							body: data
+						});
+					});
+				}
+
+				var deleteModal = dashboard.querySelector('[data-unused-form-delete-modal]');
+				var deleteMessage = dashboard.querySelector('[data-unused-form-delete-message]');
+				var deleteError = dashboard.querySelector('[data-unused-form-delete-error]');
+				var deleteConfirm = dashboard.querySelector('[data-unused-form-delete-confirm]');
+				var pendingDelete = null;
+
+				function closeDeleteModal() {
+					if (!deleteModal || (deleteConfirm && deleteConfirm.disabled)) {
+						return;
+					}
+
+					pendingDelete = null;
+					deleteModal.classList.remove('is-open');
+					deleteModal.setAttribute('aria-hidden', 'true');
+					if (deleteError) {
+						deleteError.classList.remove('is-visible');
+						deleteError.textContent = '';
+					}
+				}
+
+				dashboard.querySelectorAll('[data-unused-form-delete-cancel]').forEach(function(button) {
+					button.addEventListener('click', closeDeleteModal);
+				});
+
+				dashboard.querySelectorAll('[data-delete-unused-form-action]').forEach(function(button) {
+					button.addEventListener('click', function() {
+						var actionTitle = button.getAttribute('data-form-action-title') || '';
+
+						if (!deleteModal || !deleteConfirm) {
+							return;
+						}
+
+						pendingDelete = {
+							button: button,
+							actionId: button.getAttribute('data-delete-unused-form-action'),
+							restBase: dashboard.getAttribute('data-form-action-rest-base'),
+							restNonce: dashboard.getAttribute('data-form-action-rest-nonce'),
+							row: button.closest('[data-unused-form-action-row]'),
+							panel: button.closest('[data-unused-form-actions-panel]')
+						};
+
+						if (deleteMessage) {
+							deleteMessage.textContent = actionTitle
+								? <?php echo wp_json_encode( __( 'Delete unused form action "%s"? This cannot be undone.', 'gutenverse-form' ) ); ?>.replace('%s', actionTitle)
+								: <?php echo wp_json_encode( __( 'This form action has no live post and cannot be reassigned. Deleting it cannot be undone.', 'gutenverse-form' ) ); ?>;
+						}
+
+						deleteModal.classList.add('is-open');
+						deleteModal.setAttribute('aria-hidden', 'false');
+						deleteConfirm.focus();
+					});
+				});
+
+				if (deleteConfirm) {
+					deleteConfirm.addEventListener('click', function() {
+						if (!pendingDelete || !pendingDelete.actionId || !pendingDelete.restBase || !pendingDelete.restNonce) {
+							return;
+						}
+
+						pendingDelete.button.disabled = true;
+						deleteConfirm.disabled = true;
+						deleteConfirm.textContent = <?php echo wp_json_encode( __( 'Deleting...', 'gutenverse-form' ) ); ?>;
+						if (deleteError) {
+							deleteError.classList.remove('is-visible');
+							deleteError.textContent = '';
+						}
+
+						window.fetch(pendingDelete.restBase + pendingDelete.actionId, {
+							method: 'DELETE',
+							credentials: 'same-origin',
+							headers: {
+								'X-WP-Nonce': pendingDelete.restNonce
+							}
+						}).then(function(response) {
+							if (!response.ok) {
+								throw new Error(<?php echo wp_json_encode( __( 'Could not delete this form action. Please try again.', 'gutenverse-form' ) ); ?>);
+							}
+
+							if (pendingDelete.row) {
+								pendingDelete.row.remove();
+							}
+
+							if (pendingDelete.panel && !pendingDelete.panel.querySelector('[data-unused-form-action-row]')) {
+								pendingDelete.panel.remove();
+							}
+
+							deleteConfirm.disabled = false;
+							deleteConfirm.textContent = <?php echo wp_json_encode( __( 'Delete', 'gutenverse-form' ) ); ?>;
+							closeDeleteModal();
+						}).catch(function(error) {
+							if (pendingDelete && pendingDelete.button) {
+								pendingDelete.button.disabled = false;
+							}
+							deleteConfirm.disabled = false;
+							deleteConfirm.textContent = <?php echo wp_json_encode( __( 'Delete', 'gutenverse-form' ) ); ?>;
+							if (deleteError) {
+								deleteError.textContent = error && error.message ? error.message : <?php echo wp_json_encode( __( 'Could not delete this form action. Please try again.', 'gutenverse-form' ) ); ?>;
+								deleteError.classList.add('is-visible');
+							}
 						});
 					});
 				}
