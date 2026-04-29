@@ -57,6 +57,7 @@ const InputWrapper = compose(
 
     const animationClass = useAnimationEditor(attributes);
     const displayClass = useDisplayEditor(attributes);
+    const isOutsideFormBuilder = !recursiveParentBlock(clientId);
 
     const blockProps = useBlockProps({
         className: classnames(
@@ -70,7 +71,8 @@ const InputWrapper = compose(
             displayClass,
             {
                 'hide-label': !showLabel,
-                'hide-helper': !showHelper
+                'hide-helper': !showHelper,
+                'guten-form-input-outside-builder': isOutsideFormBuilder
             }
         ),
         ref: elementRef

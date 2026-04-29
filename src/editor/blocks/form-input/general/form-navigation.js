@@ -53,8 +53,10 @@ const FormBuilderHelper = ({ clientId, currentBlock, formBuilders }) => {
     return (
         <div className="gutenverse-form-builder-notice">
             <div className="gutenverse-form-builder-notice-content">
+                <span className="gutenverse-form-builder-notice-icon" aria-hidden="true">i</span>
                 <div className="gutenverse-form-builder-notice-copy">
-                    <div className="gutenverse-form-builder-notice-title">{__('Input is outside a form container', 'gutenverse-form')}</div>
+                    <div className="gutenverse-form-builder-notice-title">{__('Input is outside a Form Builder', 'gutenverse-form')}</div>
+                    <div className="gutenverse-form-builder-notice-description">{__('Create a new form, or insert this block into an existing one.', 'gutenverse-form')}</div>
                 </div>
             </div>
             <div className="gutenverse-form-builder-notice-actions">
@@ -71,6 +73,9 @@ const FormBuilderHelper = ({ clientId, currentBlock, formBuilders }) => {
                     label={__('Connect to Form', 'gutenverse-form')}
                     text={__('Connect to Form', 'gutenverse-form')}
                     controls={formBuilderOptions}
+                    popoverProps={{
+                        className: 'gutenverse-form-builder-notice-popover',
+                    }}
                     toggleProps={{
                         className: 'gutenverse-form-builder-notice-connect',
                         disabled: formBuilderOptions.length === 0,
