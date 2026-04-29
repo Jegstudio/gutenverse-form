@@ -963,7 +963,7 @@
         color: #2271b1;
         display: flex;
         font-size: 10px;
-        font-weight: 700;
+        font-weight: 600;
         gap: 6px;
         letter-spacing: 0.08em;
         margin-bottom: 8px;
@@ -1106,7 +1106,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            padding: 15px;
+            padding: 16px;
         }
 
         .gutenverse-form-action-summary {
@@ -1120,7 +1120,7 @@
         .gutenverse-form-action-card-header {
             color: #071521;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 600;
             gap: 8px;
             letter-spacing: 0;
             line-height: 1.2;
@@ -1165,7 +1165,7 @@
             border-radius: 6px;
             box-shadow: none;
             display: block;
-            padding: 26px 28px 24px;
+            padding: 16px;
             text-align: left;
         }
 
@@ -1186,17 +1186,15 @@
 
         .gutenverse-form-action-empty-icon {
             align-items: center;
-            background: #ffc107;
             border-radius: 50%;
             color: #fff;
             display: inline-flex;
             flex: 0 0 16px;
-            font-size: 13px;
+            font-size: 16px;
             font-weight: 700;
             height: 16px;
             justify-content: center;
             line-height: 1;
-            margin-top: 3px;
             width: 16px;
         }
 
@@ -1220,7 +1218,7 @@
         .gutenverse-form-action-empty .empty-title {
             color: #071521;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 600;
             line-height: 1.2;
             margin-bottom: 0;
             max-width: 400px;
@@ -1250,7 +1248,7 @@
             box-sizing: border-box;
             color: #fff;
             font-size: 12px;
-            font-weight: 400;
+            font-weight: 500;
             line-height: 1.2;
             min-width: 0;
             padding: 11px 6px;
@@ -1293,14 +1291,14 @@
             border-radius: 4px;
             color: #fff;
             font-size: 12px;
-            font-weight: 400;
+            font-weight: 500;
             line-height: 1.2;
             margin-top: 0;
             min-width: 0;
             margin-left: 30px;
             padding: 10px;
             white-space: normal;
-            width: calc(100% - 36px);
+            width: calc(100% - 30px);
 
             &:hover,
             &:focus,
