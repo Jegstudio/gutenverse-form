@@ -65,9 +65,28 @@ const MigrationNotice = () => {
 };
 
 const TrendChart = ({ trend }) => {
+    const [hoveredPoint, setHoveredPoint] = useState(null);
+
     if (!trend) {
         return null;
     }
+
+    const tooltip = hoveredPoint ? (() => {
+        const label = hoveredPoint.tooltip || sprintf(__('%1$s: %2$s entries', 'gutenverse-form'), hoveredPoint.label, hoveredPoint.count || 0);
+        const width = Math.max(112, (label.length * 6.6) + 22);
+        const x = Math.min(Math.max(hoveredPoint.x - (width / 2), 58), 680 - width);
+        const y = hoveredPoint.y < 68 ? hoveredPoint.y + 16 : hoveredPoint.y - 42;
+
+        return {
+            label,
+            width,
+            x,
+            y,
+        };
+    })() : null;
+
+    const showTooltip = (point) => setHoveredPoint(point);
+    const hideTooltip = () => setHoveredPoint(null);
 
     return (
         <div className="trend-chart__line" role="img" aria-label={__('Daily entries chart', 'gutenverse-form')}>
@@ -89,12 +108,37 @@ const TrendChart = ({ trend }) => {
                 <polyline className="trend-chart__stroke" points={trend.line_points} />
                 {(trend.points || []).map((point) => (
                     <g key={`${point.x}-${point.y}-${point.label}`}>
-                        <circle className="trend-chart__point" cx={point.x} cy={point.y} r="4">
+                        <circle
+                            className="trend-chart__point-hit-area"
+                            cx={point.x}
+                            cy={point.y}
+                            r="12"
+                            onMouseEnter={() => showTooltip(point)}
+                            onMouseLeave={hideTooltip}
+                        >
                             <title>{point.tooltip}</title>
                         </circle>
-                        {point.show_label && <text className="trend-chart__x-label" x={point.x} y="202">{point.label}</text>}
+                        <circle className="trend-chart__point" cx={point.x} cy={point.y} r="4" />
+                        {point.show_label && (
+                            <g
+                                className="trend-chart__x-label-group"
+                                onMouseEnter={() => showTooltip(point)}
+                                onMouseLeave={hideTooltip}
+                            >
+                                <rect className="trend-chart__x-label-hit-area" x={point.x - 34} y="184" width="68" height="24">
+                                    <title>{point.tooltip}</title>
+                                </rect>
+                                <text className="trend-chart__x-label" x={point.x} y="202">{point.label}</text>
+                            </g>
+                        )}
                     </g>
                 ))}
+                {tooltip && (
+                    <g className="trend-chart__tooltip" transform={`translate(${Number(tooltip.x).toFixed(2)} ${Number(tooltip.y).toFixed(2)})`} pointerEvents="none">
+                        <rect className="trend-chart__tooltip-bg" width={Number(tooltip.width).toFixed(2)} height="28" rx="4" />
+                        <text className="trend-chart__tooltip-text" x={Number(tooltip.width / 2).toFixed(2)} y="18">{tooltip.label}</text>
+                    </g>
+                )}
             </svg>
         </div>
     );

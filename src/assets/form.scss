@@ -2034,6 +2034,31 @@
         stroke: #2563eb;
     }
 
+    .trend-chart__point-hit-area,
+    .trend-chart__x-label-hit-area {
+        cursor: default;
+        fill: transparent;
+        stroke: transparent;
+    }
+
+    .trend-chart__x-label-group:hover .trend-chart__x-label,
+    .trend-chart__x-label-group:focus .trend-chart__x-label {
+        fill: #1d4ed8;
+        font-weight: 700;
+    }
+
+    .trend-chart__tooltip-bg {
+        fill: #111827;
+        filter: drop-shadow(0 6px 12px rgba(15, 23, 42, 0.18));
+    }
+
+    .trend-chart__tooltip-text {
+        fill: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        text-anchor: middle;
+    }
+
     .trend-chart__x-label,
     .trend-chart__y-label {
         fill: #344054;
