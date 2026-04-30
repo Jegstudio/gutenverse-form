@@ -238,10 +238,10 @@ class Form {
 		$config['hideFormProNotice'] = get_option( 'gutenverse_form_pro_notice' );
 		$config['placeholders']      = Placeholder::get_available_placeholders();
 		$config['formDashboard']     = array(
-			'entriesUrl'                    => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE ),
-			'migrationNoticeHidden'         => (bool) get_option( 'gutenverse_form_action_migration_notice' ),
-			'migrationNoticeDismissNonce'   => wp_create_nonce( 'gutenverse_form_action_migration_notice_close' ),
-			'formActionRestBase'            => rest_url( '/gutenverse-form-client/v1/form-action/' ),
+			'entriesUrl'                  => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE ),
+			'migrationNoticeHidden'       => (bool) get_option( 'gutenverse_form_action_migration_notice' ),
+			'migrationNoticeDismissNonce' => wp_create_nonce( 'gutenverse_form_action_migration_notice_close' ),
+			'formActionRestBase'          => rest_url( '/gutenverse-form-client/v1/form-action/' ),
 		);
 
 		return $config;
@@ -483,11 +483,11 @@ class Form {
 	 * @return array
 	 */
 	public static function get_form_dashboard_summary() {
-		$forms             = self::get_all_form_dashboard_data();
-		$forms_by_entries  = wp_list_sort( $forms, 'total_entries', 'DESC' );
-		$forms_by_recent   = wp_list_sort( $forms, 'last_entry_timestamp', 'DESC' );
-		$forms_by_usage    = wp_list_sort( $forms, 'location_count', 'DESC' );
-		$recent_forms      = array_filter(
+		$forms            = self::get_all_form_dashboard_data();
+		$forms_by_entries = wp_list_sort( $forms, 'total_entries', 'DESC' );
+		$forms_by_recent  = wp_list_sort( $forms, 'last_entry_timestamp', 'DESC' );
+		$forms_by_usage   = wp_list_sort( $forms, 'location_count', 'DESC' );
+		$recent_forms     = array_filter(
 			array_slice( $forms_by_recent, 0, 3 ),
 			static function ( $form ) {
 				return ! empty( $form['last_entry_timestamp'] );

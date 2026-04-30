@@ -1815,7 +1815,7 @@
 
     .dashboard-actions,
     .dashboard-row__actions,
-    .dashboard-delete-modal__actions {
+    .dashboard-delete-modal__footer {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
@@ -2116,13 +2116,100 @@
         white-space: nowrap;
     }
 
-    .empty-note,
+    .empty-note {
+        background: #fff;
+        color: #50575e;
+        font-size: 14px;
+        line-height: 1.6;
+        padding: 18px 20px;
+    }
+
     .gutenverse-form-admin-dashboard__empty {
         background: #fff;
         color: #50575e;
         font-size: 14px;
         line-height: 1.6;
         padding: 18px 20px;
+    }
+
+    .dashboard-empty-state {
+        align-items: center;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+        border: 1px solid #d9dee8;
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+        display: grid;
+        gap: 18px;
+        grid-template-columns: auto minmax(0, 1fr);
+        min-height: 150px;
+        overflow: hidden;
+        padding: 28px 30px;
+        position: relative;
+
+        &::after {
+            background: #2563eb;
+            bottom: 0;
+            content: "";
+            display: block;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 4px;
+        }
+
+        h2 {
+            color: #111827;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 6px;
+        }
+
+        p {
+            max-width: 560px;
+        }
+
+        .dashboard-actions {
+            margin-top: 16px;
+        }
+    }
+
+    .dashboard-empty-state__icon {
+        align-items: center;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        display: inline-flex;
+        height: 54px;
+        justify-content: center;
+        position: relative;
+        width: 54px;
+
+        &::before,
+        &::after {
+            content: "";
+            display: block;
+            position: absolute;
+        }
+
+        &::before {
+            background: #2563eb;
+            border-radius: 2px;
+            box-shadow: 11px 8px 0 #93c5fd, 22px -2px 0 #2563eb;
+            height: 24px;
+            left: 11px;
+            top: 20px;
+            width: 6px;
+        }
+
+        &::after {
+            border: 2px solid #2563eb;
+            border-radius: 50%;
+            height: 26px;
+            left: 13px;
+            top: 13px;
+            width: 26px;
+        }
     }
 
     .dashboard-delete-modal {
@@ -2144,27 +2231,59 @@
         background: #fff;
         border: 1px solid #d9dee8;
         border-radius: 8px;
-        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.22);
-        max-width: 420px;
-        padding: 22px;
+        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
+        max-width: 440px;
+        overflow: hidden;
+        padding: 0;
         position: relative;
         width: calc(100% - 40px);
 
         h3 {
             color: #111827;
-            font-size: 18px;
-            font-weight: 800;
-            margin: 0 0 10px;
+            font-size: 16px;
+            font-weight: 650;
+            line-height: 1.35;
+            margin: 0 0 8px;
         }
+
+        p {
+            color: #667085;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+        }
+    }
+
+    .dashboard-delete-modal__content {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: 36px minmax(0, 1fr);
+        padding: 22px 24px 18px;
+    }
+
+    .dashboard-delete-modal__icon {
+        align-items: center;
+        background: #fee4e2;
+        border-radius: 50%;
+        color: #dc2626;
+        display: inline-flex;
+        height: 36px;
+        justify-content: center;
+        width: 36px;
     }
 
     .dashboard-delete-modal__error {
         color: #dc2626 !important;
+        font-size: 12px !important;
         font-weight: 700;
+        margin-top: 10px !important;
     }
 
-    .dashboard-delete-modal__actions {
+    .dashboard-delete-modal__footer {
+        background: #f8fafc;
+        border-top: 1px solid #eef2f7;
         justify-content: flex-end;
+        padding: 14px 24px;
     }
 
     .dashboard-delete-modal__confirm {
@@ -2193,6 +2312,12 @@
 
         .gutenverse-form-admin-dashboard__summary {
             grid-template-columns: 1fr;
+        }
+
+        .dashboard-empty-state {
+            align-items: flex-start;
+            grid-template-columns: 1fr;
+            padding: 24px 22px;
         }
 
         .dashboard-row {

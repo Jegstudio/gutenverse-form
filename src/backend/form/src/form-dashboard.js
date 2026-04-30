@@ -109,10 +109,17 @@ const DeleteModal = ({ form, deleting, error, onCancel, onConfirm }) => {
         <div className="dashboard-delete-modal is-open" aria-hidden="false">
             <div className="dashboard-delete-modal__backdrop" onClick={deleting ? undefined : onCancel} />
             <div className="dashboard-delete-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="unused-form-delete-title">
-                <h3 id="unused-form-delete-title">{__('Delete unused form action?', 'gutenverse-form')}</h3>
-                <p>{sprintf(__('Delete unused form action "%s"? This cannot be undone.', 'gutenverse-form'), form.title)}</p>
-                {error && <p className="dashboard-delete-modal__error is-visible">{error}</p>}
-                <div className="dashboard-delete-modal__actions">
+                <div className="dashboard-delete-modal__content">
+                    <span className="dashboard-delete-modal__icon" aria-hidden="true">
+                        <IconTrashSVG size={16} />
+                    </span>
+                    <div>
+                        <h3 id="unused-form-delete-title">{__('Delete unused form action?', 'gutenverse-form')}</h3>
+                        <p>{sprintf(__('This will permanently delete "%s". This action cannot be undone.', 'gutenverse-form'), form.title)}</p>
+                        {error && <p className="dashboard-delete-modal__error is-visible">{error}</p>}
+                    </div>
+                </div>
+                <div className="dashboard-delete-modal__footer">
                     <button type="button" className="dashboard-button" onClick={onCancel} disabled={deleting}>{__('Cancel', 'gutenverse-form')}</button>
                     <button type="button" className="dashboard-delete-modal__confirm" onClick={onConfirm} disabled={deleting}>
                         {deleting ? __('Deleting...', 'gutenverse-form') : __('Delete', 'gutenverse-form')}
@@ -211,7 +218,16 @@ const FormDashboard = () => {
             </div>
 
             {!forms.length ? (
-                <div className="gutenverse-form-admin-dashboard__empty">{__('No forms found yet.', 'gutenverse-form')}</div>
+                <div className="gutenverse-form-admin-dashboard__empty dashboard-empty-state">
+                    <span className="dashboard-empty-state__icon" aria-hidden="true" />
+                    <div className="dashboard-empty-state__content">
+                        <h2>{__('No forms found yet', 'gutenverse-form')}</h2>
+                        <p>{__('Create a form with the Form Builder block, then submissions and form locations will appear in this dashboard.', 'gutenverse-form')}</p>
+                        <div className="dashboard-actions">
+                            <a className="dashboard-button dashboard-button--primary" href={config.entriesUrl}>{__('View Entries', 'gutenverse-form')}</a>
+                        </div>
+                    </div>
+                </div>
             ) : (
                 <div className="gutenverse-form-admin-dashboard__list dashboard-grid">
                     <div className="dashboard-panel dashboard-panel--wide dashboard-panel--chart">
