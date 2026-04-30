@@ -118,8 +118,16 @@ class Entries {
 	 */
 	public function filter_form_option( $post_type ) {
 		if ( self::POST_TYPE === $post_type ) {
-			$selected = isset( $_GET['form_id'] ) ? (int) $_GET['form_id'] : '';
-			$forms    = self::get_form_list();
+			$selected       = isset( $_GET['form_id'] ) ? (int) $_GET['form_id'] : '';
+			$date_filter    = isset( $_GET['m'] ) ? sanitize_text_field( wp_unslash( $_GET['m'] ) ) : '';
+			$forms          = self::get_form_list();
+			$export_base    = rest_url( '/gutenverse-form-client/v1/form-action/export/' );
+			$export_nonce   = wp_create_nonce( 'wp_rest' );
+			$export_label   = $selected ? __( 'Export to CSV', 'gutenverse-form' ) : __( 'Export to CSV? Select a Form Action', 'gutenverse-form' );
+			$export_args    = array( '_wpnonce' => $export_nonce );
+			$export_args    = $date_filter ? array_merge( $export_args, array( 'm' => $date_filter ) ) : $export_args;
+			$export_url     = $selected ? add_query_arg( $export_args, $export_base . $selected ) : '';
+			$export_classes = $selected ? 'button button-secondary gutenverse-export-entries-link' : 'button button-secondary gutenverse-export-entries-link disabled';
 			?>
 			<select name='form_id'>
 				<option value=''><?php esc_html_e( 'All Form', 'gutenverse-form' ); ?></option>
@@ -142,6 +150,30 @@ class Entries {
 			}
 			?>
 			</select>
+			<a
+				class="<?php echo esc_attr( $export_classes ); ?>"
+				href="<?php echo esc_url( $export_url ); ?>"
+				id="gutenverse-export-entries-link"
+				<?php echo $selected ? '' : 'aria-disabled="true"'; ?>
+			>
+				<?php echo esc_html( $export_label ); ?>
+			</a>
+			<script>
+				document.addEventListener('DOMContentLoaded', function() {
+					var formSelect = document.querySelector('select[name="form_id"]');
+					var exportLink = document.getElementById('gutenverse-export-entries-link');
+
+					if (!formSelect || !exportLink) {
+						return;
+					}
+
+					exportLink.addEventListener('click', function(event) {
+						if (exportLink.classList.contains('disabled')) {
+							event.preventDefault();
+						}
+					});
+				});
+			</script>
 			<?php
 		}
 	}
@@ -731,12 +763,14 @@ class Entries {
 	public static function get_total_entries( $form_id ) {
 		$posts = get_posts(
 			array(
-				'post_type'  => self::POST_TYPE,
-				'meta_query' => array( //phpcs:ignore
+				'post_type'      => self::POST_TYPE,
+				'posts_per_page' => -1,
+				'post_status'    => array( 'publish' ),
+				'meta_query'     => array( //phpcs:ignore
 					array(
 						'key'     => 'form-id',
 						'value'   => $form_id,
-						'compare' => '===',
+						'compare' => '=',
 					),
 				),
 			)

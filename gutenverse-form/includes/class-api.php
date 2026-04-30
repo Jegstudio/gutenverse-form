@@ -266,18 +266,28 @@ class Api {
 	public function export_form_action( $request ) {
 		$form_id    = $request->get_param( 'id' );
 		$file_title = get_the_title( $form_id ) . '-' . time();
-		$posts      = get_posts(
-			array(
-				'post_type'  => Entries::POST_TYPE,
-				'meta_query' => array( //phpcs:ignore
-					array(
-						'key'     => 'form-id',
-						'value'   => $form_id,
-						'compare' => '===',
-					),
+		$m_filter   = sanitize_text_field( (string) $request->get_param( 'm' ) );
+		$query_args = array(
+			'post_type'      => Entries::POST_TYPE,
+			'posts_per_page' => -1,
+			'post_status'    => array( 'publish' ),
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+			'meta_query'     => array( //phpcs:ignore
+				array(
+					'key'     => 'form-id',
+					'value'   => $form_id,
+					'compare' => '=',
 				),
-			)
+			),
 		);
+
+		if ( preg_match( '/^\d{6}$/', $m_filter ) ) {
+			$query_args['year']     = (int) substr( $m_filter, 0, 4 );
+			$query_args['monthnum'] = (int) substr( $m_filter, 4, 2 );
+		}
+
+		$posts = get_posts( $query_args );
 
 		header( 'Content-type: text/csv' );
 		header( 'Content-Disposition: attachment; filename=' . $file_title . '.csv' );
