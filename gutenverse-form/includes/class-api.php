@@ -207,12 +207,16 @@ class Api {
 		$file_title = get_the_title( $form_id ) . '-' . time();
 		$posts      = get_posts(
 			array(
-				'post_type'  => Entries::POST_TYPE,
-				'meta_query' => array( //phpcs:ignore
+				'post_type'      => Entries::POST_TYPE,
+				'posts_per_page' => -1,
+				'post_status'    => array( 'publish' ),
+				'orderby'        => 'date',
+				'order'          => 'DESC',
+				'meta_query'     => array( //phpcs:ignore
 					array(
 						'key'     => 'form-id',
 						'value'   => $form_id,
-						'compare' => '===',
+						'compare' => '=',
 					),
 				),
 			)

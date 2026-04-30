@@ -539,12 +539,14 @@ class Entries {
 	public static function get_total_entries( $form_id ) {
 		$posts = get_posts(
 			array(
-				'post_type'  => self::POST_TYPE,
-				'meta_query' => array( //phpcs:ignore
+				'post_type'      => self::POST_TYPE,
+				'posts_per_page' => -1,
+				'post_status'    => array( 'publish' ),
+				'meta_query'     => array( //phpcs:ignore
 					array(
 						'key'     => 'form-id',
 						'value'   => $form_id,
-						'compare' => '===',
+						'compare' => '=',
 					),
 				),
 			)
