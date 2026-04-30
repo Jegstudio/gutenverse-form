@@ -30,10 +30,41 @@ class Daily_Summary {
 	const OPTION_ENABLED = 'gutenverse_form_daily_summary_enabled';
 
 	/**
+	 * Gutenverse settings option name.
+	 *
+	 * @var string
+	 */
+	const SETTINGS_OPTION = 'gutenverse-settings';
+
+	/**
+	 * Daily summary setting group.
+	 *
+	 * @var string
+	 */
+	const SETTINGS_GROUP = 'form_settings';
+
+	/**
+	 * Daily summary setting section.
+	 *
+	 * @var string
+	 */
+	const SETTINGS_SECTION = 'dashboard';
+
+	/**
+	 * Daily summary setting key.
+	 *
+	 * @var string
+	 */
+	const SETTINGS_KEY = 'daily_admin_summary';
+
+	/**
 	 * Init constructor.
 	 */
 	public function __construct() {
+		add_action( 'init', array( __CLASS__, 'migrate_legacy_option' ), 8 );
 		add_action( 'init', array( __CLASS__, 'schedule_event' ) );
+		add_action( 'updated_option', array( __CLASS__, 'sync_event_after_settings_update' ), 10, 3 );
+		add_filter( 'gutenverse_settings_data', array( __CLASS__, 'add_settings_default' ) );
 		add_action( self::CRON_HOOK, array( $this, 'send_summary_email' ) );
 	}
 
@@ -66,8 +97,99 @@ class Daily_Summary {
 	public static function is_enabled() {
 		return (bool) apply_filters(
 			'gutenverse_form_daily_summary_enabled',
-			'yes' === get_option( self::OPTION_ENABLED, 'yes' )
+			self::get_settings_enabled()
 		);
+	}
+
+	/**
+	 * Get enabled value from Gutenverse settings.
+	 *
+	 * @param array|null $settings Optional settings data.
+	 *
+	 * @return boolean
+	 */
+	public static function get_settings_enabled( $settings = null ) {
+		if ( null === $settings ) {
+			$settings = get_option( self::SETTINGS_OPTION, array() );
+		}
+
+		if ( isset( $settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ] ) && is_array( $settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ] ) && array_key_exists( self::SETTINGS_KEY, $settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ] ) ) {
+			return rest_sanitize_boolean( $settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ][ self::SETTINGS_KEY ] );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Add default value to dashboard settings data.
+	 *
+	 * @param array $settings Settings data.
+	 *
+	 * @return array
+	 */
+	public static function add_settings_default( $settings ) {
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+
+		if ( ! isset( $settings[ self::SETTINGS_GROUP ] ) || ! is_array( $settings[ self::SETTINGS_GROUP ] ) ) {
+			$settings[ self::SETTINGS_GROUP ] = array();
+		}
+
+		if ( ! isset( $settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ] ) || ! is_array( $settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ] ) ) {
+			$settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ] = array();
+		}
+
+		if ( ! array_key_exists( self::SETTINGS_KEY, $settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ] ) ) {
+			$settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ][ self::SETTINGS_KEY ] = true;
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Move old standalone option into Gutenverse settings.
+	 */
+	public static function migrate_legacy_option() {
+		$legacy = get_option( self::OPTION_ENABLED, null );
+
+		if ( null === $legacy ) {
+			return;
+		}
+
+		$settings    = get_option( self::SETTINGS_OPTION, array() );
+		$has_setting = isset( $settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ] ) && is_array( $settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ] ) && array_key_exists( self::SETTINGS_KEY, $settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ] );
+		$settings    = self::add_settings_default( $settings );
+
+		if ( ! $has_setting ) {
+			$settings[ self::SETTINGS_GROUP ][ self::SETTINGS_SECTION ][ self::SETTINGS_KEY ] = 'yes' === $legacy;
+			update_option( self::SETTINGS_OPTION, $settings, true );
+		}
+
+		delete_option( self::OPTION_ENABLED );
+	}
+
+	/**
+	 * Keep the cron event in sync when Gutenverse settings are saved.
+	 *
+	 * @param string $option    Option name.
+	 * @param mixed  $old_value Old value.
+	 * @param mixed  $value     New value.
+	 */
+	public static function sync_event_after_settings_update( $option, $old_value, $value ) {
+		if ( self::SETTINGS_OPTION !== $option ) {
+			return;
+		}
+
+		if ( self::get_settings_enabled( $old_value ) === self::get_settings_enabled( $value ) ) {
+			return;
+		}
+
+		if ( self::get_settings_enabled( $value ) ) {
+			self::schedule_event();
+		} else {
+			self::clear_event();
+		}
 	}
 
 	/**

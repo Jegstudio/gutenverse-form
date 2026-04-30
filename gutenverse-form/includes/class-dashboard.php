@@ -67,7 +67,6 @@ class Dashboard {
 		$config['hasIntegrationPro']                 = Integration::has_pro_integration_runtime();
 		$config['integrationUpgradeUrl']             = apply_filters( 'gutenverse_form_integration_upgrade_url', admin_url( 'admin.php?page=gutenverse-dashboard#/upgrade-pro' ) );
 		$config['integrations']                      = get_option( 'gutenverse_form_integrations', array() );
-		$config['dailySummaryEnabled']               = Daily_Summary::is_enabled();
 		$config['pluginVersions'][ GUTENVERSE_FORM ] = array(
 			'name'           => GUTENVERSE_FORM_NAME,
 			'version'        => GUTENVERSE_FORM_VERSION,

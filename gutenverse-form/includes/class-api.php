@@ -123,16 +123,6 @@ class Api {
 
 		register_rest_route(
 			self::ENDPOINT,
-			'daily-summary/toggle',
-			array(
-				'methods'             => 'POST',
-				'callback'            => array( $this, 'toggle_daily_summary' ),
-				'permission_callback' => 'gutenverse_permission_check_admin',
-			)
-		);
-
-		register_rest_route(
-			self::ENDPOINT,
 			'integration/block_secret',
 			array(
 				'methods'             => 'POST',
@@ -238,32 +228,6 @@ class Api {
 	 */
 	public function get_form_dashboard() {
 		return rest_ensure_response( Form::get_form_dashboard_summary() );
-	}
-
-	/**
-	 * Toggle daily summary email delivery.
-	 *
-	 * @param object $request object .
-	 *
-	 * @return WP_REST_Response
-	 */
-	public function toggle_daily_summary( $request ) {
-		$enabled = rest_sanitize_boolean( $request->get_param( 'enabled' ) );
-
-		update_option( Daily_Summary::OPTION_ENABLED, $enabled ? 'yes' : 'no' );
-
-		if ( $enabled ) {
-			Daily_Summary::schedule_event();
-		} else {
-			Daily_Summary::clear_event();
-		}
-
-		return rest_ensure_response(
-			array(
-				'enabled' => $enabled,
-				'message' => $enabled ? __( 'Daily admin summary is enabled.', 'gutenverse-form' ) : __( 'Daily admin summary is disabled.', 'gutenverse-form' ),
-			)
-		);
 	}
 
 	/**

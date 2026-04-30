@@ -2,7 +2,8 @@ import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { ControlText, ControlTextarea, ControlCheckbox } from 'gutenverse-core/backend';
 import { applyFilters } from '@wordpress/hooks';
-import apiFetch from '@wordpress/api-fetch';
+
+const formSettingKeys = ['form_settings'];
 
 const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData }) => {
     const {
@@ -71,55 +72,39 @@ const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData
         <div className="actions">
             {saving ? <div className="gutenverse-button">
                 {__('Saving...', 'gutenverse-form')}
-            </div> : <div className="gutenverse-button" onClick={() => saveData(['form_confirmation', 'form_notification', 'form_paypal_payment', 'form_stripe_payment', 'form_captcha_settings'])}>
+            </div> : <div className="gutenverse-button" onClick={() => saveData(formSettingKeys)}>
                 {__('Save Changes', 'gutenverse-form')}
             </div>}
         </div>
     </div>;
 };
 
-const FormDailySummary = () => {
-    const initialEnabled = typeof window !== 'undefined' && typeof window.GutenverseDashboard?.dailySummaryEnabled !== 'undefined' ? window.GutenverseDashboard.dailySummaryEnabled : true;
-    const [enabled, setEnabled] = useState(!!initialEnabled);
-    const [saving, setSaving] = useState(false);
-    const [notice, setNotice] = useState('');
+const FormDailySummary = ({ settingValues, updateSettingValues, saving, saveData }) => {
+    const {
+        dashboard = {}
+    } = settingValues;
 
     const updateValue = (id, value) => {
-        const nextValue = !!value;
-        const previousValue = enabled;
-
-        setEnabled(nextValue);
-        setSaving(true);
-        setNotice('');
-
-        apiFetch({
-            path: '/gutenverse-form-client/v1/daily-summary/toggle',
-            method: 'POST',
-            data: {
-                enabled: nextValue,
-            },
-        }).then((response) => {
-            setEnabled(!!response.enabled);
-            setNotice(response.message || __('Daily admin summary setting saved.', 'gutenverse-form'));
-        }).catch((error) => {
-            setEnabled(previousValue);
-            setNotice(error?.message || __('Daily admin summary setting could not be saved.', 'gutenverse-form'));
-        }).finally(() => {
-            setSaving(false);
-        });
+        updateSettingValues('dashboard', id, value);
     };
 
-    return <div className="form-daily-summary-setting">
+    return <div className="form-tab-body form-daily-summary-setting">
+        <h2>{__('Dashboard', 'gutenverse-form')}</h2>
+        <span>{__('Manage form dashboard reporting preferences.', 'gutenverse-form')}</span>
         <ControlCheckbox
             id={'daily_admin_summary'}
             title={__('Daily Admin Summary Email', 'gutenverse-form')}
             description={__('Send one daily dashboard summary to the site admin email with submission totals and quick links to entries.', 'gutenverse-form')}
-            value={enabled}
+            value={dashboard.daily_admin_summary}
             updateValue={updateValue}
         />
-        {(saving || notice) && <span className="form-daily-summary-setting-status">
-            {saving ? __('Saving daily admin summary setting...', 'gutenverse-form') : notice}
-        </span>}
+        <div className="actions">
+            {saving ? <div className="gutenverse-button">
+                {__('Saving...', 'gutenverse-form')}
+            </div> : <div className="gutenverse-button" onClick={() => saveData(formSettingKeys)}>
+                {__('Save Changes', 'gutenverse-form')}
+            </div>}
+        </div>
     </div>;
 };
 
@@ -182,7 +167,7 @@ const FormNotification = ({ settingValues, updateSettingValues, saving, saveData
         <div className="actions">
             {saving ? <div className="gutenverse-button">
                 {__('Saving...', 'gutenverse-form')}
-            </div> : <div className="gutenverse-button" onClick={() => saveData(['form_confirmation', 'form_notification', 'form_paypal_payment', 'form_stripe_payment', 'form_captcha_settings'])}>
+            </div> : <div className="gutenverse-button" onClick={() => saveData(formSettingKeys)}>
                 {__('Save Changes', 'gutenverse-form')}
             </div>}
         </div>
@@ -211,7 +196,7 @@ const FormReCaptcha = ({ settingValues, updateSettingValues, saving, saveData })
         <div className="actions">
             {saving ? <div className="gutenverse-button">
                 {__('Saving...', 'gutenverse-form')}
-            </div> : <div className="gutenverse-button" onClick={() => saveData(['form_confirmation', 'form_notification', 'form_paypal_payment', 'form_stripe_payment', 'form_captcha_settings'])}>
+            </div> : <div className="gutenverse-button" onClick={() => saveData(formSettingKeys)}>
                 {__('Save Changes', 'gutenverse-form')}
             </div>}
         </div>
@@ -225,7 +210,7 @@ const FormSetting = (props) => {
 
     switch (formActive) {
         case 'dashboard':
-            form = <FormDailySummary />;
+            form = <FormDailySummary {...props} />;
             break;
         case 'confirmation':
             form = <FormConfirmation {...props} />;
