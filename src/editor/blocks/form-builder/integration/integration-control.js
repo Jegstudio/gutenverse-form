@@ -14,9 +14,31 @@ const customStyles = {
         boxShadow: 'none',
         borderRadius: '3px',
         color: state.isFocused ? '#ffffff' : '#1c1d21',
-        backgroundColor: state.isFocused ? '#5e81f4' : '#ffffff',
+        backgroundColor: state.isFocused ? 'rgba(59, 87, 247, 1)' : '#ffffff',
     }),
     menu: (provided) => ({ ...provided, zIndex: 999 }),
+    menuList: (provided) => ({
+        ...provided,
+        msOverflowStyle: 'none',
+        paddingBottom: 0,
+        paddingTop: 0,
+        scrollbarWidth: 'none',
+        '::-webkit-scrollbar': {
+            display: 'none',
+        },
+        transition: 'all .3s ease',
+    }),
+    option: (provided, state) => {
+        const isActive = state.isSelected;
+        const isFocused = state.isFocused;
+
+        return {
+            ...provided,
+            backgroundColor: isActive ? 'rgba(59, 87, 247, 1)' : isFocused ? 'rgba(219, 231, 255, 1)' : '#ffffff',
+            color: isActive ? '#ffffff' : '#1c1d21',
+            transition: 'all .3s ease',
+        };
+    },
     singleValue: (provided, state) => ({
         ...provided,
         position: 'absolute',
@@ -76,6 +98,7 @@ const ActionItem = ({
             setOpen(index);
         }
     };
+    const emptyLicense = applyFilters('gutenverse.panel.tab.pro.content', true);
 
     const id = useInstanceId(ActionItem, 'inspector-select-control');
     const itemClass = classnames('repeater-item', open ? 'open' : 'close');
@@ -136,9 +159,15 @@ const ActionItem = ({
                 </div>
                 <div className={'repeater-title'}>
                     <div id={`${id}-select`} className={'gutenverse-control-wrapper gutenverse-control-select'}>
-                        <div className={'control-body'}>
+                        <div className={classnames('control-body', { 'has-pro-badge': emptyLicense })}>
+                            {emptyLicense && (
+                                <span className="gutenverse-integration-pro-badge">
+                                    {__('PRO', 'gutenverse-form')}
+                                </span>
+                            )}
                             <Select
                                 id={`${id}-select`}
+                                classNamePrefix="gutenverse-integration-select"
                                 value={selectType}
                                 styles={customStyles}
                                 options={types}
@@ -172,6 +201,7 @@ const ActionItem = ({
 
 const ActionItemDummy = ({ onValueChange, onLocalChange, repeaterDefault, setOpenLast, customOptions }) => {
     const id = useInstanceId(ActionItemDummy, 'inspector-select-control');
+    const emptyLicense = applyFilters('gutenverse.panel.tab.pro.content', true);
 
     return (
         <div className={'repeater-item close dummy'}>
@@ -181,9 +211,15 @@ const ActionItemDummy = ({ onValueChange, onLocalChange, repeaterDefault, setOpe
                 </div>
                 <div className={'repeater-title'}>
                     <div id={`${id}-dummy-select`} className={'gutenverse-control-wrapper gutenverse-control-select'}>
-                        <div className={'control-body'}>
+                        <div className={classnames('control-body', { 'has-pro-badge': emptyLicense })}>
+                            {emptyLicense && (
+                                <span className="gutenverse-integration-pro-badge">
+                                    {__('PRO', 'gutenverse-form')}
+                                </span>
+                            )}
                             <Select
                                 id={'dummy-select'}
+                                classNamePrefix="gutenverse-integration-select"
                                 value={{ label: __('Select Integration', 'gutenverse-form'), value: '' }}
                                 styles={customStyles}
                                 options={typeOptions(customOptions)}
@@ -254,7 +290,7 @@ const ActionControl = ({
         onLocalChange(newValue);
     };
 
-    return <div id={id} className={'gutenverse-control-wrapper gutenverse-control-repeater gutenverse-control-adanim-repeater'}>
+    return <div id={id} className={'gutenverse-control-wrapper gutenverse-control-repeater gutenverse-control-integration-repeater'}>
         <ControlHeadingSimple
             id={`${id}-repeater`}
             label={label}

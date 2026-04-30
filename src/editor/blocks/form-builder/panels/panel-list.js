@@ -18,7 +18,8 @@ export const panelList = () => {
         {
             title: __('Integration', 'gutenverse-form'),
             panelArray: integrationPanel,
-            tabRole: TabSetting
+            tabRole: TabSetting,
+            pro: true
         },
         {
             title: __('Bulk Input Styles', 'gutenverse-form'),
