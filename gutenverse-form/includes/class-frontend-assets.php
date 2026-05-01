@@ -56,32 +56,57 @@ class Frontend_Assets {
 	}
 
 	/**
+	 * Check whether font icon assets are needed for an icon attribute pair.
+	 *
+	 * @param array  $attrs The block attributes.
+	 * @param string $type_attribute The icon type attribute name.
+	 * @param string $icon_attribute The icon class attribute name.
+	 *
+	 * @return bool
+	 */
+	private function has_font_icon( $attrs, $type_attribute, $icon_attribute ) {
+		return (
+			isset( $attrs[ $type_attribute ] ) && 'icon' === $attrs[ $type_attribute ] &&
+			( ! isset( $attrs[ $icon_attribute ] ) || ! empty( $attrs[ $icon_attribute ] ) )
+		);
+	}
+
+	/**
 	 * Load the font icon
 	 *
-	 * @param mixed  $conditions The value from the attributes array.
-	 * @param string $attrs The comparison operator (e.g., '===', '!==').
-	 * @param mixed  $block_name The value to compare against.
+	 * @param array $conditions Value of data need to be loaded.
+	 * @param array $attrs The value from the attributes array.
+	 * @param mixed $block_name The value to compare against.
 	 *
 	 * @since 3.3.0
 	 */
 	public function font_icon_conditional_load( $conditions, $attrs, $block_name ) {
 		switch ( $block_name ) {
 			case 'gutenverse/form-input-submit':
+				if ( isset( $attrs['showIcon'] ) && $attrs['showIcon'] ) {
+					if ( $this->has_font_icon( $attrs, 'iconType', 'icon' ) ) {
+						$this->icon_conditional_load( $conditions );
+					}
+				}
+				break;
 			case 'gutenverse/form-input-telp':
 			case 'gutenverse/form-input-text':
 			case 'gutenverse/form-input-textarea':
 			case 'gutenverse/form-input-number':
 			case 'gutenverse/form-input-email':
 			case 'gutenverse/form-input-date':
-				if ( isset( $attrs['showIcon'] ) && $attrs['showIcon'] ) {
-					if ( ! isset( $attrs['iconType'] ) || 'icon' === $attrs['iconType'] ) {
+				if ( isset( $attrs['useIcon'] ) && $attrs['useIcon'] ) {
+					if ( $this->has_font_icon( $attrs, 'iconType', 'icon' ) ) {
 						$this->icon_conditional_load( $conditions );
 					}
 				}
 				break;
 			case 'gutenverse/form-input-select':
 				if ( isset( $attrs['useCustomDropdown'] ) && $attrs['useCustomDropdown'] ) {
-					if ( ! isset( $attrs['dropDownIconOpenType'] ) || 'icon' === $attrs['dropDownIconOpenType'] || ! isset( $attrs['dropDownIconCloseType'] ) || 'icon' === $attrs['dropDownIconCloseType'] ) {
+					if (
+						$this->has_font_icon( $attrs, 'dropDownIconOpenType', 'dropDownIconOpen' ) ||
+						$this->has_font_icon( $attrs, 'dropDownIconCloseType', 'dropDownIconClose' )
+					) {
 						$this->icon_conditional_load( $conditions );
 					}
 				}

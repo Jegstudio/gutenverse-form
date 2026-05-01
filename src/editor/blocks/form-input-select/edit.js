@@ -8,6 +8,7 @@ import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenve
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
 import { renderIcon } from 'gutenverse-core/helper';
+import { useInitializeIconToSvg } from 'gutenverse-core/hooks';
 
 const FormInputSelectBlock = compose(
     withPartialRender,
@@ -17,6 +18,7 @@ const FormInputSelectBlock = compose(
 
     const {
         attributes,
+        setAttributes,
         clientId
     } = props;
 
@@ -39,6 +41,15 @@ const FormInputSelectBlock = compose(
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     useDynamicScript(elementRef);
+    useInitializeIconToSvg({
+        elementId,
+        attributes,
+        setAttributes,
+        icons: [
+            { type: 'dropDownIconOpenType', svg: 'dropDownIconOpenSVG' },
+            { type: 'dropDownIconCloseType', svg: 'dropDownIconCloseSVG' },
+        ],
+    });
 
     const inputData = {
         ...props,

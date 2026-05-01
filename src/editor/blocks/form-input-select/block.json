@@ -424,7 +424,7 @@
 		},
 		"dropDownIconOpenType": {
 			"type": "string",
-			"default": "icon"
+			"default": "svg"
 		},
 		"dropDownIconOpen": {
 			"type": "string",
@@ -432,11 +432,12 @@
 			"copyStyle": true
 		},
 		"dropDownIconOpenSVG": {
-			"type": "string"
+			"type": "string",
+			"default": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CjxwYXRoIGQ9Ik0zMS41OTQgOC41cS0wLjQzOC0wLjQ2OS0xLjA3OC0wLjQ4NHQtMS4wNzggMC40MjJsLTEzLjQzOCAxMi43MTktMTMuNDM4LTEyLjcxOXEtMC40MzgtMC40MzgtMS4wNzgtMC40MjJ0LTEuMDc4IDAuNDg0LTAuNDA2IDEuMDk0IDAuNDY5IDEuMDYzbDE0LjQ2OSAxMy43MTlxMC4yMTkgMC4xODggMC41IDAuMjk3dDAuNTYzIDAuMTA5IDAuNTQ3LTAuMTA5IDAuNTE2LTAuMjk3bDE0LjQ2OS0xMy43MTlxMC40MzgtMC40MzggMC40NjktMS4wNjN0LTAuNDA2LTEuMDk0djB6Ij48L3BhdGg+Cjwvc3ZnPgo="
 		},
 		"dropDownIconCloseType": {
 			"type": "string",
-			"default": "icon"
+			"default": "svg"
 		},
 		"dropDownIconClose": {
 			"type": "string",
@@ -444,7 +445,8 @@
 			"copyStyle": true
 		},
 		"dropDownIconCloseSVG": {
-			"type": "string"
+			"type": "string",
+			"default": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CjxwYXRoIGQ9Ik0zMS41MzEgMjIuMTU2bC0xNC40NjktMTMuNzE5cS0wLjQ2OS0wLjQwNi0xLjA2My0wLjQwNnQtMS4wNjMgMC40MDZsLTE0LjQ2OSAxMy43MTlxLTAuNDM4IDAuNDM4LTAuNDY5IDEuMDYzdDAuNDA2IDEuMDk0cTAuNDM4IDAuNDM4IDEuMDc4IDAuNDY5dDEuMDc4LTAuNDA2bDEzLjQzOC0xMi43MTkgMTMuNDM4IDEyLjcxOXEwLjIxOSAwLjE4OCAwLjQ4NCAwLjI5N3QwLjU0NyAwLjEwOXEwLjMxMyAwIDAuNTk0LTAuMTI1dDAuNTMxLTAuMzQ0cTAuNDM4LTAuNDY5IDAuNDA2LTEuMDk0dC0wLjQ2OS0xLjA2M3YweiI+PC9wYXRoPgo8L3N2Zz4K"
 		},
 		"dropDownIconOpenColor": {
 			"type": "object",
