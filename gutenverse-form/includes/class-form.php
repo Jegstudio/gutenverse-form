@@ -297,10 +297,20 @@ class Form {
 	public static function get_form_action_data( $id ) {
 		if ( $id ) {
 			$post = get_post( $id );
+
+			if ( ! $post || self::POST_TYPE !== $post->post_type ) {
+				return new WP_Error(
+					'invalid_form_action',
+					__( 'This form action does not exist on this site.', 'gutenverse-form' ),
+					array( 'status' => 404 )
+				);
+			}
+
 			$meta = get_post_meta( $id, 'form-data', true );
 			$data = array(
 				'title' => get_the_title( $id ),
 			);
+			$data['is_data_empty'] = empty( $meta );
 
 			// Extract input names from post content.
 			$input_names = array();

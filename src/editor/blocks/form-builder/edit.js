@@ -37,22 +37,19 @@ const NoticeMessages = ({ successExample = false, errorExample = false }) => {
 };
 
 const FormWrapper = ({ blockProps, attributes, clientId, setAttributes }) => {
-    const hasFormAction = !!attributes?.formId?.value;
-
     return (
         <div {...blockProps}>
             <NoticeMessages {...attributes} />
-            {!hasFormAction && (
-                <div className="gutenverse-form-builder-inline-action">
-                    <CreateForm
-                        attributes={attributes}
-                        clientId={clientId}
-                        setAttributes={setAttributes}
-                        compact
-                        autoOpenCreate={attributes.openFormActionOnMount}
-                    />
-                </div>
-            )}
+            <div className="gutenverse-form-builder-inline-action">
+                <CreateForm
+                    attributes={attributes}
+                    clientId={clientId}
+                    setAttributes={setAttributes}
+                    compact
+                    autoOpenCreate={attributes.openFormActionOnMount}
+                    noticeOnly
+                />
+            </div>
             <InnerBlocks />
         </div>
     );
@@ -346,17 +343,16 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) =>
             <NoticeMessages {...attributes} />
             {blankMode ? (
                 <>
-                    {!hasFormAction && (
-                        <div className="gutenverse-form-builder-inline-action">
-                            <CreateForm
-                                attributes={attributes}
-                                clientId={clientId}
-                                setAttributes={setAttributes}
-                                compact
-                                autoOpenCreate={attributes.openFormActionOnMount}
-                            />
-                        </div>
-                    )}
+                    <div className="gutenverse-form-builder-inline-action">
+                        <CreateForm
+                            attributes={attributes}
+                            clientId={clientId}
+                            setAttributes={setAttributes}
+                            compact
+                            autoOpenCreate={attributes.openFormActionOnMount}
+                            noticeOnly
+                        />
+                    </div>
                     <InnerBlocks
                         renderAppender={InnerBlocks.ButtonBlockAppender}
                         clientId={clientId}
@@ -505,6 +501,7 @@ const FormBuilderBlock = compose(
                     setAttributes={props.setAttributes}
                     compact
                     showEntriesLink
+                    showNotice={false}
                 />
             </div>
         </InspectorControls>
