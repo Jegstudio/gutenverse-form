@@ -82,6 +82,70 @@ const ExampleFillButton = ({
     </div>
 );
 
+const findPreferredInputId = (inputFields = [], keywords = [], fallback = '') => {
+    const searchTerms = keywords.map(keyword => keyword.toLowerCase());
+    const match = inputFields.find(field => {
+        const haystack = `${field.name || ''} ${field.label || ''}`.toLowerCase();
+        return searchTerms.some(keyword => haystack.includes(keyword));
+    });
+
+    return match?.name || inputFields[0]?.name || fallback;
+};
+
+const FieldIdControl = ({
+    id,
+    title,
+    description,
+    value,
+    defaultValue,
+    updateValue,
+    inputFields = [],
+}) => {
+    const inputValue = value === undefined ? defaultValue : value;
+    const listId = `${id}-available-inputs`;
+    const inputId = `${id}-field-id`;
+    const inputChange = (event) => {
+        updateValue(id, event.target.value);
+    };
+
+    return (
+        <div className="control-wrapper control-text gutenverse-field-id-control">
+            <label className="control-title" htmlFor={inputId}>{title}</label>
+            <input
+                id={inputId}
+                type="text"
+                list={inputFields.length > 0 ? listId : undefined}
+                value={inputValue || ''}
+                onChange={inputChange}
+            />
+            {inputFields.length > 0 && (
+                <datalist id={listId}>
+                    {inputFields.map(field => (
+                        <option
+                            key={field.name}
+                            value={field.name}
+                            label={field.label && field.label !== field.name ? field.label : undefined}
+                        />
+                    ))}
+                </datalist>
+            )}
+            {description !== '' && (
+                <span className="control-description">
+                    {inputFields.length > 0
+                        ? (
+                            <>
+                                {description}
+                                <br />
+                                {__('Type a custom input ID, or choose one from this form builder while typing.', 'gutenverse-form')}
+                            </>
+                        )
+                        : description}
+                </span>
+            )}
+        </div>
+    );
+};
+
 const TabGeneral = (props) => {
     const { values, updateValue } = props;
     const defaultSettings = [
@@ -980,11 +1044,11 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
 
 const TabConfirmation = (props) => {
     const {
-        values, updateValue, placeholderDescription,
+        values, updateValue, placeholderDescription, availableInputFields = [],
     } = props;
     const [exampleFilled, setExampleFilled] = useState(false);
     const fillConfirmationExample = () => {
-        updateValue('email_input_name', __('input-email', 'gutenverse-form'));
+        updateValue('email_input_name', findPreferredInputId(availableInputFields, ['email', 'mail'], 'input-email'));
         updateValue('user_email_form', __('johndoe@gmail.com', 'gutenverse-form'));
         if (values.user_email_subject_type === 'post_meta') {
             updateValue('user_email_subject_meta_key', __('custom_email_subject', 'gutenverse-form'));
@@ -1022,13 +1086,14 @@ const TabConfirmation = (props) => {
                 description={__('Choose which submitted email address receives the confirmation.', 'gutenverse-form')}
             >
                 {!values.auto_select_email && (
-                    <ControlText
+                    <FieldIdControl
                         id={'email_input_name'}
                         title={__('Recipient Field ID', 'gutenverse-form')}
                         description={__('The specific input ID (name) to use as the recipient email address.', 'gutenverse-form')}
                         defaultValue={'input-email'}
                         value={values.email_input_name}
                         updateValue={updateValue}
+                        inputFields={availableInputFields}
                     />
                 )}
             </FormGroup>
@@ -1142,7 +1207,7 @@ const TabConfirmation = (props) => {
 };
 
 const TabNotification = (props) => {
-    const { values, updateValue, placeholderDescription } = props;
+    const { values, updateValue, placeholderDescription, availableInputFields = [] } = props;
     const [exampleFilled, setExampleFilled] = useState(false);
     const fillNotificationExample = () => {
         updateValue('admin_email_from', __('johndoe@gmail.com', 'gutenverse-form'));
@@ -1152,7 +1217,7 @@ const TabNotification = (props) => {
             updateValue('admin_email_subject', __('New form submission received', 'gutenverse-form'));
         }
         if (values.admin_email_reply_to_type === 'dynamic') {
-            updateValue('admin_email_reply_to_dynamic', __('email', 'gutenverse-form'));
+            updateValue('admin_email_reply_to_dynamic', findPreferredInputId(availableInputFields, ['email', 'mail'], 'email'));
         } else {
             updateValue('admin_email_reply_to', __('johndoe@gmail.com', 'gutenverse-form'));
         }
@@ -1164,7 +1229,7 @@ const TabNotification = (props) => {
             updateValue('admin_email_to', __('johndoe@gmail.com, janedoe@gmail.com', 'gutenverse-form'));
         }
         if (values.admin_message_type === 'dynamic') {
-            updateValue('admin_message_input_name', __('message', 'gutenverse-form'));
+            updateValue('admin_message_input_name', findPreferredInputId(availableInputFields, ['message', 'textarea', 'comment', 'note'], 'message'));
         } else if (!values.admin_message_type || values.admin_message_type === 'static') {
             updateValue('admin_note', __('A new entry was submitted on {{site_title}}.', 'gutenverse-form'));
         }
@@ -1240,12 +1305,13 @@ const TabNotification = (props) => {
                     updateValue={updateValue}
                 />
                 {values.admin_email_reply_to_type === 'dynamic' ? (
-                    <ControlText
+                    <FieldIdControl
                         id={'admin_email_reply_to_dynamic'}
                         title={__('Reply-To Field ID', 'gutenverse-form')}
                         description={__('The specific input ID (name) to use as the reply-to email address.', 'gutenverse-form')}
                         value={values.admin_email_reply_to_dynamic}
                         updateValue={updateValue}
+                        inputFields={availableInputFields}
                     />
                 ) : (
                     <ControlText
@@ -1324,12 +1390,13 @@ const TabNotification = (props) => {
                     updateValue={updateValue}
                 />
                 {values.admin_message_type === 'dynamic' && (
-                    <ControlText
+                    <FieldIdControl
                         id={'admin_message_input_name'}
                         title={__('Message Field ID', 'gutenverse-form')}
                         description={__('The form input ID that contains the message body.', 'gutenverse-form')}
                         value={values.admin_message_input_name}
                         updateValue={updateValue}
+                        inputFields={availableInputFields}
                     />
                 )}
                 {(!values.admin_message_type || values.admin_message_type === 'static') && (
@@ -1435,8 +1502,13 @@ export const FormContent = (props) => {
         </>
     );
 
+    const availableInputFields = mergeFormInputs(
+        collectFormInputs(props.clientId),
+        collectFormInputsFromValues(props.values)
+    );
+
     const tabProps = {
-        ...props, emailTemplates, metaKeys, placeholderDescription, refreshTemplates: fetchEmailTemplates,
+        ...props, availableInputFields, emailTemplates, metaKeys, placeholderDescription, refreshTemplates: fetchEmailTemplates,
     };
 
     const changeActive = key => {

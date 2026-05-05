@@ -428,6 +428,13 @@
             }
         }
 
+        &.gutenverse-field-id-control {
+            input::-webkit-calendar-picker-indicator {
+                display: none !important;
+                opacity: 0;
+            }
+        }
+
         &.control-textarea {
             textarea {
                 width: 100%;
