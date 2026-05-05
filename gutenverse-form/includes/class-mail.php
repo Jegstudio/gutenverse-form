@@ -56,16 +56,7 @@ class Mail {
 
 		$reply_to_type = isset( $form_data['user_email_reply_to_type'] ) ? $form_data['user_email_reply_to_type'] : 'static';
 		if ( 'dynamic' === $reply_to_type ) {
-			$reply_to_field = isset( $form_data['user_email_reply_to_dynamic'] ) ? $form_data['user_email_reply_to_dynamic'] : '';
-			$reply_to       = '';
-			if ( ! empty( $reply_to_field ) && isset( $form_entry['entry-data'] ) ) {
-				foreach ( $form_entry['entry-data'] as $data ) {
-					if ( $data['id'] === $reply_to_field ) {
-						$reply_to = is_array( $data['value'] ) ? implode( ', ', $data['value'] ) : $data['value'];
-						break;
-					}
-				}
-			}
+			$reply_to = $this->get_context_reply_to_email( $form_data, $form_entry );
 		} else {
 			$reply_to = isset( $form_data['user_email_reply_to'] ) ? $form_data['user_email_reply_to'] : null;
 		}
@@ -259,6 +250,40 @@ class Mail {
 		}
 
 		return apply_filters( 'gutenverse_form_dynamic_admin_recipient', $email, $source, $post_id, $form_data );
+	}
+
+	/**
+	 * Get confirmation reply-to email from the current content context.
+	 *
+	 * @param array $form_data .
+	 * @param array $form_entry .
+	 *
+	 * @return string
+	 */
+	public function get_context_reply_to_email( $form_data, $form_entry ) {
+		$post_id = isset( $form_entry['post-id'] ) ? absint( $form_entry['post-id'] ) : 0;
+		$email   = '';
+
+		if ( $post_id ) {
+			$author_id = get_post_field( 'post_author', $post_id );
+
+			if ( $author_id ) {
+				$email = get_the_author_meta( 'user_email', $author_id );
+			}
+		}
+
+		if ( ! $email ) {
+			$email = get_option( 'admin_email' );
+		}
+
+		$email = apply_filters( 'gutenverse_form_confirmation_reply_to_email', $email, $post_id, $form_data, $form_entry );
+		$email = sanitize_email( $email );
+
+		if ( ! is_email( $email ) ) {
+			$email = '';
+		}
+
+		return $email;
 	}
 
 	/**

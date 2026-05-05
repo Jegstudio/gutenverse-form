@@ -726,8 +726,27 @@
 }
 
 .gutenverse-inline-notice.success {
-    border-left-color: #008a20;
+    align-items: center;
     background: #f0fbf3;
+    border: 1px solid #a8ddb2;
+    border-left-width: 1px;
+    border-radius: 4px;
+    color: #405364;
+    display: flex;
+    font-size: 13px;
+    gap: 10px;
+    line-height: 1.5;
+    padding: 12px 14px;
+}
+
+.gutenverse-inline-notice.success .gutenverse-inline-notice-content {
+    flex: 1 1 auto;
+}
+
+.gutenverse-inline-notice.success strong,
+.gutenverse-inline-notice.success b {
+    color: #051f33;
+    font-weight: 600;
 }
 
 .gutenverse-inline-notice.error,
@@ -754,6 +773,25 @@
     display: inline-flex;
     flex: 0 0 auto;
     margin-top: 1px;
+}
+
+.gutenverse-inline-notice-close {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: #7f8b98;
+    cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: 22px;
+    justify-content: center;
+    margin: 0 0 0 auto;
+    padding: 0;
+    width: 22px;
+
+    &:hover {
+        color: #53606d;
+    }
 }
 
 .gutenverse-form-save-error {

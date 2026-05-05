@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { AlertControl } from 'gutenverse-core/controls';
 import { ControlText, ControlTextarea, ControlCheckbox, ControlSelect } from 'gutenverse-core/backend';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, createInterpolateElement } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
@@ -20,23 +20,36 @@ const FormGroup = ({ title, description, children, className = '' }) => {
     );
 };
 
-const InlineNotice = ({ type = 'info', children }) => {
+const InlineNotice = ({ type = 'info', children, onClose }) => {
     if (!children) {
         return null;
     }
 
-    const hasWarningIcon = type.split(' ').includes('warning');
+    const noticeTypes = type.split(' ');
+    const hasWarningIcon = noticeTypes.includes('warning');
+    const hasSuccessIcon = noticeTypes.includes('success');
+    const hasIcon = hasWarningIcon || hasSuccessIcon;
 
     return (
         <div className={`gutenverse-inline-notice ${type}`}>
-            {hasWarningIcon && (
+            {hasIcon && (
                 <span className="gutenverse-inline-notice-icon" aria-hidden="true">
                     <svg width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 3C3.13428 3 0 6.13541 0 10C0 13.8668 3.13428 17 7 17C10.8657 17 14 13.8668 14 10C14 6.13541 10.8657 3 7 3ZM7 6.10484C7.65473 6.10484 8.18548 6.6356 8.18548 7.29032C8.18548 7.94505 7.65473 8.47581 7 8.47581C6.34527 8.47581 5.81452 7.94505 5.81452 7.29032C5.81452 6.6356 6.34527 6.10484 7 6.10484ZM8.58064 13.2742C8.58064 13.4612 8.42899 13.6129 8.24193 13.6129H5.75806C5.57101 13.6129 5.41935 13.4612 5.41935 13.2742V12.5968C5.41935 12.4097 5.57101 12.2581 5.75806 12.2581H6.09677V10.4516H5.75806C5.57101 10.4516 5.41935 10.3 5.41935 10.1129V9.43548C5.41935 9.24843 5.57101 9.09677 5.75806 9.09677H7.56452C7.75157 9.09677 7.90323 9.24843 7.90323 9.43548V12.2581H8.24193C8.42899 12.2581 8.58064 12.4097 8.58064 12.5968V13.2742Z" fill="#FFC908" />
+                        <path d="M7 3C3.13428 3 0 6.13541 0 10C0 13.8668 3.13428 17 7 17C10.8657 17 14 13.8668 14 10C14 6.13541 10.8657 3 7 3ZM7 6.10484C7.65473 6.10484 8.18548 6.6356 8.18548 7.29032C8.18548 7.94505 7.65473 8.47581 7 8.47581C6.34527 8.47581 5.81452 7.94505 5.81452 7.29032C5.81452 6.6356 6.34527 6.10484 7 6.10484ZM8.58064 13.2742C8.58064 13.4612 8.42899 13.6129 8.24193 13.6129H5.75806C5.57101 13.6129 5.41935 13.4612 5.41935 13.2742V12.5968C5.41935 12.4097 5.57101 12.2581 5.75806 12.2581H6.09677V10.4516H5.75806C5.57101 10.4516 5.41935 10.3 5.41935 10.1129V9.43548C5.41935 9.24843 5.57101 9.09677 5.75806 9.09677H7.56452C7.75157 9.09677 7.90323 9.24843 7.90323 9.43548V12.2581H8.24193C8.42899 12.2581 8.58064 12.4097 8.58064 12.5968V13.2742Z" fill={hasSuccessIcon ? '#12B33F' : '#FFC908'} />
                     </svg>
                 </span>
             )}
             <span className="gutenverse-inline-notice-content">{children}</span>
+            {onClose && (
+                <button
+                    type="button"
+                    className="gutenverse-inline-notice-close"
+                    aria-label={__('Dismiss notice', 'gutenverse-form')}
+                    onClick={onClose}
+                >
+                    <IconCloseSVG size={14} />
+                </button>
+            )}
         </div>
     );
 };
@@ -791,7 +804,10 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
             if (response && response.id) {
                 updateValue(fieldName, response.id);
                 if (onRefresh) onRefresh();
-                setMessage(__('Template created. Open it to design the email, then save this form action.', 'gutenverse-form'));
+                setMessage(createInterpolateElement(
+                    __('Template created. Click the <strong>Edit Template</strong> button to design the email, then save this form action.', 'gutenverse-form'),
+                    { strong: <strong /> }
+                ));
             }
             setSaving(false);
         }).catch(err => {
@@ -844,7 +860,7 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
                         </button>
                     ))}
                 </div>
-                <InlineNotice type="success">{message}</InlineNotice>
+                <InlineNotice type="success" onClose={() => setMessage('')}>{message}</InlineNotice>
                 <InlineNotice type="error">{error}</InlineNotice>
             </div>
         );
@@ -854,7 +870,7 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
 
     return (
         <div className="gutenverse-email-template-manager has-template">
-            <InlineNotice>
+            <InlineNotice type="warning">
                 {__('This form action will send this dedicated template only. Other form emails cannot be assigned here.', 'gutenverse-form')}
             </InlineNotice>
             <div className="template-card">
@@ -906,7 +922,7 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
                     {__('Refresh', 'gutenverse-form')}
                 </button>
             </div>
-            <InlineNotice type="success">{message}</InlineNotice>
+            <InlineNotice type="success" onClose={() => setMessage('')}>{message}</InlineNotice>
             <InlineNotice type="error">{error}</InlineNotice>
 
             {isDeleteModalOpen && (
@@ -975,9 +991,7 @@ const TabConfirmation = (props) => {
         } else {
             updateValue('user_email_subject', __('Thank you for contacting us', 'gutenverse-form'));
         }
-        if (values.user_email_reply_to_type === 'dynamic') {
-            updateValue('user_email_reply_to_dynamic', __('email', 'gutenverse-form'));
-        } else {
+        if (!values.user_email_reply_to_type || values.user_email_reply_to_type === 'static') {
             updateValue('user_email_reply_to', __('johndoe@gmail.com', 'gutenverse-form'));
         }
         if (!values.user_message_type || values.user_message_type === 'static') {
@@ -1062,22 +1076,18 @@ const TabConfirmation = (props) => {
                 <ControlSelect
                     id={'user_email_reply_to_type'}
                     title={__('Reply-To Type', 'gutenverse-form')}
-                    description={__('Choose between a static email address or a dynamic recipient based on form data.', 'gutenverse-form')}
+                    description={__('Choose a fixed reply address or use the current post author with the site admin as fallback.', 'gutenverse-form')}
                     value={values.user_email_reply_to_type || 'static'}
                     options={[
                         { label: __('Static Email', 'gutenverse-form'), value: 'static' },
-                        { label: __('Dynamic Recipient', 'gutenverse-form'), value: 'dynamic' },
+                        { label: __('Post Author / Site Admin', 'gutenverse-form'), value: 'dynamic' },
                     ]}
                     updateValue={updateValue}
                 />
                 {values.user_email_reply_to_type === 'dynamic' ? (
-                    <ControlText
-                        id={'user_email_reply_to_dynamic'}
-                        title={__('Reply-To Field ID', 'gutenverse-form')}
-                        description={__('The specific input ID (name) to use as the reply-to email address.', 'gutenverse-form')}
-                        value={values.user_email_reply_to_dynamic}
-                        updateValue={updateValue}
-                    />
+                    <InlineNotice type="warning">
+                        {__('Replies to this confirmation email will go to the current post author when available. If the form is not submitted from a post, replies go to the site admin email.', 'gutenverse-form')}
+                    </InlineNotice>
                 ) : (
                     <ControlText
                         id={'user_email_reply_to'}
