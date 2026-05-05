@@ -283,7 +283,7 @@ class Daily_Summary {
 
 		$form_rows = array();
 		foreach ( $form_counts as $form_id => $count ) {
-			$form_data = isset( $forms_by_id[ $form_id ] ) ? $forms_by_id[ $form_id ] : array();
+			$form_data   = isset( $forms_by_id[ $form_id ] ) ? $forms_by_id[ $form_id ] : array();
 			$form_rows[] = array(
 				'id'            => $form_id,
 				'title'         => ! empty( $form_data['title'] ) ? $form_data['title'] : get_the_title( $form_id ),

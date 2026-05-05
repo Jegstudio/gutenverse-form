@@ -476,9 +476,9 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
     }
 
     const dataSummaryRows = buildDataSummaryRows();
-    const dataCopy = dataSummaryRows.hasInputFields
-        ? __('This summary follows the form fields and will be filled with submitted data automatically.', 'gutenverse-form')
-        : __('Use this starter to organize your key field tags. Replace the sample values below with the field tags from your form.', 'gutenverse-form');
+    const dataCopy = isConfirmation
+        ? __('Thank you for your submission to {{form_title}}. A copy of your details is included below.', 'gutenverse-form')
+        : __('A new submission for {{form_title}} has been received. Review the details below.', 'gutenverse-form');
     const dataTip = dataSummaryRows.hasInputFields
         ? ''
         : '<p style="margin: 0; font-size: 13px; color: #64748b;">Tip: select a text block and insert your available field tags from the builder menu on the right.</p>';
@@ -606,6 +606,30 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
     const templateType = fieldName === 'user_email_template'
         ? __('confirmation', 'gutenverse-form')
         : __('notification', 'gutenverse-form');
+    const isConfirmationTemplate = fieldName === 'user_email_template';
+    const templateStarters = [
+        {
+            id: 'blank',
+            title: __('Start Blank', 'gutenverse-form'),
+            description: __('Open an empty template and design it from scratch', 'gutenverse-form'),
+            note: __('*Best for full customization.', 'gutenverse-form'),
+        },
+        {
+            id: 'thank-you',
+            title: __('Thank You Email', 'gutenverse-form'),
+            description: isConfirmationTemplate
+                ? __('A polished thank-you confirmation email with a professional tone.', 'gutenverse-form')
+                : __('A polished acknowledgement email with a professional tone.', 'gutenverse-form'),
+            note: __('*Best for simple confirmations.', 'gutenverse-form'),
+            recommended: isConfirmationTemplate,
+        },
+        {
+            id: 'data',
+            title: __('Submission Summary', 'gutenverse-form'),
+            description: __('A starter layout for showing key submission details and field tags.', 'gutenverse-form'),
+            note: __('*Best for detailed responses.', 'gutenverse-form'),
+        },
+    ];
 
     const handleCreate = (starter = 'blank') => {
         setSaving(true);
@@ -655,37 +679,24 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
     if (!templateId) {
         return (
             <div className="gutenverse-email-template-manager">
-                <InlineNotice>
+                <InlineNotice type="warning email-template-notice">
                     {__('Choose how to start this email template. You can begin with a blank canvas or a starter layout and customize it afterward.', 'gutenverse-form')}
                 </InlineNotice>
                 <div className="email-template-starters">
-                    <button
-                        type="button"
-                        className={`gutenverse-button email-template-starter ${saving ? 'disabled' : ''}`}
-                        onClick={!saving ? () => handleCreate('blank') : undefined}
-                        disabled={saving}
-                    >
-                        <strong>{__('Start Blank', 'gutenverse-form')}</strong>
-                        <span>{__('Open an empty template and design it from scratch.', 'gutenverse-form')}</span>
-                    </button>
-                    <button
-                        type="button"
-                        className={`gutenverse-button email-template-starter ${saving ? 'disabled' : ''}`}
-                        onClick={!saving ? () => handleCreate('thank-you') : undefined}
-                        disabled={saving}
-                    >
-                        <strong>{__('Thank You Template', 'gutenverse-form')}</strong>
-                        <span>{__('A clean acknowledgement email with a polished thank-you message.', 'gutenverse-form')}</span>
-                    </button>
-                    <button
-                        type="button"
-                        className={`gutenverse-button email-template-starter ${saving ? 'disabled' : ''}`}
-                        onClick={!saving ? () => handleCreate('data') : undefined}
-                        disabled={saving}
-                    >
-                        <strong>{__('Data Summary Template', 'gutenverse-form')}</strong>
-                        <span>{__('A starter layout for showing key submission details and field tags.', 'gutenverse-form')}</span>
-                    </button>
+                    {templateStarters.map(starter => (
+                        <button
+                            key={starter.id}
+                            type="button"
+                            className={`gutenverse-button email-template-starter ${starter.recommended ? 'is-recommended' : ''} ${saving ? 'disabled' : ''}`}
+                            onClick={!saving ? () => handleCreate(starter.id) : undefined}
+                            disabled={saving}
+                        >
+                            {starter.recommended && <span className="starter-badge" aria-hidden="true" />}
+                            <strong>{starter.title}</strong>
+                            <span>{starter.description}</span>
+                            <em>{starter.note}</em>
+                        </button>
+                    ))}
                 </div>
                 <InlineNotice type="success">{message}</InlineNotice>
                 <InlineNotice type="error">{error}</InlineNotice>
