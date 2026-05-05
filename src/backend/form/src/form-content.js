@@ -414,6 +414,52 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
         };
     };
 
+    const buildCompactSummaryRows = () => {
+        const hasInputFields = inputFields.length > 0;
+        const labelCellStyle = [
+            'width:34%',
+            'padding:9px 14px 9px 0',
+            'border-bottom:1px solid #e5e7eb',
+            'color:#64748b',
+            'font-size:13px',
+            'font-weight:700',
+            'line-height:1.45',
+            'vertical-align:top',
+            'word-break:break-word',
+            'overflow-wrap:anywhere',
+        ].join(';');
+        const valueCellStyle = [
+            'width:66%',
+            'padding:9px 0',
+            'border-bottom:1px solid #e5e7eb',
+            'color:#111827',
+            'font-size:14px',
+            'font-weight:600',
+            'line-height:1.55',
+            'text-align:left',
+            'vertical-align:top',
+            'word-break:break-word',
+            'overflow-wrap:anywhere',
+        ].join(';');
+        const valueTextStyle = [
+            'display:block',
+            'max-width:100%',
+            'white-space:normal',
+            'word-break:break-word',
+            'overflow-wrap:anywhere',
+        ].join(';');
+        const rows = hasInputFields
+            ? inputFields.map(input => ({
+                label: formatTemplateInputLabel(input.label, isConfirmation),
+                value: `{{${input.name}}}`,
+            }))
+            : [{ label: __('Field Tag', 'gutenverse-form'), value: '{{your_field_tag}}' }];
+
+        return rows.map(row => (
+            `<tr><td width="34%" style="${labelCellStyle}">${escapeHtml(row.label)}</td><td width="66%" style="${valueCellStyle}"><span style="${valueTextStyle}">${escapeHtml(row.value)}</span></td></tr>`
+        )).join('');
+    };
+
     if (starter === 'thank-you') {
         return {
             design: {
@@ -463,6 +509,79 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                                                 <h1 style="margin:0 0 16px;font-size:30px;line-height:1.25;color:#0f172a;">${isConfirmation ? 'Thank you for your submission' : 'A new form submission is here'}</h1>
                                                 <p style="margin:0 0 14px;font-size:16px;line-height:1.7;color:#334155;">${isConfirmation ? 'We received your response for <strong>{{form_title}}</strong> and will get back to you soon.' : 'This email was triggered by <strong>{{form_title}}</strong> on <strong>{{site_title}}</strong>.'}</p>
                                                 <p style="margin:0;font-size:14px;line-height:1.6;color:#64748b;">Reference: <strong>{{entry_title}}</strong></p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </body>
+                </html>
+            `.trim(),
+        };
+    }
+
+    if (starter === 'compact') {
+        const compactRows = buildCompactSummaryRows();
+
+        return {
+            design: {
+                counters: {},
+                body: {
+                    ...bodyBase,
+                    rows: [
+                        createRow(
+                            'compact-card',
+                            [
+                                createTextContent(
+                                    'compact-title',
+                                    '<h1 style="margin: 0; font-size: 24px; line-height: 1.25; color: #0f172a;">New submission</h1>',
+                                    { fontSize: '24px', lineHeight: '130%', color: '#0f172a' }
+                                ),
+                                createTextContent(
+                                    'compact-copy',
+                                    '<p style="margin: 0;">A visitor submitted <strong>{{form_title}}</strong>. The main details are listed below.</p>',
+                                    { fontSize: '15px', lineHeight: '160%' }
+                                ),
+                                createTextContent(
+                                    'compact-meta',
+                                    '<p style="margin: 0; font-size: 13px; color: #64748b;">Reference: <strong>{{entry_title}}</strong> &nbsp;|&nbsp; Site: <strong>{{site_title}}</strong></p>',
+                                    { fontSize: '13px', color: '#64748b' }
+                                ),
+                                createTextContent(
+                                    'compact-list',
+                                    `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
+                                        ${compactRows}
+                                    </table>`,
+                                    { fontSize: '14px', lineHeight: '155%' }
+                                ),
+                            ],
+                            {
+                                backgroundColor: '#ffffff',
+                                border: { radius: '14px' },
+                                padding: '28px 30px',
+                                rowPadding: '24px',
+                                rowBackgroundColor: soft,
+                            }
+                        ),
+                    ],
+                },
+            },
+            html: `
+                <html>
+                    <body style="margin:0;background:#eef2f7;padding:24px 16px;font-family:Arial,Helvetica,sans-serif;color:#334155;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#f5f7ff;border-radius:20px;">
+                            <tr>
+                                <td style="padding:24px;">
+                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:14px;">
+                                        <tr>
+                                            <td style="padding:28px 30px;">
+                                                <h1 style="margin:0 0 10px;font-size:24px;line-height:1.25;color:#0f172a;">New submission</h1>
+                                                <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#334155;">A visitor submitted <strong>{{form_title}}</strong>. The main details are listed below.</p>
+                                                <p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:#64748b;">Reference: <strong>{{entry_title}}</strong> &nbsp;|&nbsp; Site: <strong>{{site_title}}</strong></p>
+                                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
+                                                    ${compactRows}
+                                                </table>
                                             </td>
                                         </tr>
                                     </table>
@@ -614,21 +733,35 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
             description: __('Open an empty template and design it from scratch', 'gutenverse-form'),
             note: __('*Best for full customization.', 'gutenverse-form'),
         },
-        {
-            id: 'thank-you',
-            title: __('Thank You Email', 'gutenverse-form'),
-            description: isConfirmationTemplate
-                ? __('A polished thank-you confirmation email with a professional tone.', 'gutenverse-form')
-                : __('A polished acknowledgement email with a professional tone.', 'gutenverse-form'),
-            note: __('*Best for simple confirmations.', 'gutenverse-form'),
-            recommended: isConfirmationTemplate,
-        },
-        {
-            id: 'data',
-            title: __('Submission Summary', 'gutenverse-form'),
-            description: __('A starter layout for showing key submission details and field tags.', 'gutenverse-form'),
-            note: __('*Best for detailed responses.', 'gutenverse-form'),
-        },
+        ...(isConfirmationTemplate ? [
+            {
+                id: 'thank-you',
+                title: __('Thank You Email', 'gutenverse-form'),
+                description: __('A polished thank-you confirmation email with a professional tone.', 'gutenverse-form'),
+                note: __('*Best for simple confirmations.', 'gutenverse-form'),
+                recommended: true,
+            },
+            {
+                id: 'data',
+                title: __('Submission Summary', 'gutenverse-form'),
+                description: __('A receipt-style email with the submitted form details.', 'gutenverse-form'),
+                note: __('*Best for detailed responses.', 'gutenverse-form'),
+            },
+        ] : [
+            {
+                id: 'data',
+                title: __('Submission Summary', 'gutenverse-form'),
+                description: __('A detailed email with all submitted form data.', 'gutenverse-form'),
+                note: __('*Best for reviewing full submissions.', 'gutenverse-form'),
+                recommended: true,
+            },
+            {
+                id: 'compact',
+                title: __('Compact Notification', 'gutenverse-form'),
+                description: __('A concise email with key submission details.', 'gutenverse-form'),
+                note: __('*Best for quick admin alerts.', 'gutenverse-form'),
+            },
+        ]),
     ];
 
     const handleCreate = (starter = 'blank') => {
@@ -692,8 +825,8 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
                             disabled={saving}
                         >
                             {starter.recommended && <span className="starter-badge" aria-hidden="true" />}
-                            <strong>{starter.title}</strong>
-                            <span>{starter.description}</span>
+                            <span className="starter-title">{starter.title}</span>
+                            <span className="starter-description">{starter.description}</span>
                             <em>{starter.note}</em>
                         </button>
                     ))}

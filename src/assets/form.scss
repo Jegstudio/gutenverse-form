@@ -868,20 +868,20 @@
         text-align: left;
         white-space: normal;
 
-        strong,
-        span,
+        .starter-title,
+        .starter-description,
         em {
             display: block;
         }
 
-        strong {
+        .starter-title {
             color: #061a2f;
             font-size: 14px;
-            font-weight: 800;
+            font-weight: 600;
             line-height: 1.35;
         }
 
-        span {
+        .starter-description {
             color: #415160;
             font-size: 12px;
             line-height: 1.45;
@@ -917,14 +917,12 @@
 
         &.is-recommended {
             border-color: #3b57f7;
-            box-shadow: inset 0 0 0 1px #3b57f7;
         }
 
         &:hover,
         &:focus,
         &:active {
             border-color: #3b57f7;
-            box-shadow: inset 0 0 0 1px #3b57f7;
         }
     }
 }
