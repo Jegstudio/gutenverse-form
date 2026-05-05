@@ -1764,6 +1764,83 @@
     margin-bottom: 30px;
 }
 
+.gutenverse-form-action-modal-skeleton {
+    display: grid;
+    gap: 22px;
+    padding: 0 25px 40px;
+}
+
+.form-action-skeleton-tabs {
+    background: #fff;
+    border: 1px solid #d9dce2;
+    border-radius: 3px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 20px 0 10px;
+    padding: 10px;
+
+    span {
+        border-radius: 3px;
+        height: 44px;
+    }
+}
+
+.form-action-skeleton-section {
+    display: grid;
+    gap: 10px;
+
+    + .form-action-skeleton-section {
+        margin-top: 8px;
+    }
+}
+
+.form-action-skeleton-heading {
+    height: 18px;
+    max-width: 190px;
+}
+
+.form-action-skeleton-copy {
+    height: 12px;
+    max-width: 360px;
+
+    &.short {
+        max-width: 240px;
+    }
+}
+
+.form-action-skeleton-control {
+    border-radius: 4px;
+    height: 44px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.form-action-skeleton-row {
+    border-radius: 4px;
+    height: 38px;
+    width: 100%;
+}
+
+.gutenverse-form-action-modal-skeleton span,
+.dashboard-skeleton-line,
+.dashboard-skeleton-chart span {
+    animation: gutenverse-form-skeleton-pulse 1.4s ease-in-out infinite;
+    background: linear-gradient(90deg, #eef2f7 0%, #f8fafc 48%, #eef2f7 100%);
+    background-size: 220% 100%;
+    display: block;
+}
+
+@keyframes gutenverse-form-skeleton-pulse {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: -100% 0;
+    }
+}
+
 .gutenverse-form-confirm-modal {
     .components-modal__content {
         padding: 4px 32px 10px;
@@ -2110,6 +2187,11 @@
         gap: 16px;
     }
 
+    .gutenverse-form-admin-dashboard__skeleton {
+        display: grid;
+        gap: 16px;
+    }
+
     .gutenverse-form-admin-dashboard__summary {
         gap: 8px;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2140,6 +2222,59 @@
         display: block;
         font-size: 13px;
         line-height: 1.45;
+    }
+
+    .dashboard-skeleton-line {
+        border-radius: 999px;
+    }
+
+    .dashboard-skeleton-title {
+        height: 22px;
+        max-width: 210px;
+    }
+
+    .dashboard-skeleton-copy {
+        height: 13px;
+        max-width: 520px;
+    }
+
+    .dashboard-skeleton-button {
+        border-radius: 5px;
+        height: 32px;
+        margin-top: 8px;
+        max-width: 108px;
+    }
+
+    .dashboard-skeleton-card {
+        display: grid;
+        gap: 8px;
+    }
+
+    .dashboard-skeleton-number {
+        height: 24px;
+        max-width: 58px;
+    }
+
+    .dashboard-skeleton-label {
+        height: 12px;
+        max-width: 96px;
+    }
+
+    .dashboard-skeleton-heading {
+        height: 14px;
+        max-width: 150px;
+    }
+
+    .dashboard-skeleton-meta {
+        height: 12px;
+        max-width: 240px;
+        margin-top: 8px;
+    }
+
+    .dashboard-skeleton-toggle {
+        border-radius: 6px;
+        height: 32px;
+        width: 124px;
     }
 
     .dashboard-grid {
@@ -2225,6 +2360,37 @@
     .trend-chart {
         background: #fff;
         padding: 18px 20px 22px;
+    }
+
+    .dashboard-skeleton-chart {
+        border: 1px solid #d7deea;
+        border-radius: 4px;
+        display: grid;
+        gap: 18px;
+        min-height: 276px;
+        padding: 38px 24px 26px;
+
+        span {
+            border-radius: 999px;
+            height: 10px;
+            width: 100%;
+
+            &:nth-child(1) {
+                width: 72%;
+            }
+
+            &:nth-child(2) {
+                width: 88%;
+            }
+
+            &:nth-child(3) {
+                width: 64%;
+            }
+
+            &:nth-child(4) {
+                width: 80%;
+            }
+        }
     }
 
     .trend-chart__line {
@@ -2353,6 +2519,23 @@
 
     .dashboard-panel__title + .dashboard-row {
         border-top: 0;
+    }
+
+    .dashboard-skeleton-row-title {
+        height: 14px;
+        max-width: 190px;
+    }
+
+    .dashboard-skeleton-row-meta {
+        height: 12px;
+        max-width: 240px;
+        margin-top: 8px;
+    }
+
+    .dashboard-skeleton-action {
+        border-radius: 4px;
+        height: 30px;
+        width: 76px;
     }
 
     .dashboard-row__actions {

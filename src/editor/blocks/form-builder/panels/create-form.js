@@ -130,6 +130,28 @@ export const CreateForm = (props) => {
         </div>
     );
 
+    const FormActionLoadingSkeleton = () => (
+        <div className="gutenverse-form-action-modal-skeleton" aria-hidden="true">
+            <div className="form-action-skeleton-tabs">
+                {[1, 2, 3, 4].map(item => (
+                    <span key={item} />
+                ))}
+            </div>
+            <div className="form-action-skeleton-section">
+                <span className="form-action-skeleton-heading" />
+                <span className="form-action-skeleton-copy" />
+                <span className="form-action-skeleton-control" />
+                <span className="form-action-skeleton-copy short" />
+            </div>
+            <div className="form-action-skeleton-section">
+                <span className="form-action-skeleton-heading" />
+                <span className="form-action-skeleton-copy" />
+                <span className="form-action-skeleton-row" />
+                <span className="form-action-skeleton-row" />
+            </div>
+        </div>
+    );
+
     const updateValue = (id, value) => {
         setValues((prevValues) => {
             const nextValues = {
@@ -447,9 +469,10 @@ export const CreateForm = (props) => {
                     <div className="gutenverse-form-modal-content">
                         {error && <div className="gutenverse-form-action-error modal-error">{error}</div>}
                         {loadingData ? (
-                            <div style={{ padding: '20px', textAlign: 'center' }}>
-                                {__('Loading...', 'gutenverse-form')}
-                            </div>
+                            <>
+                                <span className="screen-reader-text">{__('Loading form action...', 'gutenverse-form')}</span>
+                                <FormActionLoadingSkeleton />
+                            </>
                         ) : (
                             <FormContent
                                 values={values}

@@ -29,6 +29,66 @@ const Row = ({ title, meta, actions }) => (
     </div>
 );
 
+const SkeletonLine = ({ className = '' }) => (
+    <span className={`dashboard-skeleton-line ${className}`} aria-hidden="true" />
+);
+
+const FormDashboardSkeleton = () => (
+    <div className="gutenverse-form-admin-dashboard__skeleton" aria-hidden="true">
+        <div className="gutenverse-form-admin-dashboard__hero dashboard-skeleton-hero">
+            <div className="gutenverse-form-admin-dashboard__intro">
+                <SkeletonLine className="dashboard-skeleton-title" />
+                <SkeletonLine className="dashboard-skeleton-copy" />
+                <SkeletonLine className="dashboard-skeleton-button" />
+            </div>
+            <div className="gutenverse-form-admin-dashboard__summary">
+                {[1, 2, 3, 4].map(item => (
+                    <div className="summary-card dashboard-skeleton-card" key={item}>
+                        <SkeletonLine className="dashboard-skeleton-number" />
+                        <SkeletonLine className="dashboard-skeleton-label" />
+                    </div>
+                ))}
+            </div>
+        </div>
+        <div className="gutenverse-form-admin-dashboard__list dashboard-grid">
+            <div className="dashboard-panel dashboard-panel--wide dashboard-panel--chart">
+                <div className="dashboard-block__header">
+                    <div>
+                        <SkeletonLine className="dashboard-skeleton-heading" />
+                        <SkeletonLine className="dashboard-skeleton-meta" />
+                    </div>
+                    <SkeletonLine className="dashboard-skeleton-toggle" />
+                </div>
+                <div className="trend-chart">
+                    <div className="dashboard-skeleton-chart">
+                        {[1, 2, 3, 4].map(item => (
+                            <span key={item} />
+                        ))}
+                    </div>
+                </div>
+            </div>
+            <div className="dashboard-masonry">
+                {[1, 2, 3, 4].map(panel => (
+                    <div className="dashboard-panel dashboard-skeleton-panel" key={panel}>
+                        <div className="dashboard-panel__title">
+                            <SkeletonLine className="dashboard-skeleton-heading" />
+                        </div>
+                        {[1, 2, 3].map(row => (
+                            <div className="dashboard-row dashboard-skeleton-row" key={row}>
+                                <div>
+                                    <SkeletonLine className="dashboard-skeleton-row-title" />
+                                    <SkeletonLine className="dashboard-skeleton-row-meta" />
+                                </div>
+                                <SkeletonLine className="dashboard-skeleton-action" />
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+);
+
 const MigrationNotice = () => {
     const config = getConfig();
     const [visible, setVisible] = useState(!config.migrationNoticeHidden);
@@ -222,9 +282,10 @@ const FormDashboard = () => {
 
     if (loading) {
         return (
-            <div className="gutenverse-form-admin-dashboard">
+            <div className="gutenverse-form-admin-dashboard is-loading" aria-busy="true">
                 <MigrationNotice />
-                <div className="gutenverse-form-admin-dashboard__empty">{__('Loading dashboard...', 'gutenverse-form')}</div>
+                <span className="screen-reader-text">{__('Loading dashboard...', 'gutenverse-form')}</span>
+                <FormDashboardSkeleton />
             </div>
         );
     }
