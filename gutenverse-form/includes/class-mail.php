@@ -195,11 +195,13 @@ class Mail {
 
 		$mail = '';
 
-		if ( isset( $form_data['admin_email_type'] ) && 'static' === $form_data['admin_email_type'] ) {
+		$email_type = ! empty( $form_data['admin_email_type'] ) ? $form_data['admin_email_type'] : 'static';
+
+		if ( 'static' === $email_type ) {
 			$mail = isset( $form_data['admin_email_to'] ) ? $form_data['admin_email_to'] : null;
 		}
 
-		if ( isset( $form_data['admin_email_type'] ) && 'dynamic' === $form_data['admin_email_type'] ) {
+		if ( 'dynamic' === $email_type ) {
 			$dynamic_mail = $this->get_dynamic_recipient( $form_data, $form_entry );
 			if ( $dynamic_mail ) {
 				$mail = $mail ? $mail . ',' . $dynamic_mail : $dynamic_mail;

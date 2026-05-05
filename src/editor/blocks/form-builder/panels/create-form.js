@@ -451,7 +451,13 @@ export const CreateForm = (props) => {
                                 {__('Loading...', 'gutenverse-form')}
                             </div>
                         ) : (
-                            <FormContent values={values} updateValue={updateValue} isEditor={true} clientId={clientId} />
+                            <FormContent
+                                values={values}
+                                updateValue={updateValue}
+                                isEditor={true}
+                                clientId={clientId}
+                                formActionId={attributes.formId?.value}
+                            />
                         )}
                     </div>
                     <div className="gutenverse-form-modal-footer" style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>

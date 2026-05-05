@@ -863,6 +863,88 @@ class Form {
 	}
 
 	/**
+	 * Normalize form action settings before saving.
+	 *
+	 * @param array $params Form Action Parameter.
+	 *
+	 * @return array
+	 */
+	private static function normalize_form_action_params( $params ) {
+		$params = wp_parse_args(
+			$params,
+			array(
+				'id'                             => '',
+				'title'                          => '',
+				'require_login'                  => '',
+				'user_browser'                   => '',
+				'form_success_notice'            => '',
+				'form_error_notice'              => '',
+				'user_confirm'                   => '',
+				'auto_select_email'              => '',
+				'email_input_name'               => '',
+				'user_email_subject'             => '',
+				'user_email_form'                => '',
+				'user_email_reply_to'            => '',
+				'user_email_reply_to_type'       => 'static',
+				'user_email_reply_to_dynamic'    => '',
+				'user_email_body'                => '',
+				'admin_confirm'                  => '',
+				'admin_email_subject'            => '',
+				'admin_email_to'                 => '',
+				'admin_email_from'               => '',
+				'admin_email_reply_to'           => '',
+				'admin_email_reply_to_type'      => 'static',
+				'admin_email_reply_to_dynamic'   => '',
+				'admin_note'                     => '',
+				'user_email_subject_type'        => 'static',
+				'user_email_subject_meta_key'    => '',
+				'user_message_type'              => 'static',
+				'admin_email_subject_type'       => 'static',
+				'admin_email_subject_meta_key'   => '',
+				'admin_email_type'               => 'static',
+				'admin_email_source'             => 'post_author',
+				'admin_email_meta_key'           => '',
+				'admin_message_type'             => 'static',
+				'admin_message_input_name'       => '',
+				'user_email_template'            => '',
+				'admin_email_template'           => '',
+				'overwrite_default_confirmation' => '',
+				'overwrite_default_notification' => '',
+				'use_captcha'                    => '',
+				'max_size_file'                  => '',
+				'allowed_extensions'             => '',
+				'variable_mapping'               => array(),
+			)
+		);
+
+		$static_defaults = array(
+			'user_email_reply_to_type'  => 'static',
+			'user_email_subject_type'   => 'static',
+			'user_message_type'         => 'static',
+			'admin_email_reply_to_type' => 'static',
+			'admin_email_subject_type'  => 'static',
+			'admin_email_type'          => 'static',
+			'admin_message_type'        => 'static',
+		);
+
+		foreach ( $static_defaults as $key => $default ) {
+			if ( empty( $params[ $key ] ) ) {
+				$params[ $key ] = $default;
+			}
+		}
+
+		if ( empty( $params['admin_email_source'] ) ) {
+			$params['admin_email_source'] = 'post_author';
+		}
+
+		if ( ! is_array( $params['variable_mapping'] ) ) {
+			$params['variable_mapping'] = array();
+		}
+
+		return $params;
+	}
+
+	/**
 	 * Create Form Action
 	 *
 	 * @param array $params Form Action Parameter.
@@ -870,6 +952,9 @@ class Form {
 	 * @return array
 	 */
 	public static function create_form_action( $params ) {
+		$params    = self::normalize_form_action_params( $params );
+		unset( $params['id'] );
+
 		$form_data = array(
 			'post_title'  => $params['title'],
 			'post_status' => 'publish',
@@ -890,6 +975,8 @@ class Form {
 	 * @return array
 	 */
 	public static function edit_form_action( $params ) {
+		$params = self::normalize_form_action_params( $params );
+
 		update_post_meta(
 			$params['id'],
 			'form-data',

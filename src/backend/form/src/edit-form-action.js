@@ -97,7 +97,7 @@ const EditForm = () => {
                 </DrawerHeader>
                 <DrawerBody>
                     {error && <div className="gutenverse-form-save-error">{error}</div>}
-                    {loading ? <FormActionSkeleton /> : <FormContent values={values} updateValue={updateValue} />}
+                    {loading ? <FormActionSkeleton /> : <FormContent values={values} updateValue={updateValue} formActionId={postId} />}
                 </DrawerBody>
                 {!loading && <DrawerFooter>
                     <>

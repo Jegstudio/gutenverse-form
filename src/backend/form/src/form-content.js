@@ -175,7 +175,110 @@ const normalizeTemplateTitle = (title) => {
         .trim();
 };
 
-const buildEmailTemplateStarter = (starter, fieldName) => {
+const escapeHtml = (value) => {
+    const div = document.createElement('div');
+    div.textContent = value || '';
+    return div.innerHTML;
+};
+
+const formatInputLabel = (name) => {
+    return (name || '')
+        .replace(/[-_]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/\b\w/g, letter => letter.toUpperCase());
+};
+
+const normalizeFormInputField = ({ name, label }) => {
+    if (!name) return null;
+
+    return {
+        name,
+        label: label || formatInputLabel(name) || name,
+    };
+};
+
+const formatTemplateInputLabel = (label, isConfirmation) => {
+    if (isConfirmation) {
+        return label;
+    }
+
+    const neutralLabel = (label || '').replace(/^your\s+/i, '').trim();
+
+    return neutralLabel || label;
+};
+
+const mergeFormInputs = (...fieldGroups) => {
+    const fields = [];
+
+    fieldGroups.flat().forEach(field => {
+        const normalized = normalizeFormInputField(field || {});
+        if (!normalized || fields.some(item => item.name === normalized.name)) {
+            return;
+        }
+
+        fields.push(normalized);
+    });
+
+    return fields;
+};
+
+const collectFormInputsFromValues = (values = {}) => {
+    const mappings = Array.isArray(values.variable_mapping) ? values.variable_mapping : [];
+    const mappedFields = mappings.map(mapping => {
+        if (typeof mapping === 'string') {
+            return { name: mapping };
+        }
+
+        return {
+            name: mapping?.input || mapping?.name,
+            label: mapping?.label || mapping?.name || mapping?.input,
+        };
+    });
+    const availableFields = Array.isArray(values.available_inputs)
+        ? values.available_inputs.map(name => ({ name }))
+        : [];
+
+    return mergeFormInputs(mappedFields, availableFields);
+};
+
+const collectFormInputs = (clientId) => {
+    if (!clientId || !window.wp || !window.wp.data) return [];
+
+    const blockEditor = window.wp.data.select('core/block-editor');
+    if (!blockEditor?.getBlocks) return [];
+
+    const blocks = blockEditor.getBlocks(clientId);
+    const inputs = [];
+
+    const traverseBlocks = (innerBlocks) => {
+        innerBlocks.forEach(block => {
+            if (
+                block.name &&
+                block.name.startsWith('gutenverse/form-input') &&
+                block.name !== 'gutenverse/form-input-submit' &&
+                block.name !== 'gutenverse/form-input-recaptcha'
+            ) {
+                const name = block.attributes?.inputName;
+                const label = block.attributes?.inputLabel;
+                if (name && !inputs.some(input => input.name === name)) {
+                    inputs.push(normalizeFormInputField({ name, label }));
+                }
+            }
+            if (block.innerBlocks) {
+                traverseBlocks(block.innerBlocks);
+            }
+        });
+    };
+
+    traverseBlocks(blocks);
+
+    return inputs;
+};
+
+const collectFormInputNames = (clientId) => collectFormInputs(clientId).map(input => input.name);
+
+const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
     if (starter === 'blank') {
         return {};
     }
@@ -255,6 +358,30 @@ const buildEmailTemplateStarter = (starter, fieldName) => {
         },
     });
 
+    const buildDataSummaryRows = () => {
+        const hasInputFields = inputFields.length > 0;
+        const rows = [
+            { label: __('Form', 'gutenverse-form'), value: '{{form_title}}' },
+            { label: __('Reference', 'gutenverse-form'), value: '{{entry_title}}' },
+            { label: __('Site', 'gutenverse-form'), value: '{{site_title}}' },
+            ...inputFields.map(input => ({
+                label: formatTemplateInputLabel(input.label, isConfirmation),
+                value: `{{${input.name}}}`,
+            })),
+        ];
+
+        if (!hasInputFields) {
+            rows.push({ label: __('Field Tag', 'gutenverse-form'), value: '{{your_field_tag}}' });
+        }
+
+        return {
+            hasInputFields,
+            tableRows: rows.map(row => (
+                `<tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">${escapeHtml(row.label)}</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>${escapeHtml(row.value)}</strong></td></tr>`
+            )).join(''),
+        };
+    };
+
     if (starter === 'thank-you') {
         return {
             design: {
@@ -316,6 +443,14 @@ const buildEmailTemplateStarter = (starter, fieldName) => {
         };
     }
 
+    const dataSummaryRows = buildDataSummaryRows();
+    const dataCopy = dataSummaryRows.hasInputFields
+        ? __('This summary follows the form fields and will be filled with submitted data automatically.', 'gutenverse-form')
+        : __('Use this starter to organize your key field tags. Replace the sample values below with the field tags from your form.', 'gutenverse-form');
+    const dataTip = dataSummaryRows.hasInputFields
+        ? ''
+        : '<p style="margin: 0; font-size: 13px; color: #64748b;">Tip: select a text block and insert your available field tags from the builder menu on the right.</p>';
+
     return {
         design: {
             counters: {},
@@ -332,7 +467,7 @@ const buildEmailTemplateStarter = (starter, fieldName) => {
                             ),
                             createTextContent(
                                 'data-copy',
-                                '<p style="margin: 0;">Use this starter to organize your key field tags. Replace the sample values below with the field tags from your form.</p>'
+                                `<p style="margin: 0;">${escapeHtml(dataCopy)}</p>`
                             ),
                         ],
                         {
@@ -349,19 +484,16 @@ const buildEmailTemplateStarter = (starter, fieldName) => {
                             createTextContent(
                                 'data-list',
                                 `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
-                                    <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Form</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{form_title}}</strong></td></tr>
-                                    <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Reference</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{entry_title}}</strong></td></tr>
-                                    <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Site</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{site_title}}</strong></td></tr>
-                                    <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Field Tag</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{your_field_tag}}</strong></td></tr>
+                                    ${dataSummaryRows.tableRows}
                                 </table>`,
                                 { fontSize: '15px', lineHeight: '160%' }
                             ),
-                            createTextContent(
+                            dataTip && createTextContent(
                                 'data-tip',
-                                '<p style="margin: 0; font-size: 13px; color: #64748b;">Tip: select a text block and insert your available field tags from the builder menu on the right.</p>',
+                                dataTip,
                                 { fontSize: '13px', color: '#64748b' }
                             ),
-                        ],
+                        ].filter(Boolean),
                         {
                             backgroundColor: '#ffffff',
                             border: { radius: '0 0 18px 18px' },
@@ -383,18 +515,15 @@ const buildEmailTemplateStarter = (starter, fieldName) => {
                                     <tr>
                                         <td style="padding:32px 32px 20px;">
                                             <h1 style="margin:0 0 12px;font-size:28px;line-height:1.25;color:#0f172a;">${isConfirmation ? 'Submission summary' : 'New submission summary'}</h1>
-                                            <p style="margin:0;font-size:16px;line-height:1.7;color:#334155;">Use this starter to organize your key field tags. Replace the sample values below with the field tags from your form.</p>
+                                            <p style="margin:0;font-size:16px;line-height:1.7;color:#334155;">${escapeHtml(dataCopy)}</p>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td style="padding:0 32px 32px;">
                                             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
-                                                <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Form</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{form_title}}</strong></td></tr>
-                                                <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Reference</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{entry_title}}</strong></td></tr>
-                                                <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Site</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{site_title}}</strong></td></tr>
-                                                <tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">Field Tag</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>{{your_field_tag}}</strong></td></tr>
+                                                ${dataSummaryRows.tableRows}
                                             </table>
-                                            <p style="margin:16px 0 0;font-size:13px;line-height:1.6;color:#64748b;">Tip: replace <strong>{{your_field_tag}}</strong> with one of your form field tags from the builder.</p>
+                                            ${dataSummaryRows.hasInputFields ? '' : '<p style="margin:16px 0 0;font-size:13px;line-height:1.6;color:#64748b;">Tip: replace <strong>{{your_field_tag}}</strong> with one of your form field tags from the builder.</p>'}
                                         </td>
                                     </tr>
                                 </table>
@@ -407,13 +536,15 @@ const buildEmailTemplateStarter = (starter, fieldName) => {
     };
 };
 
-const createEmailTemplate = ({ fieldName, formTitle, starter = 'blank' }) => {
+const createEmailTemplate = ({ fieldName, formTitle, starter = 'blank', inputFields = [], formActionId = '' }) => {
     const type = fieldName === 'user_email_template'
         ? __('Confirmation', 'gutenverse-form')
         : __('Notification', 'gutenverse-form');
     const cleanTitle = normalizeTemplateTitle(formTitle) || __('Untitled Form', 'gutenverse-form');
     const name = `${cleanTitle} - ${type}`;
-    const starterContent = buildEmailTemplateStarter(starter, fieldName);
+    const templateInputFields = mergeFormInputs(inputFields);
+    const starterContent = buildEmailTemplateStarter(starter, fieldName, templateInputFields);
+    const templateInputNames = templateInputFields.map(input => input.name);
 
     return apiFetch({
         path: '/wp/v2/gutenverse-email-tpl',
@@ -424,12 +555,14 @@ const createEmailTemplate = ({ fieldName, formTitle, starter = 'blank' }) => {
             meta: {
                 gutenverse_email_design: starterContent.design ? JSON.stringify(starterContent.design) : '',
                 gutenverse_email_html: starterContent.html || '',
+                gutenverse_email_input_names: JSON.stringify(templateInputNames),
+                gutenverse_email_form_action: formActionId ? String(formActionId) : '',
             }
         }
     });
 };
 
-const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplates, onRefresh, formTitle }) => {
+const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplates, onRefresh, formTitle, clientId, formActionId, formValues }) => {
     const [saving, setSaving] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [message, setMessage] = useState('');
@@ -446,7 +579,13 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
         setSaving(true);
         setMessage('');
         setError('');
-        createEmailTemplate({ fieldName, formTitle, starter }).then(response => {
+        createEmailTemplate({
+            fieldName,
+            formTitle,
+            starter,
+            inputFields: mergeFormInputs(collectFormInputs(clientId), collectFormInputsFromValues(formValues)),
+            formActionId,
+        }).then(response => {
             if (response && response.id) {
                 updateValue(fieldName, response.id);
                 if (onRefresh) onRefresh();
@@ -765,6 +904,9 @@ const TabConfirmation = (props) => {
                         emailTemplates={props.emailTemplates}
                         onRefresh={props.refreshTemplates}
                         formTitle={values.title}
+                        clientId={props.clientId}
+                        formActionId={props.formActionId}
+                        formValues={values}
                     />
                 )}
             </FormGroup>
@@ -980,6 +1122,9 @@ const TabNotification = (props) => {
                         emailTemplates={props.emailTemplates}
                         onRefresh={props.refreshTemplates}
                         formTitle={values.title}
+                        clientId={props.clientId}
+                        formActionId={props.formActionId}
+                        formValues={values}
                     />
                 )}
             </FormGroup>
@@ -988,24 +1133,7 @@ const TabNotification = (props) => {
 };
 
 const autoGenerateTags = ({ clientId, values, updateValue }) => {
-    if (!clientId || !window.wp || !window.wp.data) return;
-
-    const blocks = window.wp.data.select('core/block-editor').getBlocks(clientId);
-    const inputs = [];
-    const traverseBlocks = (innerBlocks) => {
-        innerBlocks.forEach(block => {
-            if (block.name.startsWith('gutenverse/form-input') || block.name === 'gutenverse/form-textarea') {
-                const name = block.attributes.inputName;
-                if (name) {
-                    inputs.push({ name, input: name });
-                }
-            }
-            if (block.innerBlocks) {
-                traverseBlocks(block.innerBlocks);
-            }
-        });
-    };
-    traverseBlocks(blocks);
+    const inputs = collectFormInputNames(clientId).map(name => ({ name, input: name }));
 
     const existing = Array.isArray(values.variable_mapping) ? values.variable_mapping : [];
     const existingInputs = existing.map(m => (typeof m === 'string' ? '' : m.input));

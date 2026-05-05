@@ -131,6 +131,38 @@ class Email_Template {
 				},
 			)
 		);
+
+		register_post_meta(
+			self::POST_TYPE,
+			'gutenverse_email_input_names',
+			array(
+				'show_in_rest'      => true,
+				'single'            => true,
+				'type'              => 'string',
+				'auth_callback'     => function () {
+					return current_user_can( 'edit_posts' );
+				},
+				'sanitize_callback' => function ( $value ) {
+					return $value;
+				},
+			)
+		);
+
+		register_post_meta(
+			self::POST_TYPE,
+			'gutenverse_email_form_action',
+			array(
+				'show_in_rest'      => true,
+				'single'            => true,
+				'type'              => 'string',
+				'auth_callback'     => function () {
+					return current_user_can( 'edit_posts' );
+				},
+				'sanitize_callback' => function ( $value ) {
+					return $value;
+				},
+			)
+		);
 	}
 
 	/**
@@ -159,7 +191,7 @@ class Email_Template {
 					array(
 						'nonce'        => wp_create_nonce( 'wp_rest' ),
 						'postId'       => get_the_ID(),
-						'placeholders' => $this->get_available_placeholders(),
+						'placeholders' => $this->get_available_placeholders( get_the_ID() ),
 					)
 				);
 
@@ -189,9 +221,10 @@ class Email_Template {
 	/**
 	 * Get Available Placeholders
 	 *
+	 * @param int $template_id Email template post ID.
 	 * @return array
 	 */
-	public function get_available_placeholders() {
-		return Placeholder::get_available_placeholders();
+	public function get_available_placeholders( $template_id = 0 ) {
+		return Placeholder::get_available_placeholders( $template_id );
 	}
 }

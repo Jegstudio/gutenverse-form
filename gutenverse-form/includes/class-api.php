@@ -843,26 +843,27 @@ class Api {
 				do_action( 'gutenverse_form_after_store', $result['entry_id'], $params, $form_setting, $request );
 
 				$form_data_settings = get_post_meta( $form_id, 'form-data', true );
+				$mail_form_data     = is_array( $form_data_settings ) ? $form_data_settings : $form_setting;
 				$entry_id           = $result['entry_id'];
 
 				if ( isset( $settings_data['form'] ) ) {
-					if ( isset( $settings_data['form']['confirmation'] ) && true !== ( $form_data['overwrite_default_confirmation'] ?? false ) ) {
-						$form_data = array_merge( $form_data, $settings_data['form']['confirmation'] );
+					if ( isset( $settings_data['form']['confirmation'] ) && true !== ( $mail_form_data['overwrite_default_confirmation'] ?? false ) ) {
+						$mail_form_data = $this->merge_form_setting_defaults( $mail_form_data, $settings_data['form']['confirmation'] );
 					}
 
-					if ( isset( $settings_data['form']['notification'] ) && true !== ( $form_data['overwrite_default_notification'] ?? false ) ) {
-						$form_data = array_merge( $form_data, $settings_data['form']['notification'] );
+					if ( isset( $settings_data['form']['notification'] ) && true !== ( $mail_form_data['overwrite_default_notification'] ?? false ) ) {
+						$mail_form_data = $this->merge_form_setting_defaults( $mail_form_data, $settings_data['form']['notification'] );
 					}
 				}
 
-				$mail_list = $this->mail_list( $params['entry-data'], $form_data );
+				$mail_list = $this->mail_list( $params['entry-data'], $mail_form_data );
 
 				if ( ! empty( $mail_list ) ) {
-					$result = ( new Mail() )->send_user_email( $form_id, $form_data, $entry_id, $params, $mail_list );
+					$result = ( new Mail() )->send_user_email( $form_id, $mail_form_data, $entry_id, $params, $mail_list );
 				}
 
-				if ( ! empty( $form_data['admin_confirm'] ) ) {
-					$result = ( new Mail() )->send_admin_email( $form_id, $form_data, $entry_id, $params );
+				if ( ! empty( $mail_form_data['admin_confirm'] ) ) {
+					$result = ( new Mail() )->send_admin_email( $form_id, $mail_form_data, $entry_id, $params );
 				}
 			}
 		}
@@ -910,6 +911,28 @@ class Api {
 		}
 
 		return $mail_list;
+	}
+
+	/**
+	 * Merge default form settings without overriding explicit form action values.
+	 *
+	 * @param array $form_data Form action data.
+	 * @param array $defaults Default settings.
+	 *
+	 * @return array
+	 */
+	private function merge_form_setting_defaults( $form_data, $defaults ) {
+		if ( ! is_array( $defaults ) ) {
+			return $form_data;
+		}
+
+		foreach ( $defaults as $key => $value ) {
+			if ( ! array_key_exists( $key, $form_data ) || '' === $form_data[ $key ] || null === $form_data[ $key ] ) {
+				$form_data[ $key ] = $value;
+			}
+		}
+
+		return $form_data;
 	}
 
 	/**
