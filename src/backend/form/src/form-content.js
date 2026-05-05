@@ -360,6 +360,38 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
 
     const buildDataSummaryRows = () => {
         const hasInputFields = inputFields.length > 0;
+        const labelCellStyle = [
+            'width:32%',
+            'padding:14px 18px 14px 0',
+            'border-bottom:1px solid #e2e8f0',
+            'color:#64748b',
+            'font-size:14px',
+            'font-weight:600',
+            'line-height:1.45',
+            'vertical-align:top',
+            'word-break:break-word',
+            'overflow-wrap:anywhere',
+        ].join(';');
+        const valueCellStyle = [
+            'width:68%',
+            'padding:14px 0',
+            'border-bottom:1px solid #e2e8f0',
+            'color:#0f172a',
+            'font-size:15px',
+            'font-weight:600',
+            'line-height:1.6',
+            'text-align:left',
+            'vertical-align:top',
+            'word-break:break-word',
+            'overflow-wrap:anywhere',
+        ].join(';');
+        const valueTextStyle = [
+            'display:block',
+            'max-width:100%',
+            'white-space:normal',
+            'word-break:break-word',
+            'overflow-wrap:anywhere',
+        ].join(';');
         const rows = [
             { label: __('Form', 'gutenverse-form'), value: '{{form_title}}' },
             { label: __('Reference', 'gutenverse-form'), value: '{{entry_title}}' },
@@ -377,7 +409,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
         return {
             hasInputFields,
             tableRows: rows.map(row => (
-                `<tr><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;color:#64748b;">${escapeHtml(row.label)}</td><td style="padding:12px 0;border-bottom:1px solid #dbe4f0;text-align:right;color:#0f172a;"><strong>${escapeHtml(row.value)}</strong></td></tr>`
+                `<tr><td width="32%" style="${labelCellStyle}">${escapeHtml(row.label)}</td><td width="68%" style="${valueCellStyle}"><span style="${valueTextStyle}">${escapeHtml(row.value)}</span></td></tr>`
             )).join(''),
         };
     };
@@ -483,7 +515,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                         [
                             createTextContent(
                                 'data-list',
-                                `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                                `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
                                     ${dataSummaryRows.tableRows}
                                 </table>`,
                                 { fontSize: '15px', lineHeight: '160%' }
@@ -520,7 +552,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                                     </tr>
                                     <tr>
                                         <td style="padding:0 32px 32px;">
-                                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
                                                 ${dataSummaryRows.tableRows}
                                             </table>
                                             ${dataSummaryRows.hasInputFields ? '' : '<p style="margin:16px 0 0;font-size:13px;line-height:1.6;color:#64748b;">Tip: replace <strong>{{your_field_tag}}</strong> with one of your form field tags from the builder.</p>'}
