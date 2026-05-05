@@ -8,7 +8,7 @@ import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { isEmpty } from 'gutenverse-core/helper';
 import { CardPro } from 'gutenverse-core/components';
-import { Modal, Button } from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 
 const FormGroup = ({ title, description, children, className = '' }) => {
     return (
@@ -756,19 +756,47 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
                 <Modal
                     title={__('Delete Email Template', 'gutenverse-form')}
                     onRequestClose={() => setIsDeleteModalOpen(false)}
-                    className="gutenverse-form-confirm-modal"
+                    className="gutenverse-form-confirm-modal gutenverse-email-delete-modal"
                 >
-                    <div className="gutenverse-form-confirm-content">
-                        <p>
-                            {__('Are you sure you want to permanently delete this email template? This action cannot be undone.', 'gutenverse-form')}
-                        </p>
-                        <div className="gutenverse-form-confirm-actions">
-                            <Button isSecondary onClick={() => setIsDeleteModalOpen(false)}>
+                    <div className="gutenverse-email-delete-dialog">
+                        <button
+                            type="button"
+                            className="gutenverse-email-delete-close"
+                            aria-label={__('Close dialog', 'gutenverse-form')}
+                            onClick={() => setIsDeleteModalOpen(false)}
+                        >
+                            <IconCloseSVG size={34} />
+                        </button>
+                        <div className="gutenverse-email-delete-body">
+                            <div className="gutenverse-email-delete-icon" aria-hidden="true">
+                                <svg width="54" height="54" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M24.4019 8.25C25.5566 6.25 28.4434 6.25 29.5981 8.25L49.0836 42C50.2383 44 48.7949 46.5 46.4856 46.5H7.51443C5.20503 46.5 3.76165 44 4.91635 42L24.4019 8.25Z" fill="currentColor" />
+                                    <path d="M24.5 20.25H29.5V33H24.5V20.25Z" fill="#fff" />
+                                    <path d="M24.5 37H29.5V42H24.5V37Z" fill="#fff" />
+                                </svg>
+                            </div>
+                            <h2>{__('Delete Email Template', 'gutenverse-form')}</h2>
+                            <p>
+                                {__('Are you sure you want to permanently delete this email template? This action cannot be undone.', 'gutenverse-form')}
+                            </p>
+                        </div>
+                        <div className="gutenverse-email-delete-actions">
+                            <button
+                                type="button"
+                                className="gutenverse-email-delete-cancel"
+                                onClick={() => setIsDeleteModalOpen(false)}
+                                disabled={saving}
+                            >
                                 {__('Cancel', 'gutenverse-form')}
-                            </Button>
-                            <Button isPrimary isDestructive onClick={handleDelete} disabled={saving}>
+                            </button>
+                            <button
+                                type="button"
+                                className="gutenverse-email-delete-confirm"
+                                onClick={handleDelete}
+                                disabled={saving}
+                            >
                                 {saving ? __('Deleting...', 'gutenverse-form') : __('Delete Permanently', 'gutenverse-form')}
-                            </Button>
+                            </button>
                         </div>
                     </div>
                 </Modal>
