@@ -25,7 +25,20 @@ const InlineNotice = ({ type = 'info', children }) => {
         return null;
     }
 
-    return <div className={`gutenverse-inline-notice ${type}`}>{children}</div>;
+    const hasWarningIcon = type.split(' ').includes('warning');
+
+    return (
+        <div className={`gutenverse-inline-notice ${type}`}>
+            {hasWarningIcon && (
+                <span className="gutenverse-inline-notice-icon" aria-hidden="true">
+                    <svg width="14" height="17" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 3C3.13428 3 0 6.13541 0 10C0 13.8668 3.13428 17 7 17C10.8657 17 14 13.8668 14 10C14 6.13541 10.8657 3 7 3ZM7 6.10484C7.65473 6.10484 8.18548 6.6356 8.18548 7.29032C8.18548 7.94505 7.65473 8.47581 7 8.47581C6.34527 8.47581 5.81452 7.94505 5.81452 7.29032C5.81452 6.6356 6.34527 6.10484 7 6.10484ZM8.58064 13.2742C8.58064 13.4612 8.42899 13.6129 8.24193 13.6129H5.75806C5.57101 13.6129 5.41935 13.4612 5.41935 13.2742V12.5968C5.41935 12.4097 5.57101 12.2581 5.75806 12.2581H6.09677V10.4516H5.75806C5.57101 10.4516 5.41935 10.3 5.41935 10.1129V9.43548C5.41935 9.24843 5.57101 9.09677 5.75806 9.09677H7.56452C7.75157 9.09677 7.90323 9.24843 7.90323 9.43548V12.2581H8.24193C8.42899 12.2581 8.58064 12.4097 8.58064 12.5968V13.2742Z" fill="#FFC908" />
+                    </svg>
+                </span>
+            )}
+            <span className="gutenverse-inline-notice-content">{children}</span>
+        </div>
+    );
 };
 
 const ExampleFillButton = ({
@@ -320,8 +333,8 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
             anchor: '',
             color: extra.color || '#334155',
             textAlign: extra.textAlign || 'left',
-            lineHeight: extra.lineHeight || '170%',
-            fontSize: extra.fontSize || '16px',
+            lineHeight: extra.lineHeight || '160%',
+            fontSize: extra.fontSize || '14px',
             text,
         },
     });
@@ -362,11 +375,11 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
         const hasInputFields = inputFields.length > 0;
         const labelCellStyle = [
             'width:32%',
-            'padding:14px 18px 14px 0',
+            'padding:11px 18px 11px 0',
             'border-bottom:1px solid #e2e8f0',
             'color:#64748b',
-            'font-size:14px',
-            'font-weight:600',
+            'font-size:13px',
+            'font-weight:500',
             'line-height:1.45',
             'vertical-align:top',
             'word-break:break-word',
@@ -374,12 +387,12 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
         ].join(';');
         const valueCellStyle = [
             'width:68%',
-            'padding:14px 0',
+            'padding:11px 0',
             'border-bottom:1px solid #e2e8f0',
             'color:#0f172a',
-            'font-size:15px',
-            'font-weight:600',
-            'line-height:1.6',
+            'font-size:14px',
+            'font-weight:400',
+            'line-height:1.55',
             'text-align:left',
             'vertical-align:top',
             'word-break:break-word',
@@ -418,11 +431,11 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
         const hasInputFields = inputFields.length > 0;
         const labelCellStyle = [
             'width:34%',
-            'padding:9px 14px 9px 0',
+            'padding:8px 14px 8px 0',
             'border-bottom:1px solid #e5e7eb',
             'color:#64748b',
-            'font-size:13px',
-            'font-weight:700',
+            'font-size:12px',
+            'font-weight:500',
             'line-height:1.45',
             'vertical-align:top',
             'word-break:break-word',
@@ -430,11 +443,11 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
         ].join(';');
         const valueCellStyle = [
             'width:66%',
-            'padding:9px 0',
+            'padding:8px 0',
             'border-bottom:1px solid #e5e7eb',
             'color:#111827',
-            'font-size:14px',
-            'font-weight:600',
+            'font-size:13px',
+            'font-weight:400',
             'line-height:1.55',
             'text-align:left',
             'vertical-align:top',
@@ -472,25 +485,25 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                             [
                                 createTextContent(
                                     'thankyou-title',
-                                    `<h1 style="margin: 0; font-size: 30px; line-height: 1.25; color: #0f172a; text-align: center;">${isConfirmation ? 'Thank you for your submission' : 'A new form submission is here'}</h1>`,
-                                    { textAlign: 'center', fontSize: '30px', lineHeight: '130%', color: '#0f172a' }
+                                    `<h1 style="margin: 0; font-size: 22px; font-weight: 600; line-height: 1.3; color: #0f172a; text-align: center;">${isConfirmation ? 'Thank you for your submission' : 'A new form submission is here'}</h1>`,
+                                    { textAlign: 'center', fontSize: '22px', lineHeight: '130%', color: '#0f172a' }
                                 ),
                                 createTextContent(
                                     'thankyou-copy',
-                                    `<p style="margin: 0;">${isConfirmation ? 'We received your response for <strong>{{form_title}}</strong> and will get back to you soon.' : 'This email was triggered by <strong>{{form_title}}</strong> on <strong>{{site_title}}</strong>.'}</p>`,
+                                    `<p style="margin: 0;">${isConfirmation ? 'We received your response for <strong style="font-weight:600;">{{form_title}}</strong> and will get back to you soon.' : 'This email was triggered by <strong style="font-weight:600;">{{form_title}}</strong> on <strong style="font-weight:600;">{{site_title}}</strong>.'}</p>`,
                                     { textAlign: 'center' }
                                 ),
                                 createTextContent(
                                     'thankyou-note',
-                                    '<p style="margin: 0; font-size: 14px; color: #64748b; text-align: center;">Reference: <strong>{{entry_title}}</strong></p>',
-                                    { textAlign: 'center', fontSize: '14px', color: '#64748b' }
+                                    '<p style="margin: 0; font-size: 12px; color: #64748b; text-align: center;">Reference: <span style="font-weight:500;">{{entry_title}}</span></p>',
+                                    { textAlign: 'center', fontSize: '12px', color: '#64748b' }
                                 ),
                             ],
                             {
                                 backgroundColor: '#ffffff',
-                                border: { radius: '18px' },
-                                padding: '40px 40px 36px',
-                                rowPadding: '32px 24px',
+                                border: { radius: '14px' },
+                                padding: '30px 32px',
+                                rowPadding: '24px',
                                 rowBackgroundColor: soft,
                             }
                         ),
@@ -500,15 +513,15 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
             html: `
                 <html>
                     <body style="margin:0;background:#eef2f7;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;color:#334155;">
-                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#f5f7ff;border-radius:24px;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#f5f7ff;border-radius:20px;">
                             <tr>
-                                <td style="padding:32px 24px;">
-                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:18px;">
+                                <td style="padding:24px;">
+                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:14px;">
                                         <tr>
-                                            <td style="padding:40px 40px 36px;text-align:center;">
-                                                <h1 style="margin:0 0 16px;font-size:30px;line-height:1.25;color:#0f172a;">${isConfirmation ? 'Thank you for your submission' : 'A new form submission is here'}</h1>
-                                                <p style="margin:0 0 14px;font-size:16px;line-height:1.7;color:#334155;">${isConfirmation ? 'We received your response for <strong>{{form_title}}</strong> and will get back to you soon.' : 'This email was triggered by <strong>{{form_title}}</strong> on <strong>{{site_title}}</strong>.'}</p>
-                                                <p style="margin:0;font-size:14px;line-height:1.6;color:#64748b;">Reference: <strong>{{entry_title}}</strong></p>
+                                            <td style="padding:30px 32px;text-align:center;">
+                                                <h1 style="margin:0 0 12px;font-size:22px;font-weight:600;line-height:1.3;color:#0f172a;">${isConfirmation ? 'Thank you for your submission' : 'A new form submission is here'}</h1>
+                                                <p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#334155;">${isConfirmation ? 'We received your response for <strong style="font-weight:600;">{{form_title}}</strong> and will get back to you soon.' : 'This email was triggered by <strong style="font-weight:600;">{{form_title}}</strong> on <strong style="font-weight:600;">{{site_title}}</strong>.'}</p>
+                                                <p style="margin:0;font-size:12px;line-height:1.5;color:#64748b;">Reference: <span style="font-weight:500;">{{entry_title}}</span></p>
                                             </td>
                                         </tr>
                                     </table>
@@ -535,31 +548,31 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                             [
                                 createTextContent(
                                     'compact-title',
-                                    '<h1 style="margin: 0; font-size: 24px; line-height: 1.25; color: #0f172a;">New submission</h1>',
-                                    { fontSize: '24px', lineHeight: '130%', color: '#0f172a' }
+                                    '<h1 style="margin: 0; font-size: 20px; font-weight: 600; line-height: 1.3; color: #0f172a;">New submission</h1>',
+                                    { fontSize: '20px', lineHeight: '130%', color: '#0f172a' }
                                 ),
                                 createTextContent(
                                     'compact-copy',
-                                    '<p style="margin: 0;">A visitor submitted <strong>{{form_title}}</strong>. The main details are listed below.</p>',
-                                    { fontSize: '15px', lineHeight: '160%' }
+                                    '<p style="margin: 0;">A visitor submitted <strong style="font-weight:600;">{{form_title}}</strong>. The main details are listed below.</p>',
+                                    { fontSize: '14px', lineHeight: '160%' }
                                 ),
                                 createTextContent(
                                     'compact-meta',
-                                    '<p style="margin: 0; font-size: 13px; color: #64748b;">Reference: <strong>{{entry_title}}</strong> &nbsp;|&nbsp; Site: <strong>{{site_title}}</strong></p>',
-                                    { fontSize: '13px', color: '#64748b' }
+                                    '<p style="margin: 0; font-size: 12px; color: #64748b;">Reference: <span style="font-weight:500;">{{entry_title}}</span> &nbsp;|&nbsp; Site: <span style="font-weight:500;">{{site_title}}</span></p>',
+                                    { fontSize: '12px', color: '#64748b' }
                                 ),
                                 createTextContent(
                                     'compact-list',
                                     `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
                                         ${compactRows}
                                     </table>`,
-                                    { fontSize: '14px', lineHeight: '155%' }
+                                    { fontSize: '13px', lineHeight: '155%' }
                                 ),
                             ],
                             {
                                 backgroundColor: '#ffffff',
                                 border: { radius: '14px' },
-                                padding: '28px 30px',
+                                padding: '24px 28px',
                                 rowPadding: '24px',
                                 rowBackgroundColor: soft,
                             }
@@ -575,10 +588,10 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                                 <td style="padding:24px;">
                                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:14px;">
                                         <tr>
-                                            <td style="padding:28px 30px;">
-                                                <h1 style="margin:0 0 10px;font-size:24px;line-height:1.25;color:#0f172a;">New submission</h1>
-                                                <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#334155;">A visitor submitted <strong>{{form_title}}</strong>. The main details are listed below.</p>
-                                                <p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:#64748b;">Reference: <strong>{{entry_title}}</strong> &nbsp;|&nbsp; Site: <strong>{{site_title}}</strong></p>
+                                            <td style="padding:24px 28px;">
+                                                <h1 style="margin:0 0 10px;font-size:20px;font-weight:600;line-height:1.3;color:#0f172a;">New submission</h1>
+                                                <p style="margin:0 0 10px;font-size:14px;line-height:1.6;color:#334155;">A visitor submitted <strong style="font-weight:600;">{{form_title}}</strong>. The main details are listed below.</p>
+                                                <p style="margin:0 0 14px;font-size:12px;line-height:1.5;color:#64748b;">Reference: <span style="font-weight:500;">{{entry_title}}</span> &nbsp;|&nbsp; Site: <span style="font-weight:500;">{{site_title}}</span></p>
                                                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
                                                     ${compactRows}
                                                 </table>
@@ -613,18 +626,18 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                         [
                             createTextContent(
                                 'data-title',
-                                `<h1 style="margin: 0; font-size: 28px; line-height: 1.25; color: #0f172a;">${isConfirmation ? 'Submission summary' : 'New submission summary'}</h1>`,
-                                { fontSize: '28px', lineHeight: '130%', color: '#0f172a' }
+                                `<h1 style="margin: 0; font-size: 22px; font-weight: 600; line-height: 1.3; color: #0f172a;">${isConfirmation ? 'Submission summary' : 'New submission summary'}</h1>`,
+                                { fontSize: '22px', lineHeight: '130%', color: '#0f172a' }
                             ),
                             createTextContent(
                                 'data-copy',
-                                `<p style="margin: 0;">${escapeHtml(dataCopy)}</p>`
+                                `<p style="margin: 0; font-size: 14px; line-height: 1.6;">${escapeHtml(dataCopy)}</p>`
                             ),
                         ],
                         {
                             backgroundColor: '#ffffff',
-                            border: { radius: '18px 18px 0 0' },
-                            padding: '32px 32px 20px',
+                            border: { radius: '14px 14px 0 0' },
+                            padding: '26px 30px 18px',
                             rowPadding: '24px 24px 0',
                             rowBackgroundColor: soft,
                         }
@@ -637,7 +650,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                                 `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
                                     ${dataSummaryRows.tableRows}
                                 </table>`,
-                                { fontSize: '15px', lineHeight: '160%' }
+                                { fontSize: '14px', lineHeight: '155%' }
                             ),
                             dataTip && createTextContent(
                                 'data-tip',
@@ -647,8 +660,8 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                         ].filter(Boolean),
                         {
                             backgroundColor: '#ffffff',
-                            border: { radius: '0 0 18px 18px' },
-                            padding: '0 32px 32px',
+                            border: { radius: '0 0 14px 14px' },
+                            padding: '0 30px 28px',
                             rowPadding: '0 24px 24px',
                             rowBackgroundColor: soft,
                         }
@@ -659,22 +672,22 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
         html: `
             <html>
                 <body style="margin:0;background:#eef2f7;padding:24px 16px;font-family:Arial,Helvetica,sans-serif;color:#334155;">
-                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#f5f7ff;border-radius:24px;">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#f5f7ff;border-radius:20px;">
                         <tr>
                             <td style="padding:24px;">
-                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:18px;overflow:hidden;">
+                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:14px;overflow:hidden;">
                                     <tr>
-                                        <td style="padding:32px 32px 20px;">
-                                            <h1 style="margin:0 0 12px;font-size:28px;line-height:1.25;color:#0f172a;">${isConfirmation ? 'Submission summary' : 'New submission summary'}</h1>
-                                            <p style="margin:0;font-size:16px;line-height:1.7;color:#334155;">${escapeHtml(dataCopy)}</p>
+                                        <td style="padding:26px 30px 18px;">
+                                            <h1 style="margin:0 0 10px;font-size:22px;font-weight:600;line-height:1.3;color:#0f172a;">${isConfirmation ? 'Submission summary' : 'New submission summary'}</h1>
+                                            <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">${escapeHtml(dataCopy)}</p>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="padding:0 32px 32px;">
+                                        <td style="padding:0 30px 28px;">
                                             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
                                                 ${dataSummaryRows.tableRows}
                                             </table>
-                                            ${dataSummaryRows.hasInputFields ? '' : '<p style="margin:16px 0 0;font-size:13px;line-height:1.6;color:#64748b;">Tip: replace <strong>{{your_field_tag}}</strong> with one of your form field tags from the builder.</p>'}
+                                            ${dataSummaryRows.hasInputFields ? '' : '<p style="margin:16px 0 0;font-size:12px;line-height:1.6;color:#64748b;">Tip: replace <span style="font-weight:500;">{{your_field_tag}}</span> with one of your form field tags from the builder.</p>'}
                                         </td>
                                     </tr>
                                 </table>
