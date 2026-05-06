@@ -1394,14 +1394,29 @@ class Form {
 	/**
 	 * Clone Form Action
 	 *
-	 * @param integer $id Delete Form Action.
+	 * @param integer $id Form Action ID.
 	 *
 	 * @return mixed
 	 */
 	public static function clone_form_action( $id ) {
-		$title     = get_the_title( $id );
+		$id   = absint( $id );
+		$post = get_post( $id );
+
+		if ( ! $post || self::POST_TYPE !== $post->post_type ) {
+			return new WP_Error(
+				'invalid_form_action',
+				__( 'This form action does not exist on this site.', 'gutenverse-form' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		$title     = get_the_title( $post );
 		$meta      = get_post_meta( $id, 'form-data', true );
 		$new_title = $title . esc_html__( ' Clone', 'gutenverse-form' );
+
+		if ( ! is_array( $meta ) ) {
+			$meta = array();
+		}
 
 		return self::create_form_action(
 			array_merge(
