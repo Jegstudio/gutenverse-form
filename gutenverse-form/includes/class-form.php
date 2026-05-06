@@ -26,6 +26,20 @@ class Form {
 	const POST_TYPE = 'gutenverse-form';
 
 	/**
+	 * Form action owner post meta key.
+	 *
+	 * @var string
+	 */
+	const OWNER_POST_META = '_gutenverse_form_owner_post_id';
+
+	/**
+	 * Form action owner instance meta key.
+	 *
+	 * @var string
+	 */
+	const OWNER_INSTANCE_META = '_gutenverse_form_owner_instance_id';
+
+	/**
 	 * Init constructor.
 	 */
 	public function __construct() {
@@ -1149,6 +1163,248 @@ class Form {
 	}
 
 	/**
+	 * Count form builder references to a form action inside parsed blocks.
+	 *
+	 * @param array   $blocks  Parsed blocks.
+	 * @param integer $form_id Form action ID.
+	 *
+	 * @return integer
+	 */
+	private static function count_form_action_references_in_blocks( $blocks, $form_id ) {
+		$count = 0;
+
+		foreach ( $blocks as $block ) {
+			if ( 'gutenverse/form-builder' === ( $block['blockName'] ?? '' ) ) {
+				$form_attr = $block['attrs']['formId'] ?? null;
+				$block_id  = null;
+
+				if ( is_array( $form_attr ) && isset( $form_attr['value'] ) ) {
+					$block_id = (int) $form_attr['value'];
+				} elseif ( is_scalar( $form_attr ) ) {
+					$block_id = (int) $form_attr;
+				}
+
+				if ( (int) $form_id === $block_id ) {
+					++$count;
+				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$count += self::count_form_action_references_in_blocks( $block['innerBlocks'], $form_id );
+			}
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Count form builder references to a form action across editable content.
+	 *
+	 * @param integer $form_id Form action ID.
+	 *
+	 * @return integer
+	 */
+	private static function get_form_action_reference_count( $form_id ) {
+		$form_id = absint( $form_id );
+
+		if ( ! $form_id ) {
+			return 0;
+		}
+
+		$ignored_types = array(
+			self::POST_TYPE,
+			Entries::POST_TYPE,
+			'gutenverse-email-tpl',
+			'attachment',
+			'revision',
+			'nav_menu_item',
+			'wp_navigation',
+			'wp_template',
+			'wp_template_part',
+		);
+		$post_types    = array_diff( get_post_types( array( 'show_ui' => true ), 'names' ), $ignored_types );
+		$statuses      = array( 'publish', 'future', 'draft', 'pending', 'private' );
+		$posts         = get_posts(
+			array(
+				'post_type'              => $post_types,
+				'post_status'            => $statuses,
+				'posts_per_page'         => -1,
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+
+		$count = 0;
+
+		foreach ( $posts as $post ) {
+			if ( ! has_blocks( $post->post_content ) || false === strpos( $post->post_content, 'gutenverse/form-builder' ) ) {
+				continue;
+			}
+
+			$count += self::count_form_action_references_in_blocks( parse_blocks( $post->post_content ), $form_id );
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Sanitize a form builder instance ID.
+	 *
+	 * @param string $instance_id Form builder instance ID.
+	 *
+	 * @return string
+	 */
+	private static function sanitize_form_instance_id( $instance_id ) {
+		return sanitize_text_field( wp_unslash( (string) $instance_id ) );
+	}
+
+	/**
+	 * Get form action owner metadata.
+	 *
+	 * @param integer $form_id Form action ID.
+	 *
+	 * @return array
+	 */
+	private static function get_form_action_owner( $form_id ) {
+		return array(
+			'post_id'     => absint( get_post_meta( $form_id, self::OWNER_POST_META, true ) ),
+			'instance_id' => self::sanitize_form_instance_id( get_post_meta( $form_id, self::OWNER_INSTANCE_META, true ) ),
+		);
+	}
+
+	/**
+	 * Check whether owner metadata exists.
+	 *
+	 * @param array $owner Form action owner data.
+	 *
+	 * @return boolean
+	 */
+	private static function has_form_action_owner( $owner ) {
+		return ! empty( $owner['post_id'] ) && ! empty( $owner['instance_id'] );
+	}
+
+	/**
+	 * Check whether a form action belongs to a form builder instance.
+	 *
+	 * @param array   $owner       Form action owner data.
+	 * @param integer $post_id     Owner post ID.
+	 * @param string  $instance_id Owner instance ID.
+	 *
+	 * @return boolean
+	 */
+	private static function is_matching_form_action_owner( $owner, $post_id, $instance_id ) {
+		return (int) $owner['post_id'] === (int) $post_id && (string) $owner['instance_id'] === (string) $instance_id;
+	}
+
+	/**
+	 * Update form action owner metadata.
+	 *
+	 * @param integer $form_id     Form action ID.
+	 * @param integer $post_id     Owner post ID.
+	 * @param string  $instance_id Owner instance ID.
+	 */
+	private static function update_form_action_owner( $form_id, $post_id, $instance_id ) {
+		$post_id     = absint( $post_id );
+		$instance_id = self::sanitize_form_instance_id( $instance_id );
+
+		if ( ! $post_id || empty( $instance_id ) ) {
+			return;
+		}
+
+		update_post_meta( $form_id, self::OWNER_POST_META, $post_id );
+		update_post_meta( $form_id, self::OWNER_INSTANCE_META, $instance_id );
+	}
+
+	/**
+	 * Prepare form action assignment response.
+	 *
+	 * @param integer $form_id Form action ID.
+	 * @param array   $flags   Response flags.
+	 *
+	 * @return array
+	 */
+	private static function prepare_form_action_assignment_response( $form_id, $flags = array() ) {
+		$title = get_the_title( $form_id );
+
+		return array_merge(
+			array(
+				'id'      => (int) $form_id,
+				'title'   => $title,
+				'formId'  => array(
+					'label' => $title,
+					'value' => (int) $form_id,
+				),
+				'copied'  => false,
+				'claimed' => false,
+			),
+			$flags
+		);
+	}
+
+	/**
+	 * Ensure a form action belongs to the current form builder instance.
+	 *
+	 * @param integer $id          Form action ID.
+	 * @param integer $post_id     Owner post ID.
+	 * @param string  $instance_id Owner instance ID.
+	 *
+	 * @return array|WP_Error
+	 */
+	public static function ensure_form_action_ownership( $id, $post_id, $instance_id ) {
+		$id          = absint( $id );
+		$post_id     = absint( $post_id );
+		$instance_id = self::sanitize_form_instance_id( $instance_id );
+		$post        = get_post( $id );
+
+		if ( ! $id || ! $post_id || empty( $instance_id ) ) {
+			return new WP_Error(
+				'invalid_form_action_owner',
+				__( 'A form action, post, and form instance are required before ownership can be checked.', 'gutenverse-form' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		if ( ! $post || self::POST_TYPE !== $post->post_type ) {
+			return new WP_Error(
+				'invalid_form_action',
+				__( 'This form action does not exist on this site.', 'gutenverse-form' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		$owner = self::get_form_action_owner( $id );
+
+		if ( self::is_matching_form_action_owner( $owner, $post_id, $instance_id ) ) {
+			return self::prepare_form_action_assignment_response( $id );
+		}
+
+		if ( ! self::has_form_action_owner( $owner ) && self::get_form_action_reference_count( $id ) <= 1 ) {
+			self::update_form_action_owner( $id, $post_id, $instance_id );
+
+			return self::prepare_form_action_assignment_response(
+				$id,
+				array(
+					'claimed' => true,
+				)
+			);
+		}
+
+		$copied_id = self::clone_form_action( $id, $post_id, $instance_id );
+
+		if ( is_wp_error( $copied_id ) ) {
+			return $copied_id;
+		}
+
+		return self::prepare_form_action_assignment_response(
+			$copied_id,
+			array(
+				'copied' => true,
+			)
+		);
+	}
+
+	/**
 	 * Extract input names from blocks.
 	 *
 	 * @param array $blocks Blocks.
@@ -1266,7 +1522,12 @@ class Form {
 	 * @return array
 	 */
 	public static function create_form_action( $params ) {
-		$params    = self::normalize_form_action_params( $params );
+		$owner_post_id     = isset( $params['owner_post_id'] ) ? absint( $params['owner_post_id'] ) : 0;
+		$owner_instance_id = isset( $params['owner_instance_id'] ) ? self::sanitize_form_instance_id( $params['owner_instance_id'] ) : '';
+
+		unset( $params['owner_post_id'], $params['owner_instance_id'] );
+
+		$params = self::normalize_form_action_params( $params );
 		unset( $params['id'] );
 
 		$form_data = array(
@@ -1278,7 +1539,13 @@ class Form {
 			),
 		);
 
-		return wp_insert_post( $form_data );
+		$form_id = wp_insert_post( $form_data );
+
+		if ( ! is_wp_error( $form_id ) && $form_id && $owner_post_id && ! empty( $owner_instance_id ) ) {
+			self::update_form_action_owner( $form_id, $owner_post_id, $owner_instance_id );
+		}
+
+		return $form_id;
 	}
 
 	/**
@@ -1374,33 +1641,77 @@ class Form {
 	/**
 	 * Delete Form Action
 	 *
-	 * @param integer $id Delete Form Action.
+	 * @param integer $id                Delete Form Action.
+	 * @param integer $owner_post_id     Owner post ID.
+	 * @param string  $owner_instance_id Owner instance ID.
 	 *
 	 * @return mixed
 	 */
-	public static function delete_form_action( $id ) {
-		$post_type = get_post_type( $id );
-		if ( self::POST_TYPE !== $post_type && 'revision' !== $post_type ) {
+	public static function delete_form_action( $id, $owner_post_id = 0, $owner_instance_id = '' ) {
+		$id                = absint( $id );
+		$owner_post_id     = absint( $owner_post_id );
+		$owner_instance_id = self::sanitize_form_instance_id( $owner_instance_id );
+		$post              = get_post( $id );
+
+		if ( ! $post || self::POST_TYPE !== $post->post_type ) {
 			return new WP_Error(
 				'forbidden_permission',
-				/* translators: %s is the post type name */
-				sprintf( esc_html__( 'Forbidden Access: Target post type is %s', 'gutenverse-form' ), $post_type ),
+				esc_html__( 'Forbidden Access: Target form action does not exist.', 'gutenverse-form' ),
 				array( 'status' => 403 )
 			);
 		}
+
+		$reference_count = self::get_form_action_reference_count( $id );
+		$owner           = self::get_form_action_owner( $id );
+		$has_requester   = $owner_post_id && ! empty( $owner_instance_id );
+
+		if ( $reference_count > 0 && ! $has_requester ) {
+			return new WP_Error(
+				'form_action_in_use',
+				__( 'This form action is still used by a form builder and cannot be deleted from here.', 'gutenverse-form' ),
+				array(
+					'status'     => 409,
+					'references' => $reference_count,
+				)
+			);
+		}
+
+		if ( $reference_count > 1 ) {
+			return new WP_Error(
+				'form_action_in_use',
+				__( 'This form action is still used by more than one form builder. Create private copies or remove the other references before deleting it.', 'gutenverse-form' ),
+				array(
+					'status'     => 409,
+					'references' => $reference_count,
+				)
+			);
+		}
+
+		if ( self::has_form_action_owner( $owner ) && $has_requester && ! self::is_matching_form_action_owner( $owner, $owner_post_id, $owner_instance_id ) ) {
+			return new WP_Error(
+				'form_action_owner_mismatch',
+				__( 'This form action belongs to another form builder and cannot be deleted from this form.', 'gutenverse-form' ),
+				array( 'status' => 403 )
+			);
+		}
+
 		return wp_delete_post( $id, true );
 	}
 
 	/**
 	 * Clone Form Action
 	 *
-	 * @param integer $id Form Action ID.
+	 * @param integer $id                Form Action ID.
+	 * @param integer $owner_post_id     Owner post ID.
+	 * @param string  $owner_instance_id Owner instance ID.
 	 *
 	 * @return mixed
 	 */
-	public static function clone_form_action( $id ) {
-		$id   = absint( $id );
-		$post = get_post( $id );
+	public static function clone_form_action( $id, $owner_post_id = 0, $owner_instance_id = '' ) {
+		$id                = absint( $id );
+		$owner_post_id     = absint( $owner_post_id );
+		$owner_instance_id = self::sanitize_form_instance_id( $owner_instance_id );
+		$post              = get_post( $id );
 
 		if ( ! $post || self::POST_TYPE !== $post->post_type ) {
 			return new WP_Error(
@@ -1422,7 +1733,9 @@ class Form {
 			array_merge(
 				$meta,
 				array(
-					'title' => $new_title,
+					'title'             => $new_title,
+					'owner_post_id'     => $owner_post_id,
+					'owner_instance_id' => $owner_instance_id,
 				)
 			)
 		);

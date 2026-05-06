@@ -103,6 +103,16 @@ class Api {
 
 		register_rest_route(
 			self::ENDPOINT,
+			'form-action/ownership',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'ensure_form_action_ownership' ),
+				'permission_callback' => 'gutenverse_permission_check_admin',
+			)
+		);
+
+		register_rest_route(
+			self::ENDPOINT,
 			'integration/save',
 			array(
 				'methods'             => 'POST',
@@ -348,8 +358,10 @@ class Api {
 	 * @return boolean
 	 */
 	public function delete_form_action( $request ) {
-		$id          = $request->get_param( 'id' );
-		$form_action = Form::delete_form_action( $id );
+		$id                = $request->get_param( 'id' );
+		$owner_post_id     = $request->get_param( 'owner_post_id' );
+		$owner_instance_id = $request->get_param( 'owner_instance_id' );
+		$form_action       = Form::delete_form_action( $id, $owner_post_id, $owner_instance_id );
 		return rest_ensure_response( $form_action );
 	}
 
@@ -361,8 +373,26 @@ class Api {
 	 * @return boolean
 	 */
 	public function clone_form_action( $request ) {
-		$id          = $request->get_param( 'id' );
-		$form_action = Form::clone_form_action( $id );
+		$id                = $request->get_param( 'id' );
+		$owner_post_id     = $request->get_param( 'owner_post_id' );
+		$owner_instance_id = $request->get_param( 'owner_instance_id' );
+		$form_action       = Form::clone_form_action( $id, $owner_post_id, $owner_instance_id );
+		return rest_ensure_response( $form_action );
+	}
+
+	/**
+	 * Ensure form action ownership.
+	 *
+	 * @param object $request object.
+	 *
+	 * @return array|WP_Error
+	 */
+	public function ensure_form_action_ownership( $request ) {
+		$id                = $request->get_param( 'id' );
+		$owner_post_id     = $request->get_param( 'owner_post_id' );
+		$owner_instance_id = $request->get_param( 'owner_instance_id' );
+		$form_action       = Form::ensure_form_action_ownership( $id, $owner_post_id, $owner_instance_id );
+
 		return rest_ensure_response( $form_action );
 	}
 
@@ -442,6 +472,8 @@ class Api {
 				'admin_email_template'           => '',
 				'overwrite_default_confirmation' => '',
 				'overwrite_default_notification' => '',
+				'owner_post_id'                  => '',
+				'owner_instance_id'              => '',
 			)
 		);
 

@@ -49,6 +49,9 @@
 		"formId": {
 			"type": "object"
 		},
+		"formInstanceId": {
+			"type": "string"
+		},
 		"openFormActionOnMount": {
 			"type": "boolean"
 		},

@@ -2,7 +2,7 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
-import { dispatch } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 import { Modal, Button } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { IconTrashSVG } from 'gutenverse-core/icons';
@@ -34,6 +34,11 @@ export const CreateForm = (props) => {
     const [isFormActionDataEmpty, setIsFormActionDataEmpty] = useState(false);
     const autoOpenHandled = useRef(false);
     const templatePersistFields = ['user_message_type', 'admin_message_type', 'user_email_template', 'admin_email_template'];
+
+    const getFormActionOwnerPayload = () => ({
+        owner_post_id: select('core/editor')?.getCurrentPostId?.() || 0,
+        owner_instance_id: attributes.formInstanceId || '',
+    });
 
     const persistBuilderAssignment = (nextFormId) => {
         setAttributes({
@@ -245,8 +250,9 @@ export const CreateForm = (props) => {
 
         setSaving(true);
         setError('');
+        const ownerPayload = getFormActionOwnerPayload();
         apiFetch({
-            path: `/gutenverse-form-client/v1/form-action/${formId}`,
+            path: `/gutenverse-form-client/v1/form-action/${formId}?owner_post_id=${ownerPayload.owner_post_id}&owner_instance_id=${encodeURIComponent(ownerPayload.owner_instance_id)}`,
             method: 'DELETE',
         }).then(() => {
             persistBuilderAssignment('');
@@ -271,7 +277,7 @@ export const CreateForm = (props) => {
         setError('');
         const path = isEditing ? '/gutenverse-form-client/v1/form-action/edit' : '/gutenverse-form-client/v1/form-action/create';
         const formId = attributes.formId?.value;
-        const formData = isEditing ? { ...values, id: formId } : values;
+        const formData = isEditing ? { ...values, id: formId } : { ...values, ...getFormActionOwnerPayload() };
 
         apiFetch({
             path: path,

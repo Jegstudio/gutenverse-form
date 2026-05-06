@@ -23,10 +23,47 @@ import contactTemplateData from './data/contact-template.json';
 import subscribeTemplateData from './data/subscribe-template.json';
 import { CreateForm } from './panels/create-form';
 import { Modal, Button, ToolbarGroup, ToolbarButton, PanelBody } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
 
 const BULK_STYLE_PANEL_STATE = {
     panel: 'setting',
     section: 2,
+};
+
+const FORM_BUILDER_BLOCK_NAME = 'gutenverse/form-builder';
+
+const createFormInstanceId = () => {
+    if (window?.crypto?.randomUUID) {
+        return window.crypto.randomUUID();
+    }
+
+    return `form-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+};
+
+const getFormActionId = (formId) => formId?.value || '';
+
+const collectFormBuilderBlocks = (blocks = [], result = []) => {
+    blocks.forEach(block => {
+        if (block.name === FORM_BUILDER_BLOCK_NAME) {
+            result.push(block);
+        }
+
+        if (block.innerBlocks?.length) {
+            collectFormBuilderBlocks(block.innerBlocks, result);
+        }
+    });
+
+    return result;
+};
+
+const persistCurrentPost = () => {
+    setTimeout(() => {
+        const editorDispatch = dispatch('core/editor');
+
+        if (editorDispatch?.savePost) {
+            editorDispatch.savePost();
+        }
+    }, 0);
 };
 
 const NoticeMessages = ({ successExample = false, errorExample = false }) => {
@@ -36,10 +73,19 @@ const NoticeMessages = ({ successExample = false, errorExample = false }) => {
     </>;
 };
 
-const FormWrapper = ({ blockProps, attributes, clientId, setAttributes }) => {
+const FormActionOwnershipNotice = ({ message }) => {
+    if (!message) {
+        return null;
+    }
+
+    return <div className="gutenverse-form-action-ownership-notice">{message}</div>;
+};
+
+const FormWrapper = ({ blockProps, attributes, clientId, setAttributes, ownershipNotice }) => {
     return (
         <div {...blockProps}>
             <NoticeMessages {...attributes} />
+            <FormActionOwnershipNotice message={ownershipNotice} />
             <div className="gutenverse-form-builder-inline-action">
                 <CreateForm
                     attributes={attributes}
@@ -107,7 +153,7 @@ const TemplatePreview = ({ templateId }) => {
     return <div className="template-preview-box" />;
 };
 
-const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) => {
+const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, ownershipNotice }) => {
     const [blankMode, setBlankMode] = useState(false);
     const [creatingForm, setCreatingForm] = useState(false);
     const [error, setError] = useState('');
@@ -341,6 +387,7 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) =>
                 </Modal>
             )}
             <NoticeMessages {...attributes} />
+            <FormActionOwnershipNotice message={ownershipNotice} />
             {blankMode ? (
                 <>
                     <div className="gutenverse-form-builder-inline-action">
@@ -396,6 +443,94 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes }) =>
     );
 };
 
+const useFormActionOwnership = ({ attributes, clientId, setAttributes }) => {
+    const [ownershipNotice, setOwnershipNotice] = useState('');
+    const ownershipRequestKey = useRef('');
+    const formActionId = getFormActionId(attributes.formId);
+    const formInstanceId = attributes.formInstanceId || '';
+    const formBuilderBlocks = useSelect(
+        (select) => collectFormBuilderBlocks(select('core/block-editor').getBlocks()),
+        []
+    );
+    const currentPostId = useSelect(
+        (select) => select('core/editor')?.getCurrentPostId?.() || 0,
+        []
+    );
+
+    const getSameInstanceBlocks = () => {
+        if (!formActionId || !formInstanceId) {
+            return [];
+        }
+
+        return formBuilderBlocks.filter(block => (
+            `${getFormActionId(block.attributes?.formId)}` === `${formActionId}` &&
+            block.attributes?.formInstanceId === formInstanceId
+        ));
+    };
+
+    useEffect(() => {
+        if (!attributes.formInstanceId) {
+            setAttributes({ formInstanceId: createFormInstanceId() });
+        }
+    }, [attributes.formInstanceId, setAttributes]);
+
+    useEffect(() => {
+        const sameInstanceBlocks = getSameInstanceBlocks();
+        const firstInstanceBlock = sameInstanceBlocks[0];
+
+        if (sameInstanceBlocks.length > 1 && firstInstanceBlock?.clientId !== clientId) {
+            setOwnershipNotice('');
+            setAttributes({ formInstanceId: createFormInstanceId() });
+        }
+    }, [clientId, formActionId, formInstanceId, formBuilderBlocks, setAttributes]);
+
+    useEffect(() => {
+        if (!formActionId || !formInstanceId || !currentPostId) {
+            return;
+        }
+
+        const sameInstanceBlocks = getSameInstanceBlocks();
+        const firstInstanceBlock = sameInstanceBlocks[0];
+
+        if (sameInstanceBlocks.length > 1 && firstInstanceBlock?.clientId !== clientId) {
+            return;
+        }
+
+        const requestKey = `${formActionId}:${currentPostId}:${formInstanceId}`;
+
+        if (ownershipRequestKey.current === requestKey) {
+            return;
+        }
+
+        ownershipRequestKey.current = requestKey;
+
+        apiFetch({
+            path: '/gutenverse-form-client/v1/form-action/ownership',
+            method: 'POST',
+            data: {
+                id: formActionId,
+                owner_post_id: currentPostId,
+                owner_instance_id: formInstanceId,
+            }
+        }).then((response) => {
+            const nextFormId = response?.formId;
+
+            if (nextFormId?.value && Number(nextFormId.value) !== Number(formActionId)) {
+                setAttributes({ formId: nextFormId });
+                persistCurrentPost();
+            }
+
+            if (response?.copied) {
+                setOwnershipNotice(__('This duplicated form now uses its own copied form action. Changes here will not affect the original form.', 'gutenverse-form'));
+            }
+        }).catch(() => {
+            ownershipRequestKey.current = '';
+        });
+    }, [clientId, currentPostId, formActionId, formInstanceId, formBuilderBlocks, setAttributes]);
+
+    return ownershipNotice;
+};
+
 const FormBuilderBlock = compose(
     withPassRef,
     withAnimationStickyV2(),
@@ -447,6 +582,11 @@ const FormBuilderBlock = compose(
     });
 
     const Component = hasChildBlocks ? FormWrapper : FormPlaceholder;
+    const ownershipNotice = useFormActionOwnership({
+        attributes,
+        clientId,
+        setAttributes: props.setAttributes,
+    });
 
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
@@ -506,7 +646,7 @@ const FormBuilderBlock = compose(
             </div>
         </InspectorControls>
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} panelState={panelState} setPanelIsClicked={setPanelIsClicked} />
-        <Component blockProps={blockProps} attributes={attributes} clientId={clientId} setAttributes={props.setAttributes} />
+        <Component blockProps={blockProps} attributes={attributes} clientId={clientId} setAttributes={props.setAttributes} ownershipNotice={ownershipNotice} />
     </>;
 });
 
