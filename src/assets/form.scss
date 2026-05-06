@@ -849,12 +849,20 @@
     .template-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
 
         .cancel {
             background: #d63638;
             border-color: #d63638;
             color: #fff;
+            gap: 0;
+            justify-content: center;
+            min-width: 50px;
+            padding: 9px 14px;
+
+            svg {
+                flex: 0 0 auto;
+            }
 
             &:hover,
             &:focus,
@@ -863,6 +871,29 @@
                 background: #b92c2e;
                 border-color: #b92c2e;
                 color: #fff;
+            }
+        }
+
+        .refresh {
+            background: #fbfbff;
+            border: 1px solid #dedfe6;
+            color: #011627;
+            gap: 0;
+            justify-content: center;
+            min-width: 50px;
+            padding: 8px 13px;
+
+            svg {
+                flex: 0 0 auto;
+            }
+
+            &:hover,
+            &:focus,
+            &:active,
+            &:visited {
+                background: #f5f6fb;
+                border-color: #d3d6df;
+                color: #011627;
             }
         }
     }
