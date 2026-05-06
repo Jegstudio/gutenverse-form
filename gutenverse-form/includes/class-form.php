@@ -344,110 +344,56 @@ class Form {
 			return false;
 		}
 
-		$form_action       = self::get_form_action_data( $id );
-		$entry_query       = get_posts(
-			array(
-				'post_type'      => Entries::POST_TYPE,
-				'posts_per_page' => -1,
-				'post_status'    => array( 'publish' ),
-				'orderby'        => 'date',
-				'order'          => 'DESC',
-				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-					array(
-						'key'     => 'form-id',
-						'value'   => $id,
-						'compare' => '=',
-					),
-				),
-			)
+		$entry_stats   = self::get_entry_dashboard_stats( array( $id ) );
+		$locations_map = self::get_form_locations_map( array( $id ) );
+
+		return self::build_form_dashboard_data(
+			$post,
+			isset( $entry_stats[ $id ] ) ? $entry_stats[ $id ] : array(),
+			isset( $locations_map[ $id ] ) ? $locations_map[ $id ] : array()
 		);
-		$latest_entries    = array();
-		$source_post_map   = array();
-		$entries_last_week = 0;
-		$last_entry_date   = '';
-		$last_entry_ts     = 0;
-		$week_cutoff       = time() - WEEK_IN_SECONDS;
+	}
 
-		foreach ( $entry_query as $index => $entry_post ) {
-			$entry_time = get_post_time( 'U', true, $entry_post );
-			$post_id    = (int) get_post_meta( $entry_post->ID, 'post-id', true );
-			$post_item  = null;
-			$post_type  = null;
-
-			if ( $entry_time >= $week_cutoff ) {
-				++$entries_last_week;
-			}
-
-			if ( $entry_time > $last_entry_ts ) {
-				$last_entry_ts   = $entry_time;
-				$last_entry_date = get_the_date( '', $entry_post );
-			}
-
-			if ( $post_id > 0 ) {
-				if ( ! isset( $source_post_map[ $post_id ] ) ) {
-					$source_post_map[ $post_id ] = 0;
-				}
-
-				++$source_post_map[ $post_id ];
-				$post_item = get_post( $post_id );
-				$post_type = $post_item ? get_post_type_object( $post_item->post_type ) : null;
-			}
-
-			if ( $index < 5 ) {
-				$latest_entries[] = array(
-					'id'            => $entry_post->ID,
-					'title'         => get_the_title( $entry_post ),
-					'date'          => get_the_date( '', $entry_post ),
-					'edit_url'      => get_edit_post_link( $entry_post->ID, 'raw' ),
-					'source_title'  => $post_item ? get_the_title( $post_item ) : '',
-					'source_type'   => $post_type ? $post_type->labels->singular_name : '',
-					'source_view'   => $post_item ? get_permalink( $post_item ) : '',
-					'source_edit'   => $post_item ? get_edit_post_link( $post_item->ID, 'raw' ) : '',
-					'source_status' => $post_item ? get_post_status( $post_item ) : '',
-				);
-			}
+	/**
+	 * Build dashboard data from precomputed entry and location maps.
+	 *
+	 * @param \WP_Post $post        Form action post.
+	 * @param array    $entry_stats Precomputed entry statistics.
+	 * @param array    $locations   Precomputed form locations.
+	 *
+	 * @return array|false
+	 */
+	private static function build_form_dashboard_data( $post, $entry_stats = array(), $locations = array() ) {
+		if ( ! $post || self::POST_TYPE !== $post->post_type ) {
+			return false;
 		}
 
-		arsort( $source_post_map );
+		$id          = (int) $post->ID;
+		$form_action = self::get_form_action_data( $id );
 
-		$top_sources = array();
-		foreach ( array_slice( array_keys( $source_post_map ), 0, 5 ) as $source_id ) {
-			$source_post = get_post( $source_id );
-			$type_object = $source_post ? get_post_type_object( $source_post->post_type ) : null;
-
-			if ( ! $source_post ) {
-				continue;
-			}
-
-			$top_sources[] = array(
-				'id'       => $source_post->ID,
-				'title'    => get_the_title( $source_post ),
-				'type'     => $type_object ? $type_object->labels->singular_name : $source_post->post_type,
-				'count'    => (int) $source_post_map[ $source_id ],
-				'status'   => get_post_status( $source_post ),
-				'view_url' => get_permalink( $source_post ),
-				'edit_url' => get_edit_post_link( $source_post->ID, 'raw' ),
-			);
+		if ( is_wp_error( $form_action ) || ! is_array( $form_action ) ) {
+			$form_action = array();
 		}
 
-		$locations = self::get_form_locations( $id );
+		$entry_stats = wp_parse_args( $entry_stats, self::get_empty_entry_dashboard_stats() );
+		$locations   = is_array( $locations ) ? $locations : array();
 
 		return array(
-			'id'                   => (int) $id,
+			'id'                   => $id,
 			'title'                => get_the_title( $id ),
 			'created'              => get_the_date( '', $post ),
 			'modified'             => get_the_modified_date( '', $post ),
 			'edit_url'             => get_edit_post_link( $id, 'raw' ),
 			'entries_url'          => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE . '&form_id=' . $id ),
 			'export_url'           => rest_url( '/gutenverse-form-client/v1/form-action/export/' . $id . '?_wpnonce=' . wp_create_nonce( 'wp_rest' ) ),
-			'total_entries'        => count( $entry_query ),
-			'entries_last_week'    => $entries_last_week,
-			'last_entry_date'      => $last_entry_date,
-			'last_entry_timestamp' => $last_entry_ts,
+			'total_entries'        => (int) $entry_stats['total_entries'],
+			'entries_last_week'    => (int) $entry_stats['entries_last_week'],
+			'last_entry_date'      => $entry_stats['last_entry_date'],
+			'last_entry_timestamp' => (int) $entry_stats['last_entry_timestamp'],
 			'location_count'       => count( $locations ),
 			'locations'            => $locations,
-			'top_sources'          => $top_sources,
-			'latest_entries'       => $latest_entries,
+			'top_sources'          => $entry_stats['top_sources'],
+			'latest_entries'       => $entry_stats['latest_entries'],
 			'available_inputs'     => isset( $form_action['available_inputs'] ) ? array_values( $form_action['available_inputs'] ) : array(),
 			'settings'             => array(
 				'require_login' => ! empty( $form_action['require_login'] ),
@@ -467,17 +413,29 @@ class Form {
 	public static function get_all_form_dashboard_data() {
 		$forms = get_posts(
 			array(
-				'post_type'      => self::POST_TYPE,
-				'post_status'    => array( 'publish', 'draft', 'pending', 'private', 'future' ),
-				'posts_per_page' => -1,
-				'orderby'        => 'modified',
-				'order'          => 'DESC',
+				'post_type'              => self::POST_TYPE,
+				'post_status'            => array( 'publish', 'draft', 'pending', 'private', 'future' ),
+				'posts_per_page'         => -1,
+				'orderby'                => 'modified',
+				'order'                  => 'DESC',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
 			)
 		);
-		$data  = array();
+		$data     = array();
+		$form_ids = wp_list_pluck( $forms, 'ID' );
+
+		$entry_stats   = self::get_entry_dashboard_stats( $form_ids );
+		$locations_map = self::get_form_locations_map( $form_ids );
 
 		foreach ( $forms as $form ) {
-			$form_dashboard = self::get_form_dashboard_data( $form->ID );
+			$form_id        = (int) $form->ID;
+			$form_dashboard = self::build_form_dashboard_data(
+				$form,
+				isset( $entry_stats[ $form_id ] ) ? $entry_stats[ $form_id ] : array(),
+				isset( $locations_map[ $form_id ] ) ? $locations_map[ $form_id ] : array()
+			);
 
 			if ( $form_dashboard ) {
 				$data[] = $form_dashboard;
@@ -485,6 +443,282 @@ class Form {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Normalize a form ID list.
+	 *
+	 * @param array $form_ids Form action IDs.
+	 *
+	 * @return array
+	 */
+	private static function normalize_form_ids( $form_ids ) {
+		return array_values( array_unique( array_filter( array_map( 'absint', (array) $form_ids ) ) ) );
+	}
+
+	/**
+	 * Get empty entry dashboard statistics.
+	 *
+	 * @return array
+	 */
+	private static function get_empty_entry_dashboard_stats() {
+		return array(
+			'total_entries'        => 0,
+			'entries_last_week'    => 0,
+			'last_entry_date'      => '',
+			'last_entry_timestamp' => 0,
+			'top_sources'          => array(),
+			'latest_entries'       => array(),
+		);
+	}
+
+	/**
+	 * Get entry counts grouped by form action.
+	 *
+	 * @param array  $form_ids    Optional form action IDs.
+	 * @param string $after       Optional date lower boundary.
+	 * @param string $before      Optional date upper boundary.
+	 * @param string $date_column Date column to filter by.
+	 *
+	 * @return array
+	 */
+	public static function get_form_entry_count_map( $form_ids = array(), $after = '', $before = '', $date_column = 'post_date' ) {
+		global $wpdb;
+
+		$form_ids    = self::normalize_form_ids( $form_ids );
+		$date_column = in_array( $date_column, array( 'post_date', 'post_date_gmt' ), true ) ? $date_column : 'post_date';
+		$where       = array(
+			'entries.post_type = %s',
+			'entries.post_status = %s',
+			"form_meta.meta_key = 'form-id'",
+			"form_meta.meta_value <> ''",
+			'CAST(form_meta.meta_value AS UNSIGNED) > 0',
+		);
+		$args        = array(
+			Entries::POST_TYPE,
+			'publish',
+		);
+
+		if ( ! empty( $form_ids ) ) {
+			$where[] = 'CAST(form_meta.meta_value AS UNSIGNED) IN (' . implode( ',', array_fill( 0, count( $form_ids ), '%d' ) ) . ')';
+			$args    = array_merge( $args, $form_ids );
+		}
+
+		if ( $after ) {
+			$where[] = "entries.{$date_column} >= %s";
+			$args[]  = $after;
+		}
+
+		if ( $before ) {
+			$where[] = "entries.{$date_column} <= %s";
+			$args[]  = $before;
+		}
+
+		$query = "
+			SELECT CAST(form_meta.meta_value AS UNSIGNED) AS form_id, COUNT(entries.ID) AS entry_count
+			FROM {$wpdb->posts} entries
+			INNER JOIN {$wpdb->postmeta} form_meta ON entries.ID = form_meta.post_id
+			WHERE " . implode( ' AND ', $where ) . '
+			GROUP BY CAST(form_meta.meta_value AS UNSIGNED)
+		';
+		$rows  = $wpdb->get_results( $wpdb->prepare( $query, $args ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$map   = array();
+
+		foreach ( $rows as $row ) {
+			$map[ (int) $row['form_id'] ] = (int) $row['entry_count'];
+		}
+
+		return $map;
+	}
+
+	/**
+	 * Get dashboard entry statistics grouped by form action.
+	 *
+	 * @param array $form_ids Form action IDs.
+	 *
+	 * @return array
+	 */
+	private static function get_entry_dashboard_stats( $form_ids ) {
+		global $wpdb;
+
+		$form_ids = self::normalize_form_ids( $form_ids );
+		$stats    = array();
+
+		foreach ( $form_ids as $form_id ) {
+			$stats[ $form_id ] = self::get_empty_entry_dashboard_stats();
+		}
+
+		if ( empty( $form_ids ) ) {
+			return $stats;
+		}
+
+		$week_cutoff = gmdate( 'Y-m-d H:i:s', time() - WEEK_IN_SECONDS );
+		$query       = "
+			SELECT
+				CAST(form_meta.meta_value AS UNSIGNED) AS form_id,
+				COUNT(entries.ID) AS total_entries,
+				SUM(CASE WHEN entries.post_date_gmt >= %s THEN 1 ELSE 0 END) AS entries_last_week,
+				MAX(entries.post_date_gmt) AS last_entry_gmt
+			FROM {$wpdb->posts} entries
+			INNER JOIN {$wpdb->postmeta} form_meta ON entries.ID = form_meta.post_id AND form_meta.meta_key = 'form-id'
+			WHERE entries.post_type = %s
+				AND entries.post_status = %s
+				AND CAST(form_meta.meta_value AS UNSIGNED) IN (" . implode( ',', array_fill( 0, count( $form_ids ), '%d' ) ) . ')
+			GROUP BY CAST(form_meta.meta_value AS UNSIGNED)
+		';
+		$args        = array_merge( array( $week_cutoff, Entries::POST_TYPE, 'publish' ), $form_ids );
+		$rows        = $wpdb->get_results( $wpdb->prepare( $query, $args ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		foreach ( $rows as $row ) {
+			$form_id        = (int) $row['form_id'];
+			$last_entry_gmt = isset( $row['last_entry_gmt'] ) ? $row['last_entry_gmt'] : '';
+
+			if ( ! isset( $stats[ $form_id ] ) ) {
+				$stats[ $form_id ] = self::get_empty_entry_dashboard_stats();
+			}
+
+			$stats[ $form_id ]['total_entries']        = (int) $row['total_entries'];
+			$stats[ $form_id ]['entries_last_week']    = (int) $row['entries_last_week'];
+			$stats[ $form_id ]['last_entry_timestamp'] = $last_entry_gmt ? strtotime( $last_entry_gmt . ' UTC' ) : 0;
+			$stats[ $form_id ]['last_entry_date']      = $last_entry_gmt ? get_date_from_gmt( $last_entry_gmt, get_option( 'date_format' ) ) : '';
+		}
+
+		$top_sources = self::get_top_sources_by_form( $form_ids );
+		foreach ( $top_sources as $form_id => $sources ) {
+			$stats[ $form_id ]['top_sources'] = $sources;
+		}
+
+		$latest_entries = self::get_latest_entries_by_form( $form_ids );
+		foreach ( $latest_entries as $form_id => $entries ) {
+			$stats[ $form_id ]['latest_entries'] = $entries;
+		}
+
+		return $stats;
+	}
+
+	/**
+	 * Get top entry sources grouped by form action.
+	 *
+	 * @param array $form_ids Form action IDs.
+	 *
+	 * @return array
+	 */
+	private static function get_top_sources_by_form( $form_ids ) {
+		global $wpdb;
+
+		$form_ids = self::normalize_form_ids( $form_ids );
+		$sources  = array();
+
+		foreach ( $form_ids as $form_id ) {
+			$sources[ $form_id ] = array();
+		}
+
+		if ( empty( $form_ids ) ) {
+			return $sources;
+		}
+
+		$query = "
+			SELECT
+				CAST(form_meta.meta_value AS UNSIGNED) AS form_id,
+				CAST(source_meta.meta_value AS UNSIGNED) AS source_id,
+				COUNT(entries.ID) AS entry_count
+			FROM {$wpdb->posts} entries
+			INNER JOIN {$wpdb->postmeta} form_meta ON entries.ID = form_meta.post_id AND form_meta.meta_key = 'form-id'
+			INNER JOIN {$wpdb->postmeta} source_meta ON entries.ID = source_meta.post_id AND source_meta.meta_key = 'post-id'
+			WHERE entries.post_type = %s
+				AND entries.post_status = %s
+				AND CAST(form_meta.meta_value AS UNSIGNED) IN (" . implode( ',', array_fill( 0, count( $form_ids ), '%d' ) ) . ')
+				AND CAST(source_meta.meta_value AS UNSIGNED) > 0
+			GROUP BY CAST(form_meta.meta_value AS UNSIGNED), CAST(source_meta.meta_value AS UNSIGNED)
+			ORDER BY form_id ASC, entry_count DESC
+		';
+		$args  = array_merge( array( Entries::POST_TYPE, 'publish' ), $form_ids );
+		$rows  = $wpdb->get_results( $wpdb->prepare( $query, $args ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		foreach ( $rows as $row ) {
+			$form_id   = (int) $row['form_id'];
+			$source_id = (int) $row['source_id'];
+
+			if ( ! isset( $sources[ $form_id ] ) || count( $sources[ $form_id ] ) >= 5 || ! $source_id ) {
+				continue;
+			}
+
+			$source_post = get_post( $source_id );
+			$type_object = $source_post ? get_post_type_object( $source_post->post_type ) : null;
+
+			if ( ! $source_post ) {
+				continue;
+			}
+
+			$sources[ $form_id ][] = array(
+				'id'       => $source_post->ID,
+				'title'    => get_the_title( $source_post ),
+				'type'     => $type_object ? $type_object->labels->singular_name : $source_post->post_type,
+				'count'    => (int) $row['entry_count'],
+				'status'   => get_post_status( $source_post ),
+				'view_url' => get_permalink( $source_post ),
+				'edit_url' => get_edit_post_link( $source_post->ID, 'raw' ),
+			);
+		}
+
+		return $sources;
+	}
+
+	/**
+	 * Get latest entries grouped by form action.
+	 *
+	 * @param array   $form_ids Form action IDs.
+	 * @param integer $limit    Latest entry limit per form.
+	 *
+	 * @return array
+	 */
+	private static function get_latest_entries_by_form( $form_ids, $limit = 5 ) {
+		$form_ids = self::normalize_form_ids( $form_ids );
+		$entries  = array();
+
+		foreach ( $form_ids as $form_id ) {
+			$entries[ $form_id ] = array();
+			$entry_ids           = get_posts(
+				array(
+					'post_type'              => Entries::POST_TYPE,
+					'posts_per_page'         => $limit,
+					'post_status'            => array( 'publish' ),
+					'orderby'                => 'date',
+					'order'                  => 'DESC',
+					'fields'                 => 'ids',
+					'no_found_rows'          => true,
+					'update_post_meta_cache' => true,
+					'update_post_term_cache' => false,
+					'meta_query'             => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+						array(
+							'key'     => 'form-id',
+							'value'   => $form_id,
+							'compare' => '=',
+						),
+					),
+				)
+			);
+
+			foreach ( $entry_ids as $entry_id ) {
+				$post_id   = (int) get_post_meta( $entry_id, 'post-id', true );
+				$post_item = $post_id > 0 ? get_post( $post_id ) : null;
+				$post_type = $post_item ? get_post_type_object( $post_item->post_type ) : null;
+
+				$entries[ $form_id ][] = array(
+					'id'            => $entry_id,
+					'title'         => get_the_title( $entry_id ),
+					'date'          => get_the_date( '', $entry_id ),
+					'edit_url'      => get_edit_post_link( $entry_id, 'raw' ),
+					'source_title'  => $post_item ? get_the_title( $post_item ) : '',
+					'source_type'   => $post_type ? $post_type->labels->singular_name : '',
+					'source_view'   => $post_item ? get_permalink( $post_item ) : '',
+					'source_edit'   => $post_item ? get_edit_post_link( $post_item->ID, 'raw' ) : '',
+					'source_status' => $post_item ? get_post_status( $post_item ) : '',
+				);
+			}
+		}
+
+		return $entries;
 	}
 
 	/**
@@ -764,6 +998,31 @@ class Form {
 	 * @return array
 	 */
 	private static function get_form_locations( $form_id ) {
+		$locations_map = self::get_form_locations_map( array( $form_id ) );
+
+		return isset( $locations_map[ (int) $form_id ] ) ? $locations_map[ (int) $form_id ] : array();
+	}
+
+	/**
+	 * Get locations that use form actions.
+	 *
+	 * @param array $form_ids Form action IDs.
+	 *
+	 * @return array
+	 */
+	private static function get_form_locations_map( $form_ids ) {
+		$form_ids = self::normalize_form_ids( $form_ids );
+		$lookup   = array_fill_keys( $form_ids, true );
+		$map      = array();
+
+		foreach ( $form_ids as $form_id ) {
+			$map[ $form_id ] = array();
+		}
+
+		if ( empty( $form_ids ) ) {
+			return $map;
+		}
+
 		$ignored_types = array(
 			self::POST_TYPE,
 			Entries::POST_TYPE,
@@ -779,24 +1038,38 @@ class Form {
 		$statuses      = array( 'publish', 'future', 'draft', 'pending', 'private' );
 		$posts         = get_posts(
 			array(
-				'post_type'      => $post_types,
-				'post_status'    => $statuses,
-				'posts_per_page' => -1,
+				'post_type'              => $post_types,
+				'post_status'            => $statuses,
+				'posts_per_page'         => -1,
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
 			)
 		);
-		$locations     = array();
 
 		foreach ( $posts as $post ) {
-			if ( ! has_blocks( $post->post_content ) ) {
+			if ( ! has_blocks( $post->post_content ) || false === strpos( $post->post_content, 'gutenverse/form-builder' ) ) {
 				continue;
 			}
 
-			if ( ! self::post_uses_form_action( parse_blocks( $post->post_content ), $form_id ) ) {
+			$used_form_ids = array();
+			self::collect_form_action_ids_from_blocks( parse_blocks( $post->post_content ), $used_form_ids );
+			$used_form_ids = array_values( array_unique( array_filter( array_map( 'absint', $used_form_ids ) ) ) );
+			$used_form_ids = array_values(
+				array_filter(
+					$used_form_ids,
+					static function ( $used_form_id ) use ( $lookup ) {
+						return isset( $lookup[ $used_form_id ] );
+					}
+				)
+			);
+
+			if ( empty( $used_form_ids ) ) {
 				continue;
 			}
 
 			$type_object = get_post_type_object( $post->post_type );
-			$locations[] = array(
+			$location    = array(
 				'id'       => (int) $post->ID,
 				'title'    => get_the_title( $post ) ? get_the_title( $post ) : __( '(no title)', 'gutenverse-form' ),
 				'type'     => $type_object ? $type_object->labels->singular_name : $post->post_type,
@@ -804,9 +1077,13 @@ class Form {
 				'view_url' => get_permalink( $post ),
 				'edit_url' => get_edit_post_link( $post->ID, 'raw' ),
 			);
+
+			foreach ( $used_form_ids as $used_form_id ) {
+				$map[ $used_form_id ][] = $location;
+			}
 		}
 
-		return $locations;
+		return $map;
 	}
 
 	/**
@@ -840,6 +1117,35 @@ class Form {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Collect form action IDs from a parsed block tree.
+	 *
+	 * @param array $blocks   Parsed blocks.
+	 * @param array $form_ids Form action IDs.
+	 */
+	private static function collect_form_action_ids_from_blocks( $blocks, &$form_ids ) {
+		foreach ( $blocks as $block ) {
+			if ( 'gutenverse/form-builder' === ( $block['blockName'] ?? '' ) ) {
+				$form_attr = $block['attrs']['formId'] ?? null;
+				$form_id   = null;
+
+				if ( is_array( $form_attr ) && isset( $form_attr['value'] ) ) {
+					$form_id = $form_attr['value'];
+				} elseif ( is_scalar( $form_attr ) ) {
+					$form_id = $form_attr;
+				}
+
+				if ( $form_id ) {
+					$form_ids[] = (int) $form_id;
+				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				self::collect_form_action_ids_from_blocks( $block['innerBlocks'], $form_ids );
+			}
+		}
 	}
 
 	/**

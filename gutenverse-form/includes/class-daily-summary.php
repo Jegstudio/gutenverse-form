@@ -236,8 +236,6 @@ class Daily_Summary {
 	 */
 	private function get_summary_data() {
 		$boundaries  = $this->get_today_boundaries();
-		$forms       = Form::get_all_form_dashboard_data();
-		$forms_by_id = array();
 		$site_url    = home_url( '/' );
 		$site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 
@@ -245,50 +243,32 @@ class Daily_Summary {
 			$site_domain = untrailingslashit( $site_url );
 		}
 
-		foreach ( $forms as $form ) {
-			$forms_by_id[ (int) $form['id'] ] = $form;
-		}
-
-		$entries = get_posts(
+		$form_ids = get_posts(
 			array(
-				'post_type'      => Entries::POST_TYPE,
-				'post_status'    => array( 'publish' ),
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-				'date_query'     => array(
-					array(
-						'after'     => $boundaries['start']->format( 'Y-m-d H:i:s' ),
-						'before'    => $boundaries['end']->format( 'Y-m-d H:i:s' ),
-						'inclusive' => true,
-						'column'    => 'post_date',
-					),
-				),
+				'post_type'              => Form::POST_TYPE,
+				'post_status'            => array( 'publish', 'draft', 'pending', 'private', 'future' ),
+				'posts_per_page'         => -1,
+				'fields'                 => 'ids',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
 			)
 		);
-
-		$form_counts = array();
-		foreach ( $entries as $entry_id ) {
-			$form_id = (int) get_post_meta( $entry_id, 'form-id', true );
-
-			if ( ! $form_id ) {
-				continue;
-			}
-
-			if ( ! isset( $form_counts[ $form_id ] ) ) {
-				$form_counts[ $form_id ] = 0;
-			}
-
-			++$form_counts[ $form_id ];
-		}
+		$form_counts  = Form::get_form_entry_count_map(
+			array(),
+			$boundaries['start']->format( 'Y-m-d H:i:s' ),
+			$boundaries['end']->format( 'Y-m-d H:i:s' ),
+			'post_date'
+		);
+		$total_counts = empty( $form_counts ) ? array() : Form::get_form_entry_count_map( array_keys( $form_counts ) );
 
 		$form_rows = array();
 		foreach ( $form_counts as $form_id => $count ) {
-			$form_data   = isset( $forms_by_id[ $form_id ] ) ? $forms_by_id[ $form_id ] : array();
 			$form_rows[] = array(
 				'id'            => $form_id,
-				'title'         => ! empty( $form_data['title'] ) ? $form_data['title'] : get_the_title( $form_id ),
+				'title'         => get_the_title( $form_id ),
 				'today_count'   => (int) $count,
-				'total_entries' => isset( $form_data['total_entries'] ) ? (int) $form_data['total_entries'] : 0,
+				'total_entries' => isset( $total_counts[ $form_id ] ) ? (int) $total_counts[ $form_id ] : 0,
 				'entries_url'   => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE . '&form_id=' . $form_id ),
 			);
 		}
@@ -312,7 +292,7 @@ class Daily_Summary {
 			'dashboard_url'           => admin_url( 'admin.php?page=' . Form::POST_TYPE ),
 			'today_total_submissions' => array_sum( $form_counts ),
 			'forms_with_submissions'  => count( $form_rows ),
-			'tracked_forms'           => count( $forms ),
+			'tracked_forms'           => count( $form_ids ),
 			'forms'                   => $form_rows,
 		);
 	}
