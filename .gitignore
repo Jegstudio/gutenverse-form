@@ -1,7 +1,7 @@
 # Folders to ignore
 .claude
 .idea
-.claude
+.serena
 build
 vendor
 release
