@@ -441,13 +441,158 @@ class Entries {
 		if ( (int) $result > 0 ) {
 			$update_title = array(
 				'ID'         => $result,
-				'post_title' => __( 'Entry #', 'gutenverse-form' ) . $result,
+				'post_title' => self::generate_entry_title( $result, $params ),
 			);
 
 			$result = wp_update_post( $update_title );
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Generate an entry title from form action settings.
+	 *
+	 * @param int   $entry_id Entry post ID.
+	 * @param array $params Entry data.
+	 *
+	 * @return string
+	 */
+	private static function generate_entry_title( $entry_id, $params ) {
+		$form_id    = isset( $params['form-id'] ) ? absint( $params['form-id'] ) : 0;
+		$form_title = $form_id ? get_the_title( $form_id ) : '';
+		$form_title = $form_title ? $form_title : __( 'Form', 'gutenverse-form' );
+		$form_data  = $form_id ? get_post_meta( $form_id, 'form-data', true ) : array();
+		$form_data  = is_array( $form_data ) ? $form_data : array();
+		$type       = isset( $form_data['entry_title_type'] ) ? $form_data['entry_title_type'] : 'form';
+		$title      = '';
+
+		switch ( $type ) {
+			case 'static':
+				$static_text = isset( $form_data['entry_title_static_text'] ) ? $form_data['entry_title_static_text'] : '';
+				$title       = self::format_entry_title_with_id( $static_text ? $static_text : $form_title, $entry_id );
+				break;
+			case 'input':
+				$input_name  = isset( $form_data['entry_title_input_name'] ) ? $form_data['entry_title_input_name'] : '';
+				$input_value = self::get_entry_input_value( $params, $input_name );
+				$title       = self::format_entry_title_with_id( $input_value ? $input_value : $form_title, $entry_id );
+				break;
+			case 'custom':
+				$format = isset( $form_data['entry_title_custom_format'] ) ? $form_data['entry_title_custom_format'] : '';
+				$title  = self::replace_entry_title_placeholders( $format, $entry_id, $params, $form_title );
+				break;
+			case 'form':
+			default:
+				$title = sprintf(
+					/* translators: 1: form title, 2: entry ID. */
+					__( '%1$s - Entry #%2$d', 'gutenverse-form' ),
+					$form_title,
+					$entry_id
+				);
+				break;
+		}
+
+		$title = sanitize_text_field( wp_strip_all_tags( $title ) );
+
+		if ( strlen( $title ) > 150 ) {
+			$title = wp_html_excerpt( $title, 150, '...' );
+		}
+
+		if ( '' === $title ) {
+			$title = sprintf(
+				/* translators: 1: form title, 2: entry ID. */
+				__( '%1$s - Entry #%2$d', 'gutenverse-form' ),
+				$form_title,
+				$entry_id
+			);
+		}
+
+		return apply_filters( 'gutenverse_form_entry_title', $title, $entry_id, $params, $form_data );
+	}
+
+	/**
+	 * Format a title with the entry ID suffix.
+	 *
+	 * @param string $title Entry title base.
+	 * @param int    $entry_id Entry post ID.
+	 *
+	 * @return string
+	 */
+	private static function format_entry_title_with_id( $title, $entry_id ) {
+		return sprintf(
+			/* translators: 1: entry title base, 2: entry ID. */
+			__( '%1$s #%2$d', 'gutenverse-form' ),
+			$title,
+			$entry_id
+		);
+	}
+
+	/**
+	 * Get submitted input value by input ID.
+	 *
+	 * @param array  $params Entry params.
+	 * @param string $input_name Input ID.
+	 *
+	 * @return string
+	 */
+	private static function get_entry_input_value( $params, $input_name ) {
+		if ( empty( $input_name ) || empty( $params['entry-data'] ) || ! is_array( $params['entry-data'] ) ) {
+			return '';
+		}
+
+		foreach ( $params['entry-data'] as $data ) {
+			if ( isset( $data['id'] ) && $input_name === $data['id'] ) {
+				$value = isset( $data['value'] ) ? $data['value'] : '';
+
+				if ( is_array( $value ) ) {
+					$value = implode( ', ', $value );
+				}
+
+				return (string) $value;
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Replace placeholders in a custom entry title format.
+	 *
+	 * @param string $format Entry title format.
+	 * @param int    $entry_id Entry post ID.
+	 * @param array  $params Entry params.
+	 * @param string $form_title Form title.
+	 *
+	 * @return string
+	 */
+	private static function replace_entry_title_placeholders( $format, $entry_id, $params, $form_title ) {
+		if ( '' === $format ) {
+			return '';
+		}
+
+		$title = str_replace(
+			array( '{{form_title}}', '{{entry_id}}', '{{site_title}}' ),
+			array( $form_title, $entry_id, get_bloginfo( 'name' ) ),
+			$format
+		);
+
+		if ( ! empty( $params['entry-data'] ) && is_array( $params['entry-data'] ) ) {
+			foreach ( $params['entry-data'] as $data ) {
+				if ( empty( $data['id'] ) ) {
+					continue;
+				}
+
+				$value = isset( $data['value'] ) ? $data['value'] : '';
+
+				if ( is_array( $value ) ) {
+					$value = implode( ', ', $value );
+				}
+
+				$title = str_replace( '{{' . $data['id'] . '}}', $value, $title );
+			}
+		}
+
+		return $title;
 	}
 
 	/**

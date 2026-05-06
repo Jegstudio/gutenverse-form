@@ -147,7 +147,7 @@ const FieldIdControl = ({
 };
 
 const TabGeneral = (props) => {
-    const { values, updateValue } = props;
+    const { values, updateValue, availableInputFields = [], placeholderDescription } = props;
     const defaultSettings = [
         {
             Component: <ControlText
@@ -223,6 +223,53 @@ const TabGeneral = (props) => {
             {getControl('require_login')}
             {getControl('user_browser')}
             {getControl('use_captcha')}
+        </FormGroup>
+
+        <FormGroup
+            title={__('Entry Title', 'gutenverse-form')}
+            description={__('Choose how each submitted entry is named in the admin entry list and email references.', 'gutenverse-form')}
+        >
+            <ControlSelect
+                id={'entry_title_type'}
+                title={__('Entry Title Format', 'gutenverse-form')}
+                description={__('Choose the title format for new submitted entries.', 'gutenverse-form')}
+                value={values.entry_title_type || 'form'}
+                options={[
+                    { label: __('Form Name + Entry ID', 'gutenverse-form'), value: 'form' },
+                    { label: __('Static Text + Entry ID', 'gutenverse-form'), value: 'static' },
+                    { label: __('Submitted Field + Entry ID', 'gutenverse-form'), value: 'input' },
+                    { label: __('Custom Format', 'gutenverse-form'), value: 'custom' },
+                ]}
+                updateValue={updateValue}
+            />
+            {values.entry_title_type === 'static' && (
+                <ControlText
+                    id={'entry_title_static_text'}
+                    title={__('Static Title Text', 'gutenverse-form')}
+                    description={__('This text will be followed by the entry ID, for example: Support Request #123.', 'gutenverse-form')}
+                    value={values.entry_title_static_text}
+                    updateValue={updateValue}
+                />
+            )}
+            {values.entry_title_type === 'input' && (
+                <FieldIdControl
+                    id={'entry_title_input_name'}
+                    title={__('Title Field ID', 'gutenverse-form')}
+                    description={__('Use the submitted value from this input as the entry title, followed by the entry ID.', 'gutenverse-form')}
+                    value={values.entry_title_input_name}
+                    updateValue={updateValue}
+                    inputFields={availableInputFields}
+                />
+            )}
+            {values.entry_title_type === 'custom' && (
+                <ControlText
+                    id={'entry_title_custom_format'}
+                    title={__('Custom Title Format', 'gutenverse-form')}
+                    description={placeholderDescription(__('Use a custom format for entry titles, for example: {{form_title}} - {{input-subject}} #{{entry_id}}.', 'gutenverse-form'))}
+                    value={values.entry_title_custom_format}
+                    updateValue={updateValue}
+                />
+            )}
         </FormGroup>
 
         <FormGroup
@@ -1590,7 +1637,7 @@ export const FormContent = (props) => {
                     );
             })}
         </div>
-        {tab === 'general' && <TabGeneral {...props} />}
+        {tab === 'general' && <TabGeneral {...tabProps} />}
         {tab === 'confirmation' && ConfirmationTab}
         {tab === 'notification' && NotificationTab}
         {tab === 'pro' && ProTab}
