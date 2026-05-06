@@ -1699,6 +1699,127 @@ class Form {
 	}
 
 	/**
+	 * Duplicate email templates attached to a cloned form action.
+	 *
+	 * @param array   $meta               Form action meta.
+	 * @param integer $new_form_action_id New form action ID.
+	 * @param string  $new_form_title     New form action title.
+	 *
+	 * @return array|WP_Error
+	 */
+	private static function duplicate_email_templates_for_cloned_action( $meta, $new_form_action_id, $new_form_title ) {
+		if ( ! is_array( $meta ) || ! $new_form_action_id ) {
+			return $meta;
+		}
+
+		$template_fields  = array( 'user_email_template', 'admin_email_template' );
+		$template_map     = array();
+		$cloned_templates = array();
+
+		foreach ( $template_fields as $field_name ) {
+			$template_id = ! empty( $meta[ $field_name ] ) ? absint( $meta[ $field_name ] ) : 0;
+
+			if ( ! $template_id ) {
+				continue;
+			}
+
+			if ( ! isset( $template_map[ $template_id ] ) ) {
+				$cloned_template_id = self::duplicate_email_template_for_cloned_action(
+					$template_id,
+					$new_form_action_id,
+					$new_form_title,
+					$field_name
+				);
+
+				if ( is_wp_error( $cloned_template_id ) ) {
+					foreach ( $cloned_templates as $created_template_id ) {
+						wp_delete_post( $created_template_id, true );
+					}
+
+					return $cloned_template_id;
+				}
+
+				if ( ! $cloned_template_id ) {
+					continue;
+				}
+
+				$template_map[ $template_id ] = $cloned_template_id;
+				$cloned_templates[]           = $cloned_template_id;
+			}
+
+			$meta[ $field_name ] = $template_map[ $template_id ];
+		}
+
+		return $meta;
+	}
+
+	/**
+	 * Duplicate one email template post for a cloned form action.
+	 *
+	 * @param integer $template_id        Source email template ID.
+	 * @param integer $new_form_action_id New form action ID.
+	 * @param string  $new_form_title     New form action title.
+	 * @param string  $field_name         Form action template field name.
+	 *
+	 * @return integer|WP_Error
+	 */
+	private static function duplicate_email_template_for_cloned_action( $template_id, $new_form_action_id, $new_form_title, $field_name ) {
+		$template_id        = absint( $template_id );
+		$new_form_action_id = absint( $new_form_action_id );
+		$template           = get_post( $template_id );
+
+		if ( ! $template || Email_Template::POST_TYPE !== $template->post_type ) {
+			return 0;
+		}
+
+		$current_user_id = get_current_user_id();
+		$template_type   = 'user_email_template' === $field_name
+			? __( 'Confirmation', 'gutenverse-form' )
+			: __( 'Notification', 'gutenverse-form' );
+		$template_name   = trim( $new_form_title )
+			? $new_form_title . ' - ' . $template_type
+			: get_the_title( $template ) . esc_html__( ' Clone', 'gutenverse-form' );
+
+		$new_template_id = wp_insert_post(
+			array(
+				'post_author'  => $current_user_id ? $current_user_id : (int) $template->post_author,
+				'post_content' => $template->post_content,
+				'post_excerpt' => $template->post_excerpt,
+				'post_status'  => $template->post_status,
+				'post_title'   => $template_name,
+				'post_type'    => Email_Template::POST_TYPE,
+			),
+			true
+		);
+
+		if ( is_wp_error( $new_template_id ) ) {
+			return $new_template_id;
+		}
+
+		if ( ! $new_template_id ) {
+			return new WP_Error(
+				'email_template_clone_failed',
+				__( 'Could not duplicate the email template for this form action.', 'gutenverse-form' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		$template_meta_keys = array(
+			'gutenverse_email_design',
+			'gutenverse_email_html',
+			'gutenverse_email_input_names',
+		);
+
+		foreach ( $template_meta_keys as $meta_key ) {
+			update_post_meta( $new_template_id, $meta_key, get_post_meta( $template_id, $meta_key, true ) );
+		}
+
+		update_post_meta( $new_template_id, 'gutenverse_email_form_action', (string) $new_form_action_id );
+
+		return absint( $new_template_id );
+	}
+
+	/**
 	 * Clone Form Action
 	 *
 	 * @param integer $id                Form Action ID.
@@ -1729,7 +1850,7 @@ class Form {
 			$meta = array();
 		}
 
-		return self::create_form_action(
+		$new_form_action_id = self::create_form_action(
 			array_merge(
 				$meta,
 				array(
@@ -1739,5 +1860,30 @@ class Form {
 				)
 			)
 		);
+
+		if ( is_wp_error( $new_form_action_id ) ) {
+			return $new_form_action_id;
+		}
+
+		if ( ! $new_form_action_id ) {
+			return new WP_Error(
+				'form_action_clone_failed',
+				__( 'Could not duplicate this form action.', 'gutenverse-form' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		$cloned_meta = get_post_meta( $new_form_action_id, 'form-data', true );
+		$cloned_meta = self::duplicate_email_templates_for_cloned_action( $cloned_meta, $new_form_action_id, $new_title );
+
+		if ( is_wp_error( $cloned_meta ) ) {
+			wp_delete_post( $new_form_action_id, true );
+
+			return $cloned_meta;
+		}
+
+		update_post_meta( $new_form_action_id, 'form-data', $cloned_meta );
+
+		return $new_form_action_id;
 	}
 }

@@ -856,7 +856,7 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const adminUrl = getAdminUrl();
-    const template = emailTemplates ? emailTemplates.find(t => t.value === templateId) : null;
+    const template = emailTemplates ? emailTemplates.find(t => String(t.value) === String(templateId)) : null;
     const templateTitle = template ? normalizeTemplateTitle(template.label) : __('(No Template Found)', 'gutenverse-form');
     const templateHtml = template?.html || '';
     const templateType = fieldName === 'user_email_template'
