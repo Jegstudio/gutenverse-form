@@ -3,9 +3,9 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { dispatch, select } from '@wordpress/data';
-import { Modal, Button } from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
-import { IconTrashSVG } from 'gutenverse-core/icons';
+import { IconCloseSVG, IconTrashSVG } from 'gutenverse-core/icons';
 import FormContent from '../../../../backend/form/src/form-content';
 
 export const CreateForm = (props) => {
@@ -514,19 +514,47 @@ export const CreateForm = (props) => {
                 <Modal
                     title={__('Delete Form Action', 'gutenverse-form')}
                     onRequestClose={() => setIsDeleteModalOpen(false)}
-                    className="gutenverse-form-confirm-modal"
+                    className="gutenverse-form-confirm-modal gutenverse-form-action-delete-modal"
                 >
-                    <div style={{ padding: '0 20px 20px' }}>
-                        <p style={{ margin: '0 0 20px 0', fontSize: '14px', lineHeight: '1.5' }}>
-                            {__('Are you sure you want to delete this form action? This cannot be undone and will permanently remove the action data.', 'gutenverse-form')}
-                        </p>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                            <Button isSecondary onClick={() => setIsDeleteModalOpen(false)}>
+                    <div className="gutenverse-form-action-delete-dialog">
+                        <button
+                            type="button"
+                            className="gutenverse-form-action-delete-close"
+                            aria-label={__('Close dialog', 'gutenverse-form')}
+                            onClick={() => setIsDeleteModalOpen(false)}
+                        >
+                            <IconCloseSVG size={34} />
+                        </button>
+                        <div className="gutenverse-form-action-delete-body">
+                            <div className="gutenverse-form-action-delete-icon" aria-hidden="true">
+                                <svg width="54" height="54" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M24.4019 8.25C25.5566 6.25 28.4434 6.25 29.5981 8.25L49.0836 42C50.2383 44 48.7949 46.5 46.4856 46.5H7.51443C5.20503 46.5 3.76165 44 4.91635 42L24.4019 8.25Z" fill="currentColor" />
+                                    <path d="M24.5 20.25H29.5V33H24.5V20.25Z" fill="#fff" />
+                                    <path d="M24.5 37H29.5V42H24.5V37Z" fill="#fff" />
+                                </svg>
+                            </div>
+                            <h2>{__('Delete Form Action', 'gutenverse-form')}</h2>
+                            <p>
+                                {__('Are you sure you want to delete this form action? This cannot be undone and will permanently remove the action data.', 'gutenverse-form')}
+                            </p>
+                        </div>
+                        <div className="gutenverse-form-action-delete-actions">
+                            <button
+                                type="button"
+                                className="gutenverse-form-action-delete-cancel"
+                                onClick={() => setIsDeleteModalOpen(false)}
+                                disabled={saving}
+                            >
                                 {__('Cancel', 'gutenverse-form')}
-                            </Button>
-                            <Button isPrimary isDestructive onClick={confirmDeleteFormAction} disabled={saving}>
+                            </button>
+                            <button
+                                type="button"
+                                className="gutenverse-form-action-delete-confirm"
+                                onClick={confirmDeleteFormAction}
+                                disabled={saving}
+                            >
                                 {saving ? __('Deleting...', 'gutenverse-form') : __('Delete Permanently', 'gutenverse-form')}
-                            </Button>
+                            </button>
                         </div>
                     </div>
                 </Modal>

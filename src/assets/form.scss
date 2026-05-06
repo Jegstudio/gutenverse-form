@@ -1923,7 +1923,8 @@
     }
 }
 
-.gutenverse-form-confirm-modal.gutenverse-email-delete-modal {
+.gutenverse-form-confirm-modal.gutenverse-email-delete-modal,
+.gutenverse-form-confirm-modal.gutenverse-form-action-delete-modal {
     border-radius: 10px;
     max-width: calc(100vw - 40px);
     overflow: hidden;
@@ -1939,13 +1940,15 @@
     }
 }
 
-.gutenverse-email-delete-dialog {
+.gutenverse-email-delete-dialog,
+.gutenverse-form-action-delete-dialog {
     background: #ffffff;
     color: #061a2f;
     position: relative;
 }
 
-.gutenverse-email-delete-close {
+.gutenverse-email-delete-close,
+.gutenverse-form-action-delete-close {
     align-items: center;
     background: transparent;
     border: 0;
@@ -1970,7 +1973,8 @@
     }
 }
 
-.gutenverse-email-delete-body {
+.gutenverse-email-delete-body,
+.gutenverse-form-action-delete-body {
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -1996,7 +2000,8 @@
     }
 }
 
-.gutenverse-email-delete-icon {
+.gutenverse-email-delete-icon,
+.gutenverse-form-action-delete-icon {
     align-items: center;
     background: #fff3f3;
     border: 2px solid #d99999;
@@ -2013,7 +2018,8 @@
     }
 }
 
-.gutenverse-email-delete-actions {
+.gutenverse-email-delete-actions,
+.gutenverse-form-action-delete-actions {
     align-items: center;
     background: #ffffff;
     border-top: 1px solid #e5e7eb;
@@ -2039,7 +2045,8 @@
     }
 }
 
-.gutenverse-email-delete-cancel {
+.gutenverse-email-delete-cancel,
+.gutenverse-form-action-delete-cancel {
     background: #f7f7fb;
     border: 2px solid #dedfe6;
     color: #061a2f;
@@ -2053,7 +2060,8 @@
     }
 }
 
-.gutenverse-email-delete-confirm {
+.gutenverse-email-delete-confirm,
+.gutenverse-form-action-delete-confirm {
     background: #ef2f32;
     border: 2px solid #ef2f32;
     color: #ffffff;
@@ -2069,11 +2077,13 @@
 }
 
 @media (max-width: 782px) {
-    .gutenverse-form-confirm-modal.gutenverse-email-delete-modal {
+    .gutenverse-form-confirm-modal.gutenverse-email-delete-modal,
+    .gutenverse-form-confirm-modal.gutenverse-form-action-delete-modal {
         width: calc(100vw - 24px);
     }
 
-    .gutenverse-email-delete-body {
+    .gutenverse-email-delete-body,
+    .gutenverse-form-action-delete-body {
         min-height: 0;
         padding: 58px 24px 34px;
 
@@ -2087,7 +2097,8 @@
         }
     }
 
-    .gutenverse-email-delete-icon {
+    .gutenverse-email-delete-icon,
+    .gutenverse-form-action-delete-icon {
         height: 64px;
         width: 64px;
 
@@ -2097,7 +2108,8 @@
         }
     }
 
-    .gutenverse-email-delete-actions {
+    .gutenverse-email-delete-actions,
+    .gutenverse-form-action-delete-actions {
         align-items: stretch;
         flex-direction: column;
         gap: 12px;
@@ -2111,7 +2123,9 @@
     }
 
     .gutenverse-email-delete-cancel,
-    .gutenverse-email-delete-confirm {
+    .gutenverse-email-delete-confirm,
+    .gutenverse-form-action-delete-cancel,
+    .gutenverse-form-action-delete-confirm {
         min-width: 0;
     }
 }
