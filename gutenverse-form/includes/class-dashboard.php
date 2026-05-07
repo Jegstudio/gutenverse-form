@@ -67,6 +67,37 @@ class Dashboard {
 		$config['hasIntegrationPro']                 = Integration::has_pro_integration_runtime();
 		$config['integrationUpgradeUrl']             = apply_filters( 'gutenverse_form_integration_upgrade_url', admin_url( 'admin.php?page=gutenverse-dashboard#/upgrade-pro' ) );
 		$config['integrations']                      = get_option( 'gutenverse_form_integrations', array() );
+
+		if ( current_user_can( 'manage_options' ) ) {
+			$service          = isset( $_GET['service'] ) ? sanitize_key( wp_unslash( $_GET['service'] ) ) : '';
+			$allowed_services = Integration::get_services();
+			$service_names    = array_column( $allowed_services, 'service_name' );
+			$current_service  = in_array( $service, $service_names, true ) ? $service : '';
+
+			$config['currentService'] = $current_service;
+
+			if ( $current_service ) {
+				$integration = Init::instance()->integration;
+				$instance    = $integration ? $integration->get_service_instance( $current_service ) : null;
+
+				if ( $instance ) {
+					$fields   = method_exists( $instance, 'get_fields' ) ? $instance->get_fields() : array();
+					$settings = method_exists( $instance, 'get_settings' ) ? $instance->get_settings() : array();
+
+					$config['serviceFields']   = $integration->prepare_service_fields_for_ui( $fields, $settings );
+					$config['serviceSettings'] = $integration->prepare_service_settings_for_ui( $fields, $settings );
+
+					foreach ( $allowed_services as $allowed_service ) {
+						if ( $allowed_service['service_name'] === $current_service ) {
+							$config['integrationDocumentationUrl'] = $allowed_service['documentation_url'];
+							$config['serviceName']                 = $allowed_service['service_name'];
+							break;
+						}
+					}
+				}
+			}
+		}
+
 		$config['pluginVersions'][ GUTENVERSE_FORM ] = array(
 			'name'           => GUTENVERSE_FORM_NAME,
 			'version'        => GUTENVERSE_FORM_VERSION,

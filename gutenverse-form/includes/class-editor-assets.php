@@ -62,6 +62,7 @@ class Editor_Assets {
 	 */
 	public function block_config( $config ) {
 		$config['gutenverseFormImgDir']              = GUTENVERSE_FORM_URL . '/assets/img';
+		$config['gutenverseFormVideoDir']            = GUTENVERSE_FORM_URL . '/assets/video';
 		$config['pluginVersions'][ GUTENVERSE_FORM ] = array(
 			'name'           => GUTENVERSE_FORM_NAME,
 			'version'        => GUTENVERSE_FORM_VERSION,

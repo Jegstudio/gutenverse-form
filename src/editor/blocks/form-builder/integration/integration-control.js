@@ -116,15 +116,18 @@ const ActionItem = ({
         onLocalChange(newValue);
     };
 
+    const imageBase = window?.GutenverseConfig?.gutenverseFormVideoDir || '';
+
     const LockedIntegrationControl = ({isOpen}) => {
         const id = useInstanceId(LockedIntegrationControl, 'inspector-locked-integration-control');
         return <div id={id} className={'gutenverse-control-wrapper gutenverse-control-locked-integration gutenverse-control-locked-layout'}>
             <DefaultLayout
                 title={__( 'Unlock Integration', 'gutenverse-form' )}
                 description={__( 'Integrate your form with various third-party services to streamline your workflow and enhance user experience.', 'gutenverse-form' )}
-                img={'/scroll-sticky.mp4'}
+                img={'integration-form.mp4'}
                 isOpen={isOpen}
                 permaLink={__('#integration')}
+                assetDir={imageBase}
             />
         </div>;
     };

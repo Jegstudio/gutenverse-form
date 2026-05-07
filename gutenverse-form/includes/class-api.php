@@ -133,6 +133,16 @@ class Api {
 
 		register_rest_route(
 			self::ENDPOINT,
+			'integration/settings',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_integration_settings' ),
+				'permission_callback' => 'gutenverse_permission_check_admin',
+			)
+		);
+
+		register_rest_route(
+			self::ENDPOINT,
 			'integration/block_secret',
 			array(
 				'methods'             => 'POST',
@@ -1196,6 +1206,59 @@ class Api {
 			),
 			403
 		);
+	}
+
+	/**
+	 * Get integration settings schema and current saved values.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_integration_settings( $request ) {
+		$service          = sanitize_key( (string) $request->get_param( 'service' ) );
+		$allowed_services = array_column( Integration::get_services(), 'service_name' );
+
+		if ( empty( $service ) || ! in_array( $service, $allowed_services, true ) ) {
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __( 'Invalid integration service.', 'gutenverse-form' ),
+				),
+				400
+			);
+		}
+
+		$integration = new Integration();
+		$instance    = $integration->get_service_instance( $service );
+
+		if ( ! $instance ) {
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __( 'Integration service is unavailable.', 'gutenverse-form' ),
+				),
+				404
+			);
+		}
+
+		$fields   = method_exists( $instance, 'get_fields' ) ? $instance->get_fields() : array();
+		$settings = method_exists( $instance, 'get_settings' ) ? $instance->get_settings() : array();
+		$response = array(
+			'success'  => true,
+			'service'  => $service,
+			'fields'   => $integration->prepare_service_fields_for_ui( $fields, $settings ),
+			'settings' => $integration->prepare_service_settings_for_ui( $fields, $settings ),
+		);
+
+		foreach ( Integration::get_services() as $allowed_service ) {
+			if ( $allowed_service['service_name'] === $service ) {
+				$response['documentationUrl'] = $allowed_service['documentation_url'];
+				break;
+			}
+		}
+
+		return new WP_REST_Response( $response, 200 );
 	}
 
 	/**

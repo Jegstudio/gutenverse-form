@@ -351,7 +351,7 @@ class Integration {
 	 *
 	 * @return array
 	 */
-	private function prepare_service_fields_for_ui( $fields, $settings ) {
+	public function prepare_service_fields_for_ui( $fields, $settings ) {
 		$prepared = array();
 
 		foreach ( $fields as $key => $field ) {
@@ -375,7 +375,7 @@ class Integration {
 	 *
 	 * @return array
 	 */
-	private function prepare_service_settings_for_ui( $fields, $settings ) {
+	public function prepare_service_settings_for_ui( $fields, $settings ) {
 		$prepared = is_array( $settings ) ? $settings : array();
 
 		foreach ( $fields as $key => $field ) {

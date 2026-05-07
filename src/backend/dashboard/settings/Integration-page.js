@@ -43,8 +43,6 @@ const hasIntegrationPro = !!integrationConfig?.hasIntegrationPro;
 const integrationUpgradeUrl = integrationConfig?.integrationUpgradeUrl || '';
 const admin_url = integrationConfig?.adminUrl || '';
 const integrationLicenseType = ['professional'];
-const dashboardIntegrationUrl = `${admin_url}admin.php?page=gutenverse-dashboard&path=settings&settings=form&sub-menu=form_integrations`;
-const integrationSetupUrl = (serviceId = '') => `${admin_url}admin.php?page=form_integration${serviceId ? `&service=${serviceId}` : ''}`;
 const appendTrackingParams = (url) => {
     if (!url) {
         return null;
@@ -141,7 +139,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
     );
 };
 
-const IntegrationItem = ({ service, status, onToggle }) => {
+const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
     const isActive = !!status;
@@ -194,8 +192,7 @@ const IntegrationItem = ({ service, status, onToggle }) => {
                                     setIsUpgradeOpen(true);
                                     return;
                                 }
-
-                                window.location.href = integrationSetupUrl(service.id);
+                                onSetup(service.id);
                             }}
                             className="setup-link-button"
                         >
@@ -255,9 +252,92 @@ const TabSetting = ({ onSetup }) => {
     );
 };
 
-const formatFieldLabel = (field) => field?.required ? `${field.label} *` : field.label;
+const formatFieldLabel = (field) => {
+    if (!field?.required) {
+        return field?.label;
+    }
+
+    return (
+        <>
+            {field.label} <span className="required-indicator">*</span>
+        </>
+    );
+};
 
 const SECRET_CLEAR_SENTINEL = '__gutenverse_clear_secret__';
+const randomDigits = (length = 6) => Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+const randomAlphaNum = (length = 12) => {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+};
+const randomHex = (length = 24) => {
+    const chars = 'abcdef0123456789';
+    return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+};
+const stripExamplePrefix = (value = '') => value.replace(/^\s*(example|eg|e\.g\.|ex)\s*:\s*/i, '').trim();
+const withExamplePrefix = (value = '') => `ex: ${stripExamplePrefix(value)}`;
+const randomUrlForField = (fieldKey = '') => {
+    if (/webhook/i.test(fieldKey)) {
+        return `https://hooks.example.com/form/${randomAlphaNum(10).toLowerCase()}`;
+    }
+
+    if (/api[_-]?url/i.test(fieldKey)) {
+        return `https://api-${randomAlphaNum(6).toLowerCase()}.example.com`;
+    }
+
+    return `https://example.com/${randomAlphaNum(8).toLowerCase()}`;
+};
+const randomPlaceholderExample = (fieldKey = '', placeholder = '') => {
+    const cleanPlaceholder = stripExamplePrefix(placeholder);
+    const normalizedKey = String(fieldKey || '').toLowerCase();
+
+    if (/url|webhook/.test(normalizedKey)) {
+        return withExamplePrefix(randomUrlForField(normalizedKey));
+    }
+
+    if (/phone|recipient/.test(normalizedKey)) {
+        return withExamplePrefix(`+1 ${randomDigits(3)}-${randomDigits(3)}-${randomDigits(4)}`);
+    }
+
+    if (/email/.test(normalizedKey)) {
+        return withExamplePrefix(`${randomAlphaNum(6).toLowerCase()}@example.com`);
+    }
+
+    if (/token|secret|key/.test(normalizedKey)) {
+        return withExamplePrefix(randomAlphaNum(28));
+    }
+
+    if (/chat|list|group|campaign|form_id|formid|sheet|number_id|business_number_id|id$/.test(normalizedKey)) {
+        return withExamplePrefix(randomDigits(10));
+    }
+
+    if (/message|note|body|content|text/.test(normalizedKey)) {
+        return withExamplePrefix(cleanPlaceholder || `Send submission to ${randomAlphaNum(5).toLowerCase()} channel`);
+    }
+
+    let result = cleanPlaceholder
+        .replace(/https?:\/\/[^\s,]+/gi, randomUrlForField(normalizedKey))
+        .replace(/\+\d[\d\s-]{7,}\d/g, `+1 ${randomDigits(3)}-${randomDigits(3)}-${randomDigits(4)}`)
+        .replace(/\b\d{6,}\b/g, match => randomDigits(match.length))
+        .replace(/\b[a-f0-9]{16,}\b/gi, match => randomHex(match.length))
+        .replace(/\b[a-z0-9_-]{16,}\b/gi, match => randomAlphaNum(match.length));
+
+    if (!result) {
+        result = randomAlphaNum(10);
+    }
+
+    return withExamplePrefix(result);
+};
+const normalizeFieldForDashboard = (fieldKey, field = {}) => ({
+    ...field,
+    placeholder: field?.placeholder ? randomPlaceholderExample(fieldKey, field.placeholder) : field?.placeholder,
+});
+
+const ArrowLeftIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
 
 const SecretField = ({ fieldKey, field, value, onChange }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -330,12 +410,56 @@ const SecretField = ({ fieldKey, field, value, onChange }) => {
 };
 
 
-const ServiceSetup = ({ serviceId, title }) => {
-    const config = integrationConfig;
-    const fields = config.serviceFields || {};
-    const [settings, setSettings] = useState(config.serviceSettings || {});
+const ServiceSetup = ({ serviceId, title, onBack }) => {
+    const [fields, setFields] = useState({});
+    const [settings, setSettings] = useState({});
     const [isSaving, setIsSaving] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [notice, setNotice] = useState(null);
+    const [documentationUrl, setDocumentationUrl] = useState('');
+
+    useEffect(() => {
+        if (!serviceId) {
+            return undefined;
+        }
+
+        let mounted = true;
+        setIsLoading(true);
+        setNotice(null);
+
+        apiFetch({
+            path: `gutenverse-form-client/v1/integration/settings?service=${serviceId}`,
+            method: 'GET',
+        }).then((response) => {
+            if (!mounted) {
+                return;
+            }
+
+            const responseFields = response?.fields || {};
+            const normalizedFields = Object.fromEntries(
+                Object.entries(responseFields).map(([key, field]) => [key, normalizeFieldForDashboard(key, field)])
+            );
+
+            setFields(normalizedFields);
+            setSettings(response?.settings || {});
+            setDocumentationUrl(response?.documentationUrl || '');
+            setIsLoading(false);
+        }).catch((err) => {
+            if (!mounted) {
+                return;
+            }
+
+            setFields({});
+            setSettings({});
+            setDocumentationUrl('');
+            setNotice({ type: 'error', message: err?.message || __('Failed to load integration settings.', 'gutenverse-form') });
+            setIsLoading(false);
+        });
+
+        return () => {
+            mounted = false;
+        };
+    }, [serviceId]);
 
     const handleSave = () => {
         setIsSaving(true);
@@ -359,95 +483,130 @@ const ServiceSetup = ({ serviceId, title }) => {
 
     return (
         <div className="service-setup-content">
-            <h3>{__('Setup', 'gutenverse-form')} {title}</h3>
-            {notice && (
-                <Notice status={notice.type} onRemove={() => setNotice(null)}>
-                    {notice.message}
-                </Notice>
-            )}
-            <div className="setup-fields">
-                {Object.keys(fields).map((key) => {
-                    const field = fields[key];
-                    return (
-                        <div key={key} className="setup-field-item">
-                            {field.sensitive ? (
-                                <SecretField
-                                    fieldKey={key}
-                                    field={field}
-                                    value={settings[key]}
-                                    onChange={updateSetting}
-                                />
-                            ) : field.type === 'textarea' ? (
-                                <TextareaControl
-                                    label={formatFieldLabel(field)}
-                                    value={settings[key] || ''}
-                                    onChange={(val) => updateSetting(key, val)}
-                                    placeholder={field.placeholder}
-                                    help={field.description}
-                                    rows={10}
-                                />
-                            ) : field.type === 'select' ? (
-                                <SelectControl
-                                    label={formatFieldLabel(field)}
-                                    value={settings[key] || field.default || ''}
-                                    options={field.options || []}
-                                    onChange={(val) => updateSetting(key, val)}
-                                    help={field.description}
-                                />
-                            ) : (
-                                <TextControl
-                                    label={formatFieldLabel(field)}
-                                    value={settings[key] || ''}
-                                    onChange={(val) => updateSetting(key, val)}
-                                    placeholder={field.placeholder}
-                                    help={field.description}
-                                />
-                            )}
-                        </div>
-                    );
-                })}
-                {config.integrationDocumentationUrl && (
-                    <div className="setup-doc-note">
-                        <p>
-                            {__('Need help setting up this integration? ', 'gutenverse-form')}
-                            <a href={config.integrationDocumentationUrl} target="_blank" rel="noreferrer">
-                                {__('Check the service documentation for setup instructions', 'gutenverse-form')}
-                            </a>
-                        </p>
+            <div className="integration-setup-shell">
+                <div className="integration-header">
+                    <button className="back-button" onClick={onBack} aria-label={__('Back to integration list', 'gutenverse-form')}>
+                        <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.5996 4.60156H0.599609M4.34961 0.601562L0.599609 4.60156L4.34961 8.60156" stroke="#3B57F7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <h1>{title || __('Integration', 'gutenverse-form')}</h1>
+                </div>
+                <div className="integration-setup-body">
+                    <div className="integration-setup-intro">
+                        <h3>{__('Setup', 'gutenverse-form')} {title}</h3>
                     </div>
-                )}
-            </div>
-            <div className="setup-footer">
-                <Button
-                    isPrimary
-                    isBusy={isSaving}
-                    onClick={handleSave}
-                    disabled={isSaving}
-                >
-                    {__('Save Settings', 'gutenverse-form')}
-                </Button>
+                    {notice && (
+                        <Notice status={notice.type} onRemove={() => setNotice(null)}>
+                            {notice.message}
+                        </Notice>
+                    )}
+                    <div className="setup-fields">
+                        {isLoading && (
+                            <p>{__('Loading integration settings...', 'gutenverse-form')}</p>
+                        )}
+                        {!isLoading && Object.keys(fields).length === 0 && !notice && (
+                            <p>{__('No settings are available for this integration.', 'gutenverse-form')}</p>
+                        )}
+                        {!isLoading && Object.keys(fields).map((key) => {
+                            const field = fields[key];
+                            return (
+                                <div key={key} className="setup-field-item">
+                                    {field.sensitive ? (
+                                        <SecretField
+                                            fieldKey={key}
+                                            field={field}
+                                            value={settings[key]}
+                                            onChange={updateSetting}
+                                        />
+                                    ) : field.type === 'textarea' ? (
+                                        <TextareaControl
+                                            label={formatFieldLabel(field)}
+                                            value={settings[key] || ''}
+                                            onChange={(val) => updateSetting(key, val)}
+                                            placeholder={field.placeholder}
+                                            help={field.description}
+                                            rows={10}
+                                        />
+                                    ) : field.type === 'select' ? (
+                                        <SelectControl
+                                            label={formatFieldLabel(field)}
+                                            value={settings[key] || field.default || ''}
+                                            options={field.options || []}
+                                            onChange={(val) => updateSetting(key, val)}
+                                            help={field.description}
+                                        />
+                                    ) : (
+                                        <TextControl
+                                            label={formatFieldLabel(field)}
+                                            value={settings[key] || ''}
+                                            onChange={(val) => updateSetting(key, val)}
+                                            placeholder={field.placeholder}
+                                            help={field.description}
+                                        />
+                                    )}
+                                </div>
+                            );
+                        })}
+                        {documentationUrl && (
+                            <div className="setup-doc-note">
+                                <p>
+                                    {__('Need help setting up this integration? ', 'gutenverse-form')}
+                                    <a href={documentationUrl} target="_blank" rel="noreferrer">
+                                        {__('Check the service documentation for setup instructions', 'gutenverse-form')}
+                                    </a>
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                    <div className="setup-footer">
+                        <Button
+                            isPrimary
+                            isBusy={isSaving}
+                            onClick={handleSave}
+                            disabled={isSaving || isLoading}
+                        >
+                            {__('Save Settings', 'gutenverse-form')}
+                        </Button>
+                    </div>
+                </div>
             </div>
         </div>
     );
 };
 
 const IntegrationPage = () => {
-    const [currentService, setCurrentService] = useState(window['GutenverseConfig']?.currentService || '');
+    const [currentService, setCurrentService] = useState('');
+    const pageRef = useRef(null);
+
+    useEffect(() => {
+        const pageElement = pageRef.current;
+        const settingsWrapper = pageElement?.closest('.settings-tab-body-wrapper');
+
+        if (!settingsWrapper) {
+            return undefined;
+        }
+
+        settingsWrapper.classList.toggle('gutenverse-form-integration-detail-open', !!currentService);
+
+        return () => {
+            settingsWrapper.classList.remove('gutenverse-form-integration-detail-open');
+        };
+    }, [currentService]);
 
     if (currentService) {
         const service = services.find(s => s.id === currentService);
         return (
-            <div className="gutenverse-form-integration-wrap">
-                <div className="integration-header">
-                    <h1>{service ? service.title : __('Integration', 'gutenverse-form')}</h1>
-                    <button className="back-button" onClick={() => {
-                        window.location.href = dashboardIntegrationUrl;
-                    }}>
-                        {__('Back to list', 'gutenverse-form')}
-                    </button>
-                </div>
+            <div
+                ref={pageRef}
+                className="gutenverse-form-integration-wrap is-service-setup"
+            >
                 <div className="form-tab-body">
-                    <ServiceSetup serviceId={currentService} title={service?.title} />
+                    <ServiceSetup
+                        serviceId={currentService}
+                        title={service?.title}
+                        onBack={() => setCurrentService('')}
+                    />
                 </div>
             </div>
         );
@@ -460,7 +619,7 @@ const IntegrationPage = () => {
 
     return (
         <>
-            <div className="gutenverse-form-integration-wrap">
+            <div ref={pageRef} className="gutenverse-form-integration-wrap">
 
                 {SettingTab}
 
