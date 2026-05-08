@@ -44,9 +44,6 @@ const FormInputTextareaBlock = compose(
 
     const elementRef = useRef();
 
-    useGenerateElementId(clientId, elementId, elementRef);
-    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
-    useDynamicScript(elementRef);
     useInitializeIconToSvg({
         elementId,
         attributes,
@@ -55,6 +52,9 @@ const FormInputTextareaBlock = compose(
             { type: 'iconType', svg: 'iconSVG' },
         ],
     });
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
+    useDynamicScript(elementRef);
 
     const [openIconLibrary, setOpenIconLibrary] = useState(false);
     const imageAltText = imageAlt || null;

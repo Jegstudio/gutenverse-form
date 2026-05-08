@@ -43,9 +43,6 @@ const FormInputSubmitBlock = compose(
 
     const elementRef = useRef();
 
-    useGenerateElementId(clientId, elementId, elementRef);
-    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
-    useDynamicScript(elementRef);
     useInitializeIconToSvg({
         elementId,
         attributes,
@@ -54,6 +51,9 @@ const FormInputSubmitBlock = compose(
             { type: 'iconType', svg: 'iconSVG' },
         ],
     });
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
+    useDynamicScript(elementRef);
 
     const textRef = useRef();
     const animationClass = useAnimationEditor(attributes);

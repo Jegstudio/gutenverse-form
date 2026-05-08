@@ -38,9 +38,6 @@ const FormInputSelectBlock = compose(
 
     const elementRef = useRef();
 
-    useGenerateElementId(clientId, elementId, elementRef);
-    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
-    useDynamicScript(elementRef);
     useInitializeIconToSvg({
         elementId,
         attributes,
@@ -50,6 +47,9 @@ const FormInputSelectBlock = compose(
             { type: 'dropDownIconCloseType', svg: 'dropDownIconCloseSVG' },
         ],
     });
+    useGenerateElementId(clientId, elementId, elementRef);
+    useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
+    useDynamicScript(elementRef);
 
     const inputData = {
         ...props,
