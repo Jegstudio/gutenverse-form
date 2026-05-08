@@ -1,7 +1,7 @@
-=== Gutenverse Form - Contact Form Builder & Block Form Plugin ===
+=== Gutenverse Form - Contact Form Builder, Block Form & Booking Form ===
 
 Contributors: Jegstudio
-Tags: form, form builder, contact form, block form, gutenberg form
+Tags: form, form builder, contact form, block form, booking form
 Requires at least: 5.9
 Tested up to: 6.9
 Requires PHP: 7.0
@@ -9,13 +9,13 @@ Stable tag: 2.6.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Contact form builder for Gutenberg: create block forms, booking forms, subscribe forms, and custom WordPress forms.
+Contact form builder for WordPress: create block forms, booking forms, reservation forms, subscribe forms, and custom forms.
 
 == Description ==
 
-Gutenverse Form is a WordPress form plugin, contact form builder, and block form plugin for Gutenberg and the native Block Editor. Create contact forms, booking forms, reservation forms, subscribe forms, lead forms, and custom WordPress forms without code.
+Gutenverse Form is a WordPress form plugin, contact form builder, block form plugin, and booking form builder for the native Block Editor. Create contact forms, booking forms, reservation forms, subscribe forms, lead forms, feedback forms, and custom WordPress forms without code.
 
-Built for the WordPress Block Editor and Site Editor, Gutenverse Form lets you design forms visually using Gutenberg form blocks. Add fields, style each input, manage responsive layouts, collect entries, send email notifications, and build forms that match your website design.
+Built for the WordPress Block Editor and Site Editor, Gutenverse Form lets you design forms visually using form blocks. Add fields, style each input, manage responsive layouts, collect entries, send email notifications, and build forms that match your website design.
 
 Use Gutenverse Form if you want a lightweight form builder that works inside the editor you already use.
 
@@ -33,13 +33,14 @@ Gutenverse Form helps you create:
 * Survey and question forms
 * Custom WordPress forms
 * WordPress form plugin layouts
-* Gutenberg block forms
+* Block forms for the WordPress editor
 
 = Key Features =
 
 * Contact form builder for the WordPress Block Editor
-* WordPress form plugin workflow inside Gutenberg
-* Gutenberg form blocks for visual form building
+* Booking form and reservation form builder
+* WordPress form plugin workflow inside the Block Editor
+* Form blocks for visual form building
 * 15+ form blocks and field types
 * Responsive form editing for desktop, tablet, and mobile
 * Form entries stored in WordPress
@@ -53,7 +54,7 @@ Gutenverse Form helps you create:
 * Global color and typography controls
 * Styling controls for spacing, background, border, notice messages, and input design
 * Block management to enable or disable unused blocks
-* Lightweight form builder workflow inside Gutenberg
+* Lightweight form builder workflow inside WordPress
 
 = Included Form Blocks =
 
@@ -81,7 +82,7 @@ Layout and design blocks may also be available depending on your Gutenverse setu
 
 = Form Builder Use Cases =
 
-Gutenverse Form can be used as a contact form plugin, custom form builder, block form plugin, and Gutenberg form builder.
+Gutenverse Form can be used as a contact form plugin, custom form builder, block form plugin, and WordPress form builder.
 
 Common use cases include:
 
@@ -182,7 +183,7 @@ After some updates, WordPress may show an "Attempt Block Recovery" button for bl
 9. Booking Form - Create booking and reservation request forms.
 10. Subscribe Form - Build email subscribe and lead generation forms.
 11. Form Settings - Configure submission, validation, and notification behavior.
-12. Block Editor Workflow - Build and edit forms directly with Gutenberg blocks.
+12. Block Editor Workflow - Build and edit forms directly with WordPress form blocks.
 
 == Use of 3rd-Party Services ==
 
