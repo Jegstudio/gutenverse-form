@@ -1,0 +1,306 @@
+GUTENVERSE FORM FULL CHANGELOGS
+
+== Changelogs ==
+
+= 2.6.2 =
+##### Bug Fixes
+* fix form entries export CSV issue can only export 5 data
+
+= 2.6.1 =
+##### New & Improvements
+* add alignment placeholder ini input style
+
+##### Bug Fixes
+* fix issue with icon svg on frontend
+* fix issue with global font when there is no font weight or line height
+
+= 2.6.0 =
+##### New & Improvements
+* update block rendering mechanism
+
+= 2.5.3 =
+##### New & Improvements
+* update core framework version
+
+= 2.5.1 =
+##### Bug Fixes
+* fix issue with sending email
+
+= 2.5.0 =
+##### New & Improvements
+* add new container block
+
+##### Bug Fixes
+* fix form vulnerability issues
+
+= 2.4.7 =
+##### New & Improvements
+* update core framework version
+
+= 2.4.5 =
+##### New & Improvements
+* add for label in form input
+* add positioning panel for form builder
+
+##### Bug Fixes
+* fix transform transition
+* fix tooltip info icon position
+
+= 2.4.4 =
+##### New & Improvements
+* add aria label options in some blocks for SEO & accessibility
+* add loading state when converting icon to svg for better ux
+
+##### Bug Fixes
+* fix error when running wp cli for gutenverse form
+* fix form action capture browser not working
+
+= 2.4.3 =
+##### New & Improvements
+* add option fetch priority high for background image
+
+##### Bug Fixes
+* fix background slideshow style overwritten by default
+* fix issue with glitching background image for background slider mode
+* fix word and character validation if only one value exist
+
+= 2.4.0 =
+##### New & Improvements
+* add option to convert Webfont to SVG icon for improved SEO
+
+##### Bug Fixes
+* fix issue with global styles fetch in editor
+* fix issue with animation effect not running on tablet/mobile
+* fix issue with animation effect when combined with transform effect
+* fix issue with section background type video
+* fix recaptcha block issue on frontend
+* fix security issue (credit by andrea bocchetti - Wordfence)
+
+= 2.3.2 =
+##### New & Improvements
+- improve styling cache mechanism
+
+##### Bug Fixes
+- fix recaptcha issue
+- fix security issue (credit by Patchstack)
+
+= 2.3.1 =
+##### New & Improvements
+* Update core framework
+
+= 2.3.0 =
+##### New & Improvements
+* Improve CSS & JS files to load only if block/feature exist
+
+##### Bug Fixes
+* fix security issue. credit: Patchstack.
+
+= 2.2.0 =
+##### New & Improvements
+* add notification center for Gutenverse notices
+* add Custom Page CSS & JS
+* add new library option when Companion theme is installed
+* blocks now use API v3 for faster editing experience
+
+##### Bug Fixes
+* fix frontend inline style
+* fix more block recovery issues
+
+= 2.1.2 =
+##### Bug Fixes
+* fix bug recaptcha causing re-scroll issue
+
+= 2.1.1 =
+##### Bug Fixes
+* fix block preview in library
+
+= 2.1.0 =
+##### Bug Fixes
+* fix blocklist enable/disable option for wrapper block
+
+= 2.0.8 =
+##### New & Improvements
+* New block: form captcha
+
+##### Bug Fixes
+* fix some undefined attributes
+
+= 2.0.7 =
+##### Bug Fixes
+* fix select input frontend
+
+= 2.0.6 =
+##### New & Improvements
+* add change icon and icon styling to form select input
+
+##### Bug Fixes
+* fix border color issue
+
+= 2.0.5 =
+##### Bug Fixes
+* fix global color bug
+
+= 2.0.4 =
+##### Bug Fixes
+* fix form input select
+* fix form input icon style
+
+= 2.0.2 =
+##### New & Improvements
+* update core version
+
+##### Bug Fixes
+* fix form input border
+
+= 2.0.1 =
+##### New & Improvements
+* update core version
+
+##### Bug Fixes
+* fix responsive style in editor - some block back to default style
+* fix library section preview when theres block hides on desktop
+* fix border control UI
+* fix save state issue
+* fix flexible wrapper width and height issue
+* fix restores the previous range control for gradient
+* fix transform switch normal/hover
+* fix transform reset button
+* fix border color issue
+* fix issue library button disappear in editor
+* fix library layout thumbnail height
+* fix the option use featured image is missing in background section and column
+* fix input global style
+* fix control with slider and unit
+* fix cursor when typing inside text control
+* fix featured background image not showing in frontend
+* fix flexible wrapper animation effect
+
+= 2.0.0 =
+##### New & Improvements
+* significantly improve editing experience inside the editor
+* improve page and post editing preview
+* add option in template library to import with global styles (for supported themes only)
+* add new one for all setting in countdown block
+* add button to easily show/hide template on posts/pages
+
+##### Bug Fixes
+* fix gdpr input issue
+
+= 1.1.9 =
+##### New & Improvements
+* improve typing experience in rich-text blocks
+
+##### Bug Fixes
+* fix transform scaleX hover
+
+= 1.1.8 =
+##### New & Improvements
+* add background slide in section
+
+##### Bug Fixes
+* fix column horizontal and vertical alignment responsive in editor
+
+= 1.1.7 =
+##### Bug Fixes
+* fix issue with text based blocks
+
+= 1.1.6 =
+##### Improvements
+* update Google Font list
+* add featured image as background
+* include padding style to chevron down icon in select 
+
+##### Bug Fixes
+* fix issue when adding column on section with empty column
+* fix refreshing style function
+* fix library plugin requirement in multisite
+
+= 1.1.5 =
+##### Bug Fixes
+* Fix sticky & vertical align issue on wrapped column 100%
+
+= 1.1.4 =
+##### Improvements
+* Improve Blocks Loading inside editor
+* Add option in dashboard to enable/disable lazy load blocks in editor
+
+##### Bug Fixes
+* Fix sticky & vertical align issue
+
+= 1.1.3 =
+##### New
+* Add new GDPR input block
+
+##### Bug Fixes
+* Fix animation effect on frontend
+* Fix section vertical-align when column position stretch
+* Fix section "fixed background" responsive on frontend
+
+= 1.1.2 =
+##### Improvements
+* Improve banner experience
+
+= 1.1.1 =
+##### Improvements
+* Improve banner experience
+
+= 1.1.0 =
+##### Bug Fixes
+* Fix warning issue related to global fonts when certain values are empty
+
+= 1.0.9 =
+##### Bug Fixes
+* Fix appearance menu for some themes
+
+= 1.0.8 =
+##### Bug Fixes
+* Fix issue with scrolling when url has no anchor tag
+* Fix issue with opening link in flexible wrapper
+
+= 1.0.7 =
+##### Bug Fix
+* Fix issue with system status on sites using WP Engine
+
+= 1.0.6 =
+##### Improvements
+* Update core version
+
+= 1.0.5 =
+##### Improvements
+* Improve blocks loading inside editor
+
+= 1.0.4 =
+##### Bug Fixes
+* Fix issue if there is no form action assigned
+
+= 1.0.3 =
+##### Improvements
+* Fix issue if form builder is inside pattern
+
+= 1.0.2 =
+##### Improvements
+* Add better phone pattern
+
+##### Bug Fixes
+* Fix issue with default number pattern
+
+= 1.0.1 =
+##### Improvements
+* Update core framework
+
+##### Bug Fixes
+* Fix form builder notice styling
+* Fix issue with form builder in template part
+* Fix exported form CSV for entry layout is broken in some cases
+* Fix issue with styling on frontend
+
+= 1.0.0 =
+##### New
+* Add new ability to copy styles between blocks
+* Add new block: Flexible Wrapper block
+
+= 0.6.0 =
+* Fix compatibility with WordPress version 6.6
+
+= 0.5.1 =
+* Initial Release
