@@ -6,7 +6,7 @@ import { useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
-import { isEmpty, openFreemiusPopup } from 'gutenverse-core/helper';
+import { isEmpty, openFreemiusPopup, prefetchPricingPlanData } from 'gutenverse-core/helper';
 import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
 import { CardBannerPro, PopupInsufficientTier } from 'gutenverse-core/components';
 
@@ -247,6 +247,10 @@ export const FormContent = (props) => {
         );
     };
 
+    const prefetchUpgradePopup = () => {
+        prefetchPricingPlanData();
+    };
+
     const proPopupProps = {
         setPopupInsufficientTier,
         setInsufficientTierDesc,
@@ -289,7 +293,13 @@ export const FormContent = (props) => {
                 return item.pro
                     ? applyFilters(
                         'gutenverse-form.tab-pro-button',
-                        <div className={classes} key={key} onClick={openUpgradePopup}>
+                        <div
+                            className={classes}
+                            key={key}
+                            onClick={openUpgradePopup}
+                            onMouseEnter={prefetchUpgradePopup}
+                            onFocus={prefetchUpgradePopup}
+                        >
                             {item.label}
                         </div>,
                         { ...proPopupProps, item, classes, key }
