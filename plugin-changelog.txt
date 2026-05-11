@@ -2,6 +2,10 @@ GUTENVERSE FORM FULL CHANGELOGS
 
 == Changelogs ==
 
+= 2.6.3 =
+##### Bug Fixes
+* fix issue with frontend animation rendering
+
 = 2.6.2 =
 ##### Bug Fixes
 * fix form entries export CSV issue can only export 5 data
