@@ -428,6 +428,20 @@
             }
         }
 
+        &.control-select {
+            input,
+            input:focus,
+            input:focus-visible {
+                background: transparent !important;
+                border: 0 !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                min-height: 0 !important;
+                outline: 0 !important;
+                padding: 0 !important;
+            }
+        }
+
         &.gutenverse-field-id-control {
             input::-webkit-calendar-picker-indicator {
                 display: none !important;
