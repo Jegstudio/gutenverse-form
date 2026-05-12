@@ -425,6 +425,10 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
     const isConfirmation = fieldName === 'user_email_template';
     const accent = '#3b57f7';
     const soft = '#f5f7ff';
+    const fontFamily = {
+        label: 'Arial',
+        value: 'arial,helvetica,sans-serif',
+    };
     const bodyBase = {
         id: 'email-body',
         rows: [],
@@ -436,10 +440,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
             contentWidth: '620px',
             contentAlign: 'center',
             contentVerticalAlign: 'top',
-            fontFamily: {
-                label: 'Arial',
-                value: 'arial,helvetica,sans-serif',
-            },
+            fontFamily,
             preheaderText: '',
             linkStyle: {
                 body: true,
@@ -462,6 +463,86 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
             lineHeight: extra.lineHeight || '160%',
             fontSize: extra.fontSize || '14px',
             text,
+        },
+    });
+
+    const createTableContent = (id, rows, extra = {}) => ({
+        id,
+        type: 'table',
+        values: {
+            containerPadding: '0px',
+            anchor: '',
+            deletable: false,
+            locked: false,
+            selectable: true,
+            draggable: true,
+            duplicatable: true,
+            hideable: true,
+            table: {
+                headers: [],
+                rows: rows.map(row => ({
+                    height: row.height || 44,
+                    cells: row.cells.map(cell => ({
+                        width: cell.width,
+                        text: escapeHtml(cell.text),
+                        backgroundColor: cell.backgroundColor || '#ffffff',
+                        color: cell.color || '#0f172a',
+                        textAlign: cell.textAlign || 'left',
+                        verticalAlign: cell.verticalAlign || 'top',
+                        padding: cell.padding || extra.contentPadding || '10px',
+                    })),
+                })),
+                footers: [],
+            },
+            cellBackgroundColor: { property: 'backgroundColor' },
+            cellColor: { property: 'color' },
+            cellTextAlign: { property: 'textAlign' },
+            cellVerticalAlign: { property: 'verticalAlign' },
+            cellPadding: { property: 'padding' },
+            border: {
+                borderBottomColor: extra.borderColor || '#e2e8f0',
+                borderBottomStyle: 'solid',
+                borderBottomWidth: '1px',
+            },
+            columns: 2,
+            rows: rows.length,
+            stripedRows: false,
+            stripedRowsBackgroundColor: '#f8fafc',
+            enableHeader: false,
+            headerFontFamily: fontFamily,
+            headerBackgroundColor: '#f8fafc',
+            headerFontWeight: 600,
+            headerFontSize: extra.labelFontSize || '13px',
+            headerColor: '#64748b',
+            headerTextAlign: 'left',
+            headerVerticalAlign: 'top',
+            headerPadding: extra.labelPadding || extra.contentPadding || '10px',
+            contentVerticalAlign: 'top',
+            contentFontFamily: fontFamily,
+            contentBackgroundColor: '#ffffff',
+            contentFontWeight: 400,
+            contentFontSize: extra.fontSize || '14px',
+            contentColor: '#0f172a',
+            contentTextAlign: 'left',
+            contentLineHeight: extra.lineHeight || '155%',
+            contentLetterSpacing: '0px',
+            contentPadding: extra.contentPadding || '10px',
+            enableFooter: false,
+            footerFontFamily: fontFamily,
+            footerBackgroundColor: '#f8fafc',
+            footerFontWeight: 600,
+            footerFontSize: extra.labelFontSize || '13px',
+            footerColor: '#64748b',
+            footerTextAlign: 'left',
+            footerVerticalAlign: 'top',
+            footerPadding: extra.labelPadding || extra.contentPadding || '10px',
+            linkStyle: {
+                body: true,
+                linkColor: accent,
+                linkHoverColor: '#243cc7',
+                linkUnderline: true,
+                linkHoverUnderline: true,
+            },
         },
     });
 
@@ -547,6 +628,23 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
 
         return {
             hasInputFields,
+            rows: rows.map(row => ({
+                height: 48,
+                cells: [
+                    {
+                        width: 32,
+                        text: row.label,
+                        color: '#64748b',
+                        padding: '11px 18px 11px 0',
+                    },
+                    {
+                        width: 68,
+                        text: row.value,
+                        color: '#0f172a',
+                        padding: '11px 0',
+                    },
+                ],
+            })),
             tableRows: rows.map(row => (
                 `<tr><td width="32%" style="${labelCellStyle}">${escapeHtml(row.label)}</td><td width="68%" style="${valueCellStyle}"><span style="${valueTextStyle}">${escapeHtml(row.value)}</span></td></tr>`
             )).join(''),
@@ -594,9 +692,28 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
             }))
             : [{ label: __('Field Tag', 'gutenverse-form'), value: '{{your_field_tag}}' }];
 
-        return rows.map(row => (
-            `<tr><td width="34%" style="${labelCellStyle}">${escapeHtml(row.label)}</td><td width="66%" style="${valueCellStyle}"><span style="${valueTextStyle}">${escapeHtml(row.value)}</span></td></tr>`
-        )).join('');
+        return {
+            rows: rows.map(row => ({
+                height: 40,
+                cells: [
+                    {
+                        width: 34,
+                        text: row.label,
+                        color: '#64748b',
+                        padding: '8px 14px 8px 0',
+                    },
+                    {
+                        width: 66,
+                        text: row.value,
+                        color: '#111827',
+                        padding: '8px 0',
+                    },
+                ],
+            })),
+            tableRows: rows.map(row => (
+                `<tr><td width="34%" style="${labelCellStyle}">${escapeHtml(row.label)}</td><td width="66%" style="${valueCellStyle}"><span style="${valueTextStyle}">${escapeHtml(row.value)}</span></td></tr>`
+            )).join(''),
+        };
     };
 
     if (starter === 'thank-you') {
@@ -687,12 +804,16 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                                     '<p style="margin: 0; font-size: 12px; color: #64748b;">Reference: <span style="font-weight:500;">{{entry_title}}</span> &nbsp;|&nbsp; Site: <span style="font-weight:500;">{{site_title}}</span></p>',
                                     { fontSize: '12px', color: '#64748b' }
                                 ),
-                                createTextContent(
+                                createTableContent(
                                     'compact-list',
-                                    `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
-                                        ${compactRows}
-                                    </table>`,
-                                    { fontSize: '13px', lineHeight: '155%' }
+                                    compactRows.rows,
+                                    {
+                                        fontSize: '13px',
+                                        labelFontSize: '12px',
+                                        lineHeight: '155%',
+                                        contentPadding: '8px 0',
+                                        borderColor: '#e5e7eb',
+                                    }
                                 ),
                             ],
                             {
@@ -719,7 +840,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                                                 <p style="margin:0 0 10px;font-size:14px;line-height:1.6;color:#334155;">A visitor submitted <strong style="font-weight:600;">{{form_title}}</strong>. The main details are listed below.</p>
                                                 <p style="margin:0 0 14px;font-size:12px;line-height:1.5;color:#64748b;">Reference: <span style="font-weight:500;">{{entry_title}}</span> &nbsp;|&nbsp; Site: <span style="font-weight:500;">{{site_title}}</span></p>
                                                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
-                                                    ${compactRows}
+                                                    ${compactRows.tableRows}
                                                 </table>
                                             </td>
                                         </tr>
@@ -739,7 +860,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
         : __('A new submission for {{form_title}} has been received. Review the details below.', 'gutenverse-form');
     const dataTip = dataSummaryRows.hasInputFields
         ? ''
-        : '<p style="margin: 0; font-size: 13px; color: #64748b;">Tip: select a text block and insert your available field tags from the builder menu on the right.</p>';
+        : '<p style="margin: 0; font-size: 13px; color: #64748b;">Tip: select a table cell and insert your available field tags from the builder menu on the right.</p>';
 
     return {
         design: {
@@ -771,12 +892,16 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                     createRow(
                         'data-table',
                         [
-                            createTextContent(
+                            createTableContent(
                                 'data-list',
-                                `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
-                                    ${dataSummaryRows.tableRows}
-                                </table>`,
-                                { fontSize: '14px', lineHeight: '155%' }
+                                dataSummaryRows.rows,
+                                {
+                                    fontSize: '14px',
+                                    labelFontSize: '13px',
+                                    lineHeight: '155%',
+                                    contentPadding: '11px 0',
+                                    borderColor: '#e2e8f0',
+                                }
                             ),
                             dataTip && createTextContent(
                                 'data-tip',

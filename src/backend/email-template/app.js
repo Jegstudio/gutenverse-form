@@ -4,6 +4,42 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import EmailEditor from 'react-email-editor';
 
+const STARTER_TABLE_IDS = ['compact-list', 'data-list'];
+const tableCellMenuCSS = `
+    td button[aria-haspopup],
+    td [role="button"][aria-haspopup],
+    td button[class*="dropdown"],
+    td button[class*="menu"],
+    table button[aria-haspopup],
+    table [role="button"][aria-haspopup] {
+        align-items: center !important;
+        background: #1267c7 !important;
+        border: 2px solid #ffffff !important;
+        border-radius: 999px !important;
+        box-shadow: 0 8px 18px rgba(18, 103, 199, 0.35), 0 0 0 2px rgba(18, 103, 199, 0.18) !important;
+        color: #ffffff !important;
+        display: inline-flex !important;
+        height: 32px !important;
+        justify-content: center !important;
+        min-height: 32px !important;
+        min-width: 32px !important;
+        opacity: 1 !important;
+        width: 32px !important;
+        z-index: 30 !important;
+    }
+
+    td button[aria-haspopup] svg,
+    td [role="button"][aria-haspopup] svg,
+    td button[class*="dropdown"] svg,
+    td button[class*="menu"] svg,
+    table button[aria-haspopup] svg,
+    table [role="button"][aria-haspopup] svg {
+        color: #ffffff !important;
+        fill: #ffffff !important;
+        stroke: #ffffff !important;
+    }
+`;
+
 const decodeEntities = (html) => {
     if (!html) return '';
     const txt = document.createElement('textarea');
@@ -16,6 +52,29 @@ const normalizeTitle = (title) => {
         .replace(/&#8211;|&#8212;|[\u2013\u2014]/g, '-')
         .replace(/\s+-\s+/g, ' - ')
         .trim();
+};
+
+const normalizeStarterTables = (design) => {
+    const designRows = [
+        ...(design?.body?.rows || []),
+        ...(design?.body?.headers || []),
+        ...(design?.body?.footers || []),
+    ];
+
+    designRows.forEach(row => {
+        row.columns?.forEach(column => {
+            column.contents?.forEach(content => {
+                if (content?.type === 'table' && STARTER_TABLE_IDS.includes(content.id)) {
+                    content.values = {
+                        ...(content.values || {}),
+                        deletable: false,
+                    };
+                }
+            });
+        });
+    });
+
+    return design;
 };
 
 const App = () => {
@@ -66,7 +125,7 @@ const App = () => {
             if (post.meta && post.meta.gutenverse_email_design) {
                 try {
                     const design = JSON.parse(post.meta.gutenverse_email_design);
-                    setInitialDesign(design);
+                    setInitialDesign(normalizeStarterTables(design));
                 } catch (e) {
                     // Invalid JSON design
                 }
@@ -222,7 +281,16 @@ const App = () => {
                                 'labels.merge-tags': __('Field Tags', 'gutenverse-form'),
                             },
                         },
+                        customCSS: tableCellMenuCSS,
+                        features: {
+                            textEditor: {
+                                tables: true,
+                            },
+                        },
                         tools: {
+                            table: {
+                                enabled: true
+                            },
                             menu: {
                                 enabled: false
                             }
