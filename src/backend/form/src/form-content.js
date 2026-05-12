@@ -1223,12 +1223,12 @@ const TabConfirmation = (props) => {
             </FormGroup>
 
             <FormGroup
-                title={__('Message Content', 'gutenverse-form')}
+                title={__('Email Content', 'gutenverse-form')}
                 description={__('Use a quick text message or design a reusable email template.', 'gutenverse-form')}
             >
                 <ControlSelect
                     id={'user_message_type'}
-                    title={__('Message Content Type', 'gutenverse-form')}
+                    title={__('Email Content Type', 'gutenverse-form')}
                     description={__('Choose between a custom static message or an email template.', 'gutenverse-form')}
                     value={values.user_message_type || 'static'}
                     options={[
@@ -1432,12 +1432,12 @@ const TabNotification = (props) => {
             </FormGroup>
 
             <FormGroup
-                title={__('Message Content', 'gutenverse-form')}
+                title={__('Email Content', 'gutenverse-form')}
                 description={__('Use a static note, a submitted field, or a designed email template.', 'gutenverse-form')}
             >
                 <ControlSelect
                     id={'admin_message_type'}
-                    title={__('Message Content Type', 'gutenverse-form')}
+                    title={__('Email Content Type', 'gutenverse-form')}
                     description={__('Choose between a custom static message, content from a form input, or an email template.', 'gutenverse-form')}
                     value={values.admin_message_type || 'static'}
                     options={[
