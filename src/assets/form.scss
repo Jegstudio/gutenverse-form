@@ -834,10 +834,24 @@
         border: 1px solid #dcdcde;
         border-radius: 5px;
         display: flex;
+        flex-wrap: wrap;
         gap: 16px;
         justify-content: space-between;
         margin-bottom: 10px;
         padding: 12px;
+    }
+
+    .template-card-content {
+        min-width: 0;
+    }
+
+    .template-card-meta {
+        align-items: center;
+        display: flex;
+        flex: 0 0 auto;
+        gap: 14px;
+        justify-content: flex-end;
+        margin-left: auto;
     }
 
     .template-label,
@@ -861,9 +875,15 @@
     }
 
     .template-actions {
+        align-items: center;
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+
+        .gutenverse-button {
+            line-height: 16px;
+            padding: 8px 20px;
+        }
 
         .cancel {
             background: #d63638;
@@ -871,8 +891,7 @@
             color: #fff;
             gap: 0;
             justify-content: center;
-            min-width: 50px;
-            padding: 9px 14px;
+            padding: 6px;
 
             svg {
                 flex: 0 0 auto;
@@ -894,8 +913,7 @@
             color: #011627;
             gap: 0;
             justify-content: center;
-            min-width: 50px;
-            padding: 8px 13px;
+            padding: 6px;
 
             svg {
                 flex: 0 0 auto;
@@ -926,16 +944,28 @@
         border-bottom: 1px solid #dcdcde;
         color: #1d2327;
         display: flex;
+        flex-wrap: wrap;
         font-size: 12px;
         font-weight: 600;
+        gap: 16px;
         justify-content: space-between;
         padding: 10px 12px;
 
-        span:last-child {
-            color: #646970;
-            font-size: 11px;
-            font-weight: 400;
-        }
+    }
+
+    .template-preview-header-actions {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-left: auto;
+    }
+
+    .template-preview-note {
+        color: #646970;
+        font-size: 11px;
+        font-weight: 400;
     }
 
     .template-preview-frame {
@@ -1047,6 +1077,41 @@
     }
 
     .gutenverse-email-template-manager {
+        .template-card {
+            align-items: flex-start;
+        }
+
+        .template-card-content,
+        .template-card-meta {
+            width: 100%;
+        }
+
+        .template-card-meta {
+            align-items: flex-start;
+            flex-direction: column;
+            margin-left: 0;
+        }
+
+        .template-preview-header {
+            align-items: flex-start;
+        }
+
+        .template-preview-header-actions {
+            align-items: flex-start;
+            flex-direction: column;
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .template-actions {
+            width: 100%;
+
+            .gutenverse-button:first-child {
+                flex: 1 1 auto;
+                justify-content: center;
+            }
+        }
+
         .template-preview-frame {
             padding: 10px;
 
