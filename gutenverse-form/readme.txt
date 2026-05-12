@@ -1,511 +1,227 @@
-=== Gutenverse Form – Contact Form Builder, Booking, Reservation, Subscribe for Block Editor ===
+=== Gutenverse Form - Contact Form Builder, Block Form & Booking Form ===
+
 Contributors: Jegstudio
-Tags: contact form, form builder, custom form, block form, WordPress form plugin
+Tags: form, form builder, contact form, block form, booking form
+Requires at least: 5.9
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 2.6.2
+Stable tag: 2.7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-The best WordPress contact form builder plugin. Create advanced contact forms, booking forms, conditional, payment, multi-step forms, & more.
+Contact form builder for WordPress: create block forms, booking forms, reservation forms, subscribe forms, and custom forms.
 
-## Description
+== Description ==
 
-**GUTENVERSE FORM – FORM BUILDER FOR GUTENBERG BLOCK EDITOR, MULTI-STEP FORMS, CONDITIONAL LOGIC, PAYMENT, CALCULATION, 15+ FREE USER-FRIENDLY FORM BLOCKS**
+Gutenverse Form is a WordPress form plugin, contact form builder, block form plugin, and booking form builder for the native Block Editor. Create contact forms, booking forms, reservation forms, subscribe forms, lead forms, feedback forms, and custom WordPress forms without code.
 
-Elevate your form creation with [Gutenverse Form](https://gutenverse.com/form/), a lightweight plugin that enriches the Gutenberg Block Editor and the WordPress Full Site Editor. With over 15 FREE form block elements, animation effects, display management options, advanced styling capabilities, and more, Gutenverse Form makes designing the perfect forms effortlessly. It streamlines customization and enhances your overall experience while creating and managing forms on your WordPress website.
+Built for the WordPress Block Editor and Site Editor, Gutenverse Form lets you design forms visually using form blocks. Add fields, style each input, manage responsive layouts, collect entries, send email notifications, and build forms that match your website design.
 
-To kickstart your project, we’ve crafted a stunning WordPress theme that integrates seamlessly with Gutenverse Form. This theme comes with pre-designed layouts, flexible settings, and intuitive controls, making website creation straightforward. It’s fully compatible with the Gutenberg Block Editor and Site Editor, ensuring it supports all Gutenverse and Gutenverse Form features for optimal performance.
+Use Gutenverse Form if you want a lightweight form builder that works inside the editor you already use.
 
-[Explore The Gutenverse Theme Collection](https://gutenverse.com/theme-list/)
+= Build Forms In The Block Editor =
 
-Unlock all the features needed to create your website with [Gutenverse PRO](https://gutenverse.com/pro/).
+Gutenverse Form helps you create:
 
+* Contact forms
+* Booking request forms
+* Reservation request forms
+* Newsletter subscribe forms
+* Lead generation forms
+* Feedback forms
+* Registration inquiry forms
+* Survey and question forms
+* Custom WordPress forms
+* WordPress form plugin layouts
+* Block forms for the WordPress editor
 
-## 🚀 Boost Productivity
+= Key Features =
 
-Your time is invaluable. Save countless hours by streamlining your workflow with Gutenverse Forms.
+* Contact form builder for the WordPress Block Editor
+* Booking form and reservation form builder
+* WordPress form plugin workflow inside the Block Editor
+* Form blocks for visual form building
+* 15+ form blocks and field types
+* Responsive form editing for desktop, tablet, and mobile
+* Form entries stored in WordPress
+* CSV export for form entries
+* Admin email notifications
+* User email notifications
+* reCAPTCHA block for spam protection
+* GDPR input block
+* Required field validation
+* Email, phone, number, date, select, checkbox, radio, and text fields
+* Global color and typography controls
+* Styling controls for spacing, background, border, notice messages, and input design
+* Block management to enable or disable unused blocks
+* Lightweight form builder workflow inside WordPress
 
-*   **Responsive Form Editing**
+= Included Form Blocks =
 
-Ensure your forms look stunning on any device, providing a seamless and visually appealing experience for your users
+Gutenverse Form includes the blocks needed to build simple and advanced WordPress forms directly in the Block Editor.
 
-*   **Lightweight & Fast User Experience**
+Free form blocks:
 
-Gutenverse optimizes code flow for a faster and smoother form creation process, resulting in a lighter website for your audience.
+* Form Builder
+* Text Input
+* Email Input
+* Phone Input
+* Number Input
+* Date Input
+* Textarea
+* Select
+* Multi Select
+* Checkbox
+* Radio
+* Switch
+* Submit Button
+* GDPR Input
+* reCAPTCHA
 
-*   **High-Speed Performance**
+Layout and design blocks may also be available depending on your Gutenverse setup, including section, container, column, and wrapper blocks.
 
-Boost your website’s performance with Gutenverse Forms, achieving loading speeds twice as fast as other form builders.
+= Form Builder Use Cases =
 
-*   **Built for Everyone**
+Gutenverse Form can be used as a contact form plugin, custom form builder, block form plugin, and WordPress form builder.
 
-Whether you're a novice or an expert in form creation, Gutenverse Forms empowers you to design beautifully crafted forms that meet your business needs.
+Common use cases include:
 
-  
+* Add a contact form to a business website
+* Create a booking request form for services
+* Create a reservation request form for restaurants, hotels, or events
+* Add a subscribe form to collect email leads
+* Build a feedback form for customers
+* Collect inquiries from landing pages
+* Create responsive forms for block themes
+* Build forms inside the WordPress Site Editor
 
-## 🔑 Key Features
+= Design And Responsive Controls =
 
-**1\.** [**15+ Easy-to-Use Gutenberg Form Blocks**](https://gutenverse.com/form/)
+Design forms visually without leaving the WordPress editor. Gutenverse Form includes controls for labels, placeholders, spacing, borders, backgrounds, colors, typography, validation notices, and responsive breakpoints.
 
-Explore a vast array of customizable form blocks, each packed with advanced features and flexibility. Unlock your creativity and design forms with limitless possibilities.
+You can style each field so your contact form, booking form, or subscribe form fits the rest of your website.
 
-**2\.** [**Template Library**](https://gutenverse.com/#library)
+= Spam Protection And Validation =
 
-Access a range of layouts and sections tailored to your needs with Gutenverse Form. Install theme templates directly from the library for quick and effortless form customization.
+Gutenverse Form includes reCAPTCHA support and validation for common field types such as email, phone, number, date, required fields, checkboxes, radio buttons, and select fields.
 
-**3\. Improved Publishing Experience**
+= Entries And Email Notifications =
 
-Experience live responsive editing with Gutenverse’s enhanced WordPress Block Editor for forms. The section block and customizable design of each block ensure a perfect fit with your site’s aesthetic.
+Form submissions can be saved as entries in WordPress. You can export entries to CSV and send email notifications to the site admin or the user who submitted the form.
 
-**4\. Live Responsive Editing**
+= Pro Features =
 
-Gutenverse’s seamless integration of responsive editing empowers you to create forms that look flawless on any device.
+Gutenverse Form Pro adds advanced features for more complex forms, including conditional logic, multi-step forms, calculation fields, image radio fields, grouped select fields, payment fields, advanced styling, display conditions, and premium form building features.
 
-**5\. Global Color & Font Variables**
-
-Effortlessly control the color and typography of all Gutenverse form elements using the extended Global Style feature.
-
-**6\. Blocks Management**
-
-Customize your editing experience by enabling or disabling blocks for a smoother workflow.
-
-**7\. Responsive Breakpoints**
-
-Edit breakpoints for tablets and mobile devices to optimize the responsiveness of your forms.
-
-  
-
-## Form Blocks
-
-*   **Form Builder**: A versatile wrapper for building flexible forms with a wide array of field choices.
-*   **Checkbox**: Create multiple checkable selections with checkboxes.
-*   **Date Input**: Capture date information with a convenient date picker interface.
-*   **Email Input**: Gather email information and validate its format to ensure valid submissions.
-*   **Select**: Provide a predefined list of choices for users to select from (single option).
-*   **Multi-select**: Offer a predefined list of choices for users to select from (multiple options).
-*   **Number Input**: Capture numeric information and validate it to ensure accurate submissions.
-*   **Radio**: Present predefined radio options for users to choose from.
-*   **Switch**: Toggle control with binary options, perfect for binary questions.
-*   **Submit Button**: Toggle control with binary options, perfect for binary questions.
-*   **Telp Input**: Collect phone number information and validate its format for accuracy.
-*   **Text Input**: Gather string information (excluding the “Return” character).
-*   **Textarea**: Obtain long text strings, including the “Return” character.
-*   **\[PRO\] Calculation Input**: Add input fields that allow users to perform calculations directly within your forms. Customize formulas and display results dynamically to enhance user interaction and functionality.
-*   **\[PRO\] Image Radio**: Use image-based radio buttons in your forms to present choices visually. Allows users to select options by clicking on images rather than traditional text-based radio buttons, making your forms more engaging and interactive.
-*   **\[PRO\] Multi Group Select**: Enable users to choose multiple options from grouped selections in your forms. Allows for organized and flexible data input, making it easier for users to make several related choices simultaneously.
-*   **\[PRO\] Payment**: Integrate payment processing directly into your forms. Allows users to make transactions or submit payments seamlessly while completing their form, enhancing convenience and streamlining the payment process.
-*   **\[PRO\] Stepper Navigation Button**: Incorporate step-by-step navigation in your forms with intuitive stepper buttons. Guides users through a multi-step process, making complex forms more manageable and improving overall user experience.
-*   **\[PRO\] Form Stepper**: Create multi-step forms with a clear, organized layout using the Form Stepper. This feature divides lengthy forms into manageable sections, guiding users through each step with progress indicators and streamlined navigation.
-
-  
-
-## Form Blocks Feature
-
-*   **Form Setting**: Customize and configure form fields, design, and behavior to create a seamless and interactive user experience on your website.
-*   **\[PRO\] Sticky**: Stick an element in any position on the page viewport as visitors scroll.
-*   **Display**: Easily control the visibility of your website elements on any device.
-*   **Animation Effects**: Create dynamic transitions and interactive elements.
-*   **\[PRO\] Transform**: Easily rotate, scale, or skew elements on your website as you like.
-*   **\[PRO\] Mouse Move Effect**: Make an effect on the pointed object whenever the cursor moves.
-*   **Spacing**: Adjust margins, paddings, and gaps between elements.
-*   **\[PRO\] Condition**: Control which elements or content are displayed on the page using conditional filters.
-*   **\[PRO\] Logic**: Implement conditional logic in your forms to show or hide fields based on user input. This feature allows for dynamic, responsive forms that adapt to user responses, ensuring a more personalized and efficient data collection process.
-*   **Advanced ID & Classname**: Assign unique IDs, HTML anchor, and CSS class.
-*   **Notice Styling**: Customize the appearance of your notice messages with various styling options to ensure they stand out and align with your website's design.
-*   **Background**: Choose from a variety of background styles, including colors, gradients, images, and videos.
-*   **Border**: Define and enhance your design with versatile border options.
-*   **Masking**: Use masking to create unique shapes and effects.
-
-  
-
-## 🏆 **[PRO]** Advanced Features
-
-*   [**Advanced Form Builder**](https://gutenverse.com/form/): Design any type of forms that perform using advanced features to collect all types of data for your business in less time.
-*   **Custom Font**: Personalize your website with custom fonts to match your brand’s unique style.
-*   [**Premium Themes**](https://gutenverse.com/theme-list/): Access a selection of premium themes designed to elevate the look and functionality of your website.
-*   [**Premium Template Library**](https://gutenverse.com/#library): Explore a wide variety of beautifully designed templates to make building your website 
-*   [**Advanced Popup Builder**](https://gutenverse.com/popup/): Packed with premade templates and advanced triggering options, optimize user engagement and conversions on your WordPress websites without needing to code. 
-
-  
-
-## Use of 3rd-Party Services
-
-To improve the user experience, Gutenverse may use the following third-party services. Here are the details:
-
-*   **Gutenverse Newsletter**
-
-Our Gutenverse dashboard offers a form for subscribing to our newsletter. By subscribing, we will send you recent updates about Gutenverse. The only information required and sent is the email address you manually input into the designated box.
-
-This data is securely sent to our server at [gutenverse.com](https://gutenverse.com/). Rest assured, no information is transmitted automatically without your explicit consent.
-
-  
-
-If you’d like more details about Gutenverse, you can check out the terms and conditions [here!](https://gutenverse.com/terms-and-conditions/)
-
-  
-
-## ⭐️ Join Gutenverse Community
-
-Become part of our community, share your thoughts and experiences about Gutenberg, and let’s collaborate to achieve your goals!
-
-*   [**Facebook Community**](https://www.facebook.com/groups/gutenversecommunity) – Join hundreds of members (and still growing) for support, advice, bug reports, and feedback.
-*   [**Social Media**](https://gutenverse.com/links/) [](https://gutenverse.com/links/) – Gain valuable insights from our Instagram, Facebook Page, X (formerly Twitter), and TikTok.
-*   [**Documentation**](https://gutenverse.com/docs/) – Access guides, tutorials, and resources to answer your questions.
-*   [**Need Help?**](https://gutenverse.com/contact/) – Kindly visit the Gutenverse Forum for any inquiries and support.
-
+Learn more at [Gutenverse Form](https://gutenverse.com/form/).
 
 == Installation ==
 
-Installing Gutenverse Form is a breeze. Follow one of the two methods below:
+= From The WordPress Plugin Dashboard =
 
-= From the WordPress Plugin Dashboard: =
-1. Go to the WordPress plugin dashboard and search for "Gutenverse Form."
-2. Click on the "Install Now" button next to the Gutenverse Form plugin.
-3. Once installed, activate the plugin from your WordPress Dashboard.
+1. Go to Plugins > Add New in your WordPress dashboard.
+2. Search for "Gutenverse Form".
+3. Click Install Now.
+4. Click Activate.
+5. Open the WordPress Block Editor and search for Gutenverse Form blocks.
 
-= Using the Upload Method: =
-1. Download the Gutenverse Form plugin as a zip file from the official website.
-2. In your WordPress Dashboard, navigate to "Plugins" and click on "Add New."
-3. Select the "Upload Plugin" button and choose the Gutenverse Form zip file.
-4. Click on "Install Now" and activate the plugin after installation.
+= Using The Upload Method =
 
-For more detailed instructions, refer to our comprehensive <a href="https://gutenverse.com/docs/plugin-installation/" target="_blank" rel="">plugin installation guide</a> available on our website.
+1. Download the Gutenverse Form plugin ZIP file.
+2. Go to Plugins > Add New in your WordPress dashboard.
+3. Click Upload Plugin.
+4. Choose the Gutenverse Form ZIP file.
+5. Click Install Now.
+6. Activate the plugin.
 
-For additional information and assistance, please visit our extensive <a href="https://gutenverse.com/docs/" target="_blank" rel="">Documentation</a> section.
-
-== DOCUMENTATION ==
-We have some <a href="https://gutenverse.com/docs/" target="_blank" rel="">documentation articles here</a> that might help you start your journey with Gutenverse.
+For more help, read the [Gutenverse documentation](https://gutenverse.com/docs/).
 
 == Frequently Asked Questions ==
 
-Here are answers to some common questions about Gutenverse Form:
+= Can I create booking forms and reservation forms? =
 
-**Does Gutenverse Form require the Gutenberg plugin to be installed?**
+Yes. You can create booking request forms, reservation request forms, appointment inquiry forms, and other custom forms by combining form fields in the Block Editor.
 
-No, Gutenverse Form does not require the Gutenberg plugin. Since WordPress version 5.9 or above already includes Gutenberg integrated, you can seamlessly use Gutenverse Form without any additional installation steps.
+= Can I create subscribe forms? =
 
-**How can I search for Gutenverse Form blocks within the block editor?**
+Yes. Gutenverse Form can be used to create subscribe forms and lead generation forms. You can collect name, email, phone, and custom field data from visitors.
 
-To find Gutenverse Form blocks in the block editor:
+= Does Gutenverse Form require the Gutenberg plugin? =
 
-Click on the top left corner of the editor.
-Enter the keyword "gutenverse", "input" or "form" in the search bar.
-The editor will display a list of all available Gutenverse Form blocks. You can also search for specific blocks by adding details, such as "email input."
+No. WordPress 5.9 and newer already include the Block Editor features needed by Gutenverse Form. You do not need to install the separate Gutenberg plugin unless you want to test experimental Gutenberg features.
 
-**My blocks contain unexpected or invalid content. What should I do?**
+= Does Gutenverse Form work with the WordPress Site Editor? =
 
-If your blocks display unexpected or invalid content after an update, follow these steps:
+Yes. Gutenverse Form is built for the WordPress Block Editor and can be used with block themes and Site Editor workflows.
 
-- If available, click on the "Attempt Block Recovery" button to recover and restore the blocks.
-- If the button is not available or the issue persists, please reach out to our support team by creating a support ticket. We will promptly assist you in resolving the issue.
+= How do I find Gutenverse Form blocks in the editor? =
 
-**Is Gutenverse Form compatible with other Gutenberg plugins?**
+Open the block inserter in the WordPress editor and search for "Gutenverse", "form", "input", or a specific field such as "email input", "checkbox", or "submit button".
 
-Gutenverse Form is designed to be compatible with other Gutenberg plugins. We have thoroughly tested Gutenverse Form with popular Gutenberg plugins like Spectra, Otter, Essential Blocks, Stackable, and Gutenberg Blocks by Kadence Blocks. You can confidently use Gutenverse Form alongside these plugins to enhance your block editing experience.
+= Can I save and export form entries? =
 
+Yes. Gutenverse Form can save form submissions as entries in WordPress, and entries can be exported to CSV.
+
+= Does Gutenverse Form support spam protection? =
+
+Yes. Gutenverse Form includes a reCAPTCHA block. You can use it to help protect forms from automated spam submissions.
+
+= What should I do if a block shows unexpected or invalid content? =
+
+After some updates, WordPress may show an "Attempt Block Recovery" button for blocks affected by older markup or styling changes. Click that button first. If the issue continues, please open a support ticket.
+
+== Screenshots ==
+
+1. Form Builder - Build forms visually in the WordPress Block Editor.
+2. Contact Form Fields - Add text, email, phone, textarea, select, checkbox, radio, and date fields.
+3. Responsive Editing - Adjust form layouts for desktop, tablet, and mobile.
+4. Field Styling - Customize labels, placeholders, spacing, borders, colors, and typography.
+5. Form Entries - Review submitted form entries in WordPress.
+6. CSV Export - Export form entries for reporting and follow-up.
+7. reCAPTCHA - Add spam protection to your forms.
+8. Email Notifications - Send form submission notifications to admins and users.
+9. Booking Form - Create booking and reservation request forms.
+10. Subscribe Form - Build email subscribe and lead generation forms.
+11. Form Settings - Configure submission, validation, and notification behavior.
+12. Block Editor Workflow - Build and edit forms directly with WordPress form blocks.
+
+== Use of 3rd-Party Services ==
+
+Gutenverse Form may connect to the following third-party services when you enable related features.
+
+= Google reCAPTCHA =
+
+If you add the reCAPTCHA block and configure reCAPTCHA keys, the plugin sends the reCAPTCHA response token to Google for verification. This is used only to validate the form submission and protect forms from spam.
+
+Service endpoint: https://www.google.com/recaptcha/api/siteverify
+Privacy Policy: https://policies.google.com/privacy
+Terms of Service: https://policies.google.com/terms
+
+= Gutenverse.com =
+
+The Gutenverse dashboard may include optional links, template/library access, documentation, support, or newsletter subscription features from gutenverse.com. Newsletter data is sent only when you manually submit your email address.
+
+Website: https://gutenverse.com/
+Terms: https://gutenverse.com/terms-and-conditions/
 
 == Changelog ==
+
+= 2.7.0 =
+
+New and improved:
+
+* Improve premium upgrade UI
+
+= 2.6.3 =
+
+Bug fixes:
+
+* Fixed issue with frontend animation rendering.
+
 = 2.6.2 =
-##### Bug Fixes
-* fix form entries export CSV issue can only export 5 data
 
-= 2.6.1 =
-##### New & Improvements
-* add daily form dashboard summary email for site admins
-* add alignment placeholder ini input style
+Bug fixes:
 
-##### Bug Fixes
-* fix issue with icon svg on frontend
-* fix issue with global font when there is no font weight or line height
+* Fixed form entries CSV export issue where only 5 data rows could be exported.
 
-= 2.6.0 =
-##### New & Improvements
-* update block rendering mechanism
-
-= 2.5.3 =
-##### New & Improvements
-* update core framework version
-
-= 2.5.1 =
-##### Bug Fixes
-* fix issue with sending email
-
-= 2.5.0 =
-##### New & Improvements
-* add new container block
-
-##### Bug Fixes
-* fix form vulnerability issues
-
-= 2.4.7 =
-##### New & Improvements
-* update core framework version
-
-= 2.4.5 =
-##### New & Improvements
-* add for label in form input
-* add positioning panel for form builder
-
-##### Bug Fixes
-* fix transform transition
-* fix tooltip info icon position
-
-= 2.4.4 =
-##### New & Improvements
-* add aria label options in some blocks for SEO & accessibility
-* add loading state when converting icon to svg for better ux
-
-##### Bug Fixes
-* fix error when running wp cli for gutenverse form
-* fix form action capture browser not working
-
-= 2.4.3 =
-##### New & Improvements
-* add option fetch priority high for background image
-
-##### Bug Fixes
-* fix background slideshow style overwritten by default
-* fix issue with glitching background image for background slider mode
-* fix word and character validation if only one value exist
-
-= 2.4.0 =
-##### New & Improvements
-* add option to convert Webfont to SVG icon for improved SEO
-
-##### Bug Fixes
-* fix issue with global styles fetch in editor
-* fix issue with animation effect not running on tablet/mobile
-* fix issue with animation effect when combined with transform effect
-* fix issue with section background type video
-* fix recaptcha block issue on frontend
-* fix security issue (credit by andrea bocchetti - Wordfence)
-
-= 2.3.2 =
-##### New & Improvements
-- improve styling cache mechanism
-
-##### Bug Fixes
-- fix recaptcha issue
-- fix security issue (credit by Patchstack)
-
-= 2.3.1 =
-##### New & Improvements
-* Update core framework
-
-= 2.3.0 =
-##### New & Improvements
-* Improve CSS & JS files to load only if block/feature exist
-
-##### Bug Fixes
-* fix security issue. credit: Patchstack.
-
-= 2.2.0 =
-##### New & Improvements
-* add notification center for Gutenverse notices
-* add Custom Page CSS & JS
-* add new library option when Companion theme is installed
-* blocks now use API v3 for faster editing experience
-
-##### Bug Fixes
-* fix frontend inline style
-* fix more block recovery issues
-
-= 2.1.2 =
-##### Bug Fixes
-* fix bug recaptcha causing re-scroll issue
-
-= 2.1.1 =
-##### Bug Fixes
-* fix block preview in library
-
-= 2.1.0 =
-##### Bug Fixes
-* fix blocklist enable/disable option for wrapper block
-
-= 2.0.8 =
-##### New & Improvements
-* New block: form captcha
-
-##### Bug Fixes
-* fix some undefined attributes
-
-= 2.0.7 =
-##### Bug Fixes
-* fix select input frontend
-
-= 2.0.6 =
-##### New & Improvements
-* add change icon and icon styling to form select input
-
-##### Bug Fixes
-* fix border color issue
-
-= 2.0.5 =
-##### Bug Fixes
-* fix global color bug
-
-= 2.0.4 =
-##### Bug Fixes
-* fix form input select
-* fix form input icon style
-
-= 2.0.2 =
-##### New & Improvements
-* update core version
-
-##### Bug Fixes
-* fix form input border
-
-= 2.0.1 =
-##### New & Improvements
-* update core version
-
-##### Bug Fixes
-* fix responsive style in editor - some block back to default style
-* fix library section preview when theres block hides on desktop
-* fix border control UI
-* fix save state issue
-* fix flexible wrapper width and height issue
-* fix restores the previous range control for gradient
-* fix transform switch normal/hover
-* fix transform reset button
-* fix border color issue
-* fix issue library button disappear in editor
-* fix library layout thumbnail height
-* fix the option use featured image is missing in background section and column
-* fix input global style
-* fix control with slider and unit
-* fix cursor when typing inside text control
-* fix featured background image not showing in frontend
-* fix flexible wrapper animation effect
-
-= 2.0.0 =
-##### New & Improvements
-* significantly improve editing experience inside the editor
-* improve page and post editing preview
-* add option in template library to import with global styles (for supported themes only)
-* add new one for all setting in countdown block
-* add button to easily show/hide template on posts/pages
-
-##### Bug Fixes
-* fix gdpr input issue
-
-= 1.1.9 =
-##### New & Improvements
-* improve typing experience in rich-text blocks
-
-##### Bug Fixes
-* fix transform scaleX hover
-
-= 1.1.8 =
-##### New & Improvements
-* add background slide in section
-
-##### Bug Fixes
-* fix column horizontal and vertical alignment responsive in editor
-
-= 1.1.7 =
-##### Bug Fixes
-* fix issue with text based blocks
-
-= 1.1.6 =
-##### Improvements
-* update Google Font list
-* add featured image as background
-* include padding style to chevron down icon in select 
-
-##### Bug Fixes
-* fix issue when adding column on section with empty column
-* fix refreshing style function
-* fix library plugin requirement in multisite
-
-= 1.1.5 =
-##### Bug Fixes
-* Fix sticky & vertical align issue on wrapped column 100%
-
-= 1.1.4 =
-##### Improvements
-* Improve Blocks Loading inside editor
-* Add option in dashboard to enable/disable lazy load blocks in editor
-
-##### Bug Fixes
-* Fix sticky & vertical align issue
-
-= 1.1.3 =
-##### New
-* Add new GDPR input block
-
-##### Bug Fixes
-* Fix animation effect on frontend
-* Fix section vertical-align when column position stretch
-* Fix section "fixed background" responsive on frontend
-
-= 1.1.2 =
-##### Improvements
-* Improve banner experience
-
-= 1.1.1 =
-##### Improvements
-* Improve banner experience
-
-= 1.1.0 =
-##### Bug Fixes
-* Fix warning issue related to global fonts when certain values are empty
-
-= 1.0.9 =
-##### Bug Fixes
-* Fix appearance menu for some themes
-
-= 1.0.8 =
-##### Bug Fixes
-* Fix issue with scrolling when url has no anchor tag
-* Fix issue with opening link in flexible wrapper
-
-= 1.0.7 =
-##### Bug Fix
-* Fix issue with system status on sites using WP Engine
-
-= 1.0.6 =
-##### Improvements
-* Update core version
-
-= 1.0.5 =
-##### Improvements
-* Improve blocks loading inside editor
-
-= 1.0.4 =
-##### Bug Fixes
-* Fix issue if there is no form action assigned
-
-= 1.0.3 =
-##### Improvements
-* Fix issue if form builder is inside pattern
-
-= 1.0.2 =
-##### Improvements
-* Add better phone pattern
-
-##### Bug Fixes
-* Fix issue with default number pattern
-
-= 1.0.1 =
-##### Improvements
-* Update core framework
-
-##### Bug Fixes
-* Fix form builder notice styling
-* Fix issue with form builder in template part
-* Fix exported form CSV for entry layout is broken in some cases
-* Fix issue with styling on frontend
-
-= 1.0.0 =
-##### New
-* Add new ability to copy styles between blocks
-* Add new block: Flexible Wrapper block
-
-= 0.6.0 =
-* Fix compatibility with WordPress version 6.6
-
-= 0.5.1 =
-* Initial Release
+For full changelog history, please visit the Gutenverse Form repository or plugin development log.
