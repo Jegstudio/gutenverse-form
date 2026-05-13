@@ -38,7 +38,10 @@ const services = [
     { id: 'google_sheets', title: 'Google Sheets', description: __('Save form submissions directly to Google Sheets.', 'gutenverse-form'), icon: <IconGoogleSheetSVG /> },
 ];
 
-const integrationConfig = window['GutenverseConfig'] || window['GutenverseDashboard'] || {};
+const integrationConfig = {
+    ...(window['GutenverseConfig'] || {}),
+    ...(window['GutenverseDashboard'] || {}),
+};
 const hasIntegrationPro = !!integrationConfig?.hasIntegrationPro;
 const integrationUpgradeUrl = integrationConfig?.integrationUpgradeUrl || '';
 const admin_url = integrationConfig?.adminUrl || '';
@@ -487,7 +490,7 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
                 <div className="integration-header">
                     <button className="back-button" onClick={onBack} aria-label={__('Back to integration list', 'gutenverse-form')}>
                         <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10.5996 4.60156H0.599609M4.34961 0.601562L0.599609 4.60156L4.34961 8.60156" stroke="#3B57F7" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M10.5996 4.60156H0.599609M4.34961 0.601562L0.599609 4.60156L4.34961 8.60156" stroke="#3B57F7" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                     </button>
                     <h1>{title || __('Integration', 'gutenverse-form')}</h1>
@@ -592,6 +595,14 @@ const IntegrationPage = () => {
         return () => {
             settingsWrapper.classList.remove('gutenverse-form-integration-detail-open');
         };
+    }, [currentService]);
+
+    useEffect(() => {
+        if (!currentService) {
+            return;
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [currentService]);
 
     if (currentService) {

@@ -42,9 +42,7 @@
 }
 
 .gutenverse-form-integration-wrap {
-    background: #fff;
     border-radius: 14px;
-    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
 
     &.is-service-setup {
         border-radius: 5px;
@@ -139,7 +137,6 @@
 
     .form-tab-body {
         min-height: 400px;
-        background: #fff;
         padding: 0;
 
         &.pro-tab {
@@ -234,20 +231,24 @@
             margin-top: auto;
 
             .components-button.is-primary {
-                min-width: 196px;
-                min-height: 66px;
-                padding: 0 28px;
-                border-radius: 12px;
-                background: #4361ee;
-                border-color: #4361ee;
+                background: #3b57f7;
+                border-color: #3b57f7;
+                border-radius: 5px;
                 box-shadow: none;
-                font-size: 18px;
-                font-weight: 600;
+                padding: 14px 16px;
+                transition: all .3s ease;
+                font-family: "Roboto", sans-serif;
+                font-weight: 500;
+                font-size: 14px;
+                line-height: 100%;
+                letter-spacing: 0%;
+                text-align: center;
+                vertical-align: middle;
 
                 &:hover,
                 &:focus {
-                    background: #314ed7;
-                    border-color: #314ed7;
+                    background: #0324cc;
+                    border-color: #0324cc;
                 }
             }
         }
@@ -326,7 +327,6 @@
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 30px;
-        background: #fff;
 
         & > p {
             grid-column: 1 / -1;

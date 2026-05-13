@@ -73,7 +73,7 @@ class Integration {
 			),
 			array(
 				'service_name'      => 'webhook',
-				'documentation_url' => 'https://api.slack.com/',
+				'documentation_url' => 'https://docs.webhook.site/',
 			),
 			array(
 				'service_name'      => 'get_response',
