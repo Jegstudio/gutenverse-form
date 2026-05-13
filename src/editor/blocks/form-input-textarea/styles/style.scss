@@ -9,6 +9,11 @@
         .input-icon-wrapper {
             align-items: flex-start;
         }
+
+        .gutenverse-input,
+        .gutenverse-input::placeholder {
+            font-family: Arial, Helvetica, sans-serif;
+        }
     }
 }
 

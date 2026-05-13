@@ -34,7 +34,14 @@
 }
 
 .tab-header.form {
-    font-size: 26px !important;
+
+    h2 {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 600;
+        font-size: 26px !important;
+        letter-spacing: 0%;
+        vertical-align: middle;
+    }
 
     & > * {
         margin: 0 !important;

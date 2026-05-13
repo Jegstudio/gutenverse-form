@@ -57,6 +57,8 @@ export const BulkInputStylePanel = ({ clientId }) => {
         return flattenBlocks(blocks).filter(block => block.name?.startsWith('gutenverse/form-input-'));
     }, [clientId]);
 
+    const hasEnoughInputs = formInputBlocks.length > 1;
+
     const sourceOptions = useMemo(() => {
         return [
             { label: __('Select a form input block', 'gutenverse-form'), value: '' },
@@ -214,18 +216,18 @@ export const BulkInputStylePanel = ({ clientId }) => {
                     <label className="components-input-control__label">
                         {__('Source Input Block', 'gutenverse-form')}
                     </label>
-                    <div className={`gutenverse-form-bulk-style-select ${isDropdownOpen ? 'is-open' : ''} ${isApplying || sourceOptions.length <= 1 ? 'is-disabled' : ''}`}>
+                    <div className={`gutenverse-form-bulk-style-select ${isDropdownOpen ? 'is-open' : ''} ${isApplying || !hasEnoughInputs ? 'is-disabled' : ''}`}>
                         <button
                             type="button"
                             className="gutenverse-form-bulk-style-select-trigger"
                             onClick={() => {
-                                if (!isApplying && sourceOptions.length > 1) {
+                                if (!isApplying && hasEnoughInputs) {
                                     setIsDropdownOpen(value => !value);
                                 }
                             }}
                             aria-haspopup="listbox"
                             aria-expanded={isDropdownOpen}
-                            disabled={isApplying || sourceOptions.length <= 1}
+                            disabled={isApplying || !hasEnoughInputs}
                         >
                             <span className="gutenverse-form-bulk-style-select-trigger-label">
                                 {selectedOption?.label}
@@ -265,7 +267,7 @@ export const BulkInputStylePanel = ({ clientId }) => {
             <Button
                 isPrimary
                 isBusy={isApplying}
-                disabled={isApplying || !selectedSourceId || sourceOptions.length <= 1}
+                disabled={isApplying || !selectedSourceId || !hasEnoughInputs}
                 onClick={applyStyleToCompatibleInputs}
                 className="gutenverse-form-action-button"
             >
