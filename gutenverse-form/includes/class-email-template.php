@@ -22,6 +22,22 @@ class Email_Template {
 	const POST_TYPE = 'gutenverse-email-tpl';
 
 	/**
+	 * Email template meta keys.
+	 */
+	const META_DESIGN      = 'gutenverse_email_design';
+	const META_HTML        = 'gutenverse_email_html';
+	const META_INPUT_NAMES = 'gutenverse_email_input_names';
+	const META_FORM_ACTION = 'gutenverse_email_form_action';
+	const META_MJML        = 'gutenverse_email_mjml';
+
+	/**
+	 * Email template design schema markers.
+	 */
+	const DESIGN_BUILDER        = 'gutenverse-email-builder';
+	const DESIGN_SOURCE_MJML    = 'grapesjs-mjml';
+	const DESIGN_SCHEMA_VERSION = 1;
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -100,57 +116,41 @@ class Email_Template {
 		);
 		register_post_type( self::POST_TYPE, $args );
 
-		register_post_meta(
-			self::POST_TYPE,
-			'gutenverse_email_design',
-			array(
-				'show_in_rest'      => true,
-				'single'            => true,
-				'type'              => 'string',
-				'auth_callback'     => function () {
-					return current_user_can( 'edit_posts' );
-				},
-				'sanitize_callback' => function ( $value ) {
-					return $value;
-				},
-			)
+		foreach ( self::get_meta_keys( true ) as $meta_key ) {
+			$this->register_template_meta( $meta_key );
+		}
+	}
+
+	/**
+	 * Get email template meta keys.
+	 *
+	 * @param bool $include_form_action Whether to include the owning form action meta key.
+	 * @return array
+	 */
+	public static function get_meta_keys( $include_form_action = false ) {
+		$keys = array(
+			self::META_DESIGN,
+			self::META_HTML,
+			self::META_INPUT_NAMES,
+			self::META_MJML,
 		);
 
-		register_post_meta(
-			self::POST_TYPE,
-			'gutenverse_email_html',
-			array(
-				'show_in_rest'      => true,
-				'single'            => true,
-				'type'              => 'string',
-				'auth_callback'     => function () {
-					return current_user_can( 'edit_posts' );
-				},
-				'sanitize_callback' => function ( $value ) {
-					return $value;
-				},
-			)
-		);
+		if ( $include_form_action ) {
+			$keys[] = self::META_FORM_ACTION;
+		}
 
-		register_post_meta(
-			self::POST_TYPE,
-			'gutenverse_email_input_names',
-			array(
-				'show_in_rest'      => true,
-				'single'            => true,
-				'type'              => 'string',
-				'auth_callback'     => function () {
-					return current_user_can( 'edit_posts' );
-				},
-				'sanitize_callback' => function ( $value ) {
-					return $value;
-				},
-			)
-		);
+		return $keys;
+	}
 
+	/**
+	 * Register email template post meta.
+	 *
+	 * @param string $meta_key Meta key.
+	 */
+	private function register_template_meta( $meta_key ) {
 		register_post_meta(
 			self::POST_TYPE,
-			'gutenverse_email_form_action',
+			$meta_key,
 			array(
 				'show_in_rest'      => true,
 				'single'            => true,
@@ -166,6 +166,94 @@ class Email_Template {
 	}
 
 	/**
+	 * Get the storage format for email template design data.
+	 *
+	 * @param string|array $design Design JSON string or decoded design data.
+	 * @return string
+	 */
+	public static function get_design_format( $design ) {
+		$design = self::normalize_design_data( $design );
+
+		if ( null === $design ) {
+			return 'invalid';
+		}
+
+		if ( empty( $design ) ) {
+			return 'empty';
+		}
+
+		if ( self::is_gutenverse_design( $design ) ) {
+			return 'gutenverse-mjml';
+		}
+
+		if ( self::is_legacy_unlayer_design( $design ) ) {
+			return 'unlayer';
+		}
+
+		return 'unknown';
+	}
+
+	/**
+	 * Check whether design data uses the Gutenverse MJML wrapper schema.
+	 *
+	 * @param string|array $design Design JSON string or decoded design data.
+	 * @return bool
+	 */
+	public static function is_gutenverse_design( $design ) {
+		$design = self::normalize_design_data( $design );
+
+		return is_array( $design )
+			&& isset( $design['builder'], $design['source'], $design['schemaVersion'] )
+			&& self::DESIGN_BUILDER === $design['builder']
+			&& self::DESIGN_SOURCE_MJML === $design['source']
+			&& self::DESIGN_SCHEMA_VERSION === (int) $design['schemaVersion'];
+	}
+
+	/**
+	 * Check whether design data looks like a legacy Unlayer design.
+	 *
+	 * @param string|array $design Design JSON string or decoded design data.
+	 * @return bool
+	 */
+	public static function is_legacy_unlayer_design( $design ) {
+		$design = self::normalize_design_data( $design );
+
+		return is_array( $design )
+			&& ! self::is_gutenverse_design( $design )
+			&& isset( $design['body'] )
+			&& is_array( $design['body'] )
+			&& (
+				isset( $design['body']['rows'] )
+				|| isset( $design['body']['headers'] )
+				|| isset( $design['body']['footers'] )
+			);
+	}
+
+	/**
+	 * Normalize design data into an array.
+	 *
+	 * @param string|array $design Design JSON string or decoded design data.
+	 * @return array|null
+	 */
+	private static function normalize_design_data( $design ) {
+		if ( is_array( $design ) ) {
+			return $design;
+		}
+
+		if ( ! is_string( $design ) ) {
+			return null;
+		}
+
+		if ( '' === trim( $design ) ) {
+			return array();
+		}
+
+		$decoded = json_decode( $design, true );
+
+		return is_array( $decoded ) ? $decoded : null;
+	}
+
+	/**
 	 * Enqueue Scripts
 	 */
 	public function enqueue_scripts() {
@@ -173,6 +261,11 @@ class Email_Template {
 
 		if ( is_object( $screen ) && self::POST_TYPE === $screen->post_type ) {
 			$asset_file = GUTENVERSE_FORM_DIR . 'lib/dependencies/email-template.asset.php';
+
+			// The full-screen email builder does not render WordPress' normal auth check modal.
+			wp_dequeue_script( 'wp-auth-check' );
+			wp_dequeue_style( 'wp-auth-check' );
+			remove_action( 'admin_print_footer_scripts', 'wp_auth_check_html', 5 );
 
 			if ( file_exists( $asset_file ) ) {
 				$asset = require $asset_file;
@@ -195,11 +288,14 @@ class Email_Template {
 					)
 				);
 
+				$style_file    = GUTENVERSE_FORM_DIR . 'assets/css/email-template.css';
+				$style_version = file_exists( $style_file ) ? filemtime( $style_file ) : $asset['version'];
+
 				wp_enqueue_style(
 					'gutenverse-email-template-css',
 					GUTENVERSE_FORM_URL . '/assets/css/email-template.css',
 					array(),
-					$asset['version']
+					$style_version
 				);
 			}
 		}

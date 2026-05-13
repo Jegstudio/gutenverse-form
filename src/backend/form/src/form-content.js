@@ -970,6 +970,7 @@ const createEmailTemplate = ({ fieldName, formTitle, starter = 'blank', inputFie
             meta: {
                 gutenverse_email_design: starterContent.design ? JSON.stringify(starterContent.design) : '',
                 gutenverse_email_html: starterContent.html || '',
+                gutenverse_email_mjml: starterContent.mjml || '',
                 gutenverse_email_input_names: JSON.stringify(templateInputNames),
                 gutenverse_email_form_action: formActionId ? String(formActionId) : '',
             }

@@ -56,6 +56,8 @@
 		"choices.js": "^9.1.0",
 		"classnames": "^2.5.1",
 		"flatpickr": "^4.6.13",
+		"grapesjs": "^0.22.16",
+		"grapesjs-mjml": "^1.0.8",
 		"gutenverse-core": "file:gutenverse-core",
 		"lodash": "^4.17.21",
 		"react-datepicker": "^4.25.0",

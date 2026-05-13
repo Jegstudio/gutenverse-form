@@ -1804,17 +1804,13 @@ class Form {
 			);
 		}
 
-		$template_meta_keys = array(
-			'gutenverse_email_design',
-			'gutenverse_email_html',
-			'gutenverse_email_input_names',
-		);
+		$template_meta_keys = Email_Template::get_meta_keys();
 
 		foreach ( $template_meta_keys as $meta_key ) {
 			update_post_meta( $new_template_id, $meta_key, get_post_meta( $template_id, $meta_key, true ) );
 		}
 
-		update_post_meta( $new_template_id, 'gutenverse_email_form_action', (string) $new_form_action_id );
+		update_post_meta( $new_template_id, Email_Template::META_FORM_ACTION, (string) $new_form_action_id );
 
 		return absint( $new_template_id );
 	}
