@@ -3,6 +3,27 @@ import isEmpty from 'lodash/isEmpty';
 import apiFetch from '@wordpress/api-fetch';
 import { applyFilters } from '@wordpress/hooks';
 
+const renderNoticeIcon = (icon, iconType = 'icon', iconSVG = '') => {
+    if (iconType === 'svg' && iconSVG) {
+        try {
+            const svgData = atob(iconSVG);
+            return `<div class="gutenverse-icon-svg">${svgData}</div>`;
+        } catch (e) {
+            if (iconSVG.trim().startsWith('<svg')) {
+                return `<div class="gutenverse-icon-svg">${iconSVG}</div>`;
+            }
+
+            return '';
+        }
+    }
+
+    if (icon) {
+        return `<i class="${icon}"></i>`;
+    }
+
+    return '';
+};
+
 class GutenverseFormValidation extends Default {
     /* public */
     init() {
@@ -473,13 +494,7 @@ class GutenverseFormValidation extends Default {
                     ? noticeData.iconLayoutSuccess
                     : noticeData.iconLayoutError;
 
-            if (currentIcon) {
-                if (currentType === 'svg') {
-                    noticeIcon.html(currentSVG);
-                } else if (currentType === 'icon') {
-                    noticeIcon.html(`<i class="${currentIcon}"></i>`);
-                }
-            }
+            noticeIcon.html(renderNoticeIcon(currentIcon, currentType, currentSVG));
 
             noticeContent.html(finalMessage);
             noticeBlock.removeClass(

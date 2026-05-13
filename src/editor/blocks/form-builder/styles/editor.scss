@@ -426,7 +426,9 @@
         background: #fff;
         border: 1px solid #d0d5dd;
         border-radius: 3px;
-        overflow: hidden;
+        max-height: 260px;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
     .gutenverse-form-bulk-style-select-option {
@@ -465,6 +467,11 @@
         letter-spacing: 0%;
         text-align: center;
         vertical-align: middle;
+        transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .gutenverse-form-action-button.components-button.is-primary:not(:disabled) {
+        cursor: pointer;
 
         &:hover,
         &:focus {
@@ -473,6 +480,20 @@
             box-shadow: none;
             outline: none;
         }
+    }
+
+    .gutenverse-form-action-button.components-button.is-primary:disabled,
+    .gutenverse-form-action-button.components-button.is-primary.is-busy {
+        align-self: stretch;
+        background: rgba(153, 162, 169, 1);
+        border: 0;
+        color: hsla(0, 0%, 100%, .86);
+        opacity: 1;
+        width: 100%;
+    }
+
+    .gutenverse-form-action-button.components-button.is-primary .components-spinner {
+        margin: 0 10px 0 0;
     }
 
     .gutenverse-form-bulk-style-notice.components-notice {
