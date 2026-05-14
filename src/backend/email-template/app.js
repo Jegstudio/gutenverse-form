@@ -360,9 +360,9 @@ const getTemplateState = (meta = {}) => {
 
     return {
         format: parsedDesign.format,
-        mjml: DEFAULT_MJML,
+        mjml,
         project: null,
-        isReadOnly: parsedDesign.format === DESIGN_FORMATS.LEGACY_UNLAYER,
+        isReadOnly: false,
     };
 };
 
@@ -537,9 +537,7 @@ const App = () => {
 
             const nextTemplateState = getTemplateState(post.meta || {});
 
-            if (nextTemplateState.format === DESIGN_FORMATS.LEGACY_UNLAYER) {
-                setLoadError(__('This legacy Unlayer template is still sendable, but visual migration will be handled in the legacy migration step.', 'gutenverse-form'));
-            } else if (nextTemplateState.format === DESIGN_FORMATS.INVALID) {
+            if (nextTemplateState.format === DESIGN_FORMATS.INVALID) {
                 setLoadError(__('This email template design data is not valid JSON. A fresh MJML canvas has been loaded instead.', 'gutenverse-form'));
             }
 

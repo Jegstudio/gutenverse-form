@@ -423,184 +423,41 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
     }
 
     const isConfirmation = fieldName === 'user_email_template';
-    const accent = '#3b57f7';
-    const soft = '#f5f7ff';
-    const fontFamily = {
-        label: 'Arial',
-        value: 'arial,helvetica,sans-serif',
-    };
-    const bodyBase = {
-        id: 'email-body',
-        rows: [],
-        headers: [],
-        footers: [],
-        values: {
-            backgroundColor: '#eef2f7',
-            backgroundImage: {},
-            contentWidth: '620px',
-            contentAlign: 'center',
-            contentVerticalAlign: 'top',
-            fontFamily,
-            preheaderText: '',
-            linkStyle: {
-                body: true,
-                linkColor: accent,
-                linkHoverColor: '#243cc7',
-                linkUnderline: true,
-                linkHoverUnderline: true,
-            },
-        },
-    };
+    const fields = inputFields.length > 0
+        ? inputFields
+        : [{ name: 'your_field_tag', label: __('Field Tag', 'gutenverse-form') }];
+    const fieldRows = fields.map(input => ({
+        label: formatTemplateInputLabel(input.label, isConfirmation),
+        value: `{{${input.name}}}`,
+    }));
+    const summaryRows = [
+        { label: __('Form', 'gutenverse-form'), value: '{{form_title}}' },
+        { label: __('Reference', 'gutenverse-form'), value: '{{entry_title}}' },
+        { label: __('Site', 'gutenverse-form'), value: '{{site_title}}' },
+        ...fieldRows,
+    ];
 
-    const createTextContent = (id, text, extra = {}) => ({
-        id,
-        type: 'text',
-        values: {
-            containerPadding: '0px',
-            anchor: '',
-            color: extra.color || '#334155',
-            textAlign: extra.textAlign || 'left',
-            lineHeight: extra.lineHeight || '160%',
-            fontSize: extra.fontSize || '14px',
-            text,
-        },
-    });
-
-    const createTableContent = (id, rows, extra = {}) => ({
-        id,
-        type: 'table',
-        values: {
-            containerPadding: '0px',
-            anchor: '',
-            deletable: false,
-            locked: false,
-            selectable: true,
-            draggable: true,
-            duplicatable: true,
-            hideable: true,
-            table: {
-                headers: [],
-                rows: rows.map(row => ({
-                    height: row.height || 44,
-                    cells: row.cells.map(cell => ({
-                        width: cell.width,
-                        text: escapeHtml(cell.text),
-                        backgroundColor: cell.backgroundColor || '#ffffff',
-                        color: cell.color || '#0f172a',
-                        textAlign: cell.textAlign || 'left',
-                        verticalAlign: cell.verticalAlign || 'top',
-                        padding: cell.padding || extra.contentPadding || '10px',
-                    })),
-                })),
-                footers: [],
-            },
-            cellBackgroundColor: { property: 'backgroundColor' },
-            cellColor: { property: 'color' },
-            cellTextAlign: { property: 'textAlign' },
-            cellVerticalAlign: { property: 'verticalAlign' },
-            cellPadding: { property: 'padding' },
-            border: {
-                borderBottomColor: extra.borderColor || '#e2e8f0',
-                borderBottomStyle: 'solid',
-                borderBottomWidth: '1px',
-            },
-            columns: 2,
-            rows: rows.length,
-            stripedRows: false,
-            stripedRowsBackgroundColor: '#f8fafc',
-            enableHeader: false,
-            headerFontFamily: fontFamily,
-            headerBackgroundColor: '#f8fafc',
-            headerFontWeight: 600,
-            headerFontSize: extra.labelFontSize || '13px',
-            headerColor: '#64748b',
-            headerTextAlign: 'left',
-            headerVerticalAlign: 'top',
-            headerPadding: extra.labelPadding || extra.contentPadding || '10px',
-            contentVerticalAlign: 'top',
-            contentFontFamily: fontFamily,
-            contentBackgroundColor: '#ffffff',
-            contentFontWeight: 400,
-            contentFontSize: extra.fontSize || '14px',
-            contentColor: '#0f172a',
-            contentTextAlign: 'left',
-            contentLineHeight: extra.lineHeight || '155%',
-            contentLetterSpacing: '0px',
-            contentPadding: extra.contentPadding || '10px',
-            enableFooter: false,
-            footerFontFamily: fontFamily,
-            footerBackgroundColor: '#f8fafc',
-            footerFontWeight: 600,
-            footerFontSize: extra.labelFontSize || '13px',
-            footerColor: '#64748b',
-            footerTextAlign: 'left',
-            footerVerticalAlign: 'top',
-            footerPadding: extra.labelPadding || extra.contentPadding || '10px',
-            linkStyle: {
-                body: true,
-                linkColor: accent,
-                linkHoverColor: '#243cc7',
-                linkUnderline: true,
-                linkHoverUnderline: true,
-            },
-        },
-    });
-
-    const createRow = (id, contents, extra = {}) => ({
-        id,
-        cells: [1],
-        columns: [
-            {
-                id: `${id}-col`,
-                contents,
-                values: {
-                    backgroundColor: extra.backgroundColor || '#ffffff',
-                    border: extra.border || {},
-                    borderRadius: extra.borderRadius || '0px',
-                    padding: extra.padding || '0px',
-                },
-            }
-        ],
-        values: {
-            anchor: '',
-            backgroundColor: extra.rowBackgroundColor || 'transparent',
-            columnsBackgroundColor: 'transparent',
-            columnsBorderRadius: '0px',
-            columnsBorder: {},
-            columnsPadding: extra.columnsPadding || '0px',
-            displayCondition: null,
-            hideDesktop: false,
-            hideMobile: false,
-            hideTablet: false,
-            noColumns: false,
-            padding: extra.rowPadding || '0px',
-            selectable: true,
-        },
-    });
-
-    const buildDataSummaryRows = () => {
-        const hasInputFields = inputFields.length > 0;
-        const labelCellStyle = [
-            'width:32%',
-            'padding:11px 18px 11px 0',
+    const buildTableRows = (rows, { labelWidth = '32%', valueWidth = '68%', compact = false } = {}) => {
+        const labelStyle = [
+            `width:${labelWidth}`,
+            compact ? 'padding:8px 14px 8px 0' : 'padding:11px 18px 11px 0',
             'border-bottom:1px solid #e2e8f0',
-            'color:#64748b',
-            'font-size:13px',
-            'font-weight:500',
+            'color:#475569',
+            compact ? 'font-size:12px' : 'font-size:13px',
+            'font-weight:600',
             'line-height:1.45',
             'vertical-align:top',
             'word-break:break-word',
             'overflow-wrap:anywhere',
         ].join(';');
-        const valueCellStyle = [
-            'width:68%',
-            'padding:11px 0',
+        const valueStyle = [
+            `width:${valueWidth}`,
+            compact ? 'padding:8px 0' : 'padding:11px 0',
             'border-bottom:1px solid #e2e8f0',
             'color:#0f172a',
-            'font-size:14px',
+            compact ? 'font-size:13px' : 'font-size:14px',
             'font-weight:400',
-            'line-height:1.55',
-            'text-align:left',
+            compact ? 'line-height:1.55' : 'line-height:1.6',
             'vertical-align:top',
             'word-break:break-word',
             'overflow-wrap:anywhere',
@@ -612,342 +469,118 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
             'word-break:break-word',
             'overflow-wrap:anywhere',
         ].join(';');
-        const rows = [
-            { label: __('Form', 'gutenverse-form'), value: '{{form_title}}' },
-            { label: __('Reference', 'gutenverse-form'), value: '{{entry_title}}' },
-            { label: __('Site', 'gutenverse-form'), value: '{{site_title}}' },
-            ...inputFields.map(input => ({
-                label: formatTemplateInputLabel(input.label, isConfirmation),
-                value: `{{${input.name}}}`,
-            })),
-        ];
 
-        if (!hasInputFields) {
-            rows.push({ label: __('Field Tag', 'gutenverse-form'), value: '{{your_field_tag}}' });
-        }
-
-        return {
-            hasInputFields,
-            rows: rows.map(row => ({
-                height: 48,
-                cells: [
-                    {
-                        width: 32,
-                        text: row.label,
-                        color: '#64748b',
-                        padding: '11px 18px 11px 0',
-                    },
-                    {
-                        width: 68,
-                        text: row.value,
-                        color: '#0f172a',
-                        padding: '11px 0',
-                    },
-                ],
-            })),
-            tableRows: rows.map(row => (
-                `<tr><td width="32%" style="${labelCellStyle}">${escapeHtml(row.label)}</td><td width="68%" style="${valueCellStyle}"><span style="${valueTextStyle}">${escapeHtml(row.value)}</span></td></tr>`
-            )).join(''),
-        };
+        return rows.map(row => (
+            `<tr><td width="${labelWidth}" style="${labelStyle}">${escapeHtml(row.label)}</td><td width="${valueWidth}" style="${valueStyle}"><span style="${valueTextStyle}">${escapeHtml(row.value)}</span></td></tr>`
+        )).join('');
     };
 
-    const buildCompactSummaryRows = () => {
-        const hasInputFields = inputFields.length > 0;
-        const labelCellStyle = [
-            'width:34%',
-            'padding:8px 14px 8px 0',
-            'border-bottom:1px solid #e5e7eb',
-            'color:#64748b',
-            'font-size:12px',
-            'font-weight:500',
-            'line-height:1.45',
-            'vertical-align:top',
-            'word-break:break-word',
-            'overflow-wrap:anywhere',
-        ].join(';');
-        const valueCellStyle = [
-            'width:66%',
-            'padding:8px 0',
-            'border-bottom:1px solid #e5e7eb',
-            'color:#111827',
-            'font-size:13px',
-            'font-weight:400',
-            'line-height:1.55',
-            'text-align:left',
-            'vertical-align:top',
-            'word-break:break-word',
-            'overflow-wrap:anywhere',
-        ].join(';');
-        const valueTextStyle = [
-            'display:block',
-            'max-width:100%',
-            'white-space:normal',
-            'word-break:break-word',
-            'overflow-wrap:anywhere',
-        ].join(';');
-        const rows = hasInputFields
-            ? inputFields.map(input => ({
-                label: formatTemplateInputLabel(input.label, isConfirmation),
-                value: `{{${input.name}}}`,
-            }))
-            : [{ label: __('Field Tag', 'gutenverse-form'), value: '{{your_field_tag}}' }];
+    const buildMjmlDocument = (content, { padding = '30px 32px' } = {}) => `
+        <mjml>
+            <mj-body background-color="#eef2f7" width="620px">
+                <mj-section background-color="#ffffff" padding="${padding}">
+                    <mj-column>
+                        ${content}
+                    </mj-column>
+                </mj-section>
+            </mj-body>
+        </mjml>
+    `.trim();
 
-        return {
-            rows: rows.map(row => ({
-                height: 40,
-                cells: [
-                    {
-                        width: 34,
-                        text: row.label,
-                        color: '#64748b',
-                        padding: '8px 14px 8px 0',
-                    },
-                    {
-                        width: 66,
-                        text: row.value,
-                        color: '#111827',
-                        padding: '8px 0',
-                    },
-                ],
-            })),
-            tableRows: rows.map(row => (
-                `<tr><td width="34%" style="${labelCellStyle}">${escapeHtml(row.label)}</td><td width="66%" style="${valueCellStyle}"><span style="${valueTextStyle}">${escapeHtml(row.value)}</span></td></tr>`
-            )).join(''),
-        };
-    };
+    const buildHtmlDocument = (content, { padding = '30px 32px' } = {}) => `
+        <html>
+            <body style="margin:0;background:#eef2f7;padding:24px 16px;font-family:Arial,Helvetica,sans-serif;color:#334155;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:14px;">
+                    <tr>
+                        <td style="padding:${padding};">
+                            ${content}
+                        </td>
+                    </tr>
+                </table>
+            </body>
+        </html>
+    `.trim();
 
     if (starter === 'thank-you') {
+        const title = isConfirmation
+            ? __('Thank you for your submission', 'gutenverse-form')
+            : __('A new form submission is here', 'gutenverse-form');
+        const copy = isConfirmation
+            ? __('We received your response for {{form_title}} and will get back to you soon.', 'gutenverse-form')
+            : __('This email was triggered by {{form_title}} on {{site_title}}.', 'gutenverse-form');
+        const reference = __('Reference: {{entry_title}}', 'gutenverse-form');
+
         return {
-            design: {
-                counters: {},
-                body: {
-                    ...bodyBase,
-                    rows: [
-                        createRow(
-                            'thankyou-hero',
-                            [
-                                createTextContent(
-                                    'thankyou-title',
-                                    `<h1 style="margin: 0; font-size: 22px; font-weight: 600; line-height: 1.3; color: #0f172a; text-align: center;">${isConfirmation ? 'Thank you for your submission' : 'A new form submission is here'}</h1>`,
-                                    { textAlign: 'center', fontSize: '22px', lineHeight: '130%', color: '#0f172a' }
-                                ),
-                                createTextContent(
-                                    'thankyou-copy',
-                                    `<p style="margin: 0;">${isConfirmation ? 'We received your response for <strong style="font-weight:600;">{{form_title}}</strong> and will get back to you soon.' : 'This email was triggered by <strong style="font-weight:600;">{{form_title}}</strong> on <strong style="font-weight:600;">{{site_title}}</strong>.'}</p>`,
-                                    { textAlign: 'center' }
-                                ),
-                                createTextContent(
-                                    'thankyou-note',
-                                    '<p style="margin: 0; font-size: 12px; color: #64748b; text-align: center;">Reference: <span style="font-weight:500;">{{entry_title}}</span></p>',
-                                    { textAlign: 'center', fontSize: '12px', color: '#64748b' }
-                                ),
-                            ],
-                            {
-                                backgroundColor: '#ffffff',
-                                border: { radius: '14px' },
-                                padding: '30px 32px',
-                                rowPadding: '24px',
-                                rowBackgroundColor: soft,
-                            }
-                        ),
-                    ],
-                },
-            },
-            html: `
-                <html>
-                    <body style="margin:0;background:#eef2f7;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;color:#334155;">
-                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#f5f7ff;border-radius:20px;">
-                            <tr>
-                                <td style="padding:24px;">
-                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:14px;">
-                                        <tr>
-                                            <td style="padding:30px 32px;text-align:center;">
-                                                <h1 style="margin:0 0 12px;font-size:22px;font-weight:600;line-height:1.3;color:#0f172a;">${isConfirmation ? 'Thank you for your submission' : 'A new form submission is here'}</h1>
-                                                <p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#334155;">${isConfirmation ? 'We received your response for <strong style="font-weight:600;">{{form_title}}</strong> and will get back to you soon.' : 'This email was triggered by <strong style="font-weight:600;">{{form_title}}</strong> on <strong style="font-weight:600;">{{site_title}}</strong>.'}</p>
-                                                <p style="margin:0;font-size:12px;line-height:1.5;color:#64748b;">Reference: <span style="font-weight:500;">{{entry_title}}</span></p>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </body>
-                </html>
-            `.trim(),
+            mjml: buildMjmlDocument(`
+                <mj-text align="center" padding="0 0 12px" font-size="22px" font-weight="700" line-height="1.3" color="#0f172a">${escapeHtml(title)}</mj-text>
+                <mj-text align="center" padding="0 0 12px" font-size="14px" line-height="1.6" color="#334155">${escapeHtml(copy)}</mj-text>
+                <mj-text align="center" padding="0" font-size="12px" line-height="1.5" color="#64748b">${escapeHtml(reference)}</mj-text>
+            `),
+            html: buildHtmlDocument(`
+                <h1 style="margin:0 0 12px;font-size:22px;font-weight:700;line-height:1.3;color:#0f172a;text-align:center;">${escapeHtml(title)}</h1>
+                <p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#334155;text-align:center;">${escapeHtml(copy)}</p>
+                <p style="margin:0;font-size:12px;line-height:1.5;color:#64748b;text-align:center;">${escapeHtml(reference)}</p>
+            `),
         };
     }
 
     if (starter === 'compact') {
-        const compactRows = buildCompactSummaryRows();
+        const compactRows = buildTableRows(fieldRows, { labelWidth: '34%', valueWidth: '66%', compact: true });
+        const title = __('New submission', 'gutenverse-form');
+        const copy = __('A visitor submitted {{form_title}}. The main details are listed below.', 'gutenverse-form');
+        const meta = __('Reference: {{entry_title}} | Site: {{site_title}}', 'gutenverse-form');
 
         return {
-            design: {
-                counters: {},
-                body: {
-                    ...bodyBase,
-                    rows: [
-                        createRow(
-                            'compact-card',
-                            [
-                                createTextContent(
-                                    'compact-title',
-                                    '<h1 style="margin: 0; font-size: 20px; font-weight: 600; line-height: 1.3; color: #0f172a;">New submission</h1>',
-                                    { fontSize: '20px', lineHeight: '130%', color: '#0f172a' }
-                                ),
-                                createTextContent(
-                                    'compact-copy',
-                                    '<p style="margin: 0;">A visitor submitted <strong style="font-weight:600;">{{form_title}}</strong>. The main details are listed below.</p>',
-                                    { fontSize: '14px', lineHeight: '160%' }
-                                ),
-                                createTextContent(
-                                    'compact-meta',
-                                    '<p style="margin: 0; font-size: 12px; color: #64748b;">Reference: <span style="font-weight:500;">{{entry_title}}</span> &nbsp;|&nbsp; Site: <span style="font-weight:500;">{{site_title}}</span></p>',
-                                    { fontSize: '12px', color: '#64748b' }
-                                ),
-                                createTableContent(
-                                    'compact-list',
-                                    compactRows.rows,
-                                    {
-                                        fontSize: '13px',
-                                        labelFontSize: '12px',
-                                        lineHeight: '155%',
-                                        contentPadding: '8px 0',
-                                        borderColor: '#e5e7eb',
-                                    }
-                                ),
-                            ],
-                            {
-                                backgroundColor: '#ffffff',
-                                border: { radius: '14px' },
-                                padding: '24px 28px',
-                                rowPadding: '24px',
-                                rowBackgroundColor: soft,
-                            }
-                        ),
-                    ],
-                },
-            },
-            html: `
-                <html>
-                    <body style="margin:0;background:#eef2f7;padding:24px 16px;font-family:Arial,Helvetica,sans-serif;color:#334155;">
-                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#f5f7ff;border-radius:20px;">
-                            <tr>
-                                <td style="padding:24px;">
-                                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:14px;">
-                                        <tr>
-                                            <td style="padding:24px 28px;">
-                                                <h1 style="margin:0 0 10px;font-size:20px;font-weight:600;line-height:1.3;color:#0f172a;">New submission</h1>
-                                                <p style="margin:0 0 10px;font-size:14px;line-height:1.6;color:#334155;">A visitor submitted <strong style="font-weight:600;">{{form_title}}</strong>. The main details are listed below.</p>
-                                                <p style="margin:0 0 14px;font-size:12px;line-height:1.5;color:#64748b;">Reference: <span style="font-weight:500;">{{entry_title}}</span> &nbsp;|&nbsp; Site: <span style="font-weight:500;">{{site_title}}</span></p>
-                                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
-                                                    ${compactRows.tableRows}
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </body>
-                </html>
-            `.trim(),
+            mjml: buildMjmlDocument(`
+                <mj-text padding="0 0 10px" font-size="20px" font-weight="700" line-height="1.3" color="#0f172a">${escapeHtml(title)}</mj-text>
+                <mj-text padding="0 0 10px" font-size="14px" line-height="1.6" color="#334155">${escapeHtml(copy)}</mj-text>
+                <mj-text padding="0 0 14px" font-size="12px" line-height="1.5" color="#64748b">${escapeHtml(meta)}</mj-text>
+                <mj-text padding="0">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
+                        ${compactRows}
+                    </table>
+                </mj-text>
+            `, { padding: '24px 28px' }),
+            html: buildHtmlDocument(`
+                <h1 style="margin:0 0 10px;font-size:20px;font-weight:700;line-height:1.3;color:#0f172a;">${escapeHtml(title)}</h1>
+                <p style="margin:0 0 10px;font-size:14px;line-height:1.6;color:#334155;">${escapeHtml(copy)}</p>
+                <p style="margin:0 0 14px;font-size:12px;line-height:1.5;color:#64748b;">${escapeHtml(meta)}</p>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
+                    ${compactRows}
+                </table>
+            `, { padding: '24px 28px' }),
         };
     }
 
-    const dataSummaryRows = buildDataSummaryRows();
-    const dataCopy = isConfirmation
+    const dataRows = buildTableRows(summaryRows);
+    const title = isConfirmation
+        ? __('Submission summary', 'gutenverse-form')
+        : __('New submission summary', 'gutenverse-form');
+    const copy = isConfirmation
         ? __('Thank you for your submission to {{form_title}}. A copy of your details is included below.', 'gutenverse-form')
         : __('A new submission for {{form_title}} has been received. Review the details below.', 'gutenverse-form');
-    const dataTip = dataSummaryRows.hasInputFields
-        ? ''
-        : '<p style="margin: 0; font-size: 13px; color: #64748b;">Tip: select a table cell and insert your available field tags from the builder menu on the right.</p>';
+    const showFallbackTip = inputFields.length === 0;
+    const fallbackTip = __('Tip: replace {{your_field_tag}} with one of your form field tags from the builder.', 'gutenverse-form');
 
     return {
-        design: {
-            counters: {},
-            body: {
-                ...bodyBase,
-                rows: [
-                    createRow(
-                        'data-header',
-                        [
-                            createTextContent(
-                                'data-title',
-                                `<h1 style="margin: 0; font-size: 22px; font-weight: 600; line-height: 1.3; color: #0f172a;">${isConfirmation ? 'Submission summary' : 'New submission summary'}</h1>`,
-                                { fontSize: '22px', lineHeight: '130%', color: '#0f172a' }
-                            ),
-                            createTextContent(
-                                'data-copy',
-                                `<p style="margin: 0; font-size: 14px; line-height: 1.6;">${escapeHtml(dataCopy)}</p>`
-                            ),
-                        ],
-                        {
-                            backgroundColor: '#ffffff',
-                            border: { radius: '14px 14px 0 0' },
-                            padding: '26px 30px 18px',
-                            rowPadding: '24px 24px 0',
-                            rowBackgroundColor: soft,
-                        }
-                    ),
-                    createRow(
-                        'data-table',
-                        [
-                            createTableContent(
-                                'data-list',
-                                dataSummaryRows.rows,
-                                {
-                                    fontSize: '14px',
-                                    labelFontSize: '13px',
-                                    lineHeight: '155%',
-                                    contentPadding: '11px 0',
-                                    borderColor: '#e2e8f0',
-                                }
-                            ),
-                            dataTip && createTextContent(
-                                'data-tip',
-                                dataTip,
-                                { fontSize: '13px', color: '#64748b' }
-                            ),
-                        ].filter(Boolean),
-                        {
-                            backgroundColor: '#ffffff',
-                            border: { radius: '0 0 14px 14px' },
-                            padding: '0 30px 28px',
-                            rowPadding: '0 24px 24px',
-                            rowBackgroundColor: soft,
-                        }
-                    ),
-                ],
-            },
-        },
-        html: `
-            <html>
-                <body style="margin:0;background:#eef2f7;padding:24px 16px;font-family:Arial,Helvetica,sans-serif;color:#334155;">
-                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#f5f7ff;border-radius:20px;">
-                        <tr>
-                            <td style="padding:24px;">
-                                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:14px;overflow:hidden;">
-                                    <tr>
-                                        <td style="padding:26px 30px 18px;">
-                                            <h1 style="margin:0 0 10px;font-size:22px;font-weight:600;line-height:1.3;color:#0f172a;">${isConfirmation ? 'Submission summary' : 'New submission summary'}</h1>
-                                            <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">${escapeHtml(dataCopy)}</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:0 30px 28px;">
-                                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
-                                                ${dataSummaryRows.tableRows}
-                                            </table>
-                                            ${dataSummaryRows.hasInputFields ? '' : '<p style="margin:16px 0 0;font-size:12px;line-height:1.6;color:#64748b;">Tip: replace <span style="font-weight:500;">{{your_field_tag}}</span> with one of your form field tags from the builder.</p>'}
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </body>
-            </html>
-        `.trim(),
+        mjml: buildMjmlDocument(`
+            <mj-text padding="0 0 10px" font-size="22px" font-weight="700" line-height="1.3" color="#0f172a">${escapeHtml(title)}</mj-text>
+            <mj-text padding="0 0 18px" font-size="14px" line-height="1.6" color="#334155">${escapeHtml(copy)}</mj-text>
+            <mj-text padding="0">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
+                    ${dataRows}
+                </table>
+            </mj-text>
+            ${showFallbackTip ? `<mj-text padding="16px 0 0" font-size="12px" line-height="1.6" color="#64748b">${escapeHtml(fallbackTip)}</mj-text>` : ''}
+        `, { padding: '26px 30px 28px' }),
+        html: buildHtmlDocument(`
+            <h1 style="margin:0 0 10px;font-size:22px;font-weight:700;line-height:1.3;color:#0f172a;">${escapeHtml(title)}</h1>
+            <p style="margin:0 0 18px;font-size:14px;line-height:1.6;color:#334155;">${escapeHtml(copy)}</p>
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;table-layout:fixed;">
+                ${dataRows}
+            </table>
+            ${showFallbackTip ? `<p style="margin:16px 0 0;font-size:12px;line-height:1.6;color:#64748b;">${escapeHtml(fallbackTip)}</p>` : ''}
+        `, { padding: '26px 30px 28px' }),
     };
 };
 
