@@ -6,8 +6,9 @@ import { useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
-import { isEmpty } from 'gutenverse-core/helper';
-import { CardBannerPro, PopupInsufficientTier, PopupPro } from 'gutenverse-core/components';
+import { isEmpty, openFreemiusPopup, prefetchPricingPlanData } from 'gutenverse-core/helper';
+import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
+import { CardBannerPro, PopupInsufficientTier } from 'gutenverse-core/components';
 
 const TabGeneral = (props) => {
     const { values, updateValue } = props;
@@ -188,7 +189,6 @@ const TabNotification = (props) => {
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
     const [hideFormNotice, setHideFormNotice] = !isEmpty(window['GutenverseConfig']) ? useState(window['GutenverseConfig']['hideFormNotice']) : useState(false);
-    const [popupActive, setPopupActive] = useState(false);
     const [popupInsufficientTier, setPopupInsufficientTier] = useState(false);
     const [insufficientTierDesc, setInsufficientTierDesc] = useState('');
 
@@ -239,6 +239,18 @@ export const FormContent = (props) => {
         }).then(() => { });
     };
 
+    const openUpgradePopup = (event = null) => {
+        openFreemiusPopup(
+            event,
+            `${upgradeProUrl}?utm_source=gutenverse&utm_medium=formProNotice&utm_client_site=${clientUrl}&utm_client_theme=${activeTheme}`,
+            { medium: 'formProNotice' }
+        );
+    };
+
+    const prefetchUpgradePopup = () => {
+        prefetchPricingPlanData();
+    };
+
     const proPopupProps = {
         setPopupInsufficientTier,
         setInsufficientTierDesc,
@@ -263,11 +275,6 @@ export const FormContent = (props) => {
                 </>
             </AlertControl>
         </div>}
-        <PopupPro
-            active={popupActive}
-            setActive={setPopupActive}
-            description={<>{__('Upgrade ', '--gctd--')}<span>{__(' Gutenverse PRO ', '--gctd--')}</span>{__(' version to ', '--gctd--')}<br />{__(' unlock these premium features', '--gctd--')}</>}
-        />
         <PopupInsufficientTier
             active={popupInsufficientTier}
             setActive={setPopupInsufficientTier}
@@ -286,7 +293,13 @@ export const FormContent = (props) => {
                 return item.pro
                     ? applyFilters(
                         'gutenverse-form.tab-pro-button',
-                        <div className={classes} key={key} onClick={() => setPopupActive(true)}>
+                        <div
+                            className={classes}
+                            key={key}
+                            onClick={openUpgradePopup}
+                            onMouseEnter={prefetchUpgradePopup}
+                            onFocus={prefetchUpgradePopup}
+                        >
                             {item.label}
                         </div>,
                         { ...proPopupProps, item, classes, key }
