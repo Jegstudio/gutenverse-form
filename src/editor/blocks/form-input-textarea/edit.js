@@ -11,6 +11,7 @@ import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenve
 import { useDynamicContent } from 'gutenverse-core/hooks';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
+import { useInitializeIconToSvg } from 'gutenverse-core/hooks';
 
 const FormInputTextareaBlock = compose(
     withPartialRender,
@@ -46,6 +47,14 @@ const FormInputTextareaBlock = compose(
 
     const elementRef = useRef();
 
+    useInitializeIconToSvg({
+        elementId,
+        attributes,
+        setAttributes,
+        icons: [
+            { type: 'iconType', svg: 'iconSVG' },
+        ],
+    });
     useGenerateElementId(clientId, elementId, elementRef);
     useDynamicStyle(elementId, attributes, getBlockStyle, elementRef);
     useDynamicScript(elementRef);
