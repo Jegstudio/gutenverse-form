@@ -46,24 +46,256 @@ const getAttachmentTitle = (attachment) => {
 };
 
 const getComponentName = (component) => {
-    return component?.get?.('type')
-        || component?.get?.('tagName')
-        || component?.attributes?.type
+    return component?.get?.('tagName')
         || component?.attributes?.tagName
+        || component?.get?.('type')
+        || component?.attributes?.type
         || '';
 };
 
+const componentMatchesName = (component, names) => {
+    const type = component?.get?.('type') || component?.attributes?.type || '';
+    const tagName = component?.get?.('tagName') || component?.attributes?.tagName || '';
+
+    return names.includes(type) || names.includes(tagName) || names.includes(getComponentName(component));
+};
+
+const isUsableImageSource = (src) => {
+    const value = String(src || '').trim();
+
+    return /^(https?:)?\/\//i.test(value) || value.startsWith('data:image/');
+};
+
+const getComponentAttributes = (component) => {
+    return component?.getAttributes?.() || component?.get?.('attributes') || component?.attributes?.attributes || {};
+};
+
+const getWordPressAttachment = (component) => {
+    return component?.get?.('wpAttachment') || component?.attributes?.wpAttachment || {};
+};
+
+const getRenderedImageSource = (component) => {
+    const image = component?.view?.el?.querySelector?.('img');
+
+    return image?.getAttribute?.('src') || image?.currentSrc || '';
+};
+
+const getAssetData = (asset) => {
+    return asset?.toJSON?.() || asset?.attributes || {};
+};
+
+const getAssetSource = (asset) => {
+    const data = getAssetData(asset);
+
+    return asset?.getSrc?.() || asset?.get?.('src') || data.src || '';
+};
+
+const normalizeImageKey = value => String(value || '').trim().toLowerCase();
+
+const getAssetKeys = (asset) => {
+    const data = getAssetData(asset);
+    const wpAttachment = asset?.get?.('wpAttachment') || data.wpAttachment || {};
+
+    return [
+        asset?.get?.('id'),
+        asset?.get?.('name'),
+        asset?.get?.('alt'),
+        data.id,
+        data.name,
+        data.alt,
+        wpAttachment.id,
+        wpAttachment.alt,
+        wpAttachment.selectedUrl,
+        wpAttachment.sourceUrl,
+    ].map(normalizeImageKey).filter(Boolean);
+};
+
+const getComponentImageKeys = (component) => {
+    const attributes = getComponentAttributes(component);
+    const wpAttachment = getWordPressAttachment(component);
+
+    return [
+        attributes.id,
+        attributes.alt,
+        attributes.src,
+        component?.get?.('id'),
+        component?.get?.('alt'),
+        component?.get?.('src'),
+        wpAttachment.id,
+        wpAttachment.alt,
+        wpAttachment.selectedUrl,
+        wpAttachment.sourceUrl,
+    ].map(normalizeImageKey).filter(Boolean);
+};
+
+const getAssetManagerImageSource = (editor, component) => {
+    const collection = editor?.AssetManager?.getAll?.();
+    const assets = collection?.models || collection || [];
+    const componentKeys = getComponentImageKeys(component);
+    const usableAssets = Array.from(assets)
+        .map(asset => ({
+            src: getAssetSource(asset),
+            keys: getAssetKeys(asset),
+        }))
+        .filter(asset => isUsableImageSource(asset.src));
+    const matchedAsset = usableAssets.find(asset => asset.keys.some(key => componentKeys.includes(key)));
+
+    if (matchedAsset) {
+        return matchedAsset.src;
+    }
+
+    return usableAssets.length === 1 ? usableAssets[0].src : '';
+};
+
+const getPreferredImageSource = (component, preferredSrc = '', editor = null) => {
+    const attributes = getComponentAttributes(component);
+    const wpAttachment = getWordPressAttachment(component);
+    const candidates = [
+        preferredSrc,
+        attributes.src,
+        component?.get?.('src'),
+        wpAttachment.selectedUrl,
+        wpAttachment.sourceUrl,
+        getRenderedImageSource(component),
+        getAssetManagerImageSource(editor, component),
+    ].filter(Boolean);
+
+    return candidates.find(isUsableImageSource) || '';
+};
+
+const getPreferredImageAlt = (component, preferredAlt = '') => {
+    const attributes = getComponentAttributes(component);
+    const wpAttachment = getWordPressAttachment(component);
+
+    return preferredAlt
+        || attributes.alt
+        || component?.get?.('alt')
+        || wpAttachment.alt
+        || wpAttachment.title
+        || '';
+};
+
+const normalizeImageWidth = (width) => {
+    const value = String(width || '').trim();
+
+    if (!value || value === 'auto') {
+        return '';
+    }
+
+    if (/^\d+(\.\d+)?$/.test(value)) {
+        return `${value}px`;
+    }
+
+    return value;
+};
+
+const getRenderedImageNaturalWidth = (component) => {
+    const image = component?.view?.el?.querySelector?.('img');
+    const naturalWidth = Number(image?.naturalWidth || 0);
+
+    return naturalWidth > 0 ? naturalWidth : '';
+};
+
+const isAutoManagedImageWidth = (component, width) => {
+    const normalizedWidth = normalizeImageWidth(width);
+    const wpAttachment = getWordPressAttachment(component);
+    const managedWidths = [
+        wpAttachment.selectedWidth,
+        wpAttachment.width,
+        getRenderedImageNaturalWidth(component),
+    ].map(normalizeImageWidth).filter(Boolean);
+
+    return normalizedWidth && managedWidths.includes(normalizedWidth);
+};
+
+const hasExplicitImageWidth = (component) => {
+    const attributes = getComponentAttributes(component);
+    const style = component?.getStyle?.() || {};
+    const candidates = [
+        attributes.width,
+        component?.get?.('width'),
+        style.width,
+    ].map(value => String(value || '').trim()).filter(Boolean);
+
+    return candidates.some(value => value !== 'auto' && !isAutoManagedImageWidth(component, value));
+};
+
+const getPreferredImageWidth = (component, assetData = {}) => {
+    const wpAttachment = {
+        ...getWordPressAttachment(component),
+        ...(assetData.wpAttachment || {}),
+    };
+    const width = assetData.width
+        || wpAttachment.selectedWidth
+        || wpAttachment.width
+        || getRenderedImageNaturalWidth(component);
+
+    return normalizeImageWidth(width);
+};
+
 const isMjImageComponent = (component) => {
-    return getComponentName(component) === 'mj-image';
+    return componentMatchesName(component, ['mj-image']);
 };
 
 const supportsMjBackgroundImage = (component) => {
-    return ['mj-body', 'mj-wrapper', 'mj-section', 'mj-column'].includes(getComponentName(component));
+    return componentMatchesName(component, ['mj-body', 'mj-wrapper', 'mj-section', 'mj-column']);
 };
 
 const removeImageOnlyAttributes = (component) => {
     if (component?.removeAttributes) {
         component.removeAttributes(['src', 'alt']);
+    }
+
+    if (component?.set) {
+        component.set('src', '');
+        component.set('alt', '');
+    }
+};
+
+const syncMjImageAttributes = (component, assetData = {}, editor = null) => {
+    if (!component) {
+        return;
+    }
+
+    const src = getPreferredImageSource(component, assetData.src, editor);
+    const alt = getPreferredImageAlt(component, assetData.alt);
+    const width = !hasExplicitImageWidth(component) ? getPreferredImageWidth(component, assetData) : '';
+    const attributes = {};
+
+    if (src) {
+        attributes.src = src;
+    }
+
+    if (alt) {
+        attributes.alt = alt;
+    }
+
+    if (width) {
+        attributes.width = width;
+    }
+
+    if (Object.keys(attributes).length && component.addAttributes) {
+        component.addAttributes(attributes);
+    }
+
+    if (!src && component.removeAttributes) {
+        component.removeAttributes(['src']);
+    }
+
+    if (component.set) {
+        if (src) {
+            component.set('src', src);
+        } else {
+            component.set('src', '');
+        }
+
+        if (alt) {
+            component.set('alt', alt);
+        }
+
+        if (assetData.wpAttachment) {
+            component.set('wpAttachment', assetData.wpAttachment);
+        }
     }
 };
 
@@ -97,6 +329,12 @@ export const sanitizeMjmlBackgroundImageAttributes = (editor) => {
 
         removePrivateAttributes(component);
 
+        if (isMjImageComponent(component)) {
+            syncMjImageAttributes(component, {}, editor);
+
+            return;
+        }
+
         if (supportsMjBackgroundImage(component) && !isMjImageComponent(component)) {
             removeImageOnlyAttributes(component);
         }
@@ -123,6 +361,8 @@ export const createWordPressAsset = (attachment) => {
             alt,
             width: attachment.width || mediaDetails.width || '',
             height: attachment.height || mediaDetails.height || '',
+            selectedWidth: size.width,
+            selectedHeight: size.height,
             selectedSize: size.key,
             selectedUrl: size.url,
             sourceUrl,
@@ -147,16 +387,7 @@ export const applyWordPressAssetToSelection = (editor, assetData, target = null)
     }
 
     if (isMjImageComponent(selected)) {
-        const attributes = {
-            src: assetData.src,
-        };
-
-        if (assetData.alt) {
-            attributes.alt = assetData.alt;
-        }
-
-        selected.addAttributes(attributes);
-        selected.set('wpAttachment', assetData.wpAttachment);
+        syncMjImageAttributes(selected, assetData, editor);
     }
 };
 

@@ -17,7 +17,7 @@ import {
 import {
     EMAIL_BUILDER_CORE_BLOCKS,
     getEmailBuilderBlockOptions,
-    normalizeEmailBuilderPlaceholders,
+    groupEmailBuilderPlaceholders,
     registerEmailBuilderBlocks,
 } from './core-blocks';
 
@@ -94,6 +94,15 @@ const HIDDEN_EDITOR_PANEL_BUTTONS = [
 ];
 
 const PLACEHOLDER_RTE_ACTION = 'gutenverse-placeholder-tag';
+const PLACEHOLDER_ATTRIBUTE_COMMAND = 'gutenverse-placeholder-attribute';
+const PLACEHOLDER_ATTRIBUTE_TOOLBAR_CLASS = 'gutenverse-placeholder-link-action';
+
+const PLACEHOLDER_LINK_ICON = `
+<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1" />
+    <path d="M14 11a5 5 0 0 0-7.1 0l-2 2a5 5 0 0 0 7.1 7.1l1.1-1.1" />
+</svg>
+`;
 
 const decodeEntities = (html) => {
     if (!html) return '';
@@ -140,6 +149,30 @@ const isMjImageComponent = (component) => {
     return type === 'mj-image' || tagName === 'mj-image';
 };
 
+const getComponentTagName = (component) => {
+    return component?.get?.('tagName') || component?.attributes?.tagName || component?.get?.('type') || '';
+};
+
+const getPlaceholderAttributeTarget = (component) => {
+    const tagName = getComponentTagName(component);
+
+    if (tagName === 'mj-button') {
+        return {
+            attribute: 'href',
+            label: __('Button URL', 'gutenverse-form'),
+        };
+    }
+
+    if (tagName === 'mj-image') {
+        return {
+            attribute: 'href',
+            label: __('Image link URL', 'gutenverse-form'),
+        };
+    }
+
+    return null;
+};
+
 const stripHtml = (value = '') => value.replace(/<[^>]*>/g, '').trim();
 
 const getRenderedValue = (value) => {
@@ -166,8 +199,12 @@ const configureEmailBuilderStyleManager = (editor) => {
     });
 };
 
-const createPlaceholderSelectOptions = placeholders => normalizeEmailBuilderPlaceholders(placeholders)
-    .map(({ name, value }) => `<option value="${escapeAttribute(value)}">${escapeHtml(name)} - ${escapeHtml(value)}</option>`)
+const createPlaceholderSelectOptions = placeholders => groupEmailBuilderPlaceholders(placeholders)
+    .map(group => `
+        <optgroup label="${escapeAttribute(group.label)}">
+            ${group.placeholders.map(({ name, value }) => `<option value="${escapeAttribute(value)}">${escapeHtml(name)} - ${escapeHtml(value)}</option>`).join('')}
+        </optgroup>
+    `)
     .join('');
 
 const registerPlaceholderRichTextAction = (editor, placeholders = {}) => {
@@ -211,6 +248,12 @@ const registerPlaceholderRichTextAction = (editor, placeholders = {}) => {
                     void error;
                     rte.insertHTML(escapeHtml(value));
                 }
+
+                const selected = editor.getSelected?.();
+                if (selected) {
+                    editor.trigger('component:update', selected);
+                }
+
                 select.value = '';
             },
         });
@@ -218,6 +261,134 @@ const registerPlaceholderRichTextAction = (editor, placeholders = {}) => {
 
     editor.on('rte:enable', addPlaceholderAction);
     editor.on('destroy', () => editor.off('rte:enable', addPlaceholderAction));
+};
+
+const insertTextIntoInput = (input, value) => {
+    if (!input || !value) {
+        return;
+    }
+
+    const start = typeof input.selectionStart === 'number' ? input.selectionStart : input.value.length;
+    const end = typeof input.selectionEnd === 'number' ? input.selectionEnd : input.value.length;
+
+    input.value = `${input.value.slice(0, start)}${value}${input.value.slice(end)}`;
+    input.focus();
+
+    const nextPosition = start + value.length;
+    input.setSelectionRange?.(nextPosition, nextPosition);
+};
+
+const setComponentAttribute = (component, attribute, value) => {
+    if (typeof component?.addAttributes === 'function') {
+        component.addAttributes({ [attribute]: value });
+        return;
+    }
+
+    const attributes = component?.getAttributes?.() || component?.get?.('attributes') || {};
+    component?.set?.('attributes', {
+        ...attributes,
+        [attribute]: value,
+    });
+};
+
+const registerPlaceholderAttributeAction = (editor, placeholders = {}) => {
+    const placeholderOptions = createPlaceholderSelectOptions(placeholders);
+
+    if (!placeholderOptions) {
+        return;
+    }
+
+    editor.Commands.add(PLACEHOLDER_ATTRIBUTE_COMMAND, {
+        run(editorInstance) {
+            const component = editorInstance.getSelected?.();
+            const target = getPlaceholderAttributeTarget(component);
+
+            if (!component || !target) {
+                return;
+            }
+
+            const attributes = component.getAttributes?.() || component.get?.('attributes') || {};
+            const currentValue = attributes[target.attribute] || '';
+            const content = document.createElement('div');
+
+            content.className = 'gutenverse-placeholder-url-modal';
+            content.innerHTML = `
+                <form class="gutenverse-placeholder-url-modal__form">
+                    <label class="gutenverse-placeholder-url-modal__field">
+                        <span>${escapeHtml(target.label)}</span>
+                        <input type="text" value="${escapeAttribute(currentValue)}" />
+                    </label>
+                    <label class="gutenverse-placeholder-url-modal__field">
+                        <span>${escapeHtml(__('Insert placeholder', 'gutenverse-form'))}</span>
+                        <select>
+                            <option value="">${escapeHtml(__('Choose tag', 'gutenverse-form'))}</option>
+                            ${placeholderOptions}
+                        </select>
+                    </label>
+                    <div class="gutenverse-placeholder-url-modal__actions">
+                        <button type="button" class="button">${escapeHtml(__('Cancel', 'gutenverse-form'))}</button>
+                        <button type="submit" class="button button-primary">${escapeHtml(__('Apply', 'gutenverse-form'))}</button>
+                    </div>
+                </form>
+            `;
+
+            const form = content.querySelector('form');
+            const input = content.querySelector('input');
+            const select = content.querySelector('select');
+            const cancel = content.querySelector('button[type="button"]');
+
+            select?.addEventListener('change', () => {
+                insertTextIntoInput(input, select.value);
+                select.value = '';
+            });
+
+            cancel?.addEventListener('click', () => {
+                editorInstance.Modal?.close?.();
+            });
+
+            form?.addEventListener('submit', (event) => {
+                event.preventDefault();
+                setComponentAttribute(component, target.attribute, input?.value || '');
+                editorInstance.trigger('component:update', component);
+                editorInstance.Modal?.close?.();
+            });
+
+            editorInstance.Modal?.setTitle?.(__('Edit link with placeholder', 'gutenverse-form'));
+            editorInstance.Modal?.setContent?.(content);
+            editorInstance.Modal?.open?.();
+            window.setTimeout(() => input?.focus?.(), 0);
+        },
+    });
+
+    const addPlaceholderToolbar = (component) => {
+        const target = getPlaceholderAttributeTarget(component);
+
+        if (!component || !target) {
+            return;
+        }
+
+        const toolbar = component.get?.('toolbar') || [];
+        const hasAction = toolbar.some(item => item?.attributes?.class === PLACEHOLDER_ATTRIBUTE_TOOLBAR_CLASS);
+
+        if (hasAction) {
+            return;
+        }
+
+        component.set?.('toolbar', [
+            ...toolbar,
+            {
+                attributes: {
+                    class: PLACEHOLDER_ATTRIBUTE_TOOLBAR_CLASS,
+                    title: __('Edit link with placeholder', 'gutenverse-form'),
+                },
+                command: PLACEHOLDER_ATTRIBUTE_COMMAND,
+                label: PLACEHOLDER_LINK_ICON,
+            },
+        ]);
+    };
+
+    editor.on('component:selected', addPlaceholderToolbar);
+    editor.on('destroy', () => editor.off('component:selected', addPlaceholderToolbar));
 };
 
 const isEditorFormControl = (target, container) => {
@@ -552,13 +723,12 @@ const App = () => {
             return;
         }
 
-        const shouldApplyDirectly = !mediaPickerRequest.select && !mediaPickerRequest.onSelect;
         sanitizeMjmlBackgroundImageAttributes(editor);
 
         const { assetData } = addWordPressAssetToEditor(
             editor,
             item,
-            shouldApplyDirectly ? mediaPickerRequest.target : null
+            mediaPickerRequest.target || null
         );
         const callbackAsset = createWordPressAssetSelection(assetData);
 
@@ -700,6 +870,7 @@ const App = () => {
         editor.runCommand?.('open-sm');
         editor.Panels?.getButton?.('views', 'open-sm')?.set?.('active', true);
         registerPlaceholderRichTextAction(editor, window.gutenverseEmailTemplate?.placeholders || {});
+        registerPlaceholderAttributeAction(editor, window.gutenverseEmailTemplate?.placeholders || {});
         registerEmailBuilderBlocks(editor, window.gutenverseEmailTemplate?.placeholders || {});
         editor.Commands.add('open-assets', {
             run: (editorInstance, sender, options = {}) => {

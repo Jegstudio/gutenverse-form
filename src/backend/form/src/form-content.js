@@ -11,6 +11,7 @@ import { Modal } from '@wordpress/components';
 import { isEmpty, openFreemiusPopup, prefetchPricingPlanData } from 'gutenverse-core/helper';
 import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
 import { CardBannerPro, PopupInsufficientTier } from 'gutenverse-core/components';
+import { createGutenverseEmailDesign } from '../../email-template/data-model';
 
 const FormGroup = ({ title, description, children, className = '' }) => {
     return (
@@ -417,9 +418,53 @@ const collectFormInputs = (clientId) => {
 
 const collectFormInputNames = (clientId) => collectFormInputs(clientId).map(input => input.name);
 
+const BLANK_EMAIL_TEMPLATE_MJML = `
+    <mjml>
+        <mj-body background-color="#eef2f7" width="620px">
+            <mj-section background-color="#ffffff" padding="28px 24px">
+                <mj-column></mj-column>
+            </mj-section>
+        </mj-body>
+    </mjml>
+`.trim();
+
+const BLANK_EMAIL_TEMPLATE_HTML = `
+    <html>
+        <body style="margin:0;background:#eef2f7;padding:24px 16px;font-family:Arial,Helvetica,sans-serif;color:#334155;">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:14px;">
+                <tr>
+                    <td style="padding:28px 24px;"></td>
+                </tr>
+            </table>
+        </body>
+    </html>
+`.trim();
+
+const createEmailStarterDesign = mjml => createGutenverseEmailDesign({
+    assets: [],
+    styles: [],
+    pages: [
+        {
+            id: 'gutenverse-email-template-starter',
+            component: mjml,
+        },
+    ],
+});
+
+const withEmailStarterDesign = starterContent => {
+    const mjml = starterContent.mjml || BLANK_EMAIL_TEMPLATE_MJML;
+
+    return {
+        ...starterContent,
+        mjml,
+        html: starterContent.html || BLANK_EMAIL_TEMPLATE_HTML,
+        design: createEmailStarterDesign(mjml),
+    };
+};
+
 const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
     if (starter === 'blank') {
-        return {};
+        return withEmailStarterDesign({});
     }
 
     const isConfirmation = fieldName === 'user_email_template';
@@ -510,7 +555,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
             : __('This email was triggered by {{form_title}} on {{site_title}}.', 'gutenverse-form');
         const reference = __('Reference: {{entry_title}}', 'gutenverse-form');
 
-        return {
+        return withEmailStarterDesign({
             mjml: buildMjmlDocument(`
                 <mj-text align="center" padding="0 0 12px" font-size="22px" font-weight="700" line-height="1.3" color="#0f172a">${escapeHtml(title)}</mj-text>
                 <mj-text align="center" padding="0 0 12px" font-size="14px" line-height="1.6" color="#334155">${escapeHtml(copy)}</mj-text>
@@ -521,7 +566,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                 <p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#334155;text-align:center;">${escapeHtml(copy)}</p>
                 <p style="margin:0;font-size:12px;line-height:1.5;color:#64748b;text-align:center;">${escapeHtml(reference)}</p>
             `),
-        };
+        });
     }
 
     if (starter === 'compact') {
@@ -530,7 +575,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
         const copy = __('A visitor submitted {{form_title}}. The main details are listed below.', 'gutenverse-form');
         const meta = __('Reference: {{entry_title}} | Site: {{site_title}}', 'gutenverse-form');
 
-        return {
+        return withEmailStarterDesign({
             mjml: buildMjmlDocument(`
                 <mj-text padding="0 0 10px" font-size="20px" font-weight="700" line-height="1.3" color="#0f172a">${escapeHtml(title)}</mj-text>
                 <mj-text padding="0 0 10px" font-size="14px" line-height="1.6" color="#334155">${escapeHtml(copy)}</mj-text>
@@ -549,7 +594,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
                     ${compactRows}
                 </table>
             `, { padding: '24px 28px' }),
-        };
+        });
     }
 
     const dataRows = buildTableRows(summaryRows);
@@ -562,7 +607,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
     const showFallbackTip = inputFields.length === 0;
     const fallbackTip = __('Tip: replace {{your_field_tag}} with one of your form field tags from the builder.', 'gutenverse-form');
 
-    return {
+    return withEmailStarterDesign({
         mjml: buildMjmlDocument(`
             <mj-text padding="0 0 10px" font-size="22px" font-weight="700" line-height="1.3" color="#0f172a">${escapeHtml(title)}</mj-text>
             <mj-text padding="0 0 18px" font-size="14px" line-height="1.6" color="#334155">${escapeHtml(copy)}</mj-text>
@@ -581,7 +626,7 @@ const buildEmailTemplateStarter = (starter, fieldName, inputFields = []) => {
             </table>
             ${showFallbackTip ? `<p style="margin:16px 0 0;font-size:12px;line-height:1.6;color:#64748b;">${escapeHtml(fallbackTip)}</p>` : ''}
         `, { padding: '26px 30px 28px' }),
-    };
+    });
 };
 
 const createEmailTemplate = ({ fieldName, formTitle, starter = 'blank', inputFields = [], formActionId = '' }) => {

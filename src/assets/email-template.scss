@@ -1612,6 +1612,73 @@
     width: 7px;
 }
 
+.gjs-toolbar .gutenverse-placeholder-link-action svg {
+    display: block;
+    fill: none;
+    height: 16px;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    width: 16px;
+}
+
+.gutenverse-placeholder-url-modal {
+    box-sizing: border-box;
+    color: #1d2327;
+    min-width: min(420px, calc(100vw - 48px));
+    padding: 16px;
+
+    * {
+        box-sizing: border-box;
+    }
+}
+
+.gutenverse-placeholder-url-modal__form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.gutenverse-placeholder-url-modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+
+    span {
+        color: #1d2327;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    input,
+    select {
+        background: #fff;
+        border: 1px solid #8c8f94;
+        border-radius: 4px;
+        color: #1d2327;
+        font-size: 13px;
+        min-height: 36px;
+        padding: 6px 10px;
+        width: 100%;
+
+        &:focus {
+            border-color: #2271b1;
+            box-shadow: 0 0 0 1px #2271b1;
+            outline: none;
+        }
+    }
+}
+
+.gutenverse-placeholder-url-modal__actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    padding-top: 4px;
+}
+
 /* Position snackbar notices in bottom left */
 .gutenverse-email-builder .components-editor-notices__snackbar {
     position: fixed;

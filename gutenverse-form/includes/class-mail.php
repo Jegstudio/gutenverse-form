@@ -77,6 +77,10 @@ class Mail {
 		$body    = $this->replace_placeholders( $body, $form_entry, $form_id, $entry_id, $form_data );
 		$subject = $this->replace_placeholders( $subject, $form_entry, $form_id, $entry_id, $form_data );
 
+		if ( $use_template ) {
+			$body = $this->restore_template_image_sources( $body, $template_id );
+		}
+
 		$body = apply_filters( 'gutenverse_form_user_email_body', $body, $form_id, $form_data, $entry_id, $form_entry );
 
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
@@ -174,6 +178,10 @@ class Mail {
 
 		$body    = $this->replace_placeholders( $body, $form_entry, $form_id, $entry_id, $form_data );
 		$subject = $this->replace_placeholders( $subject, $form_entry, $form_id, $entry_id, $form_data );
+
+		if ( $use_template ) {
+			$body = $this->restore_template_image_sources( $body, $template_id );
+		}
 
 		$body = apply_filters( 'gutenverse_form_admin_email_body', $body, $form_id, $form_data, $entry_id, $form_entry );
 
@@ -337,6 +345,299 @@ class Mail {
 		$data_html = ob_get_contents();
 		ob_end_clean();
 		return apply_filters( 'gutenverse_form_format_data', $data_html, $form_id, $form_entry, $entry_id, $admin );
+	}
+
+	/**
+	 * Restore image source attributes that were dropped from saved email HTML.
+	 *
+	 * @param string $body Email HTML.
+	 * @param int    $template_id Email template post ID.
+	 *
+	 * @return string
+	 */
+	private function restore_template_image_sources( $body, $template_id ) {
+		if ( empty( $body ) || false === stripos( $body, '<img' ) || empty( $template_id ) ) {
+			return $body;
+		}
+
+		$sources = $this->get_template_image_sources( $template_id );
+
+		if ( empty( $sources ) ) {
+			return $body;
+		}
+
+		return preg_replace_callback(
+			'/<img\b[^>]*>/i',
+			function ( $matches ) use ( $sources ) {
+				$tag          = $matches[0];
+				$current_src  = $this->get_html_tag_attribute( $tag, 'src' );
+				$matched_src  = $this->match_template_image_source(
+					$sources,
+					array(
+						$this->get_html_tag_attribute( $tag, 'alt' ),
+						$this->get_html_tag_attribute( $tag, 'id' ),
+					)
+				);
+
+				if ( ! $matched_src ) {
+					return $tag;
+				}
+
+				if ( ! empty( $current_src ) && $this->normalize_email_image_source( $current_src ) ) {
+					return $tag;
+				}
+
+				if ( preg_match( '/\ssrc\s*=\s*([\'"])(.*?)\1/i', $tag ) ) {
+					return preg_replace( '/\ssrc\s*=\s*([\'"])(.*?)\1/i', ' src="' . esc_url( $matched_src ) . '"', $tag, 1 );
+				}
+
+				return preg_replace( '/^<img\b/i', '<img src="' . esc_url( $matched_src ) . '"', $tag, 1 );
+			},
+			$body
+		);
+	}
+
+	/**
+	 * Get image sources from the saved builder design and MJML.
+	 *
+	 * @param int $template_id Email template post ID.
+	 *
+	 * @return array
+	 */
+	private function get_template_image_sources( $template_id ) {
+		$sources = array();
+		$design  = json_decode( get_post_meta( $template_id, Email_Template::META_DESIGN, true ), true );
+
+		if ( is_array( $design ) ) {
+			$this->collect_template_image_sources( $design, $sources );
+		}
+
+		$mjml = get_post_meta( $template_id, Email_Template::META_MJML, true );
+
+		if ( ! empty( $mjml ) ) {
+			$this->collect_mjml_image_sources( $mjml, $sources );
+		}
+
+		return $this->deduplicate_template_image_sources( $sources );
+	}
+
+	/**
+	 * Collect image source metadata from nested builder project data.
+	 *
+	 * @param mixed $node Builder data node.
+	 * @param array $sources Source collection.
+	 */
+	private function collect_template_image_sources( $node, &$sources ) {
+		if ( ! is_array( $node ) ) {
+			return;
+		}
+
+		$attributes    = isset( $node['attributes'] ) && is_array( $node['attributes'] ) ? $node['attributes'] : array();
+		$wp_attachment = isset( $node['wpAttachment'] ) && is_array( $node['wpAttachment'] ) ? $node['wpAttachment'] : array();
+		$type          = isset( $node['type'] ) ? $node['type'] : '';
+		$tag_name      = isset( $node['tagName'] ) ? $node['tagName'] : '';
+		$source        = $this->get_first_usable_image_source(
+			array(
+				isset( $node['src'] ) ? $node['src'] : '',
+				isset( $attributes['src'] ) ? $attributes['src'] : '',
+				isset( $wp_attachment['selectedUrl'] ) ? $wp_attachment['selectedUrl'] : '',
+				isset( $wp_attachment['sourceUrl'] ) ? $wp_attachment['sourceUrl'] : '',
+			)
+		);
+
+		if ( $source && ( 'mj-image' === $type || 'mj-image' === $tag_name || 'image' === $type || ! empty( $wp_attachment ) ) ) {
+			$sources[] = array(
+				'src'  => $source,
+				'keys' => $this->normalize_image_source_keys(
+					array(
+						isset( $node['id'] ) ? $node['id'] : '',
+						isset( $node['name'] ) ? $node['name'] : '',
+						isset( $node['alt'] ) ? $node['alt'] : '',
+						isset( $attributes['id'] ) ? $attributes['id'] : '',
+						isset( $attributes['alt'] ) ? $attributes['alt'] : '',
+						isset( $wp_attachment['id'] ) ? $wp_attachment['id'] : '',
+						isset( $wp_attachment['alt'] ) ? $wp_attachment['alt'] : '',
+						isset( $wp_attachment['selectedUrl'] ) ? $wp_attachment['selectedUrl'] : '',
+						isset( $wp_attachment['sourceUrl'] ) ? $wp_attachment['sourceUrl'] : '',
+					)
+				),
+			);
+		}
+
+		foreach ( $node as $value ) {
+			$this->collect_template_image_sources( $value, $sources );
+		}
+	}
+
+	/**
+	 * Collect image source metadata from saved MJML.
+	 *
+	 * @param string $mjml MJML.
+	 * @param array  $sources Source collection.
+	 */
+	private function collect_mjml_image_sources( $mjml, &$sources ) {
+		if ( ! preg_match_all( '/<mj-image\b[^>]*>/i', $mjml, $matches ) ) {
+			return;
+		}
+
+		foreach ( $matches[0] as $tag ) {
+			$source = $this->get_first_usable_image_source( array( $this->get_html_tag_attribute( $tag, 'src' ) ) );
+
+			if ( ! $source ) {
+				continue;
+			}
+
+			$sources[] = array(
+				'src'  => $source,
+				'keys' => $this->normalize_image_source_keys(
+					array(
+						$this->get_html_tag_attribute( $tag, 'id' ),
+						$this->get_html_tag_attribute( $tag, 'alt' ),
+						$source,
+					)
+				),
+			);
+		}
+	}
+
+	/**
+	 * Match a source by known image attributes.
+	 *
+	 * @param array $sources Source collection.
+	 * @param array $keys Candidate keys.
+	 *
+	 * @return string
+	 */
+	private function match_template_image_source( $sources, $keys ) {
+		$normalized_keys = $this->normalize_image_source_keys( $keys );
+
+		foreach ( $sources as $source ) {
+			if ( ! empty( array_intersect( $normalized_keys, $source['keys'] ) ) ) {
+				return $source['src'];
+			}
+		}
+
+		return 1 === count( $sources ) ? $sources[0]['src'] : '';
+	}
+
+	/**
+	 * Deduplicate source collection.
+	 *
+	 * @param array $sources Source collection.
+	 *
+	 * @return array
+	 */
+	private function deduplicate_template_image_sources( $sources ) {
+		$deduplicated = array();
+
+		foreach ( $sources as $source ) {
+			if ( empty( $source['src'] ) ) {
+				continue;
+			}
+
+			if ( empty( $deduplicated[ $source['src'] ] ) ) {
+				$deduplicated[ $source['src'] ] = array(
+					'src'  => $source['src'],
+					'keys' => array(),
+				);
+			}
+
+			$deduplicated[ $source['src'] ]['keys'] = array_values(
+				array_unique(
+					array_merge(
+						$deduplicated[ $source['src'] ]['keys'],
+						isset( $source['keys'] ) ? $source['keys'] : array()
+					)
+				)
+			);
+		}
+
+		return array_values( $deduplicated );
+	}
+
+	/**
+	 * Get the first usable image source.
+	 *
+	 * @param array $candidates Source candidates.
+	 *
+	 * @return string
+	 */
+	private function get_first_usable_image_source( $candidates ) {
+		foreach ( $candidates as $candidate ) {
+			$source = $this->normalize_email_image_source( $candidate );
+
+			if ( $source ) {
+				return $source;
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Normalize an image URL for email output.
+	 *
+	 * @param string $source Source URL.
+	 *
+	 * @return string
+	 */
+	private function normalize_email_image_source( $source ) {
+		$source = trim( (string) $source );
+
+		if ( empty( $source ) ) {
+			return '';
+		}
+
+		if ( 0 === strpos( $source, 'data:image/' ) || preg_match( '#^https?://#i', $source ) ) {
+			return $source;
+		}
+
+		if ( 0 === strpos( $source, '//' ) ) {
+			return ( is_ssl() ? 'https:' : 'http:' ) . $source;
+		}
+
+		if ( 0 === strpos( $source, '/' ) ) {
+			return home_url( $source );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Get an HTML tag attribute value.
+	 *
+	 * @param string $tag HTML tag.
+	 * @param string $attribute Attribute name.
+	 *
+	 * @return string
+	 */
+	private function get_html_tag_attribute( $tag, $attribute ) {
+		if ( preg_match( '/\s' . preg_quote( $attribute, '/' ) . '\s*=\s*([\'"])(.*?)\1/i', $tag, $match ) ) {
+			return html_entity_decode( $match[2], ENT_QUOTES, 'UTF-8' );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Normalize image matching keys.
+	 *
+	 * @param array $keys Raw keys.
+	 *
+	 * @return array
+	 */
+	private function normalize_image_source_keys( $keys ) {
+		$normalized = array();
+
+		foreach ( $keys as $key ) {
+			$key = strtolower( trim( wp_strip_all_tags( html_entity_decode( (string) $key, ENT_QUOTES, 'UTF-8' ) ) ) );
+
+			if ( '' !== $key ) {
+				$normalized[] = $key;
+			}
+		}
+
+		return array_values( array_unique( $normalized ) );
 	}
 
 	/**

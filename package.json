@@ -60,7 +60,6 @@
 		"grapesjs-mjml": "^1.0.8",
 		"gutenverse-core": "file:gutenverse-core",
 		"lodash": "^4.17.21",
-		"react-datepicker": "^4.25.0",
-		"react-email-editor": "^1.7.11"
+		"react-datepicker": "^4.25.0"
 	}
 }

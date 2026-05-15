@@ -82,31 +82,55 @@ const CORE_BLOCK_OPTIONS = {
     },
 };
 
+const PLACEHOLDER_GROUPS = [
+    {
+        key: 'core',
+        label: __('Core placeholders', 'gutenverse-form'),
+    },
+    {
+        key: 'field',
+        label: __('Form fields', 'gutenverse-form'),
+    },
+    {
+        key: 'custom',
+        label: __('Custom tags', 'gutenverse-form'),
+    },
+    {
+        key: 'other',
+        label: __('Other tags', 'gutenverse-form'),
+    },
+];
+
 const COMMON_PLACEHOLDERS = [
     {
         key: 'entry_title',
         name: __('Entry Title', 'gutenverse-form'),
         value: '{{entry_title}}',
+        group: 'core',
     },
     {
         key: 'form_title',
         name: __('Form Title', 'gutenverse-form'),
         value: '{{form_title}}',
+        group: 'core',
     },
     {
         key: 'site_title',
         name: __('Site Title', 'gutenverse-form'),
         value: '{{site_title}}',
+        group: 'core',
     },
     {
         key: 'entry_id',
         name: __('Entry ID', 'gutenverse-form'),
         value: '{{entry_id}}',
+        group: 'core',
     },
     {
         key: 'form_id',
         name: __('Form ID', 'gutenverse-form'),
         value: '{{form_id}}',
+        group: 'core',
     },
 ];
 
@@ -125,6 +149,22 @@ const normalizePlaceholderName = (name = '') => String(name)
     .replace(/^Tag:\s*/i, '')
     .trim();
 
+const getPlaceholderGroup = (key, name = '') => {
+    if (COMMON_PLACEHOLDER_KEYS.includes(key)) {
+        return 'core';
+    }
+
+    if (/^Field:\s*/i.test(name)) {
+        return 'field';
+    }
+
+    if (/^Tag:\s*/i.test(name)) {
+        return 'custom';
+    }
+
+    return 'other';
+};
+
 export const normalizeEmailBuilderPlaceholders = (placeholders = {}) => {
     const placeholderMap = new Map();
 
@@ -133,7 +173,8 @@ export const normalizeEmailBuilderPlaceholders = (placeholders = {}) => {
     });
 
     Object.entries(placeholders || {}).forEach(([key, placeholder]) => {
-        const name = normalizePlaceholderName(placeholder?.name || key);
+        const rawName = placeholder?.name || key;
+        const name = normalizePlaceholderName(rawName);
         const value = placeholder?.value || `{{${key}}}`;
 
         if (!value) {
@@ -144,10 +185,20 @@ export const normalizeEmailBuilderPlaceholders = (placeholders = {}) => {
             key,
             name: name || key,
             value,
+            group: getPlaceholderGroup(key, rawName),
         });
     });
 
     return Array.from(placeholderMap.values());
+};
+
+export const groupEmailBuilderPlaceholders = (placeholders = {}) => {
+    const normalized = normalizeEmailBuilderPlaceholders(placeholders);
+
+    return PLACEHOLDER_GROUPS.map(group => ({
+        ...group,
+        placeholders: normalized.filter(placeholder => placeholder.group === group.key),
+    })).filter(group => group.placeholders.length > 0);
 };
 
 const getSubmissionPlaceholders = (placeholders = {}) => {
@@ -233,9 +284,18 @@ const createSubmissionTableBlock = (placeholders = {}) => `
 `;
 
 const createPlaceholderBlock = (placeholders = {}) => {
-    const placeholderLines = normalizeEmailBuilderPlaceholders(placeholders)
-        .slice(0, 16)
-        .map(placeholder => `<div><strong>${escapeHtml(placeholder.name)}:</strong> ${escapeHtml(placeholder.value)}</div>`)
+    const placeholderLines = groupEmailBuilderPlaceholders(placeholders)
+        .map(group => `
+            <div style="margin:0 0 12px;">
+                <div style="color:#64748b;font-size:12px;font-weight:700;letter-spacing:.02em;margin:0 0 4px;text-transform:uppercase;">${escapeHtml(group.label)}</div>
+                ${group.placeholders.slice(0, 12).map(placeholder => `
+                    <div style="margin:0 0 3px;">
+                        <strong>${escapeHtml(placeholder.name)}:</strong>
+                        <code style="background:#f1f5f9;border-radius:3px;color:#0f172a;font-family:monospace;font-size:12px;padding:2px 4px;">${escapeHtml(placeholder.value)}</code>
+                    </div>
+                `).join('')}
+            </div>
+        `)
         .join('');
 
     return `
