@@ -228,7 +228,7 @@
     .header-left {
         display: flex;
         align-items: center;
-        flex: 0 0 300px;
+        flex: 0 1 300px;
         min-width: 0;
     }
 
@@ -244,15 +244,19 @@
     }
 
     .header-center {
-        flex: 1;
+        flex: 1 1 auto;
         display: flex;
         justify-content: center;
         align-items: center;
+        min-width: 0;
+        padding: 0 18px;
 
         .title-wrapper {
             display: flex;
             align-items: center;
             gap: 12px;
+            max-width: 100%;
+            min-width: 0;
             
             .title-prefix {
                 font-size: 14px;
@@ -276,10 +280,11 @@
         }
 
         .title-input {
-            width: 100%;
-            min-width: 200px;
-            max-width: 500px;
+            flex: 0 1 var(--gutenverse-email-title-width, 28ch);
             margin: 0;
+            max-width: calc(100% - 92px);
+            min-width: 18ch;
+            width: var(--gutenverse-email-title-width, 28ch);
 
             .components-base-control__field {
                 margin: 0;
@@ -290,7 +295,9 @@
                 height: 40px;
                 font-size: 20px;
                 font-weight: 600;
-                text-align: center;
+                overflow: hidden;
+                text-align: left;
+                text-overflow: ellipsis;
                 border: 1px solid transparent;
                 background: transparent;
                 box-shadow: none;
@@ -312,7 +319,7 @@
     .header-right {
         display: flex;
         align-items: center;
-        flex: 0 0 300px;
+        flex: 0 0 auto;
         gap: 8px;
         justify-content: flex-end;
         min-width: 0;

@@ -11,6 +11,8 @@ import {
 } from './data-model';
 import {
     addWordPressAssetToEditor,
+    createWordPressAssetSelection,
+    sanitizeMjmlBackgroundImageAttributes,
 } from './media-library';
 import {
     EMAIL_BUILDER_CORE_BLOCKS,
@@ -64,6 +66,10 @@ const HIDDEN_EDITOR_PANEL_BUTTONS = [
     {
         panel: 'options',
         button: 'fullscreen',
+    },
+    {
+        panel: 'options',
+        button: 'preview',
     },
     {
         panel: 'options',
@@ -380,7 +386,6 @@ const App = () => {
     const [currentPostId, setCurrentPostId] = useState(window.gutenverseEmailTemplate?.postId || null);
     const [notices, setNotices] = useState([]);
     const [isDirty, setIsDirty] = useState(false);
-    const [isPreviewing, setIsPreviewing] = useState(false);
     const [loadError, setLoadError] = useState('');
     const [mediaPickerRequest, setMediaPickerRequest] = useState(null);
     const [mediaItems, setMediaItems] = useState([]);
@@ -471,16 +476,25 @@ const App = () => {
             return;
         }
 
-        const { asset } = addWordPressAssetToEditor(editor, item, mediaPickerRequest.target);
+        const shouldApplyDirectly = !mediaPickerRequest.select && !mediaPickerRequest.onSelect;
+        sanitizeMjmlBackgroundImageAttributes(editor);
+
+        const { assetData } = addWordPressAssetToEditor(
+            editor,
+            item,
+            shouldApplyDirectly ? mediaPickerRequest.target : null
+        );
+        const callbackAsset = createWordPressAssetSelection(assetData);
 
         if (typeof mediaPickerRequest.select === 'function') {
-            mediaPickerRequest.select(asset, true);
+            mediaPickerRequest.select(callbackAsset, true);
         }
 
         if (typeof mediaPickerRequest.onSelect === 'function') {
-            mediaPickerRequest.onSelect(asset, true);
+            mediaPickerRequest.onSelect(callbackAsset, true);
         }
 
+        sanitizeMjmlBackgroundImageAttributes(editor);
         closeMediaPicker();
     };
 
@@ -570,7 +584,6 @@ const App = () => {
         blocksContainer.innerHTML = '';
         editorReadyRef.current = false;
         setIsLoaded(false);
-        setIsPreviewing(false);
 
         const editor = grapesjs.init({
             container,
@@ -746,23 +759,11 @@ const App = () => {
         return () => window.clearTimeout(refreshTimer);
     }, [isBlocksSidebarCollapsed, isSettingsSidebarCollapsed, isLoaded]);
 
-    const togglePreview = () => {
-        if (!editorRef.current || !isLoaded) {
-            return;
-        }
-
-        if (isPreviewing) {
-            editorRef.current.stopCommand('core:preview');
-            setIsPreviewing(false);
-            return;
-        }
-
-        editorRef.current.runCommand('core:preview');
-        setIsPreviewing(true);
-    };
-
     const compileTemplate = () => {
         const editor = editorRef.current;
+
+        sanitizeMjmlBackgroundImageAttributes(editor);
+
         const mjml = editor.runCommand('mjml-code').trim();
         const result = editor.runCommand('mjml-code-to-html', { mjml });
         const errorMessage = getMjmlErrorMessage(result?.errors);
@@ -840,6 +841,8 @@ const App = () => {
         });
     };
 
+    const titleWidthCh = Math.min(Math.max((title || '').length + 2, 18), 68);
+
     return (
         <div className="gutenverse-email-builder">
             <div className="gutenverse-email-builder-header">
@@ -847,7 +850,7 @@ const App = () => {
                     <span className="builder-brand">{__('Gutenverse Form - Email Template', 'gutenverse-form')}</span>
                 </div>
                 <div className="header-center">
-                    <div className="title-wrapper">
+                    <div className="title-wrapper" style={{ '--gutenverse-email-title-width': `${titleWidthCh}ch` }}>
                         <span className="title-prefix">{__('title:', 'gutenverse-form')}</span>
                         <TextControl
                             value={title}
@@ -867,9 +870,6 @@ const App = () => {
                     <span className={`save-state ${isDirty ? 'dirty' : 'saved'}`}>
                         {isDirty ? __('Unsaved changes', 'gutenverse-form') : __('Saved', 'gutenverse-form')}
                     </span>
-                    <Button isSecondary disabled={!isLoaded} onClick={togglePreview}>
-                        {isPreviewing ? __('Edit', 'gutenverse-form') : __('Preview', 'gutenverse-form')}
-                    </Button>
                     <Button isPrimary isBusy={isSaving} disabled={!isLoaded || isSaving || templateState.isReadOnly} onClick={saveDesign}>
                         {isSaving ? __('Saving...', 'gutenverse-form') : __('Save', 'gutenverse-form')}
                     </Button>

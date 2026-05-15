@@ -45,6 +45,64 @@ const getAttachmentTitle = (attachment) => {
         || '';
 };
 
+const getComponentName = (component) => {
+    return component?.get?.('type')
+        || component?.get?.('tagName')
+        || component?.attributes?.type
+        || component?.attributes?.tagName
+        || '';
+};
+
+const isMjImageComponent = (component) => {
+    return getComponentName(component) === 'mj-image';
+};
+
+const supportsMjBackgroundImage = (component) => {
+    return ['mj-body', 'mj-wrapper', 'mj-section', 'mj-column'].includes(getComponentName(component));
+};
+
+const removeImageOnlyAttributes = (component) => {
+    if (component?.removeAttributes) {
+        component.removeAttributes(['src', 'alt']);
+    }
+};
+
+const removePrivateAttributes = (component) => {
+    const attributes = component?.getAttributes?.() || component?.get?.('attributes') || {};
+    const privateAttributes = Object.keys(attributes).filter(key => key.startsWith('__'));
+
+    if (privateAttributes.length && component?.removeAttributes) {
+        component.removeAttributes(privateAttributes);
+    }
+};
+
+export const sanitizeMjmlBackgroundImageAttributes = (editor) => {
+    const wrapper = editor?.getWrapper?.();
+    const selected = editor?.getSelected?.();
+    const components = [
+        wrapper,
+        selected,
+        ...(wrapper?.find?.('*') || []),
+    ].filter(Boolean);
+    const visited = new Set();
+
+    components.forEach(component => {
+        const cid = component.cid || component.getId?.() || component;
+
+        if (visited.has(cid)) {
+            return;
+        }
+
+        visited.add(cid);
+
+        removePrivateAttributes(component);
+
+        if (supportsMjBackgroundImage(component) && !isMjImageComponent(component)) {
+            removeImageOnlyAttributes(component);
+        }
+    });
+};
+
 export const createWordPressAsset = (attachment) => {
     const size = getAttachmentSize(attachment);
     const caption = stripTags(getRenderedValue(attachment.caption));
@@ -79,16 +137,27 @@ export const applyWordPressAssetToSelection = (editor, assetData, target = null)
         return;
     }
 
-    const attributes = {
-        src: assetData.src,
-    };
-
-    if (assetData.alt) {
-        attributes.alt = assetData.alt;
+    if (supportsMjBackgroundImage(selected) && !isMjImageComponent(selected)) {
+        removeImageOnlyAttributes(selected);
+        selected.addAttributes({
+            'background-url': assetData.src,
+        });
+        selected.set('wpAttachment', assetData.wpAttachment);
+        return;
     }
 
-    selected.addAttributes(attributes);
-    selected.set('wpAttachment', assetData.wpAttachment);
+    if (isMjImageComponent(selected)) {
+        const attributes = {
+            src: assetData.src,
+        };
+
+        if (assetData.alt) {
+            attributes.alt = assetData.alt;
+        }
+
+        selected.addAttributes(attributes);
+        selected.set('wpAttachment', assetData.wpAttachment);
+    }
 };
 
 export const addWordPressAssetToEditor = (editor, attachment, target = null) => {
@@ -102,4 +171,26 @@ export const addWordPressAssetToEditor = (editor, attachment, target = null) => 
         asset,
         assetData,
     };
+};
+
+export const createWordPressAssetSelection = (assetData) => {
+    const publicAsset = {
+        type: assetData.type,
+        src: assetData.src,
+        name: assetData.name,
+        alt: assetData.alt,
+        width: assetData.width,
+        height: assetData.height,
+    };
+    const safeAsset = {
+        attributes: {
+            src: assetData.src,
+            alt: assetData.alt,
+        },
+        get: key => publicAsset[key],
+        getSrc: () => assetData.src,
+        toJSON: () => ({ ...publicAsset }),
+    };
+
+    return safeAsset;
 };
