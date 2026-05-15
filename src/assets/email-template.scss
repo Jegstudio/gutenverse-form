@@ -1465,13 +1465,20 @@
     }
 
     .gjs-toolbar {
+        align-items: center;
         background: #2271b1;
         border-radius: 2px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+        display: flex;
     }
 
     .gjs-toolbar-item {
+        align-items: center;
+        box-sizing: border-box;
+        display: inline-flex;
         height: 42px;
+        justify-content: center;
+        line-height: 1;
         padding: 11px;
         width: 42px;
 
@@ -1610,6 +1617,13 @@
     top: 50%;
     transform: translateY(-60%) rotate(45deg);
     width: 7px;
+}
+
+.gjs-toolbar .gjs-toolbar-item {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    line-height: 1;
 }
 
 .gjs-toolbar .gutenverse-placeholder-link-action svg {
