@@ -229,10 +229,53 @@ const isEditorFormControl = (target, container) => {
 };
 
 const dispatchControlChange = (target) => {
-    target.dispatchEvent(new window.Event('change', {
+    const EventConstructor = target.ownerDocument?.defaultView?.Event || window.Event;
+
+    target.dispatchEvent(new EventConstructor('change', {
         bubbles: true,
         cancelable: true,
     }));
+};
+
+const waitForEditorSettled = () => new Promise(resolve => window.setTimeout(resolve, 0));
+
+const commitElementChange = (element) => {
+    if (!element?.matches?.('input, select, textarea')) {
+        return;
+    }
+
+    dispatchControlChange(element);
+};
+
+const blurElement = (element) => {
+    if (typeof element?.blur === 'function') {
+        element.blur();
+    }
+};
+
+const commitActiveEditorChanges = async (editor) => {
+    const mainActiveElement = document.activeElement;
+    const editorDocument = editor?.Canvas?.getDocument?.();
+    const editorActiveElement = editorDocument?.activeElement;
+    const editingModel = editor?.getEditing?.();
+    const editingView = editingModel?.getView?.()
+        || editingModel?.view
+        || editor?.getSelected?.()?.getView?.()
+        || editor?.getSelected?.()?.view;
+
+    commitElementChange(mainActiveElement);
+    blurElement(mainActiveElement);
+    commitElementChange(editorActiveElement);
+    blurElement(editorActiveElement);
+
+    if (typeof editingView?.disableEditing === 'function') {
+        await editingView.disableEditing();
+    } else {
+        editor?.RichTextEditor?.hideToolbar?.();
+        editor?.getModel?.()?.setEditing?.(false);
+    }
+
+    await waitForEditorSettled();
 };
 
 const getMediaTitle = (item) => {
@@ -378,6 +421,13 @@ const App = () => {
     const editorRef = useRef(null);
     const editorReadyRef = useRef(false);
     const mediaSearchTimerRef = useRef(null);
+    const ignoreEditorDirtyEventsRef = useRef(false);
+    const isSavingRef = useRef(false);
+    const saveIgnoreUntilRef = useRef(0);
+    const saveSettleTimerRef = useRef(null);
+    const savedProjectSnapshotRef = useRef('');
+    const savedTitleRef = useRef('');
+    const titleRef = useRef('');
     const [title, setTitle] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -408,6 +458,32 @@ const App = () => {
 
     const removeNotice = (id) => {
         setNotices(prev => prev.filter(notice => notice.id !== id));
+    };
+
+    const getProjectSnapshot = (project) => {
+        if (!project) {
+            return '';
+        }
+
+        try {
+            return JSON.stringify(createGutenverseEmailDesign(project));
+        } catch {
+            return '';
+        }
+    };
+
+    const updateSavedSnapshot = (project, nextTitle = titleRef.current) => {
+        savedProjectSnapshotRef.current = getProjectSnapshot(project);
+        savedTitleRef.current = nextTitle;
+    };
+
+    const isCurrentSnapshotSaved = (editor = editorRef.current) => {
+        if (!editor || !savedProjectSnapshotRef.current) {
+            return false;
+        }
+
+        return savedTitleRef.current === titleRef.current
+            && savedProjectSnapshotRef.current === getProjectSnapshot(editor.getProjectData());
     };
 
     const loadMediaItems = (searchTerm = '') => {
@@ -541,13 +617,19 @@ const App = () => {
 
             setLoadError('');
 
+            let nextTitle = '';
+
             if (post.title && post.title.rendered) {
-                setTitle(normalizeTitle(post.title.rendered));
+                nextTitle = normalizeTitle(post.title.rendered);
 
                 if (post.status === 'auto-draft' && post.title.rendered === 'Auto Draft') {
-                    setTitle('');
+                    nextTitle = '';
                 }
             }
+
+            titleRef.current = nextTitle;
+            savedTitleRef.current = nextTitle;
+            setTitle(nextTitle);
 
             const nextTemplateState = getTemplateState(post.meta || {});
 
@@ -638,7 +720,13 @@ const App = () => {
         }
 
         const markDirty = () => {
-            if (editorReadyRef.current && !templateState.isReadOnly) {
+            if (editorReadyRef.current && !templateState.isReadOnly && !ignoreEditorDirtyEventsRef.current) {
+                if (Date.now() < saveIgnoreUntilRef.current && isCurrentSnapshotSaved(editor)) {
+                    editor.clearDirtyCount?.();
+                    setIsDirty(false);
+                    return;
+                }
+
                 setIsDirty(true);
             }
         };
@@ -664,6 +752,7 @@ const App = () => {
             hasMarkedReady = true;
             editorReadyRef.current = true;
             editor.UndoManager?.clear();
+            updateSavedSnapshot(editor.getProjectData());
             setIsLoaded(true);
             setIsDirty(false);
         };
@@ -721,17 +810,13 @@ const App = () => {
         }
 
         const preventBuilderSubmit = (event) => {
-            const activeElement = document.activeElement;
-
-            if (activeElement && root.contains(activeElement)) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
+            event.preventDefault();
+            event.stopPropagation();
         };
 
-        postForm.addEventListener('submit', preventBuilderSubmit);
+        postForm.addEventListener('submit', preventBuilderSubmit, true);
 
-        return () => postForm.removeEventListener('submit', preventBuilderSubmit);
+        return () => postForm.removeEventListener('submit', preventBuilderSubmit, true);
     }, []);
 
     useEffect(() => {
@@ -739,6 +824,14 @@ const App = () => {
             if (mediaSearchTimerRef.current) {
                 window.clearTimeout(mediaSearchTimerRef.current);
             }
+
+            if (saveSettleTimerRef.current) {
+                window.clearTimeout(saveSettleTimerRef.current);
+            }
+
+            isSavingRef.current = false;
+            ignoreEditorDirtyEventsRef.current = false;
+            saveIgnoreUntilRef.current = 0;
         };
     }, []);
 
@@ -783,15 +876,52 @@ const App = () => {
         };
     };
 
-    const saveDesign = () => {
-        if (!editorRef.current || !isLoaded || isSaving || templateState.isReadOnly) return;
+    const markSavedState = (project, nextTitle = titleRef.current) => {
+        if (saveSettleTimerRef.current) {
+            window.clearTimeout(saveSettleTimerRef.current);
+        }
+
+        updateSavedSnapshot(project || editorRef.current?.getProjectData?.(), nextTitle);
+        saveIgnoreUntilRef.current = Date.now() + 2000;
+        ignoreEditorDirtyEventsRef.current = true;
+        editorRef.current?.clearDirtyCount?.();
+        editorRef.current?.UndoManager?.clear?.();
+        setIsDirty(false);
+
+        saveSettleTimerRef.current = window.setTimeout(() => {
+            editorRef.current?.clearDirtyCount?.();
+            ignoreEditorDirtyEventsRef.current = false;
+
+            if (isCurrentSnapshotSaved()) {
+                setIsDirty(false);
+                return;
+            }
+
+            setIsDirty(true);
+        }, 200);
+    };
+
+    const saveDesign = async (event) => {
+        event?.preventDefault?.();
+        event?.stopPropagation?.();
+
+        const editor = editorRef.current;
+
+        if (!editor || !isLoaded || !isDirty || isSavingRef.current || templateState.isReadOnly) return;
+
+        isSavingRef.current = true;
         setIsSaving(true);
+        ignoreEditorDirtyEventsRef.current = true;
 
         let compiled;
 
         try {
+            await commitActiveEditorChanges(editor);
             compiled = compileTemplate();
+            await waitForEditorSettled();
         } catch (error) {
+            isSavingRef.current = false;
+            ignoreEditorDirtyEventsRef.current = false;
             setIsSaving(false);
             addNotice({
                 status: 'error',
@@ -801,26 +931,31 @@ const App = () => {
             return;
         }
 
-        apiFetch({
-            path: `/wp/v2/gutenverse-email-tpl/${currentPostId}`,
-            method: 'POST',
-            headers: { 'X-WP-Nonce': nonce },
-            data: {
-                title: title || 'Untitled Template',
-                status: 'publish',
-                meta: {
-                    gutenverse_email_design: JSON.stringify(createGutenverseEmailDesign(compiled.project)),
-                    gutenverse_email_html: compiled.html,
-                    gutenverse_email_mjml: compiled.mjml
+        try {
+            const res = await apiFetch({
+                path: `/wp/v2/gutenverse-email-tpl/${currentPostId}`,
+                method: 'POST',
+                headers: { 'X-WP-Nonce': nonce },
+                data: {
+                    title: titleRef.current || 'Untitled Template',
+                    status: 'publish',
+                    meta: {
+                        gutenverse_email_design: JSON.stringify(createGutenverseEmailDesign(compiled.project)),
+                        gutenverse_email_html: compiled.html,
+                        gutenverse_email_mjml: compiled.mjml
+                    }
                 }
-            }
-        }).then((res) => {
-            setIsSaving(false);
-            setIsDirty(false);
+            });
 
-            if (res.title && res.title.rendered) {
-                setTitle(normalizeTitle(res.title.rendered));
-            }
+            const savedTitle = res.title && res.title.rendered
+                ? normalizeTitle(res.title.rendered)
+                : titleRef.current;
+
+            titleRef.current = savedTitle;
+            setTitle(savedTitle);
+            isSavingRef.current = false;
+            setIsSaving(false);
+            markSavedState(compiled.project, savedTitle);
 
             if (res.id && res.id !== currentPostId) {
                 setCurrentPostId(res.id);
@@ -831,14 +966,17 @@ const App = () => {
                 content: __('Saved successfully!', 'gutenverse-form'),
                 isDismissible: true,
             });
-        }).catch((err) => {
+        } catch (err) {
+            isSavingRef.current = false;
+            ignoreEditorDirtyEventsRef.current = false;
+            setIsDirty(true);
             setIsSaving(false);
             addNotice({
                 status: 'error',
                 content: __('Error saving template: ', 'gutenverse-form') + (err.message || __('Unknown error', 'gutenverse-form')),
                 isDismissible: true,
             });
-        });
+        }
     };
 
     const titleWidthCh = Math.min(Math.max((title || '').length + 2, 18), 68);
@@ -854,7 +992,9 @@ const App = () => {
                         <span className="title-prefix">{__('title:', 'gutenverse-form')}</span>
                         <TextControl
                             value={title}
+                            disabled={isSaving || templateState.isReadOnly}
                             onChange={(value) => {
+                                titleRef.current = value;
                                 setTitle(value);
                                 setIsDirty(true);
                             }}
@@ -870,7 +1010,7 @@ const App = () => {
                     <span className={`save-state ${isDirty ? 'dirty' : 'saved'}`}>
                         {isDirty ? __('Unsaved changes', 'gutenverse-form') : __('Saved', 'gutenverse-form')}
                     </span>
-                    <Button isPrimary isBusy={isSaving} disabled={!isLoaded || isSaving || templateState.isReadOnly} onClick={saveDesign}>
+                    <Button type="button" isPrimary isBusy={isSaving} disabled={!isLoaded || isSaving || !isDirty || templateState.isReadOnly} onClick={saveDesign}>
                         {isSaving ? __('Saving...', 'gutenverse-form') : __('Save', 'gutenverse-form')}
                     </Button>
                 </div>
