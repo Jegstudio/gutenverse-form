@@ -187,7 +187,7 @@ const registerPlaceholderRichTextAction = (editor, placeholders = {}) => {
         richTextEditor.add(PLACEHOLDER_RTE_ACTION, {
             icon: `
                 <select class="gutenverse-rte-placeholder-select" aria-label="${escapeAttribute(__('Insert placeholder tag', 'gutenverse-form'))}">
-                    <option value="">${escapeHtml(__('Placeholder tags', 'gutenverse-form'))}</option>
+                    <option value="">${escapeHtml(__('Insert tag', 'gutenverse-form'))}</option>
                     ${placeholderOptions}
                 </select>
             `,

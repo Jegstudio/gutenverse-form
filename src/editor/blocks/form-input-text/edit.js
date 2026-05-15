@@ -4,7 +4,6 @@ import { panelList } from './panels/panel-list';
 import InputWrapper from '../form-input/general/input-wrapper';
 import { useRef, useState, useEffect } from '@wordpress/element';
 import { IconLibrary } from 'gutenverse-core/controls';
-import { useState } from '@wordpress/element';
 import { useAnimationEditor, useInitializeIconToSvg } from 'gutenverse-core/hooks';
 import classnames from 'classnames';
 import { gutenverseRoot, renderIcon } from 'gutenverse-core/helper';

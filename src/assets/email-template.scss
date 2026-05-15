@@ -1441,25 +1441,26 @@
     }
 
     .gjs-rte-toolbar {
-        background: #1d2327;
-        border: 1px solid #1d2327;
+        background: #fff;
+        border: 1px solid #c3c4c7;
         border-radius: 3px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
-        color: #fff;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+        color: #1d2327;
     }
 
     .gjs-rte-action {
         align-items: center;
-        border-color: rgba(255, 255, 255, 0.16);
-        color: #fff;
+        border-color: #dcdcde;
+        color: #1d2327;
         display: flex;
-        height: 42px;
+        height: 40px;
         justify-content: center;
-        min-width: 42px;
+        min-width: 40px;
 
         &:hover,
         &.gjs-rte-active {
-            background: #2271b1;
+            background: #eaf3fb;
+            color: #0a4b78;
         }
     }
 
@@ -1499,38 +1500,44 @@
 
 .gjs-rte-toolbar {
     background: transparent;
-    color: #fff;
+    color: #1d2327;
+    max-width: calc(100vw - 32px);
     z-index: 100000;
 }
 
 .gjs-rte-toolbar-ui {
-    background: #1d2327;
-    border: 1px solid #1d2327;
+    background: #fff;
+    border: 1px solid #c3c4c7;
     border-radius: 4px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
-    color: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+    color: #1d2327;
+    max-width: calc(100vw - 32px);
     overflow: hidden;
 }
 
 .gjs-rte-actionbar {
     align-items: stretch;
-    background: #1d2327;
+    background: #fff;
     display: flex;
+    flex-wrap: nowrap;
+    max-width: calc(100vw - 32px);
 }
 
 .gjs-rte-action {
     align-items: center;
-    background: #1d2327;
-    border-right: 1px solid rgba(255, 255, 255, 0.16);
+    background: #fff;
+    border-right: 1px solid #dcdcde;
     box-sizing: border-box;
-    color: #fff;
+    color: #1d2327;
     display: flex;
-    fill: #fff;
-    height: 42px;
+    fill: #1d2327;
+    flex: 0 0 40px;
+    height: 40px;
     justify-content: center;
-    min-width: 42px;
-    padding: 0 12px;
+    min-width: 40px;
+    padding: 0 10px;
     text-shadow: none;
+    width: 40px;
 
     &:last-child {
         border-right: 0;
@@ -1538,40 +1545,55 @@
 
     &:hover,
     &.gjs-rte-active {
-        background: #2271b1;
-        color: #fff;
-        fill: #fff;
+        background: #eaf3fb;
+        color: #0a4b78;
+        fill: #0a4b78;
     }
 }
 
 .gutenverse-rte-placeholder-action {
-    min-width: 184px;
+    flex: 0 0 148px;
+    max-width: 148px;
+    min-width: 148px;
+    overflow: hidden;
     padding: 0;
     position: relative;
+    width: 148px;
+
+    &:hover,
+    &.gjs-rte-active {
+        background: #fff;
+        color: #1d2327;
+        fill: #1d2327;
+    }
 }
 
 .gutenverse-rte-placeholder-select {
     appearance: none;
-    background: #1d2327;
+    background: #fff;
     border: 0;
     border-radius: 0;
     box-shadow: none;
-    color: #fff;
+    color: #1d2327;
     cursor: pointer;
     font-size: 13px;
     font-weight: 500;
-    height: 42px;
-    line-height: 42px;
+    height: 40px;
+    line-height: 40px;
     margin: 0;
-    min-width: 184px;
-    padding: 0 34px 0 12px;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    padding: 0 30px 0 12px;
     text-shadow: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     width: 100%;
 
     &:hover,
     &:focus {
-        background: #2271b1;
-        color: #fff;
+        background: #f6faff;
+        color: #1d2327;
         outline: none;
     }
 }
@@ -1579,15 +1601,15 @@
 .gutenverse-rte-placeholder-action::after {
     border-bottom: 2px solid currentColor;
     border-right: 2px solid currentColor;
-    color: #fff;
+    color: #50575e;
     content: "";
-    height: 8px;
+    height: 7px;
     pointer-events: none;
     position: absolute;
-    right: 13px;
+    right: 12px;
     top: 50%;
     transform: translateY(-60%) rotate(45deg);
-    width: 8px;
+    width: 7px;
 }
 
 /* Position snackbar notices in bottom left */
