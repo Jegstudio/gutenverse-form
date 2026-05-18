@@ -419,7 +419,29 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
     const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [notice, setNotice] = useState(null);
+    const [toast, setToast] = useState({
+        status: 'success',
+        message: '',
+    });
+    const [showToast, setShowToast] = useState(false);
     const [documentationUrl, setDocumentationUrl] = useState('');
+
+    const showNotificationToast = (status, message) => {
+        setToast({ status, message });
+        setShowToast(true);
+    };
+
+    useEffect(() => {
+        if (!showToast) {
+            return undefined;
+        }
+
+        const timeout = setTimeout(() => {
+            setShowToast(false);
+        }, toast?.status === 'success' ? 2000 : 5000);
+
+        return () => clearTimeout(timeout);
+    }, [showToast, toast]);
 
     useEffect(() => {
         if (!serviceId) {
@@ -456,6 +478,7 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
             setSettings({});
             setDocumentationUrl('');
             setNotice({ type: 'error', message: err?.message || __('Failed to load integration settings.', 'gutenverse-form') });
+            showNotificationToast('failed', __('Failed to load integration settings.', 'gutenverse-form'));
             setIsLoading(false);
         });
 
@@ -473,10 +496,12 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
             data: { service: serviceId, settings },
         }).then(() => {
             setIsSaving(false);
-            setNotice({ type: 'success', message: __('Settings saved successfully.', 'gutenverse-form') });
+            setNotice(null);
+            showNotificationToast('success', __('Settings saved successfully.', 'gutenverse-form'));
         }).catch((err) => {
             setIsSaving(false);
             setNotice({ type: 'error', message: err.message || __('Failed to save settings.', 'gutenverse-form') });
+            showNotificationToast('failed', __('Failed to save settings.', 'gutenverse-form'));
         });
     };
 
@@ -499,7 +524,7 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
                     <div className="integration-setup-intro">
                         <h3>{__('Setup', 'gutenverse-form')} {title}</h3>
                     </div>
-                    {notice && (
+                    {notice?.type === 'error' && (
                         <Notice status={notice.type} onRemove={() => setNotice(null)}>
                             {notice.message}
                         </Notice>
@@ -573,6 +598,19 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
                         </Button>
                     </div>
                 </div>
+            </div>
+            <div className={`gutenverse-notification-toast ${toast?.status} ${showToast ? 'show' : ''}`}>
+                {toast?.status === 'success' ? (
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="14" height="14" rx="7" fill="#17B26A" />
+                        <path d="M10.5 4.375L5.6875 9.1875L3.5 7" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                ) : (
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 0C3.15 0 0 3.15 0 7C0 10.85 3.15 14 7 14C10.85 14 14 10.85 14 7C14 3.15 10.85 0 7 0ZM9.59 8.61C9.87 8.89 9.87 9.31 9.59 9.59C9.31 9.87 8.89 9.87 8.61 9.59L7 7.98L5.39 9.59C5.11 9.87 4.69 9.87 4.41 9.59C4.13 9.31 4.13 8.89 4.41 8.61L6.02 7L4.41 5.39C4.13 5.11 4.13 4.69 4.41 4.41C4.69 4.13 5.11 4.13 5.39 4.41L7 6.02L8.61 4.41C8.89 4.13 9.31 4.13 9.59 4.41C9.87 4.69 9.87 5.11 9.59 5.39L7.98 7L9.59 8.61Z" fill="#F04438" />
+                    </svg>
+                )}
+                {toast?.message}
             </div>
         </div>
     );
