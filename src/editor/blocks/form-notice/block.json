@@ -36,7 +36,7 @@
 		},
 		"iconSuccessType": {
 			"type": "string",
-			"default": "icon"
+			"default": "svg"
 		},
 		"iconSuccessSVG": {
 			"type": "string",
@@ -44,7 +44,7 @@
 		},
 		"iconErrorType": {
 			"type": "string",
-			"default": "icon"
+			"default": "svg"
 		},
 		"iconErrorSVG": {
 			"type": "string",
