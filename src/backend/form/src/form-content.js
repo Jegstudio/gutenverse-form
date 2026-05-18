@@ -1455,7 +1455,10 @@ export const FormContent = (props) => {
             description={insufficientTierDesc}
         />
         <div className="form-notice-wrapper">
-            <CardBannerPro title={__('Upgrade to Gutenverse Pro', 'gutenverse-form')} description={__('Explore the full potential of Gutenverse Form', 'gutenverse-form')} backgroundImg="card-banner-bg-form.png" />
+            <CardBannerPro
+                title={__('Unlock Powerful Form Integrations', 'gutenverse-form')}
+                description={__('Connect your forms with WhatsApp, Discord, Google Sheets, Mailchimp, Telegram, and more to automate notifications, leads, and workflows.', 'gutenverse-form')}
+                backgroundImg="card-banner-bg-form.png" />
         </div>
         <div className="form-tab-header">
             {Object.keys(tabs).map(key => {

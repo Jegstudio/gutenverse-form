@@ -38,6 +38,11 @@ const isCompatibleBlock = (sourceName, sourceStyleGroup, targetName, targetStyle
 const getBlockDisplayLabel = (block, index) => {
     const blockType = getBlockType(block.name);
     const baseLabel = block.attributes?.inputLabel || blockType?.title || block.name;
+    const inputId = block.attributes?.inputName || block.attributes?.id;
+
+    if (inputId) {
+        return `${baseLabel} (${inputId})`;
+    }
 
     return `${baseLabel} (#${index + 1})`;
 };

@@ -259,44 +259,51 @@
 
     .form-pro-notice {
         border-radius: 5px;
-        padding: 20px 24px;
+        padding: 24px;
         position: relative;
+        border: 1px solid rgba(227, 228, 230, 1);
+        overflow: hidden;
 
         .title {
-            color: #000000;
-            font-family: "Roboto", serif;
-            font-size: 16px;
-            font-style: normal;
-            font-weight: 500;
-            line-height: 22px;
+            color: rgba(1, 22, 39, 1);
             margin: 0;
             position: relative;
+            font-family: "Roboto", sans-serif;
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 22px;
+            letter-spacing: 0%;
+            vertical-align: middle;
         }
 
         .description {
-            color: rgba(1, 22, 39, 0.50);
-            font-family: "Roboto", serif;
-            font-size: 11px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: 140%;
             padding-bottom: 9px;
             position: relative;
+            font-family: "Roboto", sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 140%;
+            letter-spacing: 0%;
+            vertical-align: middle;
+            color: rgba(1, 22, 39, 0.6);
+            max-width: 385px;
+            margin-top: 6px;
+            margin-bottom: 7px;
         }
 
         .banner-image-mockup {
             position: absolute;
             border-radius: inherit;
             right: 0;
-            bottom: 0;
+            top: 0;
             height: auto;
-            width: 150px;
             object-fit: cover;
+            transform: translate(10%, -16%);
+            width: 237px;
         }
 
         .banner-image-background {
             position: absolute;
-            border-radius: inherit;
             left: 0;
             top: 0;
             height: 100%;
