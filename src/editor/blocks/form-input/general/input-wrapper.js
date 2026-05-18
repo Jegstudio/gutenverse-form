@@ -9,6 +9,7 @@ import { useDisplayEditor } from 'gutenverse-core/hooks';
 import { select } from '@wordpress/data';
 import { BlockPanelController } from 'gutenverse-core/controls';
 import FormNavigation from './form-navigation';
+import { isBlockPreviewContext } from './is-preview-context';
 
 export const recursiveParentBlock = clientId => {
     const {
@@ -57,7 +58,7 @@ const InputWrapper = compose(
 
     const animationClass = useAnimationEditor(attributes);
     const displayClass = useDisplayEditor(attributes);
-    const isOutsideFormBuilder = !recursiveParentBlock(clientId);
+    const isOutsideFormBuilder = !recursiveParentBlock(clientId) && !isBlockPreviewContext(elementRef?.current);
 
     const blockProps = useBlockProps({
         className: classnames(

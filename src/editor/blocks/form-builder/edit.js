@@ -22,8 +22,9 @@ import bookingTemplateData from './data/booking-template.json';
 import contactTemplateData from './data/contact-template.json';
 import subscribeTemplateData from './data/subscribe-template.json';
 import { CreateForm } from './panels/create-form';
-import { Modal, Button, ToolbarGroup, ToolbarButton, PanelBody } from '@wordpress/components';
+import { Modal, Button, ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
+import { isBlockPreviewContext } from '../form-input/general/is-preview-context';
 
 const BULK_STYLE_PANEL_STATE = {
     panel: 'setting',
@@ -81,21 +82,23 @@ const FormActionOwnershipNotice = ({ message }) => {
     return <div className="gutenverse-form-action-ownership-notice">{message}</div>;
 };
 
-const FormWrapper = ({ blockProps, attributes, clientId, setAttributes, ownershipNotice }) => {
+const FormWrapper = ({ blockProps, attributes, clientId, setAttributes, ownershipNotice, isPreviewContext = false }) => {
     return (
         <div {...blockProps}>
-            <NoticeMessages {...attributes} />
-            <FormActionOwnershipNotice message={ownershipNotice} />
-            <div className="gutenverse-form-builder-inline-action">
-                <CreateForm
-                    attributes={attributes}
-                    clientId={clientId}
-                    setAttributes={setAttributes}
-                    compact
-                    autoOpenCreate={attributes.openFormActionOnMount}
-                    noticeOnly
-                />
-            </div>
+            {!isPreviewContext && <NoticeMessages {...attributes} />}
+            {!isPreviewContext && <FormActionOwnershipNotice message={ownershipNotice} />}
+            {!isPreviewContext && (
+                <div className="gutenverse-form-builder-inline-action">
+                    <CreateForm
+                        attributes={attributes}
+                        clientId={clientId}
+                        setAttributes={setAttributes}
+                        compact
+                        autoOpenCreate={attributes.openFormActionOnMount}
+                        noticeOnly
+                    />
+                </div>
+            )}
             <InnerBlocks />
         </div>
     );
@@ -153,7 +156,7 @@ const TemplatePreview = ({ templateId }) => {
     return <div className="template-preview-box" />;
 };
 
-const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, ownershipNotice }) => {
+const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, ownershipNotice, isPreviewContext = false }) => {
     const [blankMode, setBlankMode] = useState(false);
     const [creatingForm, setCreatingForm] = useState(false);
     const [error, setError] = useState('');
@@ -162,7 +165,6 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, owne
     const { replaceBlocks, removeBlocks } = dispatch('core/block-editor');
     const hasProPluginActive = !!window?.GutenverseConfig?.plugins?.['gutenverse-pro']?.active;
     const hasActiveProLicense = !isEmpty(window?.gprodata);
-    const hasFormAction = !!attributes?.formId?.value;
     const imageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
     const appointmentPreviewImage = imageBase ? `${imageBase}/${appointmentTemplateData.previewImage}` : '';
     const adminUrl = window?.GutenverseConfig?.adminUrl || '/wp-admin/';
@@ -386,8 +388,8 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, owne
                     </div>
                 </Modal>
             )}
-            <NoticeMessages {...attributes} />
-            <FormActionOwnershipNotice message={ownershipNotice} />
+            {!isPreviewContext && <NoticeMessages {...attributes} />}
+            {!isPreviewContext && <FormActionOwnershipNotice message={ownershipNotice} />}
             {blankMode ? (
                 <>
                     <div className="gutenverse-form-builder-inline-action">
@@ -443,7 +445,7 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, owne
     );
 };
 
-const useFormActionOwnership = ({ attributes, clientId, setAttributes }) => {
+const useFormActionOwnership = ({ attributes, clientId, setAttributes, disabled = false }) => {
     const [ownershipNotice, setOwnershipNotice] = useState('');
     const ownershipRequestKey = useRef('');
     const formActionId = getFormActionId(attributes.formId);
@@ -469,12 +471,20 @@ const useFormActionOwnership = ({ attributes, clientId, setAttributes }) => {
     };
 
     useEffect(() => {
+        if (disabled) {
+            return;
+        }
+
         if (!attributes.formInstanceId) {
             setAttributes({ formInstanceId: createFormInstanceId() });
         }
-    }, [attributes.formInstanceId, setAttributes]);
+    }, [attributes.formInstanceId, disabled, setAttributes]);
 
     useEffect(() => {
+        if (disabled) {
+            return;
+        }
+
         const sameInstanceBlocks = getSameInstanceBlocks();
         const firstInstanceBlock = sameInstanceBlocks[0];
 
@@ -482,9 +492,13 @@ const useFormActionOwnership = ({ attributes, clientId, setAttributes }) => {
             setOwnershipNotice('');
             setAttributes({ formInstanceId: createFormInstanceId() });
         }
-    }, [clientId, formActionId, formInstanceId, formBuilderBlocks, setAttributes]);
+    }, [clientId, disabled, formActionId, formInstanceId, formBuilderBlocks, setAttributes]);
 
     useEffect(() => {
+        if (disabled) {
+            return;
+        }
+
         if (!formActionId || !formInstanceId || !currentPostId) {
             return;
         }
@@ -526,9 +540,9 @@ const useFormActionOwnership = ({ attributes, clientId, setAttributes }) => {
         }).catch(() => {
             ownershipRequestKey.current = '';
         });
-    }, [clientId, currentPostId, formActionId, formInstanceId, formBuilderBlocks, setAttributes]);
+    }, [clientId, currentPostId, disabled, formActionId, formInstanceId, formBuilderBlocks, setAttributes]);
 
-    return ownershipNotice;
+    return disabled ? '' : ownershipNotice;
 };
 
 const FormBuilderBlock = compose(
@@ -565,6 +579,7 @@ const FormBuilderBlock = compose(
     const animationClass = useAnimationEditor(attributes);
     const displayClass = useDisplayEditor(attributes);
     const hasChildBlocks = getBlockOrder(clientId).length > 0;
+    const isPreviewContext = isBlockPreviewContext(elementRef.current);
 
     const blockProps = useBlockProps({
         className: classnames(
@@ -586,6 +601,7 @@ const FormBuilderBlock = compose(
         attributes,
         clientId,
         setAttributes: props.setAttributes,
+        disabled: isPreviewContext,
     });
 
     useGenerateElementId(clientId, elementId, elementRef);
@@ -646,7 +662,7 @@ const FormBuilderBlock = compose(
             </div>
         </InspectorControls>
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} panelState={panelState} setPanelIsClicked={setPanelIsClicked} />
-        <Component blockProps={blockProps} attributes={attributes} clientId={clientId} setAttributes={props.setAttributes} ownershipNotice={ownershipNotice} />
+        <Component blockProps={blockProps} attributes={attributes} clientId={clientId} setAttributes={props.setAttributes} ownershipNotice={ownershipNotice} isPreviewContext={isPreviewContext} />
     </>;
 });
 
