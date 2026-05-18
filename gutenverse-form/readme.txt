@@ -206,6 +206,16 @@ Terms: https://gutenverse.com/terms-and-conditions/
 
 == Changelog ==
 
+= 2.7.1 =
+
+New and improved:
+* Add responsive option for background color
+
+Bug fixes:
+
+* Fixed background image preload fetch priority.
+* Fixed color option bug with hex input.
+
 = 2.7.0 =
 
 New and improved:
