@@ -208,6 +208,9 @@ Terms: https://gutenverse.com/terms-and-conditions/
 
 = 2.7.1 =
 
+New and improved:
+* Add responsive option for background color
+
 Bug fixes:
 
 * Fixed background image preload fetch priority.
