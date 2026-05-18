@@ -657,11 +657,11 @@ class Mail {
 		}
 
 		// Generic placeholders.
-		$content = str_replace( '{{form_id}}', $form_id, $content );
-		$content = str_replace( '{{entry_id}}', $entry_id, $content );
-		$content = str_replace( '{{form_title}}', get_the_title( $form_id ), $content );
-		$content = str_replace( '{{entry_title}}', get_the_title( $entry_id ), $content );
-		$content = str_replace( '{{site_title}}', get_bloginfo( 'name' ), $content );
+		$content = $this->replace_placeholder_token( $content, 'form_id', $form_id );
+		$content = $this->replace_placeholder_token( $content, 'entry_id', $entry_id );
+		$content = $this->replace_placeholder_token( $content, 'form_title', get_the_title( $form_id ) );
+		$content = $this->replace_placeholder_token( $content, 'entry_title', get_the_title( $entry_id ) );
+		$content = $this->replace_placeholder_token( $content, 'site_title', get_bloginfo( 'name' ) );
 
 		// Field Tags.
 		if ( ! empty( $form_data['variable_mapping'] ) && is_array( $form_data['variable_mapping'] ) ) {
@@ -677,7 +677,7 @@ class Mail {
 							break;
 						}
 					}
-					$content = str_replace( '{{' . $var . '}}', $val, $content );
+					$content = $this->replace_placeholder_token( $content, $var, $val );
 				}
 			}
 		}
@@ -686,10 +686,42 @@ class Mail {
 			foreach ( $form_entry['entry-data'] as $data ) {
 				$id      = $data['id'];
 				$value   = is_array( $data['value'] ) ? implode( ', ', $data['value'] ) : $data['value'];
-				$content = str_replace( '{{' . $id . '}}', $value, $content );
+				$content = $this->replace_placeholder_token( $content, $id, $value );
 			}
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Replace a placeholder token, including variants encoded by email editors.
+	 *
+	 * @param string $content .
+	 * @param string $name .
+	 * @param mixed  $value .
+	 *
+	 * @return string
+	 */
+	private function replace_placeholder_token( $content, $name, $value ) {
+		if ( '' === $name ) {
+			return $content;
+		}
+
+		if ( is_array( $value ) ) {
+			$value = implode( ', ', $value );
+		}
+
+		$value       = (string) $value;
+		$left_brace  = '(?:\{|&#0*123;|&#x0*7b;|&lbrace;|&lcub;)';
+		$right_brace = '(?:\}|&#0*125;|&#x0*7d;|&rbrace;|&rcub;)';
+		$pattern     = '/' . $left_brace . $left_brace . preg_quote( $name, '/' ) . $right_brace . $right_brace . '/i';
+
+		return preg_replace_callback(
+			$pattern,
+			function ( $_matches ) use ( $value ) {
+				return $value;
+			},
+			$content
+		);
 	}
 }
