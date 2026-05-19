@@ -221,8 +221,6 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
 const TabSetting = ({ integrations, setIntegrations, onSetup }) => {
     const [saving, setSaving] = useState(null);
 
-    console.log(integrations);
-
     const onToggle = (id, value) => {
         setSaving(id);
         apiFetch({
