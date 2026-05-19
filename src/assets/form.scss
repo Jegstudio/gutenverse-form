@@ -174,6 +174,20 @@
             text-transform: capitalize;
         }
 
+        .integration-service-icon {
+            align-items: center;
+            border-radius: 999px;
+            display: inline-flex;
+            flex: 0 0 24px;
+            font-size: 10px;
+            font-weight: 800;
+            height: 24px;
+            justify-content: center;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            width: 24px;
+        }
+
         .retrigger-integration-item {
             border-radius: 4px;
             line-height: 1;
@@ -184,11 +198,28 @@
 
     .integration-log-section {
         .integration-log-service {
+            align-items: center;
             background: #ffffff;
             border-bottom: 1px solid #edf0f5;
             color: #111827;
+            display: flex;
+            gap: 10px;
             font-weight: 700;
             min-height: 42px;
+
+            .integration-service-icon {
+                align-items: center;
+                border-radius: 999px;
+                display: inline-flex;
+                flex: 0 0 24px;
+                font-size: 10px;
+                font-weight: 800;
+                height: 24px;
+                justify-content: center;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                width: 24px;
+            }
         }
 
         .integration-log-item {
@@ -212,6 +243,18 @@
         .integration-log-status {
             color: #8a5d00;
             font-weight: 700;
+
+            &.integration-log-status-success {
+                color: #12b76a;
+            }
+
+            &.integration-log-status-skipped {
+                color: #ffcd1f;
+            }
+
+            &.integration-log-status-error {
+                color: #f04438;
+            }
         }
     }
 

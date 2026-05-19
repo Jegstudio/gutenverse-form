@@ -63,6 +63,63 @@ class Entries {
 	}
 
 	/**
+	 * Get integration label from service id.
+	 *
+	 * @param string $service Integration service slug.
+	 *
+	 * @return string
+	 */
+	private function get_integration_label( $service ) {
+		$labels = array(
+			'whatsapp'         => 'WhatsApp',
+			'telegram'         => 'Telegram',
+			'discord'          => 'Discord',
+			'mailchimp'        => 'Mail Chimp',
+			'slack'            => 'Slack',
+			'webhook'          => 'Webhook',
+			'get_response'     => 'GetResponse',
+			'drip'             => 'Drip',
+			'active_campaign'  => 'Active Campaign',
+			'convert_kit'      => 'Kit (Convert Kit)',
+			'mailer'           => 'Mailer',
+			'google_sheets'    => 'Google Sheets',
+		);
+
+		return isset( $labels[ $service ] ) ? $labels[ $service ] : ucfirst( str_replace( '_', ' ', (string) $service ) );
+	}
+
+	/**
+	 * Render a compact integration icon for entry UI.
+	 *
+	 * @param string $service Integration service slug.
+	 *
+	 * @return string
+	 */
+	private function render_integration_icon( $service ) {
+		$icon_map = array(
+			'whatsapp'        => array( 'label' => 'WA', 'bg' => '#25D366', 'color' => '#ffffff' ),
+			'telegram'        => array( 'label' => 'TG', 'bg' => '#229ED9', 'color' => '#ffffff' ),
+			'discord'         => array( 'label' => 'DS', 'bg' => '#5865F2', 'color' => '#ffffff' ),
+			'mailchimp'       => array( 'label' => 'MC', 'bg' => '#FFE01B', 'color' => '#111827' ),
+			'slack'           => array( 'label' => 'SL', 'bg' => '#4A154B', 'color' => '#ffffff' ),
+			'webhook'         => array( 'label' => 'WH', 'bg' => '#F0F1F4', 'color' => '#111827' ),
+			'get_response'    => array( 'label' => 'GR', 'bg' => '#00A2FF', 'color' => '#ffffff' ),
+			'drip'            => array( 'label' => 'DR', 'bg' => '#F224F1', 'color' => '#ffffff' ),
+			'active_campaign' => array( 'label' => 'AC', 'bg' => '#356AE6', 'color' => '#ffffff' ),
+			'convert_kit'     => array( 'label' => 'KT', 'bg' => '#44B1FF', 'color' => '#ffffff' ),
+			'mailer'          => array( 'label' => 'ML', 'bg' => '#00C875', 'color' => '#ffffff' ),
+			'google_sheets'   => array( 'label' => 'GS', 'bg' => '#34A853', 'color' => '#ffffff' ),
+		);
+		$icon     = isset( $icon_map[ $service ] ) ? $icon_map[ $service ] : array(
+			'label' => strtoupper( substr( preg_replace( '/[^a-z0-9]/i', '', (string) $service ), 0, 2 ) ),
+			'bg'    => '#94A3B8',
+			'color' => '#ffffff',
+		);
+
+		return '<span class="integration-service-icon" aria-hidden="true" style="background:' . esc_attr( $icon['bg'] ) . ';color:' . esc_attr( $icon['color'] ) . ';">' . esc_html( $icon['label'] ) . '</span>';
+	}
+
+	/**
 	 * Render form action migration notice on entries list page.
 	 */
 	public function form_action_migration_notice() {
@@ -729,7 +786,7 @@ class Entries {
 
 			$integration_list = array();
 			foreach ( $services as $service ) {
-				$service_label      = ucfirst( str_replace( '_', ' ', (string) $service ) );
+				$service_label      = $this->get_integration_label( $service );
 				$retrigger_btn      = current_user_can( 'manage_options' )
 					? '<button type="button" class="button button-small retrigger-integration-item" data-entry-id="' . $post->ID . '" data-service="' . esc_attr( $service ) . '">' . __( 'Resend Submission', 'gutenverse-form' ) . '</button>'
 					: '';
@@ -746,11 +803,12 @@ class Entries {
 					continue;
 				}
 
-				$result .= '<div class="entry-data integration-log-service"><strong>' . esc_html( ucfirst( str_replace( '_', ' ', (string) $service ) ) ) . '</strong></div>';
+				$result .= '<div class="entry-data integration-log-service">' . $this->render_integration_icon( $service ) . '<strong>' . esc_html( $this->get_integration_label( $service ) ) . '</strong></div>';
 
 				foreach ( array_reverse( $service_logs ) as $record ) {
 					$time    = isset( $record['time'] ) ? esc_html( $record['time'] ) : '';
 					$status  = isset( $record['status'] ) ? esc_html( strtoupper( $record['status'] ) ) : '';
+					$status_class = isset( $record['status'] ) ? sanitize_html_class( strtolower( (string) $record['status'] ) ) : 'unknown';
 					$message = isset( $record['message'] ) ? esc_html( $record['message'] ) : '';
 					$context = '';
 
@@ -769,7 +827,7 @@ class Entries {
 						}
 					}
 
-					$result .= '<div class="entry-data integration-log-item">' . $time . ' <span class="integration-log-status">[' . $status . ']</span> ' . $message . $context . '</div>';
+					$result .= '<div class="entry-data integration-log-item">' . $time . ' <span class="integration-log-status integration-log-status-' . esc_attr( $status_class ) . '">[' . $status . ']</span> ' . $message . $context . '</div>';
 				}
 			}
 
