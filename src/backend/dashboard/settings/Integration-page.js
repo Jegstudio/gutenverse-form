@@ -218,9 +218,10 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
     );
 };
 
-const TabSetting = ({ onSetup }) => {
-    const [integrations, setIntegrations] = useState(integrationConfig?.integrations || {});
+const TabSetting = ({ integrations, setIntegrations, onSetup }) => {
     const [saving, setSaving] = useState(null);
+
+    console.log(integrations);
 
     const onToggle = (id, value) => {
         setSaving(id);
@@ -618,6 +619,7 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
 
 const IntegrationPage = () => {
     const [currentService, setCurrentService] = useState('');
+    const [integrations, setIntegrations] = useState(integrationConfig?.integrations || {});
     const pageRef = useRef(null);
 
     useEffect(() => {
@@ -663,7 +665,11 @@ const IntegrationPage = () => {
 
     const SettingTab = applyFilters(
         'gutenverse.form.integration.tab.setting',
-        <TabSetting onSetup={setCurrentService} />,
+        <TabSetting
+            integrations={integrations}
+            setIntegrations={setIntegrations}
+            onSetup={setCurrentService}
+        />,
     );
 
     return (
