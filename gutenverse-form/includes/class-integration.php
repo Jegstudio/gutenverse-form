@@ -401,22 +401,21 @@ class Integration {
 			return '';
 		}
 
-		// Generic placeholders.
-		$template = str_replace( '{form_id}', $form_id, $template );
-		$template = str_replace( '{entry_id}', $entry_id, $template );
-		$template = str_replace( '{form_title}', get_the_title( $form_id ), $template );
-		$template = str_replace( '{site_title}', get_bloginfo( 'name' ), $template );
+		// Generic placeholders use double-brace syntax.
+		$template = str_replace( '{{form_id}}', $form_id, $template );
+		$template = str_replace( '{{entry_id}}', $entry_id, $template );
+		$template = str_replace( '{{form_title}}', get_the_title( $form_id ), $template );
+		$template = str_replace( '{{site_title}}', get_bloginfo( 'name' ), $template );
 
 		// Field placeholders.
 		$all_fields = '';
 		foreach ( $data as $key => $value ) {
 			$display_value = is_array( $value ) ? implode( ', ', $value ) : $value;
 			$all_fields   .= "{$key}: {$display_value}\n";
-			$template      = str_replace( '{' . $key . '}', $display_value, $template );
 			$template      = str_replace( '{{' . $key . '}}', $display_value, $template );
 		}
 
-		$template = str_replace( '{all_fields}', trim( $all_fields ), $template );
+		$template = str_replace( '{{all_fields}}', trim( $all_fields ), $template );
 
 		return $template;
 	}

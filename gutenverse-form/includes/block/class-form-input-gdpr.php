@@ -34,6 +34,7 @@ class Form_Input_Gdpr extends Block_Abstract {
 		$display_block      = isset( $this->attributes['displayBlock'] ) ? $this->attributes['displayBlock'] : 'default';
 		$gdpr_value         = isset( $this->attributes['gdprValue'] ) ? $this->attributes['gdprValue'] : false;
 		$gdpr_form_value    = isset( $this->attributes['gdprFormValue'] ) ? $this->attributes['gdprFormValue'] : 'Yes, I Agree';
+		$gdpr_unchecked_value = isset( $this->attributes['gdprUncheckedFormValue'] ) ? $this->attributes['gdprUncheckedFormValue'] : 'No, I Do Not Agree';
 		$gdpr_label         = isset( $this->attributes['gdprLabel'] ) ? $this->attributes['gdprLabel'] : 'Yes, I Agree';
 
 		$validation = array(
@@ -57,7 +58,7 @@ class Form_Input_Gdpr extends Block_Abstract {
 		$html  = '<div class="' . esc_attr( $inner_class ) . '">';
 		$html .= '<div class="guten-gdpr-wrapper">';
 		$html .= '<div class="guten-gdpr-input-wrapper">';
-		$html .= '<input name="' . esc_attr( $input_name ) . '"' . ( $gdpr_value ? ' checked="checked"' : '' ) . ' data-validation="' . esc_attr( wp_json_encode( $validation ) ) . '"' . $additional_props . ' class="gutenverse-input gutenverse-input-gdpr" type="checkbox" data-value="' . esc_attr( $gdpr_form_value ) . '"/>';
+		$html .= '<input name="' . esc_attr( $input_name ) . '"' . ( $gdpr_value ? ' checked="checked"' : '' ) . ' data-validation="' . esc_attr( wp_json_encode( $validation ) ) . '"' . $additional_props . ' class="gutenverse-input gutenverse-input-gdpr" type="checkbox" data-value="' . esc_attr( $gdpr_form_value ) . '" data-unchecked-value="' . esc_attr( $gdpr_unchecked_value ) . '"/>';
 		$html .= '<span class="check"></span>';
 		$html .= '</div>';
 		$html .= '<div class="gdpr-label">' . wp_kses_post( $gdpr_label ) . '</div>';

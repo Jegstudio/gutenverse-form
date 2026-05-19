@@ -209,7 +209,7 @@ class GutenverseFormValidation extends Default {
             value = input.checked;
         }
         if (input.type === 'checkbox' && u(input).hasClass('gutenverse-input-gdpr')) {
-            value = u(input).data('value');
+            value = input.checked ? u(input).data('value') : u(input).data('unchecked-value');
         }
 
         if (u(input).hasClass('gutenverse-input-mobile')) {

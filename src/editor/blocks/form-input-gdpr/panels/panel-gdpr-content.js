@@ -16,8 +16,14 @@ export const gdprContentPanel = () => {
         },
         {
             id: 'gdprFormValue',
-            label: __('GDPR Form Value', 'gutenverse-form'),
-            description: __('Value that will be recorded in Form Action', 'gutenverse-form'),
+            label: __('GDPR Checked Value', 'gutenverse-form'),
+            description: __('Value sent to Form Action and integrations when the checkbox is checked', 'gutenverse-form'),
+            component: TextControl,
+        },
+        {
+            id: 'gdprUncheckedFormValue',
+            label: __('GDPR Unchecked Value', 'gutenverse-form'),
+            description: __('Value sent to Form Action and integrations when the checkbox is unchecked', 'gutenverse-form'),
             component: TextControl,
         },
     ];

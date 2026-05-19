@@ -244,6 +244,10 @@
 			"type": "string",
 			"default": "Yes, I Agree"
 		},
+		"gdprUncheckedFormValue": {
+			"type": "string",
+			"default": "No, I Do Not Agree"
+		},
 		"gdprColor": {
 			"type": "object",
 			"copyStyle": true
