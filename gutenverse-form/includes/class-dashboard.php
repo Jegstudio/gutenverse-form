@@ -90,6 +90,7 @@ class Dashboard {
 					foreach ( $allowed_services as $allowed_service ) {
 						if ( $allowed_service['service_name'] === $current_service ) {
 							$config['integrationDocumentationUrl'] = $allowed_service['documentation_url'];
+							$config['integrationApiVersion']       = $allowed_service['api_version'] ?? '';
 							$config['serviceName']                 = $allowed_service['service_name'];
 							break;
 						}

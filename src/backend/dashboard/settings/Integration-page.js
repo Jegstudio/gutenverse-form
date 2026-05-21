@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { ButtonUpgradePro, EscListener } from 'gutenverse-core/components';
@@ -424,6 +424,7 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
     });
     const [showToast, setShowToast] = useState(false);
     const [documentationUrl, setDocumentationUrl] = useState('');
+    const [apiVersion, setApiVersion] = useState('');
 
     const showNotificationToast = (status, message) => {
         setToast({ status, message });
@@ -467,6 +468,7 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
             setFields(normalizedFields);
             setSettings(response?.settings || {});
             setDocumentationUrl(response?.documentationUrl || '');
+            setApiVersion(response?.apiVersion || '');
             setIsLoading(false);
         }).catch((err) => {
             if (!mounted) {
@@ -476,6 +478,7 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
             setFields({});
             setSettings({});
             setDocumentationUrl('');
+            setApiVersion('');
             setNotice({ type: 'error', message: err?.message || __('Failed to load integration settings.', 'gutenverse-form') });
             showNotificationToast('failed', __('Failed to load integration settings.', 'gutenverse-form'));
             setIsLoading(false);
@@ -522,6 +525,11 @@ const ServiceSetup = ({ serviceId, title, onBack }) => {
                 <div className="integration-setup-body">
                     <div className="integration-setup-intro">
                         <h3>{__('Setup', 'gutenverse-form')} {title}</h3>
+                        {apiVersion && (
+                            <p className="integration-api-version">
+                                {sprintf(__('API Ver. %s', 'gutenverse-form'), apiVersion)}
+                            </p>
+                        )}
                     </div>
                     {notice?.type === 'error' && (
                         <Notice status={notice.type} onRemove={() => setNotice(null)}>

@@ -54,6 +54,7 @@ class Integration {
 			array(
 				'service_name'      => 'whatsapp',
 				'documentation_url' => 'https://developers.facebook.com/documentation/business-messaging/whatsapp/get-started',
+				'api_version'       => '22.0',
 			),
 			array(
 				'service_name'      => 'telegram',
@@ -66,6 +67,7 @@ class Integration {
 			array(
 				'service_name'      => 'mailchimp',
 				'documentation_url' => 'https://mailchimp.com/developer/',
+				'api_version'       => '3.0',
 			),
 			array(
 				'service_name'      => 'slack',
@@ -73,15 +75,17 @@ class Integration {
 			),
 			array(
 				'service_name'      => 'webhook',
-				'documentation_url' => 'https://docs.webhook.site/',
+				'documentation_url' => 'https://api.slack.com/',
 			),
 			array(
 				'service_name'      => 'get_response',
 				'documentation_url' => 'https://apidocs.getresponse.com/',
+				'api_version'       => '3',
 			),
 			array(
 				'service_name'      => 'drip',
 				'documentation_url' => 'https://developer.drip.com/',
+				'api_version'       => '2',
 			),
 			array(
 				'service_name'      => 'active_campaign',
@@ -90,6 +94,7 @@ class Integration {
 			array(
 				'service_name'      => 'convert_kit',
 				'documentation_url' => 'https://developers.kit.com/v4',
+				'api_version'       => '4',
 			),
 			array(
 				'service_name'      => 'mailer',
@@ -170,6 +175,7 @@ class Integration {
 						foreach ( $allowed_services as $s ) {
 							if ( $s['service_name'] === $current_service ) {
 								$config['integrationDocumentationUrl'] = $s['documentation_url'];
+								$config['integrationApiVersion']       = $s['api_version'] ?? '';
 								$config['serviceName']                 = $s['service_name'];
 								break;
 							}

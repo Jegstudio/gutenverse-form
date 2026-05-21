@@ -1254,6 +1254,7 @@ class Api {
 		foreach ( Integration::get_services() as $allowed_service ) {
 			if ( $allowed_service['service_name'] === $service ) {
 				$response['documentationUrl'] = $allowed_service['documentation_url'];
+				$response['apiVersion']       = $allowed_service['api_version'] ?? '';
 				break;
 			}
 		}
