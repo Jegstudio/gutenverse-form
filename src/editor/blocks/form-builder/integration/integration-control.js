@@ -122,8 +122,8 @@ const ActionItem = ({
         const id = useInstanceId(LockedIntegrationControl, 'inspector-locked-integration-control');
         return <div id={id} className={'gutenverse-control-wrapper gutenverse-control-locked-integration gutenverse-control-locked-layout'}>
             <DefaultLayout
-                title={__( 'Unlock Powerful Integrations', 'gutenverse-form' )}
-                description={__( 'Integrate your forms with various third-party services to streamline your workflow, automate tasks, and enhance user experience — from instant WhatsApp notifications to subscriber management with Mailchimp and more.', 'gutenverse-form' )}
+                title={__( 'Stop Wasting Conversion Opportunities', 'gutenverse-form' )}
+                description={__( 'Sync submissions with WhatsApp, Mailchimp, Google Sheets, Telegram, Discord, and more to reduce manual work and act on leads faster.', 'gutenverse-form' )}
                 img={'integration-form.mp4'}
                 isOpen={isOpen}
                 permaLink={__('#integration')}

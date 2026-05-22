@@ -292,7 +292,8 @@
 		"integration": {
 			"type": "object",
 			"default": {
-				"actions": []
+				"actions": [],
+				"useDashboardSettings": false
 			}
 		},
 		"flexAlignSelf": {

@@ -1456,8 +1456,8 @@ export const FormContent = (props) => {
         />
         <div className="form-notice-wrapper">
             <CardBannerPro
-                title={__('Unlock Powerful Form Integrations', 'gutenverse-form')}
-                description={__('Connect your forms with WhatsApp, Discord, Google Sheets, Mailchimp, Telegram, and more to automate notifications, leads, and workflows.', 'gutenverse-form')}
+                title={__('Don’t Let Hot Leads Go Cold', 'gutenverse-form')}
+                description={__('Without instant notifications and connected workflows, valuable inquiries can sit unnoticed. Upgrade to Pro to keep every lead moving.', 'gutenverse-form')}
                 backgroundImg="card-banner-bg-form.png" />
         </div>
         <div className="form-tab-header">

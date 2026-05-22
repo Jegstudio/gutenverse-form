@@ -492,6 +492,52 @@ class Integration {
 	}
 
 	/**
+	 * Determine whether the submit payload includes an explicit integration object.
+	 *
+	 * @param array $params Submission params.
+	 *
+	 * @return bool
+	 */
+	private static function request_has_integration_payload( $params ) {
+		return isset( $params['integrations'] ) && is_array( $params['integrations'] );
+	}
+
+	/**
+	 * Determine whether a form should use dashboard-level integration settings.
+	 *
+	 * Legacy forms did not store an explicit flag. For backward compatibility,
+	 * we only assume dashboard settings are enabled when no meaningful local
+	 * actions exist on either the request payload or the saved form settings.
+	 *
+	 * @param array $integrations Request/saved integration payload.
+	 * @param array $form_setting Saved form settings.
+	 *
+	 * @return bool
+	 */
+	private static function use_dashboard_settings( $integrations, $form_setting = array() ) {
+		if ( isset( $integrations['useDashboardSettings'] ) ) {
+			return rest_sanitize_boolean( $integrations['useDashboardSettings'] );
+		}
+
+		$request_actions = isset( $integrations['actions'] ) && is_array( $integrations['actions'] ) ? $integrations['actions'] : array();
+		foreach ( $request_actions as $action ) {
+			if ( self::action_has_meaningful_config( $action ) ) {
+				return false;
+			}
+		}
+
+		if ( isset( $form_setting['integrations']['actions'] ) && is_array( $form_setting['integrations']['actions'] ) ) {
+			foreach ( $form_setting['integrations']['actions'] as $action ) {
+				if ( self::action_has_meaningful_config( $action ) ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Determine whether saved service settings contain a real local override.
 	 *
 	 * An empty settings object, or one that only stores disabled flags, should
@@ -642,6 +688,18 @@ class Integration {
 		$normalized = is_array( $integrations ) ? $integrations : array();
 		$actions    = isset( $normalized['actions'] ) && is_array( $normalized['actions'] ) ? $normalized['actions'] : array();
 
+		if ( self::use_dashboard_settings( $normalized, $form_setting ) ) {
+			$actions = self::get_global_service_actions();
+
+			if ( ! empty( $actions ) ) {
+				$normalized['actions'] = $actions;
+			} else {
+				unset( $normalized['actions'] );
+			}
+
+			return $normalized;
+		}
+
 		if ( ! empty( $actions ) ) {
 			return $normalized;
 		}
@@ -655,10 +713,6 @@ class Integration {
 					}
 				)
 			);
-		}
-
-		if ( empty( $actions ) ) {
-			$actions = self::get_global_service_actions();
 		}
 
 		if ( ! empty( $actions ) ) {
@@ -692,6 +746,12 @@ class Integration {
 			}
 
 			$actions = isset( $integration['actions'] ) && is_array( $integration['actions'] ) ? $integration['actions'] : array();
+		} elseif ( self::request_has_integration_payload( $params ) ) {
+			$integration = isset( $params['integrations'] ) && is_array( $params['integrations'] ) ? $params['integrations'] : array();
+
+			if ( ! self::use_dashboard_settings( $integration, $form_setting ) ) {
+				return array();
+			}
 		} elseif ( isset( $form_setting['integrations']['actions'] ) && is_array( $form_setting['integrations']['actions'] ) ) {
 			$integration = array(
 				'actions'   => $form_setting['integrations']['actions'],
