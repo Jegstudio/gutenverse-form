@@ -88,6 +88,22 @@ class Form {
 			'manage_options',
 			'edit.php?post_type=' . Entries::POST_TYPE
 		);
+
+		add_submenu_page(
+			self::POST_TYPE,
+			esc_html__( 'Form Settings', 'gutenverse-form' ),
+			esc_html__( 'Form Settings', 'gutenverse-form' ),
+			'manage_options',
+			admin_url( 'admin.php?page=gutenverse&path=settings&settings=form&sub-menu=form_settings' )
+		);
+
+		add_submenu_page(
+			self::POST_TYPE,
+			esc_html__( 'Form Integrations', 'gutenverse-form' ),
+			esc_html__( 'Form Integrations', 'gutenverse-form' ),
+			'manage_options',
+			admin_url( 'admin.php?page=gutenverse&path=settings&settings=form&sub-menu=form_integrations' )
+		);
 	}
 
 	/**
