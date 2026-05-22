@@ -60,19 +60,26 @@ class Frontend_Assets {
 	}
 
 	/**
-	 * Check whether font icon assets are needed for an icon attribute pair.
+	 * Icon conditional load by value. This will only work if the icon type is 'icon' and icon default is font icon.
 	 *
-	 * @param array  $attrs The block attributes.
-	 * @param string $type_attribute The icon type attribute name.
-	 * @param string $icon_attribute The icon class attribute name.
-	 *
-	 * @return bool
+	 * @param mixed $attrs The value from the attributes array.
+	 * @param mixed $name The value from the attributes array.
+	 * @param mixed $conditions The value from the attributes array.
 	 */
-	private function has_font_icon( $attrs, $type_attribute, $icon_attribute ) {
-		return (
-			isset( $attrs[ $type_attribute ] ) && 'icon' === $attrs[ $type_attribute ] &&
-			( ! isset( $attrs[ $icon_attribute ] ) || ! empty( $attrs[ $icon_attribute ] ) )
-		);
+	public function icon_conditional_load_by_value( $attrs, $name, &$conditions ) {
+		$type_name = $name . 'Type';
+
+		if ( isset( $attrs[ $type_name ] ) ) {
+			if ( 'icon' === $attrs[ $type_name ] && ( ! isset( $attrs[ $name ] ) || '' !== $attrs[ $name ] ) ) {
+				$this->icon_conditional_load( $conditions );
+			}
+
+			return;
+		}
+
+		if ( isset( $attrs[ $name ] ) && '' !== $attrs[ $name ] ) {
+			$this->icon_conditional_load( $conditions );
+		}
 	}
 
 	/**
@@ -88,9 +95,7 @@ class Frontend_Assets {
 		switch ( $block_name ) {
 			case 'gutenverse/form-input-submit':
 				if ( isset( $attrs['showIcon'] ) && $attrs['showIcon'] ) {
-					if ( $this->has_font_icon( $attrs, 'iconType', 'icon' ) ) {
-						$this->icon_conditional_load( $conditions );
-					}
+					$this->icon_conditional_load_by_value( $attrs, 'icon', $conditions );
 				}
 				break;
 			case 'gutenverse/form-input-telp':
@@ -100,28 +105,18 @@ class Frontend_Assets {
 			case 'gutenverse/form-input-email':
 			case 'gutenverse/form-input-date':
 				if ( isset( $attrs['useIcon'] ) && $attrs['useIcon'] ) {
-					if ( $this->has_font_icon( $attrs, 'iconType', 'icon' ) ) {
-						$this->icon_conditional_load( $conditions );
-					}
+					$this->icon_conditional_load_by_value( $attrs, 'icon', $conditions );
 				}
 				break;
 			case 'gutenverse/form-input-select':
 				if ( isset( $attrs['useCustomDropdown'] ) && $attrs['useCustomDropdown'] ) {
-					if (
-						$this->has_font_icon( $attrs, 'dropDownIconOpenType', 'dropDownIconOpen' ) ||
-						$this->has_font_icon( $attrs, 'dropDownIconCloseType', 'dropDownIconClose' )
-					) {
-						$this->icon_conditional_load( $conditions );
-					}
+					$this->icon_conditional_load_by_value( $attrs, 'dropDownIconOpen', $conditions );
+					$this->icon_conditional_load_by_value( $attrs, 'dropDownIconClose', $conditions );
 				}
-				break;
-			case 'gutenverse/form-input-gdpr':
-				$this->icon_conditional_load( $conditions );
 				break;
 			case 'gutenverse/form-notice':
-				if ( ! isset( $attrs['iconSuccessType'] ) || 'icon' === $attrs['iconSuccessType'] || ! isset( $attrs['iconErrorType'] ) || 'icon' === $attrs['iconErrorType'] ) {
-					$this->icon_conditional_load( $conditions );
-				}
+				$this->icon_conditional_load_by_value( $attrs, 'iconSuccess', $conditions );
+				$this->icon_conditional_load_by_value( $attrs, 'iconError', $conditions );
 				break;
 		}
 
