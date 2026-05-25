@@ -4,9 +4,11 @@ import apiFetch from '@wordpress/api-fetch';
 import { applyFilters } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
 import { IconTrashSVG } from 'gutenverse-core/icons';
+import { signal } from 'gutenverse-core/editor-helper';
 
 const chartTop = 32;
 const chartBase = 168;
+const filterSettleDelay = 500;
 
 const getConfig = () => window?.GutenverseConfig?.formDashboard || {};
 
@@ -316,6 +318,7 @@ const FormDashboard = () => {
     const [pendingDelete, setPendingDelete] = useState(null);
     const [deleteError, setDeleteError] = useState('');
     const [deleting, setDeleting] = useState(false);
+    const [filtersSettled, setFiltersSettled] = useState(false);
 
     useEffect(() => {
         apiFetch({ path: '/gutenverse-form-client/v1/form-action/dashboard' })
@@ -328,6 +331,26 @@ const FormDashboard = () => {
                 setLoading(false);
             });
     }, []);
+
+    useEffect(() => {
+        const bindDashboard = signal.afterFilterSignal.add(() => setFiltersSettled(true));
+
+        return () => {
+            bindDashboard.detach();
+        };
+    }, []);
+
+    useEffect(() => {
+        if (loading || filtersSettled) {
+            return;
+        }
+
+        const fallback = setTimeout(() => setFiltersSettled(true), filterSettleDelay);
+
+        return () => {
+            clearTimeout(fallback);
+        };
+    }, [filtersSettled, loading]);
 
     const deleteUnusedForm = () => {
         if (!pendingDelete) {
@@ -372,6 +395,16 @@ const FormDashboard = () => {
         );
     }
 
+    if (!filtersSettled) {
+        return (
+            <div className="gutenverse-form-admin-dashboard is-loading" aria-busy="true">
+                <MigrationNotice />
+                <span className="screen-reader-text">{__('Loading dashboard...', 'gutenverse-form')}</span>
+                <FormDashboardSkeleton />
+            </div>
+        );
+    }
+
     const forms = data?.forms || [];
     const recentForms = data?.recentForms || [];
     const trend = data?.trendContexts?.[range] || data?.trendContexts?.[7];
@@ -393,6 +426,7 @@ const FormDashboard = () => {
             setDeleteError,
         },
     };
+
     const rangeToggle = applyFilters(
         'gutenverse-form.dashboard-range-toggle',
         <>
@@ -405,6 +439,7 @@ const FormDashboard = () => {
         </>,
         dashboardFilterProps
     );
+
     const proDashboardContent = applyFilters(
         'gutenverse-form.pro-dashboard-content',
         <PremiumDashboardPanels />,
