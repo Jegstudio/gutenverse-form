@@ -215,6 +215,8 @@ Bug fixes:
 
 * Fixed background image preload fetch priority.
 * Fixed color option bug with hex input.
+* Fixed video background issue.
+* Fixed template library only load two layouts initially.
 
 = 2.7.0 =
 
