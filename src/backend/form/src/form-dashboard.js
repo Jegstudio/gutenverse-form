@@ -1,7 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from '@wordpress/element';
+import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import { applyFilters } from '@wordpress/hooks';
+import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
 import { IconTrashSVG } from 'gutenverse-core/icons';
 import { signal } from 'gutenverse-core/editor-helper';
@@ -9,8 +9,13 @@ import { signal } from 'gutenverse-core/editor-helper';
 const chartTop = 32;
 const chartBase = 168;
 const filterSettleDelay = 500;
+const proDashboardContentFilter = 'gutenverse-form.pro-dashboard-content';
 
 const getConfig = () => window?.GutenverseConfig?.formDashboard || {};
+const hasProLicenseData = () => Boolean(window?.gprodata && Object.keys(window.gprodata).length);
+const hasActiveProRuntime = () => Boolean(window?.GutenverseConfig?.plugins?.['gutenverse-pro']?.active || hasProLicenseData());
+const hasDashboardContentFilter = () => Boolean(hasFilter(proDashboardContentFilter));
+const shouldWaitForDashboardFilters = () => hasActiveProRuntime() && !hasDashboardContentFilter();
 
 const EmptyNote = ({ children }) => <p className="empty-note">{children}</p>;
 
@@ -35,22 +40,26 @@ const Row = ({ title, meta, actions }) => (
 
 const DashboardProBadge = () => <span className="dashboard-pro-badge">{__('Pro', 'gutenverse-form')}</span>;
 
+const strongDescription = (text) => createInterpolateElement(text, {
+    strong: <strong />,
+});
+
 const lockedDashboardPanels = [
     {
         title: __('Needs Attention', 'gutenverse-form'),
-        description: __('Find forms that are not connected to any live location.', 'gutenverse-form'),
+        description: strongDescription(__('Database bloat slows you down. <strong>Upgrade to PRO</strong> to instantly spot and purge unused forms to keep your site lean and fast.', 'gutenverse-form')),
     },
     {
         title: __('Top Forms', 'gutenverse-form'),
-        description: __('Compare form performance by total and recent entries.', 'gutenverse-form'),
+        description: strongDescription(__('Stop guessing what works. <strong>PRO</strong> pinpoints the exact pages driving your submissions so you can double down on what makes you money.', 'gutenverse-form')),
     },
     {
         title: __('Top Entry Sources', 'gutenverse-form'),
-        description: __('See which posts or pages are producing submissions.', 'gutenverse-form'),
+        description: strongDescription(__('One form could be carrying your entire site\'s conversions. <strong>Unlock PRO</strong> to find it, optimize it, and replicate its success.', 'gutenverse-form')),
     },
     {
         title: __('Recent Activity', 'gutenverse-form'),
-        description: __('Track the latest form activity across your site.', 'gutenverse-form'),
+        description: strongDescription(__('A hot lead just interacted with your site. Did you miss it? <strong>Upgrade to PRO</strong> for real-time tracking so you can strike while the iron is hot.', 'gutenverse-form')),
     },
 ];
 
@@ -58,8 +67,8 @@ const PremiumDashboardCallout = () => (
     <div className="dashboard-panel dashboard-panel--wide dashboard-panel--premium-callout">
         <div className="dashboard-premium-callout__content">
             <DashboardProBadge />
-            <h2>{__('Unlock the full form dashboard', 'gutenverse-form')}</h2>
-            <p>{__('Basic keeps the summary and 7-day chart available. Upgrade to Standard or higher for deeper form insights.', 'gutenverse-form')}</p>
+            <h2>{__('Hidden Data = Lost Revenue.', 'gutenverse-form')}</h2>
+            <p>{strongDescription(__('Free only gives you a basic summary. <strong>Gutenverse PRO</strong> instantly unlocks the exact pages, forms, and traffic sources driving your revenue.', 'gutenverse-form'))}</p>
         </div>
         <ButtonUpgradePro
             isBanner={true}
@@ -318,7 +327,7 @@ const FormDashboard = () => {
     const [pendingDelete, setPendingDelete] = useState(null);
     const [deleteError, setDeleteError] = useState('');
     const [deleting, setDeleting] = useState(false);
-    const [filtersSettled, setFiltersSettled] = useState(false);
+    const [filtersSettled, setFiltersSettled] = useState(() => !shouldWaitForDashboardFilters());
 
     useEffect(() => {
         apiFetch({ path: '/gutenverse-form-client/v1/form-action/dashboard' })
@@ -333,6 +342,12 @@ const FormDashboard = () => {
     }, []);
 
     useEffect(() => {
+        if (hasDashboardContentFilter()) {
+            setFiltersSettled(true);
+
+            return;
+        }
+
         const bindDashboard = signal.afterFilterSignal.add(() => setFiltersSettled(true));
 
         return () => {
@@ -441,7 +456,7 @@ const FormDashboard = () => {
     );
 
     const proDashboardContent = applyFilters(
-        'gutenverse-form.pro-dashboard-content',
+        proDashboardContentFilter,
         <PremiumDashboardPanels />,
         dashboardFilterProps
     );

@@ -2938,7 +2938,7 @@
         grid-template-columns: 34px minmax(0, 1fr);
         padding: 18px 20px 12px;
 
-        strong {
+        > div > strong {
             color: #111827;
             display: block;
             font-size: 14px;
@@ -2952,6 +2952,15 @@
             display: block;
             font-size: 13px;
             line-height: 1.45;
+
+            strong {
+                color: #111827;
+                display: inline;
+                font-size: inherit;
+                font-weight: 700;
+                line-height: inherit;
+                margin-bottom: 0;
+            }
         }
     }
 
