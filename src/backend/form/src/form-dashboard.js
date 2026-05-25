@@ -8,14 +8,13 @@ import { signal } from 'gutenverse-core/editor-helper';
 
 const chartTop = 32;
 const chartBase = 168;
-const filterSettleDelay = 500;
+const filterCheckDelay = 100;
 const proDashboardContentFilter = 'gutenverse-form.pro-dashboard-content';
 
 const getConfig = () => window?.GutenverseConfig?.formDashboard || {};
 const hasProLicenseData = () => Boolean(window?.gprodata && Object.keys(window.gprodata).length);
-const hasActiveProRuntime = () => Boolean(window?.GutenverseConfig?.plugins?.['gutenverse-pro']?.active || hasProLicenseData());
 const hasDashboardContentFilter = () => Boolean(hasFilter(proDashboardContentFilter));
-const shouldWaitForDashboardFilters = () => hasActiveProRuntime() && !hasDashboardContentFilter();
+const shouldWaitForDashboardFilters = () => hasProLicenseData() && !hasDashboardContentFilter();
 
 const EmptyNote = ({ children }) => <p className="empty-note">{children}</p>;
 
@@ -342,30 +341,30 @@ const FormDashboard = () => {
     }, []);
 
     useEffect(() => {
-        if (hasDashboardContentFilter()) {
-            setFiltersSettled(true);
+        let filterChecker = null;
+        const settleWhenReady = () => {
+            if (shouldWaitForDashboardFilters()) {
+                return false;
+            }
 
+            setFiltersSettled(true);
+            clearInterval(filterChecker);
+
+            return true;
+        };
+
+        if (settleWhenReady()) {
             return;
         }
 
-        const bindDashboard = signal.afterFilterSignal.add(() => setFiltersSettled(true));
+        filterChecker = setInterval(settleWhenReady, filterCheckDelay);
+        const bindDashboard = signal.afterFilterSignal.add(settleWhenReady);
 
         return () => {
+            clearInterval(filterChecker);
             bindDashboard.detach();
         };
     }, []);
-
-    useEffect(() => {
-        if (loading || filtersSettled) {
-            return;
-        }
-
-        const fallback = setTimeout(() => setFiltersSettled(true), filterSettleDelay);
-
-        return () => {
-            clearTimeout(fallback);
-        };
-    }, [filtersSettled, loading]);
 
     const deleteUnusedForm = () => {
         if (!pendingDelete) {
