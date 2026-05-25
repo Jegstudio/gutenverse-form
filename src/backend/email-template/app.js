@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from '@wordpress/element';
 import { Button, TextControl, SnackbarList, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
+import { applyFilters, hasFilter } from '@wordpress/hooks';
 import grapesjs from 'grapesjs';
 import grapesJSMJML from 'grapesjs-mjml';
 import {
@@ -61,6 +62,9 @@ const EDITOR_DIRTY_EVENTS = [
     'undo',
     'redo',
 ];
+const filterCheckDelay = 100;
+const emailTemplateSaveButtonFilter = 'gutenverse-form.email-template-save-button';
+const hasEmailTemplateSaveButtonFilter = () => Boolean(hasFilter(emailTemplateSaveButtonFilter));
 
 const HIDDEN_EDITOR_PANEL_BUTTONS = [
     {
@@ -130,6 +134,10 @@ const normalizeTitle = (title) => {
 
 const hasProjectData = (project) => {
     return !!project && typeof project === 'object' && Object.keys(project).length > 0;
+};
+
+const hasActiveProLicense = () => {
+    return Boolean(window?.gutenverseEmailTemplate?.canSave);
 };
 
 const getMjmlErrorMessage = (errors = []) => {
@@ -615,8 +623,27 @@ const App = () => {
     const [isMediaUploading, setIsMediaUploading] = useState(false);
     const [isBlocksSidebarCollapsed, setIsBlocksSidebarCollapsed] = useState(false);
     const [isSettingsSidebarCollapsed, setIsSettingsSidebarCollapsed] = useState(false);
+    const canSaveTemplate = hasActiveProLicense();
+    const [emailTemplateSaveButtonFilterReady, setEmailTemplateSaveButtonFilterReady] = useState(() => hasEmailTemplateSaveButtonFilter());
 
     const { nonce } = window.gutenverseEmailTemplate || {};
+
+    useEffect(() => {
+        if (canSaveTemplate || emailTemplateSaveButtonFilterReady) {
+            return;
+        }
+
+        const filterChecker = window.setInterval(() => {
+            if (hasEmailTemplateSaveButtonFilter()) {
+                setEmailTemplateSaveButtonFilterReady(true);
+                window.clearInterval(filterChecker);
+            }
+        }, filterCheckDelay);
+
+        return () => {
+            window.clearInterval(filterChecker);
+        };
+    }, [canSaveTemplate, emailTemplateSaveButtonFilterReady]);
 
     const addNotice = (notice) => {
         const id = Date.now();
@@ -1078,6 +1105,8 @@ const App = () => {
 
         const editor = editorRef.current;
 
+        if (!hasActiveProLicense()) return;
+
         if (!editor || !isLoaded || !isDirty || isSavingRef.current || templateState.isReadOnly) return;
 
         isSavingRef.current = true;
@@ -1151,6 +1180,37 @@ const App = () => {
     };
 
     const titleWidthCh = Math.min(Math.max((title || '').length + 2, 18), 68);
+    const upgradeProUrl = window?.gutenverseEmailTemplate?.upgradeProUrl || window?.GutenverseConfig?.upgradeProUrl;
+    const saveButton = (
+        <Button type="button" isPrimary isBusy={isSaving} disabled={!isLoaded || isSaving || !isDirty || templateState.isReadOnly} onClick={saveDesign}>
+            {isSaving ? __('Saving...', 'gutenverse-form') : __('Save', 'gutenverse-form')}
+        </Button>
+    );
+    const upgradeButtonFallback = (
+        <a
+            className="button-upgrade-pro button-upgrade-pro-banner"
+            href={upgradeProUrl || '#'}
+            target="_blank"
+            rel="noreferrer"
+        >
+            {__('Upgrade to PRO', 'gutenverse-form')}
+        </a>
+    );
+    const filteredUpgradeButton = canSaveTemplate ? null : applyFilters(
+        emailTemplateSaveButtonFilter,
+        upgradeButtonFallback,
+        {
+            canSaveTemplate,
+            filterReady: emailTemplateSaveButtonFilterReady,
+            location: 'email-template-builder',
+            text: __('Upgrade to PRO', 'gutenverse-form'),
+            upgradeProUrl,
+            customStyles: { height: '36px', padding: '0 16px' },
+        }
+    );
+    const emailTemplateSaveButton = canSaveTemplate ? saveButton : (
+        filteredUpgradeButton || upgradeButtonFallback
+    );
 
     return (
         <div className="gutenverse-email-builder">
@@ -1181,9 +1241,7 @@ const App = () => {
                     <span className={`save-state ${isDirty ? 'dirty' : 'saved'}`}>
                         {isDirty ? __('Unsaved changes', 'gutenverse-form') : __('Saved', 'gutenverse-form')}
                     </span>
-                    <Button type="button" isPrimary isBusy={isSaving} disabled={!isLoaded || isSaving || !isDirty || templateState.isReadOnly} onClick={saveDesign}>
-                        {isSaving ? __('Saving...', 'gutenverse-form') : __('Save', 'gutenverse-form')}
-                    </Button>
+                    {emailTemplateSaveButton}
                 </div>
             </div>
             {loadError && <div className="email-template-load-error">{loadError}</div>}

@@ -45,6 +45,7 @@ class Email_Template {
 		add_action( 'edit_form_after_title', array( $this, 'render_editor' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );
+		add_filter( 'rest_pre_insert_' . self::POST_TYPE, array( $this, 'protect_rest_save' ), 10, 2 );
 	}
 
 	/**
@@ -59,6 +60,42 @@ class Email_Template {
 			return false;
 		}
 		return $use_block_editor;
+	}
+
+	/**
+	 * Check whether email template saves are available.
+	 *
+	 * @return bool
+	 */
+	private function can_save_template() {
+		$has_license = function_exists( 'gutenverse_pro_active' )
+			&& gutenverse_pro_active()
+			&& ! empty( get_option( 'gutenverse-license', '' ) );
+
+		return (bool) apply_filters( 'gutenverse_form_email_template_can_save', $has_license );
+	}
+
+	/**
+	 * Protect email template REST saves behind PRO.
+	 *
+	 * @param \stdClass         $prepared_post Prepared post object.
+	 * @param \WP_REST_Request $request       REST request.
+	 * @return \stdClass|\WP_Error
+	 */
+	public function protect_rest_save( $prepared_post, $request ) {
+		if ( $this->can_save_template() ) {
+			return $prepared_post;
+		}
+
+		if ( 'GET' === $request->get_method() ) {
+			return $prepared_post;
+		}
+
+		return new \WP_Error(
+			'gutenverse_form_email_template_pro_required',
+			__( 'Saving email templates requires Gutenverse PRO.', 'gutenverse-form' ),
+			array( 'status' => 403 )
+		);
 	}
 
 	/**
@@ -268,7 +305,8 @@ class Email_Template {
 			remove_action( 'admin_print_footer_scripts', 'wp_auth_check_html', 5 );
 
 			if ( file_exists( $asset_file ) ) {
-				$asset = require $asset_file;
+				$asset             = require $asset_file;
+				$gutenverse_config = \Gutenverse\Framework\Init::instance()->editor_assets->gutenverse_config();
 
 				wp_enqueue_script(
 					'gutenverse-email-template',
@@ -280,11 +318,19 @@ class Email_Template {
 
 				wp_localize_script(
 					'gutenverse-email-template',
+					'GutenverseConfig',
+					$gutenverse_config
+				);
+
+				wp_localize_script(
+					'gutenverse-email-template',
 					'gutenverseEmailTemplate',
 					array(
-						'nonce'        => wp_create_nonce( 'wp_rest' ),
-						'postId'       => get_the_ID(),
-						'placeholders' => $this->get_available_placeholders( get_the_ID() ),
+						'nonce'         => wp_create_nonce( 'wp_rest' ),
+						'postId'        => get_the_ID(),
+						'canSave'       => $this->can_save_template(),
+						'placeholders'  => $this->get_available_placeholders( get_the_ID() ),
+						'upgradeProUrl' => isset( $gutenverse_config['upgradeProUrl'] ) ? $gutenverse_config['upgradeProUrl'] : '',
 					)
 				);
 
