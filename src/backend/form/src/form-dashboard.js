@@ -8,9 +8,7 @@ import { signal } from 'gutenverse-core/editor-helper';
 
 const chartTop = 32;
 const chartBase = 168;
-const filterCheckDelay = 100;
-const backgroundFilterCheckDelay = 1000;
-const maxDashboardFilterChecks = 50;
+const dashboardFilterWaitDelay = 1000;
 const proDashboardContentFilter = 'gutenverse-form.pro-dashboard-content';
 
 const getConfig = () => window?.GutenverseConfig?.formDashboard || {};
@@ -344,26 +342,25 @@ const FormDashboard = () => {
     }, []);
 
     useEffect(() => {
-        let filterChecker = null;
-        let checkCount = 0;
+        let fallbackTimer = null;
 
-        const clearFilterChecker = () => {
-            if (filterChecker) {
-                clearInterval(filterChecker);
-                filterChecker = null;
+        const clearFallbackTimer = () => {
+            if (fallbackTimer) {
+                clearTimeout(fallbackTimer);
+                fallbackTimer = null;
             }
         };
 
         const refreshDashboardFilters = () => {
             setFiltersSettled(true);
             setDashboardFilterVersion((current) => current + 1);
-            clearFilterChecker();
+            clearFallbackTimer();
 
             return true;
         };
 
-        const settleWhenReady = () => {
-            if (shouldWaitForDashboardFilters()) {
+        const settleWhenReady = (allowMissingDashboardFilter = false) => {
+            if (shouldWaitForDashboardFilters() && !allowMissingDashboardFilter) {
                 return false;
             }
 
@@ -374,23 +371,13 @@ const FormDashboard = () => {
             return;
         }
 
-        filterChecker = setInterval(() => {
-            checkCount += 1;
-
-            if (settleWhenReady()) {
-                return;
-            }
-
-            if (checkCount >= maxDashboardFilterChecks) {
-                setFiltersSettled(true);
-                clearFilterChecker();
-                filterChecker = setInterval(settleWhenReady, backgroundFilterCheckDelay);
-            }
-        }, filterCheckDelay);
-        const bindDashboard = signal.afterFilterSignal.add(settleWhenReady);
+        fallbackTimer = setTimeout(() => {
+            setFiltersSettled(true);
+        }, dashboardFilterWaitDelay);
+        const bindDashboard = signal.afterFilterSignal.add(() => settleWhenReady(true));
 
         return () => {
-            clearFilterChecker();
+            clearFallbackTimer();
             bindDashboard.detach();
         };
     }, []);

@@ -1180,7 +1180,11 @@ const App = () => {
     };
 
     const titleWidthCh = Math.min(Math.max((title || '').length + 2, 18), 68);
+    const hasProPlugin = Boolean(window?.gutenverseEmailTemplate?.hasProPlugin || window?.gserver);
+    const licenseUrl = window?.gutenverseEmailTemplate?.licenseUrl || `${window?.GutenverseConfig?.adminUrl || ''}admin.php?page=gutenverse&path=license`;
     const upgradeProUrl = window?.gutenverseEmailTemplate?.upgradeProUrl || window?.GutenverseConfig?.upgradeProUrl;
+    const upgradeButtonText = hasProPlugin ? __('Activate License', 'gutenverse-form') : __('Upgrade to PRO', 'gutenverse-form');
+    const upgradeButtonUrl = hasProPlugin ? licenseUrl : upgradeProUrl;
     const saveButton = (
         <Button type="button" isPrimary isBusy={isSaving} disabled={!isLoaded || isSaving || !isDirty || templateState.isReadOnly} onClick={saveDesign}>
             {isSaving ? __('Saving...', 'gutenverse-form') : __('Save', 'gutenverse-form')}
@@ -1189,11 +1193,11 @@ const App = () => {
     const upgradeButtonFallback = (
         <a
             className="button-upgrade-pro button-upgrade-pro-banner"
-            href={upgradeProUrl || '#'}
+            href={upgradeButtonUrl || '#'}
             target="_blank"
             rel="noreferrer"
         >
-            {__('Upgrade to PRO', 'gutenverse-form')}
+            {upgradeButtonText}
         </a>
     );
     const filteredUpgradeButton = canSaveTemplate ? null : applyFilters(
@@ -1202,8 +1206,10 @@ const App = () => {
         {
             canSaveTemplate,
             filterReady: emailTemplateSaveButtonFilterReady,
+            hasProPlugin,
+            licenseUrl,
             location: 'email-template-builder',
-            text: __('Upgrade to PRO', 'gutenverse-form'),
+            text: upgradeButtonText,
             upgradeProUrl,
             customStyles: { height: '36px', padding: '0 16px' },
         }

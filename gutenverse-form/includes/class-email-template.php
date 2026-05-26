@@ -63,13 +63,21 @@ class Email_Template {
 	}
 
 	/**
+	 * Check whether Gutenverse PRO is active.
+	 *
+	 * @return bool
+	 */
+	private function has_pro_plugin() {
+		return function_exists( 'gutenverse_pro_active' ) && gutenverse_pro_active();
+	}
+
+	/**
 	 * Check whether email template saves are available.
 	 *
 	 * @return bool
 	 */
 	private function can_save_template() {
-		$has_license = function_exists( 'gutenverse_pro_active' )
-			&& gutenverse_pro_active()
+		$has_license = $this->has_pro_plugin()
 			&& ! empty( get_option( 'gutenverse-license', '' ) );
 
 		return (bool) apply_filters( 'gutenverse_form_email_template_can_save', $has_license );
@@ -329,6 +337,8 @@ class Email_Template {
 						'nonce'         => wp_create_nonce( 'wp_rest' ),
 						'postId'        => get_the_ID(),
 						'canSave'       => $this->can_save_template(),
+						'hasProPlugin'  => $this->has_pro_plugin(),
+						'licenseUrl'    => admin_url( 'admin.php?page=gutenverse&path=license' ),
 						'placeholders'  => $this->get_available_placeholders( get_the_ID() ),
 						'upgradeProUrl' => isset( $gutenverse_config['upgradeProUrl'] ) ? $gutenverse_config['upgradeProUrl'] : '',
 					)
