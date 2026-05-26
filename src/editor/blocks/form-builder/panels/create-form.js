@@ -470,7 +470,7 @@ export const CreateForm = (props) => {
                     title={isEditing ? __('Edit Form Action', 'gutenverse-form') : __('Create New Form Action', 'gutenverse-form')}
                     onRequestClose={() => setOpen(false)}
                     className="gutenverse-form-builder-modal"
-                    style={{ width: '800px', maxHeight: 'calc(100% - 60px)' }}
+                    style={{ width: '800px', maxHeight: 'calc(100% - 60px)!important' }}
                 >
                     <div className="gutenverse-form-modal-content">
                         {error && <div className="gutenverse-form-action-error modal-error">{error}</div>}
