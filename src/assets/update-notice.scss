@@ -45,9 +45,10 @@
             > div {
                 background: transparent;
                 border-radius: 12px;
+                box-sizing: border-box;
                 height: auto;
                 max-width: 1000px;
-                min-height: 148px;
+                min-height: 200px;
                 width: calc(100% - 30px);
 
                 &::before {
@@ -77,13 +78,14 @@
         .upgrade-notice-head .upgrade-notice-title {
             color: #011627;
             font-family: "Roboto", serif;
-            font-size: 30px;
+            font-size: 48px;
             font-weight: 700;
-            letter-spacing: 0;
-            line-height: 1.2;
+            letter-spacing: -0.01em;
+            line-height: 1;
             margin: 0;
             position: relative;
             text-align: center;
+            vertical-align: middle;
             z-index: 1;
 
             span {
@@ -103,20 +105,20 @@
         }
 
         .form-300-content {
-            padding-bottom: 80px;
+            padding: 40px;
 
             p {
                 color: #011627;
                 font-family: "Roboto", serif;
                 font-size: 16px;
                 font-weight: 400;
-                line-height: 1.7;
+                letter-spacing: 0;
+                line-height: 150%;
                 margin: 0;
             }
 
             img {
                 display: block;
-                margin: 0;
                 width: 100%;
             }
         }
@@ -131,10 +133,13 @@
                 color: #011627;
                 display: flex;
                 font-size: 18px;
-                font-weight: 700;
+                font-family: "Roboto", serif;
+                font-weight: 600;
                 gap: 8px;
-                line-height: 1.4;
-                margin-bottom: 6px;
+                letter-spacing: 0;
+                line-height: 140%;
+                margin-bottom: 8px;
+                vertical-align: middle;
 
                 &::before {
                     background: #68dbcf;
@@ -161,7 +166,7 @@
             align-items: center;
             display: flex;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
 
             img {
                 border-radius: 4px;
@@ -174,27 +179,30 @@
             h2 {
                 color: #011627;
                 font-family: "Roboto", serif;
-                font-size: 22px;
-                font-weight: 700;
-                line-height: 1.35;
+                font-size: 24px;
+                font-weight: 600;
+                letter-spacing: 0;
+                line-height: 25.5px;
                 margin: 0;
+                text-transform: capitalize;
+                vertical-align: middle;
             }
         }
 
         .form-300-media {
-            border-radius: 8px;
-            margin-top: 18px;
+            border-radius: 20px;
+            margin-top: 30px;
         }
 
         .form-300-media-note {
-            margin-top: 16px;
+            margin-top: 20px;
         }
 
         .form-300-media-grid {
             display: grid;
             gap: 20px;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            margin-top: 18px;
+            margin-top: 28px;
 
             figure {
                 margin: 0;
