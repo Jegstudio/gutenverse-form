@@ -1,12 +1,20 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useState } from '@wordpress/element';
+import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { applyFilters, hasFilter } from '@wordpress/hooks';
+import { ButtonUpgradePro } from 'gutenverse-core/components';
 import { IconTrashSVG } from 'gutenverse-core/icons';
+import { signal } from 'gutenverse-core/editor-helper';
 
 const chartTop = 32;
 const chartBase = 168;
+const dashboardFilterWaitDelay = 1000;
+const proDashboardContentFilter = 'gutenverse-form.pro-dashboard-content';
 
 const getConfig = () => window?.GutenverseConfig?.formDashboard || {};
+const hasProLicenseData = () => Boolean(window?.gprodata && Object.keys(window.gprodata).length);
+const hasDashboardContentFilter = () => Boolean(hasFilter(proDashboardContentFilter));
+const shouldWaitForDashboardFilters = () => hasProLicenseData() && !hasDashboardContentFilter();
 
 const EmptyNote = ({ children }) => <p className="empty-note">{children}</p>;
 
@@ -27,6 +35,81 @@ const Row = ({ title, meta, actions }) => (
         </div>
         {actions && <div className="dashboard-row__actions">{actions}</div>}
     </div>
+);
+
+const DashboardProBadge = () => <span className="dashboard-pro-badge">{__('Pro', 'gutenverse-form')}</span>;
+
+const strongDescription = (text) => createInterpolateElement(text, {
+    strong: <strong />,
+});
+
+const lockedDashboardPanels = [
+    {
+        title: __('Needs Attention', 'gutenverse-form'),
+        description: strongDescription(__('Database bloat slows you down. <strong>Upgrade to PRO</strong> to instantly spot and purge unused forms to keep your site lean and fast.', 'gutenverse-form')),
+    },
+    {
+        title: __('Top Forms', 'gutenverse-form'),
+        description: strongDescription(__('Stop guessing what works. <strong>PRO</strong> pinpoints the exact pages driving your submissions so you can double down on what makes you money.', 'gutenverse-form')),
+    },
+    {
+        title: __('Top Entry Sources', 'gutenverse-form'),
+        description: strongDescription(__('One form could be carrying your entire site\'s conversions. <strong>Unlock PRO</strong> to find it, optimize it, and replicate its success.', 'gutenverse-form')),
+    },
+    {
+        title: __('Recent Activity', 'gutenverse-form'),
+        description: strongDescription(__('A hot lead just interacted with your site. Did you miss it? <strong>Upgrade to PRO</strong> for real-time tracking so you can strike while the iron is hot.', 'gutenverse-form')),
+    },
+];
+
+const PremiumDashboardCallout = () => (
+    <div className="dashboard-panel dashboard-panel--wide dashboard-panel--premium-callout">
+        <div className="dashboard-premium-callout__content">
+            <DashboardProBadge />
+            <h2>{__('Hidden Data = Lost Revenue.', 'gutenverse-form')}</h2>
+            <p>{strongDescription(__('Free only gives you a basic summary. <strong>Gutenverse PRO</strong> instantly unlocks the exact pages, forms, and traffic sources driving your revenue.', 'gutenverse-form'))}</p>
+        </div>
+        <ButtonUpgradePro
+            isBanner={true}
+            location="form-dashboard"
+            customStyles={{ padding: '10px 14px' }}
+        />
+    </div>
+);
+
+const PremiumDashboardPanel = ({ title, description }) => (
+    <div className="dashboard-panel dashboard-panel--premium">
+        <div className="dashboard-panel__title">
+            <h3>{title}</h3>
+            <DashboardProBadge />
+        </div>
+        <div className="dashboard-premium-panel__body">
+            <span className="dashboard-premium-panel__lock" aria-hidden="true" />
+            <div>
+                <strong>{__('Premium dashboard insight', 'gutenverse-form')}</strong>
+                <span>{description}</span>
+            </div>
+        </div>
+        <div className="dashboard-premium-panel__preview" aria-hidden="true">
+            <span />
+            <span />
+        </div>
+    </div>
+);
+
+const PremiumDashboardPanels = () => (
+    <>
+        <PremiumDashboardCallout />
+        <div className="dashboard-masonry dashboard-masonry--premium-locked">
+            {lockedDashboardPanels.map((panel) => (
+                <PremiumDashboardPanel
+                    key={panel.title}
+                    title={panel.title}
+                    description={panel.description}
+                />
+            ))}
+        </div>
+    </>
 );
 
 const SkeletonLine = ({ className = '' }) => (
@@ -243,6 +326,8 @@ const FormDashboard = () => {
     const [pendingDelete, setPendingDelete] = useState(null);
     const [deleteError, setDeleteError] = useState('');
     const [deleting, setDeleting] = useState(false);
+    const [filtersSettled, setFiltersSettled] = useState(() => !shouldWaitForDashboardFilters());
+    const [dashboardFilterVersion, setDashboardFilterVersion] = useState(0);
 
     useEffect(() => {
         apiFetch({ path: '/gutenverse-form-client/v1/form-action/dashboard' })
@@ -254,6 +339,47 @@ const FormDashboard = () => {
                 setLoadError(error?.message || __('Could not load the form dashboard.', 'gutenverse-form'));
                 setLoading(false);
             });
+    }, []);
+
+    useEffect(() => {
+        let fallbackTimer = null;
+
+        const clearFallbackTimer = () => {
+            if (fallbackTimer) {
+                clearTimeout(fallbackTimer);
+                fallbackTimer = null;
+            }
+        };
+
+        const refreshDashboardFilters = () => {
+            setFiltersSettled(true);
+            setDashboardFilterVersion((current) => current + 1);
+            clearFallbackTimer();
+
+            return true;
+        };
+
+        const settleWhenReady = (allowMissingDashboardFilter = false) => {
+            if (shouldWaitForDashboardFilters() && !allowMissingDashboardFilter) {
+                return false;
+            }
+
+            return refreshDashboardFilters();
+        };
+
+        if (settleWhenReady()) {
+            return;
+        }
+
+        fallbackTimer = setTimeout(() => {
+            setFiltersSettled(true);
+        }, dashboardFilterWaitDelay);
+        const bindDashboard = signal.afterFilterSignal.add(() => settleWhenReady(true));
+
+        return () => {
+            clearFallbackTimer();
+            bindDashboard.detach();
+        };
     }, []);
 
     const deleteUnusedForm = () => {
@@ -299,9 +425,57 @@ const FormDashboard = () => {
         );
     }
 
+    if (!filtersSettled) {
+        return (
+            <div className="gutenverse-form-admin-dashboard is-loading" aria-busy="true">
+                <MigrationNotice />
+                <span className="screen-reader-text">{__('Loading dashboard...', 'gutenverse-form')}</span>
+                <FormDashboardSkeleton />
+            </div>
+        );
+    }
+
     const forms = data?.forms || [];
     const recentForms = data?.recentForms || [];
-    const trend = data?.trendContexts?.[range];
+    const trend = data?.trendContexts?.[range] || data?.trendContexts?.[7];
+    const dashboardFilterProps = {
+        data,
+        forms,
+        recentForms,
+        config,
+        range,
+        setRange,
+        filterVersion: dashboardFilterVersion,
+        components: {
+            Panel,
+            Row,
+            EmptyNote,
+            IconTrashSVG,
+        },
+        actions: {
+            setPendingDelete,
+            setDeleteError,
+        },
+    };
+
+    const rangeToggle = applyFilters(
+        'gutenverse-form.dashboard-range-toggle',
+        <>
+            <button type="button" className="active" onClick={() => setRange('7')}>{__('7 days', 'gutenverse-form')}</button>
+            <button type="button" className="locked" disabled>
+                <span className="dashboard-range-toggle__lock" aria-hidden="true" />
+                {__('30 days', 'gutenverse-form')}
+                <span className="dashboard-range-toggle__badge">{__('Pro', 'gutenverse-form')}</span>
+            </button>
+        </>,
+        dashboardFilterProps
+    );
+
+    const proDashboardContent = applyFilters(
+        proDashboardContentFilter,
+        <PremiumDashboardPanels />,
+        dashboardFilterProps
+    );
 
     return (
         <div className="gutenverse-form-admin-dashboard">
@@ -342,8 +516,7 @@ const FormDashboard = () => {
                                 <div className="dashboard-form-card__meta">{sprintf(__('Daily entries for the last %s days.', 'gutenverse-form'), range)}</div>
                             </div>
                             <div className="dashboard-range-toggle" aria-label={__('Chart date range', 'gutenverse-form')}>
-                                <button type="button" className={range === '7' ? 'active' : ''} onClick={() => setRange('7')}>{__('7 days', 'gutenverse-form')}</button>
-                                <button type="button" className={range === '30' ? 'active' : ''} onClick={() => setRange('30')}>{__('30 days', 'gutenverse-form')}</button>
+                                {rangeToggle}
                             </div>
                         </div>
                         <div className="trend-chart trend-chart--compact">
@@ -351,89 +524,7 @@ const FormDashboard = () => {
                         </div>
                     </div>
 
-                    <div className="dashboard-masonry">
-                        <Panel title={__('Needs Attention', 'gutenverse-form')} className="dashboard-panel--attention">
-                            {data.needsAttention?.length ? data.needsAttention.map((form) => {
-                                const primaryLocation = form.locations?.[0];
-                                return (
-                                    <Row
-                                        key={form.id}
-                                        title={form.title}
-                                        meta={form.attention_reason}
-                                        actions={primaryLocation?.edit_url && <a href={primaryLocation.edit_url}>{__('Edit Post', 'gutenverse-form')}</a>}
-                                    />
-                                );
-                            }) : <EmptyNote>{__('Nothing urgent detected right now.', 'gutenverse-form')}</EmptyNote>}
-                        </Panel>
-
-                        <Panel title={__('Top Entry Sources', 'gutenverse-form')}>
-                            {data.topSources?.length ? data.topSources.map((source) => (
-                                <Row
-                                    key={source.id}
-                                    title={source.title}
-                                    meta={sprintf(__('%1$s entries • %2$s', 'gutenverse-form'), source.count, source.type)}
-                                    actions={source.edit_url && <a href={source.edit_url}>{__('Edit', 'gutenverse-form')}</a>}
-                                />
-                            )) : <EmptyNote>{__('Entry source data will appear after submissions are linked to posts or pages.', 'gutenverse-form')}</EmptyNote>}
-                        </Panel>
-
-                        {!!data.unusedForms?.length && (
-                            <Panel title={__('Unused Form Actions', 'gutenverse-form')}>
-                                {data.unusedForms.map((form) => (
-                                    <Row
-                                        key={form.id}
-                                        title={form.title}
-                                        meta={sprintf(__('No live location • Updated %s', 'gutenverse-form'), form.modified)}
-                                        actions={(
-                                            <>
-                                                <span className="status-badge">{__('No live post', 'gutenverse-form')}</span>
-                                                <button
-                                                    type="button"
-                                                    className="dashboard-row-delete"
-                                                    aria-label={__('Delete unused form action', 'gutenverse-form')}
-                                                    title={__('Delete unused form action', 'gutenverse-form')}
-                                                    onClick={() => {
-                                                        setPendingDelete(form);
-                                                        setDeleteError('');
-                                                    }}
-                                                >
-                                                    <IconTrashSVG size={16} aria-hidden="true" focusable="false" />
-                                                </button>
-                                            </>
-                                        )}
-                                    />
-                                ))}
-                            </Panel>
-                        )}
-
-                        <Panel title={__('Top Forms', 'gutenverse-form')}>
-                            {(data.formsByEntries || []).slice(0, 3).map((form) => {
-                                const primaryLocation = form.locations?.[0];
-                                return (
-                                    <Row
-                                        key={form.id}
-                                        title={form.title}
-                                        meta={sprintf(__('%1$s total • %2$s this week', 'gutenverse-form'), form.total_entries, form.entries_last_week)}
-                                        actions={primaryLocation?.edit_url && <a href={primaryLocation.edit_url}>{__('Edit', 'gutenverse-form')}</a>}
-                                    />
-                                );
-                            })}
-                        </Panel>
-
-                        <Panel title={__('Recent Activity', 'gutenverse-form')}>
-                            {recentForms.length ? recentForms.map((form) => {
-                                const primaryLocation = form.locations?.[0];
-                                return (
-                                    <Row
-                                        key={form.id}
-                                        title={form.title}
-                                        meta={sprintf(__('Last entry: %s', 'gutenverse-form'), form.last_entry_date)}
-                                        actions={primaryLocation?.edit_url && <a href={primaryLocation.edit_url}>{__('Edit', 'gutenverse-form')}</a>}
-                                    />
-                                );
-                            }) : <EmptyNote>{__('No recent entry activity yet.', 'gutenverse-form')}</EmptyNote>}
-                        </Panel>
-                    </div>
+                    {proDashboardContent}
                 </div>
             )}
 

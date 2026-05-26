@@ -37,6 +37,184 @@
         }
     }
 
+    .gutenverse.form-300 {
+        .upgrade-notice-head {
+            height: auto;
+            margin-top: 32px;
+
+            > div {
+                background: transparent;
+                border-radius: 12px;
+                height: auto;
+                max-width: 1000px;
+                min-height: 148px;
+                width: calc(100% - 30px);
+
+                &::before {
+                    display: none;
+                }
+            }
+        }
+
+        .form-300-header {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+            padding: 42px 24px;
+            position: relative;
+        }
+
+        .form-300-header-background {
+            height: 100%;
+            inset: 0;
+            margin: 0;
+            object-fit: cover;
+            position: absolute;
+            width: 100%;
+        }
+
+        .upgrade-notice-head .upgrade-notice-title {
+            color: #011627;
+            font-family: "Roboto", serif;
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 0;
+            line-height: 1.2;
+            margin: 0;
+            position: relative;
+            text-align: center;
+            z-index: 1;
+
+            span {
+                background: -webkit-linear-gradient(45deg, #15adf7, #3b57f7);
+                background-clip: text;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+
+        .upgrade-notice-body {
+            padding-top: 26px;
+
+            > div {
+                max-width: 1000px;
+            }
+        }
+
+        .form-300-content {
+            padding-bottom: 80px;
+
+            p {
+                color: #011627;
+                font-family: "Roboto", serif;
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 1.7;
+                margin: 0;
+            }
+
+            img {
+                display: block;
+                margin: 0;
+                width: 100%;
+            }
+        }
+
+        .form-300-callout {
+            background: #effbf7;
+            border-radius: 8px;
+            padding: 16px 18px;
+
+            strong {
+                align-items: center;
+                color: #011627;
+                display: flex;
+                font-size: 18px;
+                font-weight: 700;
+                gap: 8px;
+                line-height: 1.4;
+                margin-bottom: 6px;
+
+                &::before {
+                    background: #68dbcf;
+                    border-radius: 4px;
+                    color: #fff;
+                    content: "+";
+                    display: inline-flex;
+                    font-size: 12px;
+                    font-weight: 700;
+                    height: 20px;
+                    align-items: center;
+                    justify-content: center;
+                    line-height: 1;
+                    width: 20px;
+                }
+            }
+        }
+
+        .form-300-section {
+            margin-top: 38px;
+        }
+
+        .form-300-section-title {
+            align-items: center;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+
+            img {
+                border-radius: 4px;
+                flex: 0 0 28px;
+                height: 28px;
+                margin: 0;
+                width: 28px;
+            }
+
+            h2 {
+                color: #011627;
+                font-family: "Roboto", serif;
+                font-size: 22px;
+                font-weight: 700;
+                line-height: 1.35;
+                margin: 0;
+            }
+        }
+
+        .form-300-media {
+            border-radius: 8px;
+            margin-top: 18px;
+        }
+
+        .form-300-media-note {
+            margin-top: 16px;
+        }
+
+        .form-300-media-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            margin-top: 18px;
+
+            figure {
+                margin: 0;
+            }
+
+            .form-300-media {
+                margin-top: 0;
+            }
+
+            figcaption {
+                color: #011627;
+                font-size: 12px;
+                font-style: normal;
+                line-height: 1.4;
+                margin-top: 10px;
+                text-align: center;
+            }
+        }
+    }
+
     .gutenverse-form-dashboard-page {
         display: grid;
         gap: 18px;
@@ -252,6 +430,36 @@
     }
 
     @media (max-width: 782px) {
+        .gutenverse.form-300 {
+            .upgrade-notice-head {
+                margin-top: 20px;
+
+                > div {
+                    min-height: 120px;
+                }
+            }
+
+            .form-300-header {
+                padding: 32px 18px;
+            }
+
+            .upgrade-notice-head .upgrade-notice-title {
+                font-size: 24px;
+            }
+
+            .upgrade-notice-body {
+                padding-top: 20px;
+            }
+
+            .form-300-section {
+                margin-top: 30px;
+            }
+
+            .form-300-media-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .gutenverse-form-dashboard-page-hero,
         .card-header,
         .location-row {

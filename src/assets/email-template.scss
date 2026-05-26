@@ -1,4 +1,5 @@
 @import "grapesjs/dist/css/grapes.min";
+@import "gutenverse-core/src/assets/pro";
 
 /* Full Screen Overrides for Gutenverse Email Builder */
 .post-type-gutenverse-email-tpl.post-php,
@@ -349,6 +350,119 @@
 
         .components-button.is-primary {
             min-width: 72px;
+        }
+
+        .button-upgrade-pro,
+        .upgrade-button {
+            align-items: center;
+            background: #2563eb;
+            border: 0;
+            border-radius: 3px;
+            box-shadow: none;
+            box-sizing: border-box;
+            color: #fff !important;
+            cursor: pointer;
+            display: inline-flex;
+            font-size: 13px;
+            font-weight: 600;
+            gap: 8px;
+            height: 36px;
+            justify-content: center;
+            line-height: 1;
+            min-width: 120px;
+            padding: 0 16px;
+            text-decoration: none;
+            transition: background-color 0.15s ease, box-shadow 0.15s ease;
+            white-space: nowrap;
+
+            &:hover,
+            &:focus {
+                background: #1d4ed8;
+                color: #fff !important;
+                text-decoration: none;
+            }
+
+            &:focus {
+                box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(37, 99, 235, 0.35);
+                outline: none;
+            }
+
+            svg {
+                display: block;
+                flex: 0 0 auto;
+                height: 14px;
+                width: 14px;
+            }
+        }
+
+        .email-template-save-lock {
+            align-items: center;
+            display: inline-flex;
+            position: relative;
+
+            &__tooltip {
+                align-items: center;
+                background: #111827;
+                border: 1px solid #1f2937;
+                border-radius: 5px;
+                box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22);
+                box-sizing: border-box;
+                color: #fff;
+                display: flex;
+                font-size: 13px;
+                font-weight: 600;
+                gap: 10px;
+                line-height: 1.4;
+                max-width: 320px;
+                min-width: 270px;
+                padding: 12px 14px;
+                position: absolute;
+                right: 0;
+                top: calc(100% + 14px);
+                z-index: 1000001;
+
+                &::before {
+                    background: #111827;
+                    border-left: 1px solid #1f2937;
+                    border-top: 1px solid #1f2937;
+                    content: "";
+                    height: 12px;
+                    position: absolute;
+                    right: 24px;
+                    top: -7px;
+                    transform: rotate(45deg);
+                    width: 12px;
+                }
+
+                span {
+                    flex: 1 1 auto;
+                }
+
+                button {
+                    align-items: center;
+                    background: transparent;
+                    border: 0;
+                    box-shadow: none;
+                    color: #d1d5db;
+                    cursor: pointer;
+                    display: inline-flex;
+                    flex: 0 0 auto;
+                    font-size: 16px;
+                    font-weight: 600;
+                    height: 24px;
+                    justify-content: center;
+                    line-height: 1;
+                    margin: -4px -4px -4px 0;
+                    padding: 0;
+                    width: 24px;
+
+                    &:hover,
+                    &:focus {
+                        color: #fff;
+                        outline: none;
+                    }
+                }
+            }
         }
     }
 }
