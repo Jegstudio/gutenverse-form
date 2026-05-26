@@ -44,6 +44,7 @@ class Form {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'post_type' ), 9 );
+		add_action( 'load-edit.php', array( $this, 'prepare_admin_list_screen' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ), 99 );
 		add_action( 'admin_footer', array( $this, 'admin_footer' ) );
 		add_action( 'admin_menu', array( $this, 'parent_menu' ) );
@@ -115,6 +116,23 @@ class Form {
 			<div id="gutenverse-form-dashboard"></div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Prepare Form admin list screen routing.
+	 */
+	public function prepare_admin_list_screen() {
+		$post_type = 'post';
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( isset( $_GET['post_type'] ) && is_scalar( $_GET['post_type'] ) ) {
+			$post_type = sanitize_key( wp_unslash( $_GET['post_type'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
+		if ( in_array( $post_type, array( self::POST_TYPE, Email_Template::POST_TYPE ), true ) ) {
+			wp_safe_redirect( admin_url( 'admin.php?page=' . self::POST_TYPE ) );
+			exit;
+		}
 	}
 
 	/**
@@ -1056,7 +1074,7 @@ class Form {
 		$ignored_types = array(
 			self::POST_TYPE,
 			Entries::POST_TYPE,
-			'gutenverse-email-tpl',
+			Email_Template::POST_TYPE,
 			'attachment',
 			'revision',
 			'nav_menu_item',
@@ -1230,7 +1248,7 @@ class Form {
 		$ignored_types = array(
 			self::POST_TYPE,
 			Entries::POST_TYPE,
-			'gutenverse-email-tpl',
+			Email_Template::POST_TYPE,
 			'attachment',
 			'revision',
 			'nav_menu_item',
@@ -1628,7 +1646,7 @@ class Form {
 		$user_tpl_id  = isset( $params['user_email_template'] ) ? (int) $params['user_email_template'] : 0;
 		$admin_tpl_id = isset( $params['admin_email_template'] ) ? (int) $params['admin_email_template'] : 0;
 
-		if ( $user_tpl_id && 'gutenverse-email-tpl' === get_post_type( $user_tpl_id ) ) {
+		if ( $user_tpl_id && Email_Template::POST_TYPE === get_post_type( $user_tpl_id ) ) {
 			wp_update_post(
 				array(
 					'ID'         => $user_tpl_id,
@@ -1637,7 +1655,7 @@ class Form {
 			);
 		}
 
-		if ( $admin_tpl_id && 'gutenverse-email-tpl' === get_post_type( $admin_tpl_id ) ) {
+		if ( $admin_tpl_id && Email_Template::POST_TYPE === get_post_type( $admin_tpl_id ) ) {
 			wp_update_post(
 				array(
 					'ID'         => $admin_tpl_id,
