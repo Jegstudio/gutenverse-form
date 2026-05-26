@@ -103,7 +103,7 @@ class Dashboard {
 			'name'           => GUTENVERSE_FORM_NAME,
 			'version'        => GUTENVERSE_FORM_VERSION,
 			'currentNotice'  => GUTENVERSE_FORM_NOTICE_VERSION,
-			'noticeVersions' => array( '1.0.0' ),
+			'noticeVersions' => array( '3.0.0', '1.0.0' ),
 		);
 
 		return $config;

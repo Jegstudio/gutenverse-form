@@ -16,7 +16,7 @@ use Gutenverse_Form\Init;
 
 defined( 'GUTENVERSE_FORM' ) || define( 'GUTENVERSE_FORM', 'gutenverse-form' );
 defined( 'GUTENVERSE_FORM_VERSION' ) || define( 'GUTENVERSE_FORM_VERSION', '3.0.0-overhaul' );
-defined( 'GUTENVERSE_FORM_NOTICE_VERSION' ) || define( 'GUTENVERSE_FORM_NOTICE_VERSION', '1.0.0' );
+defined( 'GUTENVERSE_FORM_NOTICE_VERSION' ) || define( 'GUTENVERSE_FORM_NOTICE_VERSION', '3.0.0' );
 defined( 'GUTENVERSE_FORM_NAME' ) || define( 'GUTENVERSE_FORM_NAME', 'Gutenverse Form' );
 defined( 'GUTENVERSE_FORM_URL' ) || define( 'GUTENVERSE_FORM_URL', plugins_url( GUTENVERSE_FORM ) );
 defined( 'GUTENVERSE_FORM_PLUGIN_URL' ) || define( 'GUTENVERSE_FORM_PLUGIN_URL', plugins_url( GUTENVERSE_FORM ) );
