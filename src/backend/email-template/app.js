@@ -623,6 +623,7 @@ const App = () => {
     const [isMediaUploading, setIsMediaUploading] = useState(false);
     const [isBlocksSidebarCollapsed, setIsBlocksSidebarCollapsed] = useState(false);
     const [isSettingsSidebarCollapsed, setIsSettingsSidebarCollapsed] = useState(false);
+    const [isSaveLockTooltipVisible, setIsSaveLockTooltipVisible] = useState(true);
     const canSaveTemplate = hasActiveProLicense();
     const [emailTemplateSaveButtonFilterReady, setEmailTemplateSaveButtonFilterReady] = useState(() => hasEmailTemplateSaveButtonFilter());
 
@@ -1185,6 +1186,9 @@ const App = () => {
     const upgradeProUrl = window?.gutenverseEmailTemplate?.upgradeProUrl || window?.GutenverseConfig?.upgradeProUrl;
     const upgradeButtonText = hasProPlugin ? __('Activate License', 'gutenverse-form') : __('Upgrade to PRO', 'gutenverse-form');
     const upgradeButtonUrl = hasProPlugin ? licenseUrl : upgradeProUrl;
+    const saveLockTooltipText = hasProPlugin
+        ? __('Don\'t lose your template changes. Activate your license to save this email template.', 'gutenverse-form')
+        : __('Don\'t lose your template changes. Upgrade to PRO to save this email template.', 'gutenverse-form');
     const saveButton = (
         <Button type="button" isPrimary isBusy={isSaving} disabled={!isLoaded || isSaving || !isDirty || templateState.isReadOnly} onClick={saveDesign}>
             {isSaving ? __('Saving...', 'gutenverse-form') : __('Save', 'gutenverse-form')}
@@ -1215,7 +1219,21 @@ const App = () => {
         }
     );
     const emailTemplateSaveButton = canSaveTemplate ? saveButton : (
-        filteredUpgradeButton || upgradeButtonFallback
+        <div className="email-template-save-lock">
+            {isDirty && isSaveLockTooltipVisible && (
+                <div className="email-template-save-lock__tooltip" role="status">
+                    <span>{saveLockTooltipText}</span>
+                    <button
+                        type="button"
+                        aria-label={__('Dismiss save notice', 'gutenverse-form')}
+                        onClick={() => setIsSaveLockTooltipVisible(false)}
+                    >
+                        x
+                    </button>
+                </div>
+            )}
+            {filteredUpgradeButton || upgradeButtonFallback}
+        </div>
     );
 
     return (

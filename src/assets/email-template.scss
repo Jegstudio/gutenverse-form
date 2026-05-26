@@ -394,6 +394,76 @@
                 width: 14px;
             }
         }
+
+        .email-template-save-lock {
+            align-items: center;
+            display: inline-flex;
+            position: relative;
+
+            &__tooltip {
+                align-items: center;
+                background: #111827;
+                border: 1px solid #1f2937;
+                border-radius: 5px;
+                box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22);
+                box-sizing: border-box;
+                color: #fff;
+                display: flex;
+                font-size: 13px;
+                font-weight: 600;
+                gap: 10px;
+                line-height: 1.4;
+                max-width: 320px;
+                min-width: 270px;
+                padding: 12px 14px;
+                position: absolute;
+                right: 0;
+                top: calc(100% + 14px);
+                z-index: 1000001;
+
+                &::before {
+                    background: #111827;
+                    border-left: 1px solid #1f2937;
+                    border-top: 1px solid #1f2937;
+                    content: "";
+                    height: 12px;
+                    position: absolute;
+                    right: 24px;
+                    top: -7px;
+                    transform: rotate(45deg);
+                    width: 12px;
+                }
+
+                span {
+                    flex: 1 1 auto;
+                }
+
+                button {
+                    align-items: center;
+                    background: transparent;
+                    border: 0;
+                    box-shadow: none;
+                    color: #d1d5db;
+                    cursor: pointer;
+                    display: inline-flex;
+                    flex: 0 0 auto;
+                    font-size: 16px;
+                    font-weight: 600;
+                    height: 24px;
+                    justify-content: center;
+                    line-height: 1;
+                    margin: -4px -4px -4px 0;
+                    padding: 0;
+                    width: 24px;
+
+                    &:hover,
+                    &:focus {
+                        color: #fff;
+                        outline: none;
+                    }
+                }
+            }
+        }
     }
 }
 
