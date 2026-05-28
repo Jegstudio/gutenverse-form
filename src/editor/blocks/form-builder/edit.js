@@ -657,7 +657,6 @@ const FormBuilderBlock = compose(
                     setAttributes={props.setAttributes}
                     compact
                     showEntriesLink
-                    showNotice={false}
                 />
             </div>
         </InspectorControls>

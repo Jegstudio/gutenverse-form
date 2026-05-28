@@ -1989,7 +1989,10 @@
 }
 
 .components-modal__frame.gutenverse-form-builder-modal {
-    
+    width: 800px !important;
+    height: calc(100% - 60px) !important;
+    max-height: 85% !important;
+
     .components-modal__header {
         border-bottom: 1px solid #eee;
     }

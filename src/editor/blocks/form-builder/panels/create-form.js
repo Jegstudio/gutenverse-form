@@ -164,7 +164,7 @@ export const CreateForm = (props) => {
                 [id]: value
             };
 
-            if (templatePersistFields.includes(id) && attributes.formId?.value) {
+            if (isEditing && templatePersistFields.includes(id) && attributes.formId?.value) {
                 persistExistingFormAction(nextValues);
             }
 
@@ -192,7 +192,6 @@ export const CreateForm = (props) => {
     };
 
     const createLocalFormAction = () => {
-        setIsFormActionMissing(false);
         openCreateModal();
     };
 
@@ -470,7 +469,6 @@ export const CreateForm = (props) => {
                     title={isEditing ? __('Edit Form Action', 'gutenverse-form') : __('Create New Form Action', 'gutenverse-form')}
                     onRequestClose={() => setOpen(false)}
                     className="gutenverse-form-builder-modal"
-                    style={{ width: '800px', maxHeight: 'calc(100% - 60px)!important' }}
                 >
                     <div className="gutenverse-form-modal-content">
                         {error && <div className="gutenverse-form-action-error modal-error">{error}</div>}
@@ -485,7 +483,7 @@ export const CreateForm = (props) => {
                                 updateValue={updateValue}
                                 isEditor={true}
                                 clientId={clientId}
-                                formActionId={attributes.formId?.value}
+                                formActionId={isEditing ? attributes.formId?.value : ''}
                             />
                         )}
                     </div>
