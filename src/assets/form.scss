@@ -466,8 +466,7 @@
         }
 
         &.control-text,
-        &.control-number,
-        &.control-search-select {
+        &.control-number {
             input {
                 border: 1px solid #e6e6ef;
                 border-radius: 3px;
@@ -590,6 +589,36 @@
             .async-select__control {
                 border: 1px solid #e6e6ef;
                 border-radius: 3px;
+            }
+
+            .async-select__input,
+            .async-select__input-container {
+                margin: 0;
+                padding: 0;
+            }
+
+            .async-select__input,
+            .async-select__input:focus,
+            .async-select__input:focus-visible,
+            .async-select__input input,
+            .async-select__input input:focus,
+            .async-select__input input:focus-visible,
+            .async-select__input-container input,
+            .async-select__input-container input:focus,
+            .async-select__input-container input:focus-visible,
+            input[aria-autocomplete="list"],
+            input[aria-autocomplete="list"]:focus,
+            input[aria-autocomplete="list"]:focus-visible {
+                background: transparent !important;
+                border: 0 !important;
+                box-shadow: none !important;
+                color: inherit;
+                line-height: normal;
+                margin: 0 !important;
+                min-height: 0 !important;
+                outline: 0 !important;
+                padding: 0 !important;
+                width: auto !important;
             }
 
             .select-search {
