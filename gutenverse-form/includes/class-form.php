@@ -87,7 +87,8 @@ class Form {
 			esc_html__( 'Entries', 'gutenverse-form' ),
 			esc_html__( 'Entries', 'gutenverse-form' ),
 			'manage_options',
-			'edit.php?post_type=' . Entries::POST_TYPE
+			Entries::PAGE_SLUG,
+			array( Init::instance()->entries, 'render_entry_list_page' )
 		);
 
 		add_submenu_page(
@@ -127,6 +128,21 @@ class Form {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		if ( isset( $_GET['post_type'] ) && is_scalar( $_GET['post_type'] ) ) {
 			$post_type = sanitize_key( wp_unslash( $_GET['post_type'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
+		if ( Entries::POST_TYPE === $post_type ) {
+			$args = array();
+
+			if ( isset( $_GET['form_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$args['form_id'] = absint( $_GET['form_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			}
+
+			if ( isset( $_GET['m'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$args['month'] = sanitize_text_field( wp_unslash( $_GET['m'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			}
+
+			wp_safe_redirect( Entries::get_admin_page_url( $args ) );
+			exit;
 		}
 
 		if ( in_array( $post_type, array( self::POST_TYPE, Email_Template::POST_TYPE ), true ) ) {
@@ -214,7 +230,7 @@ class Form {
 	public function custom_column( $column, $post_id ) {
 		if ( 'form_entries' === $column ) {
 			$total_entries = Entries::get_total_entries( $post_id );
-			$form_link     = admin_url( 'edit.php?post_type=' . Entries::POST_TYPE ) . '&form_id=' . $post_id;
+			$form_link     = Entries::get_admin_page_url( array( 'form_id' => $post_id ) );
 			$export_link   = rest_url( '/gutenverse-form-client/v1/form-action/export/' . $post_id . '?_wpnonce=' . wp_create_nonce( 'wp_rest' ) );
 			$dashboard_url = admin_url( 'admin.php?page=' . self::POST_TYPE );
 			$dashboard_ref = '<a href="' . esc_url( $dashboard_url ) . '">' . esc_html__( 'Dashboard', 'gutenverse-form' ) . '</a>';
@@ -247,7 +263,9 @@ class Form {
 	public function enqueue_script() {
 		$screen = get_current_screen();
 
-		if ( self::POST_TYPE === $screen->post_type || ( isset( $_GET['page'] ) && self::POST_TYPE === $_GET['page'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( self::POST_TYPE === $screen->post_type || in_array( $page, array( self::POST_TYPE, Entries::PAGE_SLUG ), true ) ) {
 			$include = ( include GUTENVERSE_FORM_DIR . '/lib/dependencies/form.asset.php' )['dependencies'];
 
 			wp_register_script(
@@ -286,11 +304,12 @@ class Form {
 		$config['hideFormProNotice'] = get_option( 'gutenverse_form_pro_notice' );
 		$config['placeholders']      = Placeholder::get_available_placeholders();
 		$config['formDashboard']     = array(
-			'entriesUrl'                  => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE ),
+			'entriesUrl'                  => Entries::get_admin_page_url(),
 			'migrationNoticeHidden'       => (bool) get_option( 'gutenverse_form_action_migration_notice' ),
 			'migrationNoticeDismissNonce' => wp_create_nonce( 'gutenverse_form_action_migration_notice_close' ),
 			'formActionRestBase'          => rest_url( '/gutenverse-form-client/v1/form-action/' ),
 		);
+		$config['entryList']         = Entries::get_entry_list_config( $config );
 
 		return $config;
 	}
@@ -432,7 +451,7 @@ class Form {
 			'created'              => get_the_date( '', $post ),
 			'modified'             => get_the_modified_date( '', $post ),
 			'edit_url'             => get_edit_post_link( $id, 'raw' ),
-			'entries_url'          => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE . '&form_id=' . $id ),
+			'entries_url'          => Entries::get_admin_page_url( array( 'form_id' => $id ) ),
 			'export_url'           => rest_url( '/gutenverse-form-client/v1/form-action/export/' . $id . '?_wpnonce=' . wp_create_nonce( 'wp_rest' ) ),
 			'total_entries'        => (int) $entry_stats['total_entries'],
 			'entries_last_week'    => (int) $entry_stats['entries_last_week'],

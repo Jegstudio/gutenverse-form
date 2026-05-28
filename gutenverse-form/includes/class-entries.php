@@ -23,10 +23,25 @@ class Entries {
 	const POST_TYPE = 'gutenverse-entries';
 
 	/**
+	 * React entry list admin page slug.
+	 *
+	 * @var string
+	 */
+	const PAGE_SLUG = 'gutenverse-form-entries';
+
+	/**
+	 * Free entry list limit.
+	 *
+	 * @var int
+	 */
+	const FREE_ENTRY_LIMIT = 10;
+
+	/**
 	 * Init constructor.
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'post_type' ), 9 );
+		add_action( 'load-post.php', array( $this, 'protect_entry_detail_screen' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ) );
 		add_action( 'admin_notices', array( $this, 'form_action_migration_notice' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
@@ -44,6 +59,97 @@ class Entries {
 
 		add_action( 'wp_ajax_gutenverse_form_retrigger_integration', array( $this, 'retrigger_integration' ) );
 		add_action( 'admin_footer', array( $this, 'admin_footer_scripts' ) );
+	}
+
+	/**
+	 * Get the React entry list admin URL.
+	 *
+	 * @param array $args Optional query args.
+	 *
+	 * @return string
+	 */
+	public static function get_admin_page_url( $args = array() ) {
+		return add_query_arg(
+			array_merge(
+				array(
+					'page' => self::PAGE_SLUG,
+				),
+				$args
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+	/**
+	 * Render the React entry list page.
+	 */
+	public function render_entry_list_page() {
+		?>
+		<div class="wrap">
+			<div id="gutenverse-form-entry-list"></div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Check whether Gutenverse PRO is active.
+	 *
+	 * @return bool
+	 */
+	private static function has_pro_plugin() {
+		return function_exists( 'gutenverse_pro_active' ) && gutenverse_pro_active();
+	}
+
+	/**
+	 * Get entry list capability flags.
+	 *
+	 * @return array
+	 */
+	public static function get_entry_list_capabilities() {
+		$has_license  = self::has_pro_plugin() && ! empty( get_option( 'gutenverse-license', '' ) );
+		$capabilities = array(
+			'viewAll'      => $has_license,
+			'export'       => $has_license,
+			'filter'       => $has_license,
+			'olderDetails' => $has_license,
+		);
+
+		$capabilities['viewAll']      = (bool) apply_filters( 'gutenverse_form_entry_list_can_view_all', $capabilities['viewAll'], $has_license );
+		$capabilities['export']       = (bool) apply_filters( 'gutenverse_form_entry_list_can_export', $capabilities['export'], $has_license );
+		$capabilities['filter']       = (bool) apply_filters( 'gutenverse_form_entry_list_can_filter', $capabilities['filter'], $has_license );
+		$capabilities['olderDetails'] = (bool) apply_filters( 'gutenverse_form_entry_list_can_view_older_details', $capabilities['olderDetails'], $has_license );
+
+		$capabilities = wp_parse_args(
+			apply_filters( 'gutenverse_form_entry_list_capabilities', $capabilities, $has_license ),
+			array(
+				'viewAll'      => false,
+				'export'       => false,
+				'filter'       => false,
+				'olderDetails' => false,
+			)
+		);
+
+		return array_map( 'boolval', $capabilities );
+	}
+
+	/**
+	 * Get JS config for the entry list.
+	 *
+	 * @param array $config Existing Gutenverse config.
+	 *
+	 * @return array
+	 */
+	public static function get_entry_list_config( $config = array() ) {
+		return array(
+			'apiPath'       => '/gutenverse-form-client/v1/entries',
+			'exportUrl'     => add_query_arg( '_wpnonce', wp_create_nonce( 'wp_rest' ), rest_url( '/gutenverse-form-client/v1/entries/export' ) ),
+			'limit'         => self::FREE_ENTRY_LIMIT,
+			'pageUrl'       => self::get_admin_page_url(),
+			'nativeListUrl' => admin_url( 'edit.php?post_type=' . self::POST_TYPE ),
+			'licenseUrl'    => admin_url( 'admin.php?page=gutenverse&path=license' ),
+			'upgradeProUrl' => isset( $config['upgradeProUrl'] ) ? $config['upgradeProUrl'] : '',
+			'capabilities'  => self::get_entry_list_capabilities(),
+		);
 	}
 
 	/**
@@ -240,7 +346,11 @@ class Entries {
 	 */
 	private static function get_form_list() {
 		$args = array(
-			'post_type' => Form::POST_TYPE,
+			'post_type'      => Form::POST_TYPE,
+			'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
+			'posts_per_page' => -1,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
 		);
 
 		wp_reset_postdata();
@@ -248,6 +358,312 @@ class Entries {
 		wp_reset_postdata();
 
 		return $posts;
+	}
+
+	/**
+	 * Get form options for the React entry list filter.
+	 *
+	 * @return array
+	 */
+	private static function get_form_options() {
+		$forms = array();
+
+		foreach ( self::get_form_list() as $form ) {
+			$forms[] = array(
+				'id'    => (int) $form->ID,
+				'title' => get_the_title( $form ),
+			);
+		}
+
+		return $forms;
+	}
+
+	/**
+	 * Get latest entry IDs available to free users.
+	 *
+	 * @return array
+	 */
+	private static function get_limited_entry_ids() {
+		$ids = get_posts(
+			array(
+				'post_type'              => self::POST_TYPE,
+				'post_status'            => array( 'publish' ),
+				'posts_per_page'         => self::FREE_ENTRY_LIMIT,
+				'orderby'                => 'date',
+				'order'                  => 'DESC',
+				'fields'                 => 'ids',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+
+		return array_map( 'intval', $ids );
+	}
+
+	/**
+	 * Check if an entry detail is available.
+	 *
+	 * @param int $entry_id Entry ID.
+	 *
+	 * @return bool
+	 */
+	public static function can_view_entry_detail( $entry_id ) {
+		$capabilities = self::get_entry_list_capabilities();
+
+		if ( ! empty( $capabilities['olderDetails'] ) ) {
+			return true;
+		}
+
+		return in_array( (int) $entry_id, self::get_limited_entry_ids(), true );
+	}
+
+	/**
+	 * Redirect free users away from older entry detail URLs.
+	 */
+	public function protect_entry_detail_screen() {
+		$entry_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$action   = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'edit'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( ! $entry_id || 'edit' !== $action || self::POST_TYPE !== get_post_type( $entry_id ) ) {
+			return;
+		}
+
+		if ( self::can_view_entry_detail( $entry_id ) ) {
+			return;
+		}
+
+		wp_safe_redirect(
+			self::get_admin_page_url(
+				array(
+					'entry_access' => 'locked',
+				)
+			)
+		);
+		exit;
+	}
+
+	/**
+	 * Build entry list query args.
+	 *
+	 * @param \WP_REST_Request $request REST request.
+	 * @param array            $capabilities Entry list capabilities.
+	 * @param bool             $export Whether this query is for export.
+	 *
+	 * @return array
+	 */
+	private static function get_entry_query_args( $request, $capabilities, $export = false ) {
+		$view     = sanitize_key( (string) $request->get_param( 'view' ) );
+		$view_all = ! empty( $capabilities['viewAll'] ) && 'all' === $view;
+		$per_page = $view_all ? absint( $request->get_param( 'per_page' ) ) : self::FREE_ENTRY_LIMIT;
+		$per_page = $per_page ? min( $per_page, 100 ) : 20;
+		$page     = $view_all ? max( 1, absint( $request->get_param( 'page' ) ) ) : 1;
+
+		if ( $export ) {
+			$view_all = true;
+			$per_page = -1;
+			$page     = 1;
+		}
+
+		$args = array(
+			'post_type'      => self::POST_TYPE,
+			'post_status'    => array( 'publish' ),
+			'posts_per_page' => $per_page,
+			'paged'          => $page,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+		);
+
+		if ( ! empty( $capabilities['filter'] ) && $view_all ) {
+			$form_id = absint( $request->get_param( 'form_id' ) );
+			$month   = sanitize_text_field( (string) $request->get_param( 'month' ) );
+			$search  = sanitize_text_field( (string) $request->get_param( 'search' ) );
+
+			if ( $form_id ) {
+				$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					array(
+						'key'     => 'form-id',
+						'compare' => '=',
+						'value'   => $form_id,
+					),
+				);
+			}
+
+			if ( preg_match( '/^\d{4}-\d{2}$/', $month ) ) {
+				$args['year']     = (int) substr( $month, 0, 4 );
+				$args['monthnum'] = (int) substr( $month, 5, 2 );
+			}
+
+			if ( '' !== $search ) {
+				$args['s'] = $search;
+			}
+		}
+
+		return apply_filters( 'gutenverse_form_entry_list_query_args', $args, $request, $capabilities, $export );
+	}
+
+	/**
+	 * Normalize an entry value to plain text.
+	 *
+	 * @param mixed $value Entry value.
+	 *
+	 * @return string
+	 */
+	private static function entry_value_text( $value ) {
+		if ( is_array( $value ) ) {
+			return implode( ', ', array_map( 'strval', $value ) );
+		}
+
+		return (string) $value;
+	}
+
+	/**
+	 * Prepare one entry for the React list.
+	 *
+	 * @param \WP_Post $post Entry post.
+	 *
+	 * @return array
+	 */
+	private static function prepare_entry_for_list( $post ) {
+		$form_id       = (int) get_post_meta( $post->ID, 'form-id', true );
+		$ref_id        = (int) get_post_meta( $post->ID, 'post-id', true );
+		$entry_data    = get_post_meta( $post->ID, 'entry-data', true );
+		$entry_data    = is_array( $entry_data ) ? $entry_data : array();
+		$preview       = array();
+		$detail_access = self::can_view_entry_detail( $post->ID );
+
+		foreach ( array_slice( $entry_data, 0, 3 ) as $item ) {
+			$preview[] = array(
+				'id'    => isset( $item['id'] ) ? (string) $item['id'] : '',
+				'value' => self::entry_value_text( isset( $item['value'] ) ? $item['value'] : '' ),
+			);
+		}
+
+		return array(
+			'id'              => (int) $post->ID,
+			'title'           => get_the_title( $post ),
+			'date'            => get_the_date( '', $post ),
+			'dateGmt'         => get_gmt_from_date( $post->post_date ),
+			'formId'          => $form_id,
+			'formTitle'       => $form_id ? get_the_title( $form_id ) : __( 'No form', 'gutenverse-form' ),
+			'referralId'      => $ref_id,
+			'referralTitle'   => $ref_id ? get_the_title( $ref_id ) : __( 'No referral', 'gutenverse-form' ),
+			'referralUrl'     => $ref_id ? get_permalink( $ref_id ) : '',
+			'fieldsCount'     => count( $entry_data ),
+			'preview'         => $preview,
+			'canViewDetail'   => $detail_access,
+			'detailUrl'       => $detail_access ? admin_url( 'post.php?post=' . (int) $post->ID . '&action=edit' ) : '',
+			'lockedDetail'    => ! $detail_access,
+		);
+	}
+
+	/**
+	 * Get entries for the React admin list.
+	 *
+	 * @param \WP_REST_Request $request REST request.
+	 *
+	 * @return array
+	 */
+	public static function get_entries_for_admin( $request ) {
+		$capabilities = self::get_entry_list_capabilities();
+		$args         = self::get_entry_query_args( $request, $capabilities );
+		$query        = new \WP_Query( $args );
+		$entries      = array();
+
+		foreach ( $query->posts as $post ) {
+			$entries[] = self::prepare_entry_for_list( $post );
+		}
+
+		wp_reset_postdata();
+
+		$view = sanitize_key( (string) $request->get_param( 'view' ) );
+
+		return array(
+			'entries'      => $entries,
+			'total'        => (int) $query->found_posts,
+			'totalPages'   => (int) $query->max_num_pages,
+			'page'         => isset( $args['paged'] ) ? (int) $args['paged'] : 1,
+			'perPage'      => isset( $args['posts_per_page'] ) ? (int) $args['posts_per_page'] : self::FREE_ENTRY_LIMIT,
+			'limit'        => self::FREE_ENTRY_LIMIT,
+			'limited'      => empty( $capabilities['viewAll'] ) || 'all' !== $view,
+			'forms'        => ! empty( $capabilities['filter'] ) ? self::get_form_options() : array(),
+			'capabilities' => $capabilities,
+		);
+	}
+
+	/**
+	 * Export entries from the React list.
+	 *
+	 * @param \WP_REST_Request $request REST request.
+	 *
+	 * @return \WP_Error|void
+	 */
+	public static function export_entries_for_admin( $request ) {
+		$capabilities = self::get_entry_list_capabilities();
+
+		if ( empty( $capabilities['export'] ) ) {
+			return new \WP_Error(
+				'gutenverse_form_entry_export_locked',
+				__( 'Exporting entries requires Gutenverse PRO.', 'gutenverse-form' ),
+				array( 'status' => 403 )
+			);
+		}
+
+		$args               = self::get_entry_query_args( $request, $capabilities, true );
+		$query              = new \WP_Query( $args );
+		$field_keys         = array();
+		$prepared_entry_map = array();
+
+		foreach ( $query->posts as $post ) {
+			$entry_data = get_post_meta( $post->ID, 'entry-data', true );
+			$entry_data = is_array( $entry_data ) ? $entry_data : array();
+			$values     = array();
+
+			foreach ( $entry_data as $item ) {
+				if ( empty( $item['id'] ) ) {
+					continue;
+				}
+
+				$key            = (string) $item['id'];
+				$field_keys[]   = $key;
+				$values[ $key ] = self::entry_value_text( isset( $item['value'] ) ? $item['value'] : '' );
+			}
+
+			$prepared_entry_map[ $post->ID ] = $values;
+		}
+
+		$field_keys = array_values( array_unique( $field_keys ) );
+		$filename   = 'gutenverse-form-entries-' . gmdate( 'Y-m-d-His' ) . '.csv';
+
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename=' . $filename );
+
+		$output = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		fputcsv( $output, array_merge( array( 'Entry ID', 'Date', 'Title', 'Form', 'Referral' ), $field_keys ) );
+
+		foreach ( $query->posts as $post ) {
+			$form_id  = (int) get_post_meta( $post->ID, 'form-id', true );
+			$ref_id   = (int) get_post_meta( $post->ID, 'post-id', true );
+			$row      = array(
+				$post->ID,
+				get_the_date( '', $post ),
+				get_the_title( $post ),
+				$form_id ? get_the_title( $form_id ) : '',
+				$ref_id ? get_the_title( $ref_id ) : '',
+			);
+			$values   = isset( $prepared_entry_map[ $post->ID ] ) ? $prepared_entry_map[ $post->ID ] : array();
+
+			foreach ( $field_keys as $field_key ) {
+				$row[] = isset( $values[ $field_key ] ) ? $values[ $field_key ] : '';
+			}
+
+			fputcsv( $output, $row );
+		}
+
+		fclose( $output ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+		wp_reset_postdata();
+		exit;
 	}
 
 	/**
@@ -447,7 +863,7 @@ class Entries {
 		if ( 'form_parent' === $column ) {
 			$form_id  = get_post_meta( $post_id, 'form-id', true );
 			$title    = get_the_title( $form_id );
-			$link     = admin_url( '/edit.php?post_type=' . self::POST_TYPE . '&form_id=' . $form_id );
+			$link     = self::get_admin_page_url( array( 'form_id' => $form_id ) );
 			$form_ref = 0 !== (int) $form_id ? '<a href="' . $link . '">' . $title . '</a>' : __( 'no-form', 'gutenverse-form' );
 
 			gutenverse_print_html( $form_ref );
@@ -918,7 +1334,7 @@ class Entries {
 
 		if ( $form_id ) {
 			$form_title = get_the_title( $form_id );
-			$form_link  = admin_url( '/edit.php?post_type=' . self::POST_TYPE . '&form_id=' . $form_id );
+			$form_link  = self::get_admin_page_url( array( 'form_id' => $form_id ) );
 
 			$result = '<div class="gutenverse-entry-detail-list">';
 			$result .= $this->entry_detail_item( esc_html__( 'Form ID', 'gutenverse-form' ), esc_html( $form_id ) );

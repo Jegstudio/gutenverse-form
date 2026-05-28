@@ -269,7 +269,7 @@ class Daily_Summary {
 				'title'         => get_the_title( $form_id ),
 				'today_count'   => (int) $count,
 				'total_entries' => isset( $total_counts[ $form_id ] ) ? (int) $total_counts[ $form_id ] : 0,
-				'entries_url'   => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE . '&form_id=' . $form_id ),
+				'entries_url'   => Entries::get_admin_page_url( array( 'form_id' => $form_id ) ),
 			);
 		}
 

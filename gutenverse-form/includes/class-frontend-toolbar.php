@@ -43,7 +43,7 @@ class Frontend_Toolbar {
 				'id'     => 'form-entries',
 				'parent' => $parent,
 				'title'  => esc_html__( 'Form Entries', 'gutenverse-form' ),
-				'href'   => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE ),
+				'href'   => Entries::get_admin_page_url(),
 			)
 		);
 

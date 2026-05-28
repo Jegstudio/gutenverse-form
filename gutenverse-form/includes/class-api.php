@@ -103,6 +103,26 @@ class Api {
 
 		register_rest_route(
 			self::ENDPOINT,
+			'entries',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_entries' ),
+				'permission_callback' => 'gutenverse_permission_check_admin',
+			)
+		);
+
+		register_rest_route(
+			self::ENDPOINT,
+			'entries/export',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'export_entries' ),
+				'permission_callback' => 'gutenverse_permission_check_admin',
+			)
+		);
+
+		register_rest_route(
+			self::ENDPOINT,
 			'form-action/ownership',
 			array(
 				'methods'             => 'POST',
@@ -248,6 +268,28 @@ class Api {
 	 */
 	public function get_form_dashboard() {
 		return rest_ensure_response( Form::get_form_dashboard_summary() );
+	}
+
+	/**
+	 * Get entry list data.
+	 *
+	 * @param \WP_REST_Request $request REST request.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_entries( $request ) {
+		return rest_ensure_response( Entries::get_entries_for_admin( $request ) );
+	}
+
+	/**
+	 * Export entry list data.
+	 *
+	 * @param \WP_REST_Request $request REST request.
+	 *
+	 * @return \WP_Error|void
+	 */
+	public function export_entries( $request ) {
+		return Entries::export_entries_for_admin( $request );
 	}
 
 	/**
