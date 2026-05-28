@@ -407,7 +407,7 @@ export const CreateForm = (props) => {
                     {showNotice && isFormActionMissing && (
                         <ActionRequiredNotice
                             title={__('Form Action Required', 'gutenverse-form')}
-                            description={__('This imported form action does not exist on this site. Create a new local form action so this form builder can work properly.', 'gutenverse-form')}
+                            description={__('This form action does not exist on this site. Create a new local form action so this form builder can work properly.', 'gutenverse-form')}
                             buttonLabel={__('Create Form Action', 'gutenverse-form')}
                             onClick={createLocalFormAction}
                         />
@@ -422,7 +422,7 @@ export const CreateForm = (props) => {
                         />
                     )}
 
-                    {!noticeOnly && isFormActionMissing && (
+                    {!noticeOnly && !showNotice && isFormActionMissing && (
                         <button
                             type="button"
                             className={`gutenverse-form-action-button primary ${saving ? 'disabled' : ''}`}
