@@ -1,9 +1,10 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import { applyFilters } from '@wordpress/hooks';
+import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
-import { IconDownloadSVG, IconEyeSVG, IconSearchSVG } from 'gutenverse-core/icons';
+import { IconEyeSVG } from 'gutenverse-core/icons';
+import { signal } from 'gutenverse-core/editor-helper';
 
 const defaultCapabilities = {
     viewAll: false,
@@ -11,13 +12,32 @@ const defaultCapabilities = {
     filter: false,
     olderDetails: false,
 };
+const entryListFilterWaitDelay = 1000;
+const entryListActionsFilter = 'gutenverse-form.entry-list-actions';
+const entryListControlsFilter = 'gutenverse-form.entry-list-controls';
+const entryListFooterFilter = 'gutenverse-form.entry-list-footer';
+const proEntryListContentFilter = 'gutenverse-form.pro-entry-list-content';
 
 const getConfig = () => window?.GutenverseConfig?.entryList || {};
+const hasEntryListFilter = () => (
+    hasFilter(entryListActionsFilter) ||
+    hasFilter(entryListControlsFilter) ||
+    hasFilter(entryListFooterFilter) ||
+    hasFilter(proEntryListContentFilter)
+);
+const shouldWaitForEntryListFilters = () => !hasEntryListFilter();
 
 const normalizeCapabilities = (capabilities = {}) => ({
     ...defaultCapabilities,
     ...capabilities,
 });
+
+const hasAllEntryListCapabilities = (capabilities = {}) => (
+    capabilities.viewAll &&
+    capabilities.export &&
+    capabilities.filter &&
+    capabilities.olderDetails
+);
 
 const normalizeMonth = value => {
     if (/^\d{6}$/.test(value)) {
@@ -82,31 +102,6 @@ const buildPath = (config, query, capabilities) => {
     return `${config.apiPath || '/gutenverse-form-client/v1/entries'}?${params.toString()}`;
 };
 
-const buildExportUrl = (config, query, capabilities) => {
-    const params = new URLSearchParams();
-
-    params.set('view', 'all');
-
-    if (capabilities.filter) {
-        if (query.formId) {
-            params.set('form_id', query.formId);
-        }
-
-        if (query.month) {
-            params.set('month', query.month);
-        }
-
-        if (query.search) {
-            params.set('search', query.search);
-        }
-    }
-
-    const exportUrl = config.exportUrl || '#';
-    const separator = exportUrl.includes('?') ? '&' : '?';
-
-    return `${exportUrl}${separator}${params.toString()}`;
-};
-
 const SkeletonLine = ({ className = '' }) => <span className={`entry-list-skeleton-line ${className}`} aria-hidden="true" />;
 
 const EntryListSkeleton = () => (
@@ -148,73 +143,6 @@ const EntryListUpgrade = ({ config }) => (
         />
     </div>
 );
-
-const EntryListControls = ({
-    data,
-    query,
-    setQuery,
-    searchDraft,
-    setSearchDraft,
-}) => {
-    const forms = data?.forms || [];
-
-    return (
-        <div className="entry-list-controls">
-            <form
-                className="entry-list-search"
-                onSubmit={event => {
-                    event.preventDefault();
-                    setQuery(current => ({ ...current, search: searchDraft.trim(), page: 1, view: 'all' }));
-                }}
-            >
-                <IconSearchSVG aria-hidden="true" focusable="false" />
-                <input
-                    type="search"
-                    value={searchDraft}
-                    placeholder={__('Search entries', 'gutenverse-form')}
-                    onChange={event => setSearchDraft(event.target.value)}
-                />
-                <button type="submit">{__('Search', 'gutenverse-form')}</button>
-            </form>
-
-            <select
-                value={query.formId}
-                aria-label={__('Filter by form', 'gutenverse-form')}
-                onChange={event => setQuery(current => ({ ...current, formId: event.target.value, page: 1, view: 'all' }))}
-            >
-                <option value="">{__('All forms', 'gutenverse-form')}</option>
-                {forms.map(form => (
-                    <option key={form.id} value={form.id}>{form.title}</option>
-                ))}
-            </select>
-
-            <input
-                type="month"
-                value={query.month}
-                aria-label={__('Filter by month', 'gutenverse-form')}
-                onChange={event => setQuery(current => ({ ...current, month: event.target.value, page: 1, view: 'all' }))}
-            />
-
-            <button
-                type="button"
-                className="entry-list-button"
-                onClick={() => {
-                    setSearchDraft('');
-                    setQuery(current => ({
-                        ...current,
-                        formId: '',
-                        month: '',
-                        search: '',
-                        page: 1,
-                        view: 'all',
-                    }));
-                }}
-            >
-                {__('Reset', 'gutenverse-form')}
-            </button>
-        </div>
-    );
-};
 
 const EntryPreview = ({ entry }) => {
     if (!entry.preview?.length) {
@@ -294,34 +222,6 @@ const EntryListTable = ({ entries }) => {
     );
 };
 
-const EntryListPagination = ({ data, query, setQuery }) => {
-    const totalPages = data?.totalPages || 1;
-
-    if (query.view !== 'all' || totalPages <= 1) {
-        return null;
-    }
-
-    return (
-        <div className="entry-list-pagination">
-            <button
-                type="button"
-                disabled={query.page <= 1}
-                onClick={() => setQuery(current => ({ ...current, page: Math.max(1, current.page - 1) }))}
-            >
-                {__('Previous', 'gutenverse-form')}
-            </button>
-            <span>{sprintf(__('Page %1$s of %2$s', 'gutenverse-form'), data.page || query.page, totalPages)}</span>
-            <button
-                type="button"
-                disabled={query.page >= totalPages}
-                onClick={() => setQuery(current => ({ ...current, page: current.page + 1 }))}
-            >
-                {__('Next', 'gutenverse-form')}
-            </button>
-        </div>
-    );
-};
-
 const EntryList = () => {
     const config = useMemo(() => getConfig(), []);
     const [capabilities, setCapabilities] = useState(() => normalizeCapabilities(config.capabilities));
@@ -330,6 +230,8 @@ const EntryList = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState('');
+    const [filtersSettled, setFiltersSettled] = useState(() => !shouldWaitForEntryListFilters());
+    const [entryListFilterVersion, setEntryListFilterVersion] = useState(0);
     const lockedDetailNotice = useMemo(() => {
         const params = new URLSearchParams(window.location.search);
 
@@ -352,6 +254,48 @@ const EntryList = () => {
             });
     }, [config, query, capabilities.viewAll, capabilities.filter]);
 
+    useEffect(() => {
+        let fallbackTimer = null;
+
+        const clearFallbackTimer = () => {
+            if (fallbackTimer) {
+                clearTimeout(fallbackTimer);
+                fallbackTimer = null;
+            }
+        };
+
+        const refreshEntryListFilters = () => {
+            setFiltersSettled(true);
+            setEntryListFilterVersion(current => current + 1);
+            clearFallbackTimer();
+
+            return true;
+        };
+
+        const settleWhenReady = () => {
+            if (shouldWaitForEntryListFilters()) {
+                return false;
+            }
+
+            return refreshEntryListFilters();
+        };
+
+        const filtersReady = settleWhenReady();
+
+        if (!filtersReady) {
+            fallbackTimer = setTimeout(() => {
+                refreshEntryListFilters();
+            }, entryListFilterWaitDelay);
+        }
+
+        const bindEntryList = signal.afterFilterSignal.add(settleWhenReady);
+
+        return () => {
+            clearFallbackTimer();
+            bindEntryList.detach();
+        };
+    }, []);
+
     const entries = data?.entries || [];
     const limit = data?.limit || config.limit || 10;
     const isLimited = data?.limited ?? !capabilities.viewAll;
@@ -361,50 +305,18 @@ const EntryList = () => {
         setQuery,
         capabilities,
         config,
+        limit,
         searchDraft,
         setSearchDraft,
+        filterVersion: entryListFilterVersion,
     };
+    const actions = applyFilters(entryListActionsFilter, null, filterProps);
+    const controls = applyFilters(entryListControlsFilter, null, filterProps);
+    const footer = applyFilters(entryListFooterFilter, null, filterProps);
+    const defaultEntryListContent = hasAllEntryListCapabilities(capabilities) ? null : <EntryListUpgrade config={config} />;
+    const proEntryListContent = applyFilters(proEntryListContentFilter, defaultEntryListContent, filterProps);
 
-    const viewToggle = capabilities.viewAll ? (
-        <div className="entry-list-view-toggle" aria-label={__('Entry list view', 'gutenverse-form')}>
-            <button
-                type="button"
-                className={query.view === 'recent' ? 'active' : ''}
-                onClick={() => setQuery(current => ({ ...current, view: 'recent', page: 1 }))}
-            >
-                {sprintf(__('Recent %s', 'gutenverse-form'), limit)}
-            </button>
-            <button
-                type="button"
-                className={query.view === 'all' ? 'active' : ''}
-                onClick={() => setQuery(current => ({ ...current, view: 'all', page: 1 }))}
-            >
-                {__('All entries', 'gutenverse-form')}
-            </button>
-        </div>
-    ) : null;
-
-    const defaultActions = (
-        <div className="entry-list-actions">
-            {viewToggle}
-            {capabilities.export && (
-                <a className="entry-list-button entry-list-button--primary" href={buildExportUrl(config, query, capabilities)}>
-                    <IconDownloadSVG aria-hidden="true" focusable="false" />
-                    {__('Export all entries', 'gutenverse-form')}
-                </a>
-            )}
-        </div>
-    );
-
-    const actions = applyFilters('gutenverse-form.entry-list-actions', defaultActions, filterProps);
-    const controls = capabilities.filter
-        ? applyFilters('gutenverse-form.entry-list-controls', <EntryListControls {...filterProps} />, filterProps)
-        : null;
-    const upgrade = !capabilities.viewAll || !capabilities.export || !capabilities.filter || !capabilities.olderDetails
-        ? applyFilters('gutenverse-form.entry-list-upgrade-content', <EntryListUpgrade config={config} />, filterProps)
-        : null;
-
-    if (loading && !data) {
+    if ((loading && !data) || !filtersSettled) {
         return (
             <div className="gutenverse-form-entry-list is-loading" aria-busy="true">
                 <EntryListSkeleton />
@@ -437,10 +349,10 @@ const EntryList = () => {
 
             {controls}
 
-            {upgrade}
+            {proEntryListContent}
 
             <EntryListTable entries={entries} />
-            <EntryListPagination data={data} query={query} setQuery={setQuery} />
+            {footer}
 
             {loading && data && <div className="entry-list-loading-overlay">{__('Refreshing entries...', 'gutenverse-form')}</div>}
         </div>

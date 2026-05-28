@@ -108,10 +108,10 @@ class Entries {
 	public static function get_entry_list_capabilities() {
 		$has_license  = self::has_pro_plugin() && ! empty( get_option( 'gutenverse-license', '' ) );
 		$capabilities = array(
-			'viewAll'      => $has_license,
-			'export'       => $has_license,
-			'filter'       => $has_license,
-			'olderDetails' => $has_license,
+			'viewAll'      => false,
+			'export'       => false,
+			'filter'       => false,
+			'olderDetails' => false,
 		);
 
 		$capabilities['viewAll']      = (bool) apply_filters( 'gutenverse_form_entry_list_can_view_all', $capabilities['viewAll'], $has_license );
