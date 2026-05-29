@@ -7,24 +7,44 @@ const getBlockStyle = (elementId, attributes) => {
     data = backgroundStyle({ attributes, data, elementId });
 
     /* Panel Icon Style */
-    isNotEmpty(attributes['iconSize']) && data.push({
-        'type': 'plain',
-        'id': 'iconSize',
-        'responsive': true,
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-email-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper .form-input-email-icon .icon svg`,
-        'properties': [
-            {
-                'name': 'font-size',
-                'valueType': 'pattern',
-                'pattern': '{value}px',
-                'patternValues': {
-                    'value': {
-                        'type': 'direct',
+    isNotEmpty(attributes['iconSize']) && isNotEmpty(attributes['useIcon']) && attributes['iconType'] === 'icon' && data.push(
+        {
+            'type': 'plain',
+            'id': 'iconSize',
+            'responsive': true,
+            'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-email-icon .icon i, .${elementId} .main-wrapper .input-icon-wrapper .form-input-email-icon .icon svg`,
+            'properties': [
+                {
+                    'name': 'font-size',
+                    'valueType': 'pattern',
+                    'pattern': '{value}px',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        }
                     }
                 }
-            }
-        ],
-    });
+            ],
+        },
+        {
+            'type': 'plain',
+            'id': 'iconSize',
+            'responsive': true,
+            'selector': `.${elementId} .main-wrapper .input-icon-wrapper input`,
+            'properties': [
+                {
+                    'name': 'height',
+                    'valueType': 'pattern',
+                    'pattern': '{value}px !important',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        }
+                    }
+                }
+            ],
+        },
+    );
 
     isNotEmpty(attributes['imageWidth']) && attributes['iconType'] === 'image' && data.push({
         'type': 'plain',
@@ -45,24 +65,44 @@ const getBlockStyle = (elementId, attributes) => {
         ],
     });
 
-    isNotEmpty(attributes['imageHeight']) && attributes['iconType'] === 'image' && data.push({
-        'type': 'plain',
-        'id': 'imageHeight',
-        'responsive': true,
-        'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-email-icon .icon`,
-        'properties': [
-            {
-                'name': 'height',
-                'valueType': 'pattern',
-                'pattern': '{value}px',
-                'patternValues': {
-                    'value': {
-                        'type': 'direct',
+    isNotEmpty(attributes['imageHeight']) && isNotEmpty(attributes['useIcon']) && attributes['iconType'] === 'image' && data.push(
+        {
+            'type': 'plain',
+            'id': 'imageHeight',
+            'responsive': true,
+            'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-email-icon .icon`,
+            'properties': [
+                {
+                    'name': 'height',
+                    'valueType': 'pattern',
+                    'pattern': '{value}px',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        }
                     }
                 }
-            }
-        ],
-    });
+            ],
+        },
+        {
+            'type': 'plain',
+            'id': 'imageHeight',
+            'responsive': true,
+            'selector': `.${elementId} .main-wrapper .input-icon-wrapper input`,
+            'properties': [
+                {
+                    'name': 'height',
+                    'valueType': 'pattern',
+                    'pattern': '{value}px !important',
+                    'patternValues': {
+                        'value': {
+                            'type': 'direct',
+                        }
+                    }
+                }
+            ],
+        },
+    );
 
     isNotEmpty(attributes['iconAlignment']) && data.push({
         'type': 'plain',
