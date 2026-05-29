@@ -7,24 +7,25 @@ import isEmpty from 'lodash/isEmpty';
 import { BlockPanelController } from 'gutenverse-core/controls';
 import { panelList } from './panels/panel-list';
 import { useEffect, useRef, useState } from '@wordpress/element';
-import { isSticky } from 'gutenverse-core/helper';
+import { isSticky, openFreemiusPopup } from 'gutenverse-core/helper';
 import { useRichTextParameter } from 'gutenverse-core/helper';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import { useDisplayEditor } from 'gutenverse-core/hooks';
 import { dispatch, select, subscribe, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
+import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { PanelTutorial } from 'gutenverse-core/controls';
 import { useDynamicScript, useDynamicStyle, useGenerateElementId } from 'gutenverse-core/styling';
 import getBlockStyle from './styles/block-style';
 import { CopyElementToolbar } from 'gutenverse-core/components';
-import appointmentTemplateData from './data/appointment-template.json';
 import bookingTemplateData from './data/booking-template.json';
 import contactTemplateData from './data/contact-template.json';
 import subscribeTemplateData from './data/subscribe-template.json';
 import { CreateForm } from './panels/create-form';
-import { Modal, Button, ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { isBlockPreviewContext } from '../form-input/general/is-preview-context';
+import { signal } from 'gutenverse-core/editor-helper';
 
 const BULK_STYLE_PANEL_STATE = {
     panel: 'setting',
@@ -32,6 +33,10 @@ const BULK_STYLE_PANEL_STATE = {
 };
 
 const FORM_BUILDER_BLOCK_NAME = 'gutenverse/form-builder';
+const APPOINTMENT_TEMPLATE_ID = 'appointment';
+const APPOINTMENT_TEMPLATE_PREVIEW_IMAGE = 'form-builder-appointment.png';
+const FORM_BUILDER_TEMPLATES_FILTER = 'gutenverse-form.form-builder-templates';
+const FORM_BUILDER_TEMPLATE_CONTENT_FILTER = 'gutenverse-form.form-builder-template-content';
 
 const createFormInstanceId = () => {
     if (window?.crypto?.randomUUID) {
@@ -123,16 +128,16 @@ const FormBuilderIcon = ({ add = false }) => {
 };
 
 const TEMPLATE_DATA = {
-    appointment: appointmentTemplateData,
     booking: bookingTemplateData,
     contact: contactTemplateData,
     subscribe: subscribeTemplateData
 };
 
-const TemplatePreview = ({ templateId }) => {
+const TemplatePreview = ({ templateId, template = {} }) => {
     const imageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
-    const imageSrc = imageBase && (TEMPLATE_DATA[templateId]?.previewImage || (templateId === 'library' ? 'form-builder-library.png' : ''))
-        ? `${imageBase}/${TEMPLATE_DATA[templateId]?.previewImage || 'form-builder-library.png'}`
+    const previewImage = template.previewImage || TEMPLATE_DATA[templateId]?.previewImage || (templateId === 'library' ? 'form-builder-library.png' : '');
+    const imageSrc = imageBase && previewImage
+        ? `${imageBase}/${previewImage}`
         : '';
 
     if (imageSrc) {
@@ -160,16 +165,25 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, owne
     const [blankMode, setBlankMode] = useState(false);
     const [creatingForm, setCreatingForm] = useState(false);
     const [error, setError] = useState('');
-    const [proPopupActive, setProPopupActive] = useState(false);
+    const [templateFilterVersion, setTemplateFilterVersion] = useState(0);
     const pendingLibraryImportRef = useRef(null);
     const { replaceBlocks, removeBlocks } = dispatch('core/block-editor');
-    const hasProPluginActive = !!window?.GutenverseConfig?.plugins?.['gutenverse-pro']?.active;
+    const hasProPluginActive = Boolean(window?.GutenverseConfig?.plugins?.['gutenverse-pro']?.active || window?.gserver);
     const hasActiveProLicense = !isEmpty(window?.gprodata);
-    const imageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
-    const appointmentPreviewImage = imageBase ? `${imageBase}/${appointmentTemplateData.previewImage}` : '';
+    const hasPremiumTemplateContentFilter = hasFilter(FORM_BUILDER_TEMPLATE_CONTENT_FILTER);
     const adminUrl = window?.GutenverseConfig?.adminUrl || '/wp-admin/';
     const upgradeUrl = window?.GutenverseConfig?.upgradeProUrl || `${adminUrl}admin.php?page=gutenverse&path=license`;
-    const licenseUrl = `${adminUrl}admin.php?page=gutenverse&path=license`;
+    const licenseUrl = window?.GutenverseConfig?.updateLicensePage || `${adminUrl}admin.php?page=gutenverse&path=license`;
+    useEffect(() => {
+        const bindFormBuilderTemplate = signal.afterFilterSignal.add(() => {
+            setTemplateFilterVersion(current => current + 1);
+            return true;
+        });
+
+        return () => {
+            bindFormBuilderTemplate.detach();
+        };
+    }, []);
 
     const findFormCategory = (sectionCategories = []) => {
         let result = null;
@@ -288,12 +302,33 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, owne
         selectFormLibraryFilter();
     };
 
-    const createNewForm = (templateId) => {
+    const openPremiumTemplatePopup = (event = null) => {
+        if (event?.preventDefault) {
+            event.preventDefault();
+        }
+
+        if (hasProPluginActive) {
+            window.open(licenseUrl, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        const popupOpened = openFreemiusPopup(null, upgradeUrl, {
+            medium: 'form-builder-template',
+            campaign: 'appointment-form-template',
+        });
+
+        if (!popupOpened && upgradeUrl) {
+            window.open(upgradeUrl, '_blank', 'noopener,noreferrer');
+        }
+    };
+
+    const createNewForm = (template) => {
         if (creatingForm) {
             return;
         }
 
         setCreatingForm(true);
+        const templateId = typeof template === 'string' ? template : template?.id;
 
         if (templateId === 'blank') {
             setBlankMode(true);
@@ -307,16 +342,18 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, owne
             return;
         }
 
-        const templateBlocks = Object.fromEntries(
-            Object.entries(TEMPLATE_DATA).map(([templateId, templateData]) => [templateId, templateData.templateContent])
+        const selectedTemplateContent = applyFilters(
+            FORM_BUILDER_TEMPLATE_CONTENT_FILTER,
+            TEMPLATE_DATA[templateId]?.templateContent || '',
+            {
+                template,
+                templateId,
+                hasProPluginActive,
+                hasActiveProLicense,
+                hasPremiumTemplateContentFilter,
+                templateFilterVersion,
+            }
         );
-        const selectedTemplateContent = templateBlocks[templateId];
-
-        if (templateId === 'appointment' && !hasActiveProLicense) {
-            setCreatingForm(false);
-            setProPopupActive(true);
-            return;
-        }
 
         if (selectedTemplateContent) {
             const blocks = parse(selectedTemplateContent);
@@ -332,62 +369,46 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, owne
             return;
         }
 
+        if (template?.pro) {
+            openPremiumTemplatePopup();
+            setCreatingForm(false);
+            return;
+        }
+
         setError(__('Template block data is not connected yet.', 'gutenverse-form'));
         setCreatingForm(false);
     };
+
+    const filteredPremiumTemplates = applyFilters(
+        FORM_BUILDER_TEMPLATES_FILTER,
+        [
+            {
+                id: APPOINTMENT_TEMPLATE_ID,
+                label: __('Appointment Form', 'gutenverse-form'),
+                pro: true,
+                previewImage: APPOINTMENT_TEMPLATE_PREVIEW_IMAGE,
+            },
+        ],
+        {
+            hasActiveProLicense,
+            hasProPluginActive,
+            hasPremiumTemplateContentFilter,
+            templateFilterVersion,
+        }
+    );
+    const premiumTemplates = Array.isArray(filteredPremiumTemplates) ? filteredPremiumTemplates : [];
 
     const templates = [
         { id: 'blank', label: __('Blank Form', 'gutenverse-form') },
         { id: 'contact', label: __('Contact Form', 'gutenverse-form') },
         { id: 'subscribe', label: __('Subscribe Form', 'gutenverse-form') },
         { id: 'booking', label: __('Booking Form', 'gutenverse-form') },
-        { id: 'appointment', label: __('Appointment Form', 'gutenverse-form'), pro: appointmentTemplateData.pro },
+        ...premiumTemplates,
         { id: 'library', label: __('Choose From Library', 'gutenverse-form') },
     ];
 
     return (
         <div {...blockProps}>
-            {proPopupActive && (
-                <Modal
-                    title={__('Appointment Form Template', 'gutenverse-form')}
-                    onRequestClose={() => setProPopupActive(false)}
-                    className="gutenverse-form-template-pro-modal"
-                >
-                    <div className="gutenverse-form-template-pro-content">
-                        {appointmentPreviewImage && (
-                            <div className="gutenverse-form-template-pro-preview">
-                                <img
-                                    src={appointmentPreviewImage}
-                                    alt={__('Appointment Form template preview', 'gutenverse-form')}
-                                />
-                            </div>
-                        )}
-                        <div className="gutenverse-form-template-pro-copy">
-                            <span className="template-pro-pill">{__('PRO Template', 'gutenverse-form')}</span>
-                            <h3>{__('Unlock the Appointment Form layout', 'gutenverse-form')}</h3>
-                            <p>{__('This starter template is available for active Gutenverse PRO licenses. Upgrade or activate your license to use it in the editor.', 'gutenverse-form')}</p>
-                        </div>
-                        <div className="gutenverse-form-template-pro-actions">
-                            <Button
-                                variant="tertiary"
-                                onClick={() => setProPopupActive(false)}
-                            >
-                                {__('Maybe later', 'gutenverse-form')}
-                            </Button>
-                            <Button
-                                variant={hasProPluginActive ? 'primary' : 'secondary'}
-                                href={hasProPluginActive ? licenseUrl : upgradeUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                {hasProPluginActive
-                                    ? __('Activate License', 'gutenverse-form')
-                                    : __('Upgrade to PRO', 'gutenverse-form')}
-                            </Button>
-                        </div>
-                    </div>
-                </Modal>
-            )}
             {!isPreviewContext && <NoticeMessages {...attributes} />}
             {!isPreviewContext && <FormActionOwnershipNotice message={ownershipNotice} />}
             {blankMode ? (
@@ -419,21 +440,22 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, owne
                             <button
                                 type="button"
                                 className={classnames('placeholder-template-card', {
-                                    'pro-locked': template.pro && !hasActiveProLicense
+                                    'pro-locked': template.pro && !hasPremiumTemplateContentFilter
                                 })}
                                 key={template.id}
-                                onClick={() => {
-                                    if (template.pro && !hasActiveProLicense) {
-                                        setProPopupActive(true);
+                                disabled={creatingForm}
+                                onClick={(event) => {
+                                    if (template.pro && !hasPremiumTemplateContentFilter) {
+                                        setError('');
+                                        openPremiumTemplatePopup(event);
                                         return;
                                     }
                                     setError('');
-                                    createNewForm(template.id);
+                                    createNewForm(template);
                                 }}
-                                disabled={creatingForm}
                             >
                                 {template.pro && <span className="template-pro-badge">{__('PRO', 'gutenverse-form')}</span>}
-                                <TemplatePreview templateId={template.id} />
+                                <TemplatePreview templateId={template.id} template={template} />
                                 <strong>{template.label}</strong>
                             </button>
                         ))}
