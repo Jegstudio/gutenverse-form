@@ -213,7 +213,7 @@ class Daily_Summary {
 			'gutenverse_form_daily_summary_subject',
 			sprintf(
 				/* translators: 1: site name, 2: report date */
-				__( 'Daily Form Summary for %1$s - %2$s', 'gutenverse-form' ),
+				__( '[Gutenverse Form] Daily Summary for %1$s - %2$s', 'gutenverse-form' ),
 				get_bloginfo( 'name' ),
 				$summary['date_label']
 			),
