@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
-import { IconEyeSVG } from 'gutenverse-core/icons';
+import { IconEyeSVG, IconTrashSVG } from 'gutenverse-core/icons';
 import { signal } from 'gutenverse-core/editor-helper';
 
 const defaultCapabilities = {
@@ -17,6 +17,7 @@ const entryListActionsFilter = 'gutenverse-form.entry-list-actions';
 const entryListControlsFilter = 'gutenverse-form.entry-list-controls';
 const entryListFooterFilter = 'gutenverse-form.entry-list-footer';
 const proEntryListContentFilter = 'gutenverse-form.pro-entry-list-content';
+const entriesPerPage = 10;
 
 const getConfig = () => window?.GutenverseConfig?.entryList || {};
 const hasEntryListFilter = () => (
@@ -31,6 +32,12 @@ const normalizeCapabilities = (capabilities = {}) => ({
     ...defaultCapabilities,
     ...capabilities,
 });
+
+const hasExplicitRecentView = () => {
+    const params = new URLSearchParams(window.location.search);
+
+    return params.get('view') === 'recent';
+};
 
 const hasAllEntryListCapabilities = (capabilities = {}) => (
     capabilities.viewAll &&
@@ -53,14 +60,14 @@ const normalizeMonth = value => {
 
 const getInitialQuery = (capabilities) => {
     const params = new URLSearchParams(window.location.search);
-    const requestedView = params.get('view') === 'all' ? 'all' : 'recent';
+    const requestedView = params.get('view');
     const hasRequestedFilter = Boolean(params.get('form_id') || params.get('month') || params.get('m') || params.get('search'));
-    const view = capabilities.viewAll && (requestedView === 'all' || hasRequestedFilter) ? 'all' : 'recent';
+    const view = capabilities.viewAll && (requestedView !== 'recent' || hasRequestedFilter) ? 'all' : 'recent';
 
     return {
         view,
         page: Math.max(1, Number(params.get('paged') || params.get('page_num') || 1)),
-        perPage: 20,
+        perPage: entriesPerPage,
         formId: params.get('form_id') || '',
         month: normalizeMonth(params.get('month') || params.get('m') || ''),
         search: params.get('search') || '',
@@ -83,7 +90,7 @@ const buildPath = (config, query, capabilities) => {
 
     params.set('view', view);
     params.set('page', String(query.page));
-    params.set('per_page', String(query.perPage));
+    params.set('per_page', String(Math.min(query.perPage || entriesPerPage, entriesPerPage)));
 
     if (capabilities.filter && view === 'all') {
         if (query.formId) {
@@ -100,6 +107,12 @@ const buildPath = (config, query, capabilities) => {
     }
 
     return `${config.apiPath || '/gutenverse-form-client/v1/entries'}?${params.toString()}`;
+};
+
+const buildDeletePath = (config, entryId) => {
+    const apiPath = config.apiPath || '/gutenverse-form-client/v1/entries';
+
+    return `${apiPath.replace(/\/$/, '')}/${entryId}`;
 };
 
 const SkeletonLine = ({ className = '' }) => <span className={`entry-list-skeleton-line ${className}`} aria-hidden="true" />;
@@ -153,7 +166,8 @@ const EntryPreview = ({ entry }) => {
         <div className="entry-list-field-preview">
             {entry.preview.map((field, index) => (
                 <span key={`${entry.id}-${field.id || index}`}>
-                    <strong>{field.id || __('Field', 'gutenverse-form')}</strong>
+                    <strong>{field.id || __('Field', 'gutenverse-form')}:</strong>
+                    {' '}
                     {field.value || __('Empty', 'gutenverse-form')}
                 </span>
             ))}
@@ -161,7 +175,7 @@ const EntryPreview = ({ entry }) => {
     );
 };
 
-const EntryRow = ({ entry }) => (
+const EntryRow = ({ entry, deletingEntryId, onDelete }) => (
     <tr>
         <td className="entry-list-entry-title">
             <strong>{entry.title}</strong>
@@ -177,22 +191,34 @@ const EntryRow = ({ entry }) => (
         </td>
         <td>{entry.date}</td>
         <td><EntryPreview entry={entry} /></td>
-        <td className="entry-list-detail-cell">
-            {entry.canViewDetail ? (
-                <a className="entry-list-icon-button" href={entry.detailUrl} aria-label={__('View entry details', 'gutenverse-form')} title={__('View entry details', 'gutenverse-form')}>
-                    <IconEyeSVG fill="currentColor" aria-hidden="true" focusable="false" />
-                </a>
-            ) : (
-                <span className="entry-list-locked-detail">
-                    {__('Locked', 'gutenverse-form')}
-                    <ProBadge />
-                </span>
-            )}
+        <td className="entry-list-actions-cell">
+            <div className="entry-list-row-actions">
+                {entry.canViewDetail ? (
+                    <a className="entry-list-icon-button" href={entry.detailUrl} aria-label={__('View entry details', 'gutenverse-form')} title={__('View entry details', 'gutenverse-form')}>
+                        <IconEyeSVG fill="currentColor" aria-hidden="true" focusable="false" />
+                    </a>
+                ) : (
+                    <span className="entry-list-locked-detail">
+                        {__('Locked', 'gutenverse-form')}
+                        <ProBadge />
+                    </span>
+                )}
+                <button
+                    type="button"
+                    className="entry-list-icon-button entry-list-icon-button--danger"
+                    disabled={deletingEntryId === entry.id}
+                    onClick={() => onDelete(entry)}
+                    aria-label={__('Delete entry', 'gutenverse-form')}
+                    title={__('Delete entry', 'gutenverse-form')}
+                >
+                    <IconTrashSVG size={16} aria-hidden="true" focusable="false" />
+                </button>
+            </div>
         </td>
     </tr>
 );
 
-const EntryListTable = ({ entries }) => {
+const EntryListTable = ({ entries, deletingEntryId, onDelete }) => {
     if (!entries.length) {
         return (
             <div className="entry-list-empty">
@@ -211,11 +237,18 @@ const EntryListTable = ({ entries }) => {
                         <th>{__('Form', 'gutenverse-form')}</th>
                         <th>{__('Submitted', 'gutenverse-form')}</th>
                         <th>{__('Preview', 'gutenverse-form')}</th>
-                        <th>{__('Details', 'gutenverse-form')}</th>
+                        <th>{__('Actions', 'gutenverse-form')}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {entries.map(entry => <EntryRow entry={entry} key={entry.id} />)}
+                    {entries.map(entry => (
+                        <EntryRow
+                            deletingEntryId={deletingEntryId}
+                            entry={entry}
+                            key={entry.id}
+                            onDelete={onDelete}
+                        />
+                    ))}
                 </tbody>
             </table>
         </div>
@@ -230,8 +263,10 @@ const EntryList = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState('');
+    const [deletingEntryId, setDeletingEntryId] = useState(0);
     const [filtersSettled, setFiltersSettled] = useState(() => !shouldWaitForEntryListFilters());
     const [entryListFilterVersion, setEntryListFilterVersion] = useState(0);
+    const shouldDefaultToAllEntries = useMemo(() => !hasExplicitRecentView(), []);
     const lockedDetailNotice = useMemo(() => {
         const params = new URLSearchParams(window.location.search);
 
@@ -253,6 +288,18 @@ const EntryList = () => {
                 setLoading(false);
             });
     }, [config, query, capabilities.viewAll, capabilities.filter]);
+
+    useEffect(() => {
+        if (!capabilities.viewAll || !shouldDefaultToAllEntries) {
+            return;
+        }
+
+        setQuery(current => current.view === 'all' ? current : {
+            ...current,
+            page: 1,
+            view: 'all',
+        });
+    }, [capabilities.viewAll, shouldDefaultToAllEntries]);
 
     useEffect(() => {
         let fallbackTimer = null;
@@ -299,6 +346,11 @@ const EntryList = () => {
     const entries = data?.entries || [];
     const limit = data?.limit || config.limit || 10;
     const isLimited = data?.limited ?? !capabilities.viewAll;
+    const selectedForm = (data?.forms || []).find(form => String(form.id) === String(query.formId));
+    const title = query.formId && selectedForm?.title
+        ? sprintf(__('Entries from %s', 'gutenverse-form'), selectedForm.title)
+        : __('Entries from All Forms', 'gutenverse-form');
+    const countLabel = data ? getPageLabel(data, query) : '';
     const filterProps = {
         data,
         query,
@@ -308,6 +360,7 @@ const EntryList = () => {
         limit,
         searchDraft,
         setSearchDraft,
+        entriesPerPage,
         filterVersion: entryListFilterVersion,
     };
     const actions = applyFilters(entryListActionsFilter, null, filterProps);
@@ -315,6 +368,43 @@ const EntryList = () => {
     const footer = applyFilters(entryListFooterFilter, null, filterProps);
     const defaultEntryListContent = hasAllEntryListCapabilities(capabilities) ? null : <EntryListUpgrade config={config} />;
     const proEntryListContent = applyFilters(proEntryListContentFilter, defaultEntryListContent, filterProps);
+
+    const deleteEntry = (entry) => {
+        if (!entry?.id || deletingEntryId) {
+            return;
+        }
+
+        const confirmed = window.confirm(
+            sprintf(
+                __('Delete "%s"? This entry will be permanently deleted.', 'gutenverse-form'),
+                entry.title || sprintf(__('Entry #%s', 'gutenverse-form'), entry.id)
+            )
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        setDeletingEntryId(entry.id);
+        setLoadError('');
+
+        apiFetch({
+            path: buildDeletePath(config, entry.id),
+            method: 'DELETE',
+        })
+            .then(() => {
+                setQuery(current => ({
+                    ...current,
+                    page: entries.length === 1 && current.page > 1 ? current.page - 1 : current.page,
+                }));
+            })
+            .catch(error => {
+                setLoadError(error?.message || __('Could not delete entry. Please try again.', 'gutenverse-form'));
+            })
+            .finally(() => {
+                setDeletingEntryId(0);
+            });
+    };
 
     if ((loading && !data) || !filtersSettled) {
         return (
@@ -328,12 +418,11 @@ const EntryList = () => {
         <div className="gutenverse-form-entry-list">
             <div className="gutenverse-form-entry-list__header">
                 <div>
-                    <h1>{__('Entries', 'gutenverse-form')}</h1>
-                    <p>
-                        {isLimited
-                            ? sprintf(__('Showing the latest %s entries.', 'gutenverse-form'), limit)
-                            : getPageLabel(data, query)}
-                    </p>
+                    <div className="entry-list-title-row">
+                        <h1>{title}</h1>
+                        {countLabel && <span className="entry-list-count">{countLabel}</span>}
+                    </div>
+                    {isLimited && <p>{sprintf(__('Showing the latest %s entries.', 'gutenverse-form'), limit)}</p>}
                 </div>
                 {actions}
             </div>
@@ -351,7 +440,11 @@ const EntryList = () => {
 
             {proEntryListContent}
 
-            <EntryListTable entries={entries} />
+            <EntryListTable
+                deletingEntryId={deletingEntryId}
+                entries={entries}
+                onDelete={deleteEntry}
+            />
             {footer}
 
             {loading && data && <div className="entry-list-loading-overlay">{__('Refreshing entries...', 'gutenverse-form')}</div>}

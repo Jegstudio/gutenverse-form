@@ -111,15 +111,25 @@ class Api {
 			)
 		);
 
-		register_rest_route(
-			self::ENDPOINT,
-			'entries/export',
-			array(
-				'methods'             => 'GET',
-				'callback'            => array( $this, 'export_entries' ),
-				'permission_callback' => 'gutenverse_permission_check_admin',
-			)
-		);
+			register_rest_route(
+				self::ENDPOINT,
+				'entries/export',
+				array(
+					'methods'             => 'GET',
+					'callback'            => array( $this, 'export_entries' ),
+					'permission_callback' => 'gutenverse_permission_check_admin',
+				)
+			);
+
+			register_rest_route(
+				self::ENDPOINT,
+				'entries/(?P<id>\d+)',
+				array(
+					'methods'             => 'DELETE',
+					'callback'            => array( $this, 'delete_entry' ),
+					'permission_callback' => 'gutenverse_permission_check_admin',
+				)
+			);
 
 		register_rest_route(
 			self::ENDPOINT,
@@ -290,6 +300,17 @@ class Api {
 	 */
 	public function export_entries( $request ) {
 		return Entries::export_entries_for_admin( $request );
+	}
+
+	/**
+	 * Delete entry list data.
+	 *
+	 * @param \WP_REST_Request $request REST request.
+	 *
+	 * @return WP_REST_Response|\WP_Error
+	 */
+	public function delete_entry( $request ) {
+		return rest_ensure_response( Entries::delete_entry_for_admin( $request ) );
 	}
 
 	/**

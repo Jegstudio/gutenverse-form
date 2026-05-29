@@ -456,7 +456,7 @@ class Entries {
 		$view     = sanitize_key( (string) $request->get_param( 'view' ) );
 		$view_all = ! empty( $capabilities['viewAll'] ) && 'all' === $view;
 		$per_page = $view_all ? absint( $request->get_param( 'per_page' ) ) : self::FREE_ENTRY_LIMIT;
-		$per_page = $per_page ? min( $per_page, 100 ) : 20;
+		$per_page = $per_page ? min( $per_page, self::FREE_ENTRY_LIMIT ) : self::FREE_ENTRY_LIMIT;
 		$page     = $view_all ? max( 1, absint( $request->get_param( 'page' ) ) ) : 1;
 
 		if ( $export ) {
@@ -578,16 +578,60 @@ class Entries {
 
 		$view = sanitize_key( (string) $request->get_param( 'view' ) );
 
+		$is_limited = empty( $capabilities['viewAll'] ) || 'all' !== $view;
+
 		return array(
 			'entries'      => $entries,
-			'total'        => (int) $query->found_posts,
-			'totalPages'   => (int) $query->max_num_pages,
+			'total'        => $is_limited ? count( $entries ) : (int) $query->found_posts,
+			'totalPages'   => $is_limited ? 1 : (int) $query->max_num_pages,
 			'page'         => isset( $args['paged'] ) ? (int) $args['paged'] : 1,
 			'perPage'      => isset( $args['posts_per_page'] ) ? (int) $args['posts_per_page'] : self::FREE_ENTRY_LIMIT,
 			'limit'        => self::FREE_ENTRY_LIMIT,
-			'limited'      => empty( $capabilities['viewAll'] ) || 'all' !== $view,
+			'limited'      => $is_limited,
 			'forms'        => ! empty( $capabilities['filter'] ) ? self::get_form_options() : array(),
 			'capabilities' => $capabilities,
+		);
+	}
+
+	/**
+	 * Delete one entry from the React admin list.
+	 *
+	 * @param \WP_REST_Request $request REST request.
+	 *
+	 * @return array|\WP_Error
+	 */
+	public static function delete_entry_for_admin( $request ) {
+		$entry_id = absint( $request->get_param( 'id' ) );
+
+		if ( ! $entry_id || self::POST_TYPE !== get_post_type( $entry_id ) ) {
+			return new \WP_Error(
+				'gutenverse_form_entry_not_found',
+				__( 'Entry not found.', 'gutenverse-form' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		if ( ! current_user_can( 'delete_post', $entry_id ) ) {
+			return new \WP_Error(
+				'gutenverse_form_entry_delete_forbidden',
+				__( 'You do not have permission to delete this entry.', 'gutenverse-form' ),
+				array( 'status' => 403 )
+			);
+		}
+
+		$deleted = wp_delete_post( $entry_id, true );
+
+		if ( ! $deleted ) {
+			return new \WP_Error(
+				'gutenverse_form_entry_delete_failed',
+				__( 'Could not delete entry. Please try again.', 'gutenverse-form' ),
+				array( 'status' => 500 )
+			);
+		}
+
+		return array(
+			'deleted' => true,
+			'id'      => $entry_id,
 		);
 	}
 
