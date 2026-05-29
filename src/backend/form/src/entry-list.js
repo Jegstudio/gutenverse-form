@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
-import { IconEyeSVG, IconTrashSVG } from 'gutenverse-core/icons';
+import { IconCloseSVG, IconEyeSVG, IconTrashSVG } from 'gutenverse-core/icons';
 import { signal } from 'gutenverse-core/editor-helper';
 
 const defaultCapabilities = {
@@ -255,6 +255,49 @@ const EntryListTable = ({ entries, deletingEntryId, onDelete }) => {
     );
 };
 
+const EntryDeleteModal = ({ deleting, error, entry, onCancel, onConfirm }) => {
+    if (!entry) {
+        return null;
+    }
+
+    return (
+        <div className="entry-delete-modal" aria-hidden="false">
+            <div className="entry-delete-modal__backdrop" onClick={deleting ? undefined : onCancel} />
+            <div className="entry-delete-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="entry-delete-title">
+                <button
+                    type="button"
+                    className="entry-delete-modal__close"
+                    aria-label={__('Close dialog', 'gutenverse-form')}
+                    disabled={deleting}
+                    onClick={onCancel}
+                >
+                    <IconCloseSVG size={24} aria-hidden="true" focusable="false" />
+                </button>
+                <div className="entry-delete-modal__body">
+                    <div className="entry-delete-modal__icon" aria-hidden="true">
+                        <svg width="54" height="54" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M24.4019 8.25C25.5566 6.25 28.4434 6.25 29.5981 8.25L49.0836 42C50.2383 44 48.7949 46.5 46.4856 46.5H7.51443C5.20503 46.5 3.76165 44 4.91635 42L24.4019 8.25Z" fill="currentColor" />
+                            <path d="M24.5 20.25H29.5V33H24.5V20.25Z" fill="#fff" />
+                            <path d="M24.5 37H29.5V42H24.5V37Z" fill="#fff" />
+                        </svg>
+                    </div>
+                    <h2 id="entry-delete-title">{__('Delete Entries Data', 'gutenverse-form')}</h2>
+                    <p>{__('Are you sure you want to delete this entries? This cannot be undone and will permanently remove the action data.', 'gutenverse-form')}</p>
+                    {error && <p className="entry-delete-modal__error">{error}</p>}
+                </div>
+                <div className="entry-delete-modal__actions">
+                    <button type="button" className="entry-delete-modal__cancel" onClick={onCancel} disabled={deleting}>
+                        {__('Cancel', 'gutenverse-form')}
+                    </button>
+                    <button type="button" className="entry-delete-modal__confirm" onClick={onConfirm} disabled={deleting}>
+                        {deleting ? __('Deleting...', 'gutenverse-form') : __('Delete Permanently', 'gutenverse-form')}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const EntryList = () => {
     const config = useMemo(() => getConfig(), []);
     const [capabilities, setCapabilities] = useState(() => normalizeCapabilities(config.capabilities));
@@ -264,6 +307,8 @@ const EntryList = () => {
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState('');
     const [deletingEntryId, setDeletingEntryId] = useState(0);
+    const [deleteEntryTarget, setDeleteEntryTarget] = useState(null);
+    const [deleteError, setDeleteError] = useState('');
     const [filtersSettled, setFiltersSettled] = useState(() => !shouldWaitForEntryListFilters());
     const [entryListFilterVersion, setEntryListFilterVersion] = useState(0);
     const shouldDefaultToAllEntries = useMemo(() => !hasExplicitRecentView(), []);
@@ -369,37 +414,46 @@ const EntryList = () => {
     const defaultEntryListContent = hasAllEntryListCapabilities(capabilities) ? null : <EntryListUpgrade config={config} />;
     const proEntryListContent = applyFilters(proEntryListContentFilter, defaultEntryListContent, filterProps);
 
-    const deleteEntry = (entry) => {
+    const openDeleteEntryModal = (entry) => {
         if (!entry?.id || deletingEntryId) {
             return;
         }
 
-        const confirmed = window.confirm(
-            sprintf(
-                __('Delete "%s"? This entry will be permanently deleted.', 'gutenverse-form'),
-                entry.title || sprintf(__('Entry #%s', 'gutenverse-form'), entry.id)
-            )
-        );
+        setDeleteError('');
+        setDeleteEntryTarget(entry);
+    };
 
-        if (!confirmed) {
+    const closeDeleteEntryModal = () => {
+        if (deletingEntryId) {
             return;
         }
 
-        setDeletingEntryId(entry.id);
+        setDeleteError('');
+        setDeleteEntryTarget(null);
+    };
+
+    const confirmDeleteEntry = () => {
+        if (!deleteEntryTarget?.id || deletingEntryId) {
+            return;
+        }
+
+        setDeletingEntryId(deleteEntryTarget.id);
+        setDeleteError('');
         setLoadError('');
 
         apiFetch({
-            path: buildDeletePath(config, entry.id),
+            path: buildDeletePath(config, deleteEntryTarget.id),
             method: 'DELETE',
         })
             .then(() => {
+                setDeleteEntryTarget(null);
                 setQuery(current => ({
                     ...current,
                     page: entries.length === 1 && current.page > 1 ? current.page - 1 : current.page,
                 }));
             })
             .catch(error => {
-                setLoadError(error?.message || __('Could not delete entry. Please try again.', 'gutenverse-form'));
+                setDeleteError(error?.message || __('Could not delete entry. Please try again.', 'gutenverse-form'));
             })
             .finally(() => {
                 setDeletingEntryId(0);
@@ -443,9 +497,17 @@ const EntryList = () => {
             <EntryListTable
                 deletingEntryId={deletingEntryId}
                 entries={entries}
-                onDelete={deleteEntry}
+                onDelete={openDeleteEntryModal}
             />
             {footer}
+
+            <EntryDeleteModal
+                deleting={Boolean(deletingEntryId)}
+                entry={deleteEntryTarget}
+                error={deleteError}
+                onCancel={closeDeleteEntryModal}
+                onConfirm={confirmDeleteEntry}
+            />
 
             {loading && data && <div className="entry-list-loading-overlay">{__('Refreshing entries...', 'gutenverse-form')}</div>}
         </div>
