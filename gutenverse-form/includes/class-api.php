@@ -894,6 +894,17 @@ class Api {
 	}
 
 	/**
+	 * Send no-cache headers for public form endpoints.
+	 *
+	 * @since 3.0.0-performance
+	 */
+	private function send_form_endpoint_no_cache_headers() {
+		if ( ! headers_sent() ) {
+			nocache_headers();
+		}
+	}
+
+	/**
 	 * Filter Form Params
 	 *
 	 * @param array     $entry_data .
@@ -1186,6 +1197,8 @@ class Api {
 	 * @return WP_Response
 	 */
 	public function submit_form( $request ) {
+		$this->send_form_endpoint_no_cache_headers();
+
 		// -----------------------------
 		// 1. Validate form-entry structure
 		// -----------------------------
@@ -1627,6 +1640,8 @@ class Api {
 	 * @return WP_Rest.
 	 */
 	public function form_init( $request ) {
+		$this->send_form_endpoint_no_cache_headers();
+
 		$form_id   = $request->get_param( 'form_id' );
 		$post_type = get_post_type( (int) $form_id );
 		$result    = array(
