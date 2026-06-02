@@ -908,10 +908,6 @@ class Api {
 		$form_entry    = $request->get_param( 'form-entry' );
 		$form_id       = $form_entry['formId'];
 		$form_options  = get_post_meta( (int) $form_id, 'form-data', true );
-		$file_rules    = array(
-			'max_size'           => isset( $form_options['max_size_file'] ) ? $form_options['max_size_file'] : false,
-			'allowed_extensions' => isset( $form_options['allowed_extensions'] ) ? $form_options['allowed_extensions'] : false,
-		);
 		if ( isset( $entry_data ) ) {
 			foreach ( $entry_data as $key => $data ) {
 				$value_key = $data['id'] . '-' . $key . '-value';
@@ -974,68 +970,48 @@ class Api {
 						);
 						break;
 					case 'file':
-						$id    = sanitize_key( $data['id'] );
-						$files = $request->get_file_params();
+						/**
+						 * Filters submitted file field handling.
+						 *
+						 * @since 3.0.0-performance
+						 *
+						 * @param array|null $file_result File handling result.
+						 * @param array      $data Submitted field data.
+						 * @param string|int $key Submitted field index.
+						 * @param string     $value_key Submitted field value key.
+						 * @param object     $request Submit request.
+						 * @param array      $form_options Form options.
+						 */
+						$file_result = apply_filters(
+							'gutenverse_form_submit_file_field',
+							null,
+							$data,
+							$key,
+							$value_key,
+							$request,
+							$form_options
+						);
 
-						if ( ! isset( $files['form-entry'] ) ) {
+						if ( null === $file_result ) {
+							$error[] = 'File upload handler is unavailable.';
 							break;
 						}
 
-						$file_names = $files['form-entry']['name']['data'][ $key ][ $value_key ];
-						if ( ! empty( $file_names ) ) {
-							$file_info = array(
-								'name'      => $files['form-entry']['name']['data'][ $key ][ $value_key ],
-								'type'      => $files['form-entry']['type']['data'][ $key ][ $value_key ],
-								'tmp_name'  => $files['form-entry']['tmp_name']['data'][ $key ][ $value_key ],
-								'error'     => $files['form-entry']['error']['data'][ $key ][ $value_key ],
-								'size'      => $files['form-entry']['size']['data'][ $key ][ $value_key ],
-								'full_path' => $files['form-entry']['full_path']['data'][ $key ][ $value_key ],
+						if ( ! is_array( $file_result ) || ! array_key_exists( 'status', $file_result ) ) {
+							$error[] = 'Invalid file upload response.';
+							break;
+						}
+
+						if ( ! $file_result['status'] ) {
+							$error[] = isset( $file_result['message'] ) && is_scalar( $file_result['message'] ) ? sanitize_text_field( $file_result['message'] ) : 'File upload failed.';
+							break;
+						}
+
+						if ( isset( $file_result['data'] ) && is_array( $file_result['data'] ) ) {
+							$filtered_data[] = array(
+								'id'    => isset( $file_result['data']['id'] ) ? sanitize_key( $file_result['data']['id'] ) : sanitize_key( $data['id'] ),
+								'value' => isset( $file_result['data']['value'] ) ? esc_url_raw( $file_result['data']['value'] ) : null,
 							);
-
-							if ( $file_rules['max_size'] && intval( $file_info['size'] ) > intval( $file_rules['max_size'] ) * 1024 ) {
-								array_push( $error, $file_info['name'] . ' exceeds max size of ' . $file_rules['max_size'] . 'KB.' );
-							}
-
-							$allowed_ext = array();
-							if ( $file_rules['allowed_extensions'] && 0 < count( $file_rules['allowed_extensions'] ) ) {
-								$allowed_ext = array_column( $file_rules['allowed_extensions'], 'value' );
-							} else {
-								$allowed_ext = array( 'jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'zip' );
-							}
-
-							$file_ext = strtolower( pathinfo( $file_info['name'], PATHINFO_EXTENSION ) );
-							if ( ! in_array( $file_ext, $allowed_ext, true ) ) {
-								array_push( $error, $file_info['name'] . '\'s extensions not allowed.' );
-							}
-							if ( count( $error ) > 0 ) {
-								break;
-							}
-							$uploaded = wp_handle_upload( $file_info, array( 'test_form' => false ) );
-							if ( ! isset( $uploaded['error'] ) ) {
-								$file_url = $uploaded['url'];
-
-								// SVG Safety Check .
-								if ( 'image/svg+xml' === $uploaded['type'] || 'svg' === strtolower( pathinfo( $uploaded['file'], PATHINFO_EXTENSION ) ) ) {
-									if ( function_exists( 'gutenverse_is_svg_safe' ) ) {
-										$svg_content = file_get_contents( $uploaded['file'] );
-										if ( ! gutenverse_is_svg_safe( $svg_content ) ) {
-											unlink( $uploaded['file'] );
-											array_push( $error, $file_info['name'] . ' contains unsafe SVG content.' );
-											break;
-										}
-									}
-								}
-
-								$filtered_data[] = array(
-									'id'    => $id,
-									'value' => $file_url,
-								);
-							} else {
-								$filtered_data[] = array(
-									'id'    => $id,
-									'value' => null,
-								);
-							}
 						}
 						break;
 					default:
