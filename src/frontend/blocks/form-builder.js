@@ -1,4 +1,4 @@
-import { Default, u } from 'gutenverse-core-frontend';
+import { Default, getNonce, u } from 'gutenverse-core-frontend';
 import isEmpty from 'lodash/isEmpty';
 import { applyFilters } from '@wordpress/hooks';
 
@@ -7,7 +7,13 @@ const getRestUrl = (path) => {
     return `${apiRoot.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
 };
 
-const getWpNonce = () => window?.wpApiSettings?.nonce || '';
+const getSubmitNonce = (formData) => {
+    if (!formData['require_login']) {
+        return Promise.resolve('');
+    }
+
+    return getNonce('wp_rest');
+};
 
 const submitPublicForm = (url, body, options = {}) => {
     const headers = {};
@@ -430,9 +436,9 @@ class GutenverseFormValidation extends Default {
                 // remove existing notification on another submit
                 currentFormBuilder.find('.form-notification').remove();
                 setTimeout(() => {
-                    submitPublicForm(submitUrl, requestBody, {
-                        nonce: formData['require_login'] ? getWpNonce() : ''
-                    }).then(({ entry_id }) => {
+                    getSubmitNonce(formData).then(nonce => submitPublicForm(submitUrl, requestBody, {
+                        nonce
+                    })).then(({ entry_id }) => {
                         if (isPayment) {
                             const message = 'Please wait you are being redirected';
                             const notifclass = 'guten-loading';
