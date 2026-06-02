@@ -750,6 +750,154 @@ class Api {
 	}
 
 	/**
+	 * Merge registered block defaults into saved attributes.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param string $block_name Block name.
+	 * @param array  $attrs      Saved block attributes.
+	 *
+	 * @return array
+	 */
+	private function get_form_block_attrs_with_defaults( $block_name, $attrs ) {
+		if ( ! class_exists( '\WP_Block_Type_Registry' ) ) {
+			return $attrs;
+		}
+
+		$block_type = \WP_Block_Type_Registry::get_instance()->get_registered( $block_name );
+
+		if ( empty( $block_type ) || empty( $block_type->attributes ) || ! is_array( $block_type->attributes ) ) {
+			return $attrs;
+		}
+
+		foreach ( $block_type->attributes as $key => $definition ) {
+			if ( is_array( $definition ) && array_key_exists( 'default', $definition ) && ! array_key_exists( $key, $attrs ) ) {
+				$attrs[ $key ] = $definition['default'];
+			}
+		}
+
+		return $attrs;
+	}
+
+	/**
+	 * Normalize saved option values for schema allowlists.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $options Saved option definitions.
+	 *
+	 * @return array
+	 */
+	private function normalize_form_schema_options( $options ) {
+		$values = array();
+
+		if ( ! is_array( $options ) ) {
+			return $values;
+		}
+
+		foreach ( $options as $option ) {
+			if ( is_array( $option ) && isset( $option['value'] ) && is_scalar( $option['value'] ) ) {
+				$value = sanitize_text_field( (string) $option['value'] );
+			} elseif ( is_scalar( $option ) ) {
+				$value = sanitize_text_field( (string) $option );
+			} else {
+				continue;
+			}
+
+			if ( '' !== $value ) {
+				$values[] = $value;
+			}
+		}
+
+		return array_values( array_unique( $values ) );
+	}
+
+	/**
+	 * Get saved option values for a form field.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array  $attrs Field block attributes.
+	 * @param string $type  Field type.
+	 *
+	 * @return array
+	 */
+	private function get_form_field_options( $attrs, $type ) {
+		switch ( $type ) {
+			case 'select':
+			case 'multiselect':
+				return $this->normalize_form_schema_options( $attrs['selectOptions'] ?? array() );
+			case 'radio':
+				return $this->normalize_form_schema_options( $attrs['radioOptions'] ?? array() );
+			case 'checkbox':
+				return $this->normalize_form_schema_options( $attrs['checkboxOptions'] ?? array() );
+			case 'gdpr':
+				return $this->normalize_form_schema_options(
+					array(
+						$attrs['gdprFormValue'] ?? '',
+						$attrs['gdprUncheckedFormValue'] ?? '',
+					)
+				);
+			default:
+				return array();
+		}
+	}
+
+	/**
+	 * Build a field schema item from saved block attributes.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param string $field_id   Field ID.
+	 * @param string $field_type Field type.
+	 * @param string $block_name Block name.
+	 * @param array  $attrs      Field block attributes.
+	 *
+	 * @return array
+	 */
+	private function build_form_field_schema( $field_id, $field_type, $block_name, $attrs ) {
+		$schema = array(
+			'id'            => $field_id,
+			'type'          => sanitize_key( $field_type ),
+			'blockName'     => $block_name,
+			'required'      => ! empty( $attrs['required'] ),
+			'options'       => $this->get_form_field_options( $attrs, $field_type ),
+			'defaultLogic'  => isset( $attrs['defaultLogic'] ) && is_scalar( $attrs['defaultLogic'] ) ? sanitize_key( $attrs['defaultLogic'] ) : '',
+			'hasFieldLogic' => ! empty( $attrs['displayLogic'] ) && is_array( $attrs['displayLogic'] ),
+		);
+
+		if ( isset( $attrs['validationType'] ) && is_scalar( $attrs['validationType'] ) ) {
+			$schema['validationType'] = sanitize_key( $attrs['validationType'] );
+		}
+
+		if ( isset( $attrs['validationMin'] ) && is_numeric( $attrs['validationMin'] ) ) {
+			$schema['validationMin'] = (float) $attrs['validationMin'];
+		}
+
+		if ( isset( $attrs['validationMax'] ) && is_numeric( $attrs['validationMax'] ) ) {
+			$schema['validationMax'] = (float) $attrs['validationMax'];
+		}
+
+		if ( 'number' === $field_type ) {
+			if ( isset( $attrs['inputMin'] ) && is_numeric( $attrs['inputMin'] ) ) {
+				$schema['min'] = (float) $attrs['inputMin'];
+			}
+
+			if ( isset( $attrs['inputMax'] ) && is_numeric( $attrs['inputMax'] ) ) {
+				$schema['max'] = (float) $attrs['inputMax'];
+			}
+		}
+
+		if ( 'date' === $field_type ) {
+			$schema['dateRange'] = ! empty( $attrs['dateRange'] );
+			$schema['dateStart'] = isset( $attrs['dateStart'] ) && is_scalar( $attrs['dateStart'] ) ? sanitize_text_field( (string) $attrs['dateStart'] ) : '';
+			$schema['dateEnd']   = isset( $attrs['dateEnd'] ) && is_scalar( $attrs['dateEnd'] ) ? sanitize_text_field( (string) $attrs['dateEnd'] ) : '';
+		}
+
+		return apply_filters( 'gutenverse_form_public_submit_field_schema_item', $schema, $attrs, $block_name );
+	}
+
+	/**
 	 * Build submitted field schema from saved form input blocks.
 	 *
 	 * @since 3.0.0-performance
@@ -769,15 +917,13 @@ class Api {
 			$attrs      = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
 
 			if ( isset( $type_map[ $block_name ] ) && is_scalar( $type_map[ $block_name ] ) ) {
+				$field_type = sanitize_key( $type_map[ $block_name ] );
+				$attrs      = $this->get_form_block_attrs_with_defaults( $block_name, $attrs );
 				$input_name = isset( $attrs['inputName'] ) && is_scalar( $attrs['inputName'] ) ? $attrs['inputName'] : ( $default_name_map[ $block_name ] ?? '' );
 				$field_id   = is_scalar( $input_name ) ? sanitize_key( $input_name ) : '';
 
 				if ( ! empty( $field_id ) ) {
-					$schema[ $field_id ] = array(
-						'id'        => $field_id,
-						'type'      => sanitize_key( $type_map[ $block_name ] ),
-						'blockName' => $block_name,
-					);
+					$schema[ $field_id ] = $this->build_form_field_schema( $field_id, $field_type, $block_name, $attrs );
 				}
 			}
 
@@ -835,7 +981,307 @@ class Api {
 	}
 
 	/**
-	 * Validate submitted field IDs and types against saved form schema.
+	 * Build a generic schema validation response.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param string $message Error message.
+	 *
+	 * @return WP_REST_Response
+	 */
+	private function make_public_submit_schema_error( $message ) {
+		return new WP_REST_Response(
+			array(
+				'status'  => 'failed',
+				'message' => $message,
+			),
+			400
+		);
+	}
+
+	/**
+	 * Get submitted field value from the payload shape used by FormData.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array      $data      Submitted field data.
+	 * @param string|int $key       Submitted field index.
+	 * @param bool       $has_value Whether the submitted value key exists.
+	 *
+	 * @return mixed
+	 */
+	private function get_submitted_form_field_value( $data, $key, &$has_value = null ) {
+		$has_value = false;
+
+		if ( ! isset( $data['id'] ) || ! is_scalar( $data['id'] ) ) {
+			return null;
+		}
+
+		$value_key = $data['id'] . '-' . $key . '-value';
+
+		if ( array_key_exists( $value_key, $data ) ) {
+			$has_value = true;
+			return $data[ $value_key ];
+		}
+
+		if ( array_key_exists( 'value', $data ) ) {
+			$has_value = true;
+			return $data['value'];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Normalize submitted scalar value.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param mixed $value Submitted value.
+	 *
+	 * @return string
+	 */
+	private function normalize_submitted_form_scalar( $value ) {
+		if ( is_array( $value ) || is_object( $value ) ) {
+			return '';
+		}
+
+		return sanitize_text_field( wp_unslash( (string) $value ) );
+	}
+
+	/**
+	 * Normalize submitted list value.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param mixed $value Submitted value.
+	 *
+	 * @return array
+	 */
+	private function normalize_submitted_form_value_list( $value ) {
+		if ( is_array( $value ) ) {
+			$raw_values = $value;
+		} elseif ( is_object( $value ) ) {
+			return array();
+		} elseif ( function_exists( 'wp_parse_list' ) ) {
+			$raw_values = wp_parse_list( $value );
+		} else {
+			$raw_values = array_map( 'trim', explode( ',', (string) $value ) );
+		}
+
+		$values = array();
+
+		foreach ( $raw_values as $raw_value ) {
+			if ( ! is_scalar( $raw_value ) ) {
+				continue;
+			}
+
+			$value = sanitize_text_field( wp_unslash( (string) $raw_value ) );
+
+			if ( '' !== $value ) {
+				$values[] = $value;
+			}
+		}
+
+		return $values;
+	}
+
+	/**
+	 * Check whether a submitted value is empty.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param mixed $value Submitted value.
+	 *
+	 * @return bool
+	 */
+	private function is_empty_submitted_form_value( $value ) {
+		if ( null === $value ) {
+			return true;
+		}
+
+		if ( is_array( $value ) ) {
+			return empty( $this->normalize_submitted_form_value_list( $value ) );
+		}
+
+		if ( is_object( $value ) ) {
+			return true;
+		}
+
+		return '' === trim( (string) $value );
+	}
+
+	/**
+	 * Validate one submitted field value against schema.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array      $schema_field Field schema.
+	 * @param mixed      $value        Submitted field value.
+	 * @param array      $form_entry   Form entry data.
+	 * @param int        $form_id      Form ID.
+	 * @param array      $data         Submitted field data.
+	 * @param string|int $key          Submitted field index.
+	 *
+	 * @return WP_REST_Response|null
+	 */
+	private function validate_submitted_form_field_value( $schema_field, $value, $form_entry, $form_id, $data, $key ) {
+		$type     = isset( $schema_field['type'] ) && is_scalar( $schema_field['type'] ) ? sanitize_key( $schema_field['type'] ) : '';
+		$required = ! empty( $schema_field['required'] );
+
+		if ( $required && $this->is_empty_submitted_form_value( $value ) ) {
+			return $this->make_public_submit_schema_error( 'Required form field is empty.' );
+		}
+
+		if ( ! $required && $this->is_empty_submitted_form_value( $value ) ) {
+			return null;
+		}
+
+		if ( 'email' === $type && ! is_email( $this->normalize_submitted_form_scalar( $value ) ) ) {
+			return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+		}
+
+		if ( 'number' === $type ) {
+			if ( is_array( $value ) || ! is_numeric( $value ) ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+
+			$number = (float) $value;
+
+			if ( isset( $schema_field['min'] ) && is_numeric( $schema_field['min'] ) && $number < (float) $schema_field['min'] ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+
+			if ( isset( $schema_field['max'] ) && is_numeric( $schema_field['max'] ) && $number > (float) $schema_field['max'] ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+		}
+
+		if ( 'switch' === $type && ! is_bool( $value ) ) {
+			$boolean_values = array( '1', '0', 'true', 'false', 'yes', 'no', 'on', 'off' );
+			$boolean_value  = strtolower( trim( (string) $value ) );
+
+			if ( ! in_array( $boolean_value, $boolean_values, true ) ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+		}
+
+		if ( 'date' === $type && ( ! empty( $schema_field['dateStart'] ) || ! empty( $schema_field['dateEnd'] ) ) ) {
+			$date_values = ! empty( $schema_field['dateRange'] ) ? preg_split( '/\s+to\s+/', $this->normalize_submitted_form_scalar( $value ) ) : array( $this->normalize_submitted_form_scalar( $value ) );
+			$min_date    = ! empty( $schema_field['dateStart'] ) ? strtotime( $schema_field['dateStart'] ) : false;
+			$max_date    = ! empty( $schema_field['dateEnd'] ) ? strtotime( $schema_field['dateEnd'] ) : false;
+
+			if ( ! is_array( $date_values ) ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+
+			foreach ( $date_values as $date_value ) {
+				$date_timestamp = strtotime( trim( $date_value ) );
+
+				if ( false === $date_timestamp ) {
+					return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+				}
+
+				if ( false !== $min_date && $date_timestamp < $min_date ) {
+					return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+				}
+
+				if ( false !== $max_date && $date_timestamp > $max_date ) {
+					return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+				}
+			}
+		}
+
+		if ( ! empty( $schema_field['options'] ) && is_array( $schema_field['options'] ) ) {
+			$multiple_types = array( 'checkbox', 'multiselect', 'multi-group-select' );
+
+			if ( in_array( $type, $multiple_types, true ) ) {
+				foreach ( $this->normalize_submitted_form_value_list( $value ) as $item ) {
+					if ( ! in_array( $item, $schema_field['options'], true ) ) {
+						return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+					}
+				}
+			} elseif ( is_array( $value ) || ! in_array( $this->normalize_submitted_form_scalar( $value ), $schema_field['options'], true ) ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+		}
+
+		$validation_type = isset( $schema_field['validationType'] ) && is_scalar( $schema_field['validationType'] ) ? sanitize_key( $schema_field['validationType'] ) : '';
+
+		if ( in_array( $validation_type, array( 'character', 'word' ), true ) ) {
+			if ( is_array( $value ) ) {
+				$length = count( $this->normalize_submitted_form_value_list( $value ) );
+			} else {
+				$text = $this->normalize_submitted_form_scalar( $value );
+
+				if ( 'word' === $validation_type ) {
+					$words  = preg_split( '/\s+/', trim( $text ), -1, PREG_SPLIT_NO_EMPTY );
+					$length = is_array( $words ) ? count( $words ) : 0;
+				} else {
+					$length = function_exists( 'mb_strlen' ) ? mb_strlen( $text ) : strlen( $text );
+				}
+			}
+
+			if ( isset( $schema_field['validationMin'] ) && is_numeric( $schema_field['validationMin'] ) && $length < (float) $schema_field['validationMin'] ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+
+			if ( isset( $schema_field['validationMax'] ) && is_numeric( $schema_field['validationMax'] ) && $length > (float) $schema_field['validationMax'] ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+		}
+
+		/**
+		 * Filters schema validation result for a submitted field.
+		 *
+		 * @since 3.0.0-performance
+		 *
+		 * @param WP_REST_Response|null $error        Validation error.
+		 * @param array                 $schema_field Field schema.
+		 * @param mixed                 $value        Submitted field value.
+		 * @param array                 $form_entry   Form entry data.
+		 * @param int                   $form_id      Form ID.
+		 * @param array                 $data         Submitted field data.
+		 * @param string|int            $key          Submitted field index.
+		 */
+		$filtered_error = apply_filters( 'gutenverse_form_public_submit_field_value_error', null, $schema_field, $value, $form_entry, $form_id, $data, $key );
+
+		if ( $filtered_error instanceof WP_REST_Response ) {
+			return $filtered_error;
+		}
+
+		if ( is_string( $filtered_error ) && '' !== $filtered_error ) {
+			return $this->make_public_submit_schema_error( $filtered_error );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Decide whether a missing required field should fail validation.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $schema_field Field schema.
+	 * @param array $form_entry   Form entry data.
+	 * @param int   $form_id      Form ID.
+	 *
+	 * @return bool
+	 */
+	private function should_validate_missing_required_field( $schema_field, $form_entry, $form_id ) {
+		if ( empty( $schema_field['required'] ) ) {
+			return false;
+		}
+
+		if ( ! empty( $schema_field['hasFieldLogic'] ) || ( isset( $schema_field['defaultLogic'] ) && 'hide' === $schema_field['defaultLogic'] ) ) {
+			return false;
+		}
+
+		return (bool) apply_filters( 'gutenverse_form_public_submit_validate_missing_required_field', true, $schema_field, $form_entry, $form_id );
+	}
+
+	/**
+	 * Validate submitted field IDs, types, and values against saved form schema.
 	 *
 	 * @since 3.0.0-performance
 	 *
@@ -851,7 +1297,9 @@ class Api {
 			return $schema;
 		}
 
-		foreach ( $form_entry['data'] as $data ) {
+		$submitted_fields = array();
+
+		foreach ( $form_entry['data'] as $key => $data ) {
 			if ( ! is_array( $data ) ) {
 				return new WP_REST_Response(
 					array(
@@ -887,6 +1335,28 @@ class Api {
 					),
 					400
 				);
+			}
+
+			$value = $this->get_submitted_form_field_value( $data, $key, $has_value );
+
+			if ( ! $has_value ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+
+			if ( is_array( $schema_field ) ) {
+				$value_error = $this->validate_submitted_form_field_value( $schema_field, $value, $form_entry, $form_id, $data, $key );
+
+				if ( $value_error ) {
+					return $value_error;
+				}
+			}
+
+			$submitted_fields[ $field_id ] = true;
+		}
+
+		foreach ( $schema as $field_id => $schema_field ) {
+			if ( ! isset( $submitted_fields[ $field_id ] ) && is_array( $schema_field ) && $this->should_validate_missing_required_field( $schema_field, $form_entry, $form_id ) ) {
+				return $this->make_public_submit_schema_error( 'Required form field is missing.' );
 			}
 		}
 
