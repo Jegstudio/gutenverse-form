@@ -297,8 +297,8 @@ class Integration {
 			}
 		}
 
-		$secret_map = get_post_meta( $post_id, 'gutenverse_form_block_secrets', true );
-		$secret_map = is_array( $secret_map ) ? $secret_map : array();
+		$secret_map  = get_post_meta( $post_id, 'gutenverse_form_block_secrets', true );
+		$secret_map  = is_array( $secret_map ) ? $secret_map : array();
 		$element_map = isset( $secret_map[ $element_id ] ) && is_array( $secret_map[ $element_id ] ) ? $secret_map[ $element_id ] : array();
 
 		foreach ( $integration['actions'] as $index => $action ) {
@@ -321,6 +321,84 @@ class Integration {
 		}
 
 		return $integration;
+	}
+
+	/**
+	 * Load saved form builder integration settings from a rendered post.
+	 *
+	 * @param int    $post_id    Post ID containing the form builder block.
+	 * @param int    $form_id    Assigned Gutenverse form ID.
+	 * @param string $element_id Form builder block element ID.
+	 *
+	 * @return array
+	 */
+	public static function get_form_builder_integration_from_post( $post_id, $form_id, $element_id ) {
+		$post_id    = absint( $post_id );
+		$form_id    = absint( $form_id );
+		$element_id = sanitize_key( $element_id );
+
+		if ( ! $post_id || ! $form_id || empty( $element_id ) ) {
+			return array();
+		}
+
+		$post = get_post( $post_id );
+		if ( ! $post || empty( $post->post_content ) ) {
+			return array();
+		}
+
+		$block = self::find_form_builder_block( parse_blocks( $post->post_content ), $form_id, $element_id );
+		if ( empty( $block['attrs'] ) || ! is_array( $block['attrs'] ) ) {
+			return array();
+		}
+
+		$integration              = isset( $block['attrs']['integration'] ) && is_array( $block['attrs']['integration'] ) ? $block['attrs']['integration'] : array();
+		$integration['elementId'] = $element_id;
+		$integration['_source']   = 'server';
+
+		return $integration;
+	}
+
+	/**
+	 * Find a matching form builder block in parsed block data.
+	 *
+	 * @param array  $blocks     Parsed blocks.
+	 * @param int    $form_id    Assigned Gutenverse form ID.
+	 * @param string $element_id Form builder block element ID.
+	 *
+	 * @return array|null
+	 */
+	private static function find_form_builder_block( $blocks, $form_id, $element_id ) {
+		foreach ( $blocks as $block ) {
+			if ( isset( $block['blockName'] ) && 'gutenverse/form-builder' === $block['blockName'] ) {
+				$attrs          = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+				$block_form_id  = 0;
+				$block_form_ref = isset( $attrs['formId'] ) ? $attrs['formId'] : null;
+
+				if ( is_array( $block_form_ref ) && isset( $block_form_ref['value'] ) ) {
+					$block_form_id = absint( $block_form_ref['value'] );
+				} elseif ( is_scalar( $block_form_ref ) ) {
+					$block_form_id = absint( $block_form_ref );
+				}
+
+				if (
+					isset( $attrs['elementId'] ) &&
+					sanitize_key( $attrs['elementId'] ) === $element_id &&
+					$block_form_id === $form_id
+				) {
+					return $block;
+				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+				$found = self::find_form_builder_block( $block['innerBlocks'], $form_id, $element_id );
+
+				if ( $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -480,6 +558,10 @@ class Integration {
 	public static function request_has_integration_actions( $params ) {
 		if ( ! isset( $params['integrations']['actions'] ) || ! is_array( $params['integrations']['actions'] ) ) {
 			return false;
+		}
+
+		if ( ! isset( $params['integrations']['_source'] ) || 'server' !== $params['integrations']['_source'] ) {
+			return (bool) apply_filters( 'gutenverse_form_allow_request_integration_actions', false, $params );
 		}
 
 		foreach ( $params['integrations']['actions'] as $action ) {
@@ -700,9 +782,11 @@ class Integration {
 			return $normalized;
 		}
 
-		if ( ! empty( $actions ) ) {
+		if ( ! empty( $actions ) && isset( $normalized['_source'] ) && 'server' === $normalized['_source'] ) {
 			return $normalized;
 		}
+
+		unset( $normalized['actions'] );
 
 		if ( isset( $form_setting['integrations']['actions'] ) && is_array( $form_setting['integrations']['actions'] ) ) {
 			$actions = array_values(
@@ -800,8 +884,8 @@ class Integration {
 		}
 
 		if ( $entry_id > 0 ) {
-			$logs = get_post_meta( $entry_id, 'integration_logs', true );
-			$logs = is_array( $logs ) ? $logs : array();
+			$logs               = get_post_meta( $entry_id, 'integration_logs', true );
+			$logs               = is_array( $logs ) ? $logs : array();
 			$logs[ $service ]   = isset( $logs[ $service ] ) && is_array( $logs[ $service ] ) ? $logs[ $service ] : array();
 			$logs[ $service ][] = $record;
 			$logs[ $service ]   = array_slice( $logs[ $service ], -self::MAX_LOG_RECORDS );

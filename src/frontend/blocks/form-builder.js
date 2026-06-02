@@ -1,7 +1,59 @@
 import { Default, u } from 'gutenverse-core-frontend';
 import isEmpty from 'lodash/isEmpty';
-import apiFetch from '@wordpress/api-fetch';
 import { applyFilters } from '@wordpress/hooks';
+
+const getRestUrl = (path) => {
+    const apiRoot = window?.wpApiSettings?.root || `${window.location.origin}/wp-json/`;
+    return `${apiRoot.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
+};
+
+const getWpNonce = () => window?.wpApiSettings?.nonce || '';
+
+const submitPublicForm = (url, body, options = {}) => {
+    const headers = {};
+
+    if (options.nonce) {
+        headers['X-WP-Nonce'] = options.nonce;
+    }
+
+    return fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers,
+        body
+    }).then(response => {
+        return response.json().catch(() => ({})).then(data => {
+            if (!response.ok) {
+                const error = new Error(data?.message || response.statusText);
+                error.data = data;
+                throw error;
+            }
+
+            return data;
+        });
+    });
+};
+
+const submitJson = (url, data) => {
+    return fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then(response => {
+        return response.json().catch(() => ({})).then(result => {
+            if (!response.ok) {
+                const error = new Error(result?.message || result?.error || response.statusText);
+                error.data = result;
+                throw error;
+            }
+
+            return result;
+        });
+    });
+};
 
 const renderNoticeIcon = (icon, iconType = 'icon', iconSVG = '') => {
     if (iconType === 'svg' && iconSVG) {
@@ -124,7 +176,7 @@ class GutenverseFormValidation extends Default {
             if (dynamicConfig) {
                 try {
                     const config = typeof dynamicConfig === 'string' ? JSON.parse(dynamicConfig) : dynamicConfig;
-                    if (( config.type === 'custom' || config.type === 'pro-dynamic' ) && config.custom) {
+                    if ((config.type === 'custom' || config.type === 'pro-dynamic') && config.custom) {
                         if (!input.value) input.value = config.custom;
                     } else if (config.type === 'query' && config.query?.key) {
                         const urlParams = new URLSearchParams(window.location.search);
@@ -289,8 +341,16 @@ class GutenverseFormValidation extends Default {
         const instance = this;
         const formId = formBuilder.data('form-id');
         const postId = formBuilder.data('post-id') || (!isEmpty(window['GutenverseData']) ? window['GutenverseData']['postId'] : 0);
+        const submitUrl = formBuilder.data('submit-url') || getRestUrl('gutenverse-form-client/v1/form/submit');
         const hideAfterSubmit = formBuilder.data('hide-after');
         const redirectTo = formBuilder.data('redirect');
+        const startedAtInput = formBuilder.find('input[name="gutenverse-form-started-at"]').first();
+        const loadStartedAt = window.performance && typeof window.performance.now === 'function' ? window.performance.now() : Date.now();
+
+        if (startedAtInput && !startedAtInput.value) {
+            startedAtInput.value = Date.now();
+        }
+
         formBuilder.on('submit', (e) => {
             e.preventDefault();
             const captcha = formBuilder.find('.gutenverse-recaptcha');
@@ -302,10 +362,6 @@ class GutenverseFormValidation extends Default {
             let validFlag = true;
             let value = null;
             let isPayment = false;
-            let paymentMethod = false;
-            let paymentPrice = false;
-            let paymentItemName = false;
-            let paymentOption = false;
             formBuilder.find('.gutenverse-input').each(function (input) {
                 const currentInput = u(input);
                 const validation = JSON.parse(currentInput.data('validation'));
@@ -327,14 +383,8 @@ class GutenverseFormValidation extends Default {
                         value: value,
                         type
                     });
-                    if (validation) {
-                        isPayment = ('payment' === validation.type) && value;
-                        paymentMethod = ('payment' === validation.type) ? value : false;
-                        paymentOption = ('payment' === validation.type) ? JSON.parse(currentInput.data('payment-option')) : false;
-                    } else {
-                        isPayment = false;
-                        paymentMethod = false;
-                        paymentOption = false;
+                    if (validation && 'payment' === validation.type && value) {
+                        isPayment = true;
                     }
                 }
             });
@@ -354,10 +404,17 @@ class GutenverseFormValidation extends Default {
                 requestBody.append('form-entry[formId]', formId);
                 requestBody.append('form-entry[postId]', postId);
 
-                const integrationsInput = currentFormBuilder.find('input[name="gutenverse-form-integrations"]').first();
-                if (integrationsInput) {
-                    requestBody.append('form-entry[integrations]', integrationsInput.value);
+                const integrationSourceInput = currentFormBuilder.find('input[name="gutenverse-form-integration-source"]').first();
+                if (integrationSourceInput) {
+                    requestBody.append('form-entry[integrationSource]', integrationSourceInput.value);
                 }
+
+                const honeypotInput = currentFormBuilder.find('input[name="gutenverse-form-hp"]').first();
+                const currentStartedAtInput = currentFormBuilder.find('input[name="gutenverse-form-started-at"]').first();
+                const currentTime = window.performance && typeof window.performance.now === 'function' ? window.performance.now() : Date.now();
+                requestBody.append('gutenverse-form-hp', honeypotInput ? honeypotInput.value : '');
+                requestBody.append('gutenverse-form-started-at', currentStartedAtInput && currentStartedAtInput.value ? currentStartedAtInput.value : Date.now());
+                requestBody.append('gutenverse-form-elapsed', Math.max(0, Math.floor(currentTime - loadStartedAt)));
 
                 // append each value field
                 values.forEach(({ id, value, type }, idx) => {
@@ -373,34 +430,19 @@ class GutenverseFormValidation extends Default {
                 // remove existing notification on another submit
                 currentFormBuilder.find('.form-notification').remove();
                 setTimeout(() => {
-                    apiFetch({
-                        path: 'gutenverse-form-client/v1/form/submit',
-                        method: 'POST',
-                        body: requestBody
+                    submitPublicForm(submitUrl, requestBody, {
+                        nonce: formData['require_login'] ? getWpNonce() : ''
                     }).then(({ entry_id }) => {
                         if (isPayment) {
-                            const amountId = paymentOption.amountInput;
-                            const price = values.find(item => item.id === amountId);
-                            paymentPrice = price.value;
                             const message = 'Please wait you are being redirected';
                             const notifclass = 'guten-loading';
                             const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
                             currentFormBuilder.prepend(notice);
 
-                            apiFetch({
-                                path: 'gutenverse-pro/v1/form-payment',
-                                method: 'POST',
-                                data: {
-                                    payment: {
-                                        paymentMethod,
-                                        paymentPrice,
-                                        paymentOption,
-                                        paymentItemName,
-                                        redirectTo,
-                                        id: entry_id,
-                                        currentUrl: window.location.href
-                                    }
-                                },
+                            submitJson(getRestUrl('gutenverse-pro/v1/form-payment'), {
+                                payment: {
+                                    id: entry_id
+                                }
                             }).then((data) => {
                                 window.location = data.url;
                             }).catch((e) => {

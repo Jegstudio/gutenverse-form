@@ -104,18 +104,21 @@ class Form_Builder extends Block_Abstract {
 		$data_attrs  = ' data-form-id="' . esc_attr( isset( $form_id['value'] ) ? $form_id['value'] : '' ) . '"';
 		$data_attrs .= ' data-hide-after="' . esc_attr( $hide_after ? 'true' : 'false' ) . '"';
 		$data_attrs .= ' data-redirect="' . esc_url( $redirect_to ) . '"';
+		$data_attrs .= ' data-submit-url="' . esc_url( rest_url( \Gutenverse_Form\Api::ENDPOINT . '/form/submit' ) ) . '"';
 
 		if ( $is_sticky ) {
 			$data_attrs .= ' data-id="' . esc_attr( $id ) . '"';
 		}
 
-		$integration = isset( $this->attributes['integration'] ) ? $this->attributes['integration'] : array();
-		$post_id     = get_the_ID();
-		$integration['elementId'] = $element_id;
-		$integration = ( new \Gutenverse_Form\Integration() )->hydrate_block_integration_secrets( $integration, (int) $post_id, (string) $element_id );
+		$integration_source = array(
+			'type'      => 'block',
+			'elementId' => $element_id,
+		);
 
 		$html  = '<form style="display:none" class="' . esc_attr( trim( $class_name ) ) . '"' . $data_attrs . '>';
-		$html .= '<input type="hidden" name="gutenverse-form-integrations" value="' . esc_attr( wp_json_encode( $integration ) ) . '">';
+		$html .= '<input type="hidden" name="gutenverse-form-integration-source" value="' . esc_attr( wp_json_encode( $integration_source ) ) . '">';
+		$html .= '<input type="text" name="gutenverse-form-hp" value="" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">';
+		$html .= '<input type="hidden" name="gutenverse-form-started-at" value="">';
 		$html .= $this->render_content();
 		$html .= '</form>';
 

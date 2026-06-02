@@ -145,6 +145,21 @@ class Form_Validation extends Style_Generator {
 	 */
 	public function localize_validation_data( $form_data ) {
 		$form_result = array();
+		$include_user_data = apply_filters( 'gutenverse_form_localize_frontend_user_data', false );
+		$user_data         = null;
+
+		if ( $include_user_data && is_user_logged_in() ) {
+			$user_data = array(
+				'id'           => get_current_user_id(),
+				'username'     => wp_get_current_user()->user_login,
+				'display_name' => wp_get_current_user()->display_name,
+				'first_name'   => wp_get_current_user()->first_name,
+				'last_name'    => wp_get_current_user()->last_name,
+				'email'        => wp_get_current_user()->user_email,
+				'role'         => (array) wp_get_current_user()->roles,
+			);
+		}
+
 		if ( ! empty( $form_data ) ) {
 
 			foreach ( $form_data as $form_id ) {
@@ -175,16 +190,8 @@ class Form_Validation extends Style_Generator {
 			array(
 				'data'         => $form_result,
 				'missingLabel' => esc_html__( 'Form action is missing, please assign form action into this form.', 'gutenverse-form' ),
-				'isAdmin'      => current_user_can( 'manage_options' ),
-				'userData'     => is_user_logged_in() ? array(
-					'id'           => get_current_user_id(),
-					'username'     => wp_get_current_user()->user_login,
-					'display_name' => wp_get_current_user()->display_name,
-					'first_name'   => wp_get_current_user()->first_name,
-					'last_name'    => wp_get_current_user()->last_name,
-					'email'        => wp_get_current_user()->user_email,
-					'role'         => (array) wp_get_current_user()->roles,
-				) : null,
+				'isAdmin'      => $include_user_data && current_user_can( 'manage_options' ),
+				'userData'     => $user_data,
 			)
 		);
 	}

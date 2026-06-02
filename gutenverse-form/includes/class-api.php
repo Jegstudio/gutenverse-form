@@ -624,6 +624,13 @@ class Api {
 							'value' => sanitize_text_field( $data[ $value_key ] ),
 						);
 						break;
+					case 'payment':
+						$filtered_data[] = array(
+							'id'    => sanitize_key( $data['id'] ),
+							'value' => sanitize_text_field( $data[ $value_key ] ),
+							'type'  => 'payment',
+						);
+						break;
 					case 'email':
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),
@@ -741,16 +748,25 @@ class Api {
 	}
 
 	/**
-	 * Submit Form
+	 * Verify frontend submit nonce when required.
 	 *
-	 * @param object $request .
+	 * Public cached forms do not require a nonce by default. Login-required forms
+	 * do require one after the login check passes.
 	 *
-	 * @return WP_Response
+	 * @param int    $form_id Form ID.
+	 * @param object $request Request object.
+	 * @param array  $form_setting Form setting.
+	 *
+	 * @return WP_REST_Response|null
 	 */
-	public function submit_form( $request ) {
-		// -----------------------------
-		// 1. Verify nonce (CSRF protection)
-		// -----------------------------
+	private function maybe_verify_public_submit_nonce( $form_id, $request, $form_setting ) {
+		$default_require_nonce = ! empty( $form_setting['require_login'] );
+		$require_nonce         = apply_filters( 'gutenverse_form_public_submit_require_nonce', $default_require_nonce, $form_id, $request, $form_setting );
+
+		if ( ! $require_nonce ) {
+			return null;
+		}
+
 		$nonce = $request->get_header( 'X-WP-Nonce' );
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
 			return new WP_REST_Response(
@@ -762,8 +778,131 @@ class Api {
 			);
 		}
 
+		return null;
+	}
+
+	/**
+	 * Validate cache-safe anti-spam fields.
+	 *
+	 * @param int    $form_id Form ID.
+	 * @param object $request Request object.
+	 *
+	 * @return WP_REST_Response|null
+	 */
+	private function validate_public_submit_spam_guards( $form_id, $request ) {
+		$honeypot = sanitize_text_field( wp_unslash( (string) $request->get_param( 'gutenverse-form-hp' ) ) );
+
+		if ( '' !== $honeypot ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'failed',
+					'message' => 'Invalid request.',
+				),
+				400
+			);
+		}
+
+		$min_seconds = (float) apply_filters( 'gutenverse_form_public_submit_min_seconds', 2, $form_id, $request );
+		if ( $min_seconds > 0 ) {
+			$elapsed_ms = absint( $request->get_param( 'gutenverse-form-elapsed' ) );
+
+			if ( $elapsed_ms > 0 ) {
+				$elapsed_seconds = $elapsed_ms / 1000;
+
+				if ( $elapsed_seconds < $min_seconds ) {
+					return new WP_REST_Response(
+						array(
+							'status'  => 'failed',
+							'message' => 'Invalid request.',
+						),
+						400
+					);
+				}
+			} else {
+				$started_at = absint( $request->get_param( 'gutenverse-form-started-at' ) );
+
+				if ( $started_at > 100000000000 ) {
+					$started_at = (int) floor( $started_at / 1000 );
+				}
+
+				if ( ! $started_at || ( time() - $started_at ) < $min_seconds ) {
+					return new WP_REST_Response(
+						array(
+							'status'  => 'failed',
+							'message' => 'Invalid request.',
+						),
+						400
+					);
+				}
+			}
+		}
+
+		return $this->check_public_submit_rate_limit( $form_id, $request );
+	}
+
+	/**
+	 * Apply a default public submit rate limit.
+	 *
+	 * @param int    $form_id Form ID.
+	 * @param object $request Request object.
+	 *
+	 * @return WP_REST_Response|null
+	 */
+	private function check_public_submit_rate_limit( $form_id, $request ) {
+		$rate_limit = apply_filters(
+			'gutenverse_form_public_submit_rate_limit',
+			array(
+				'limit'  => 5,
+				'window' => MINUTE_IN_SECONDS,
+			),
+			$form_id,
+			$request
+		);
+
+		if ( $rate_limit instanceof WP_REST_Response ) {
+			return $rate_limit;
+		}
+
+		if ( false === $rate_limit || ! is_array( $rate_limit ) || empty( $rate_limit['limit'] ) || empty( $rate_limit['window'] ) ) {
+			return null;
+		}
+
+		$limit  = absint( $rate_limit['limit'] );
+		$window = absint( $rate_limit['window'] );
+
+		if ( ! $limit || ! $window ) {
+			return null;
+		}
+
+		$remote_addr   = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) );
+		$transient_key = 'gutenverse_form_submit_' . md5( $form_id . '|' . $remote_addr );
+		$count         = (int) get_transient( $transient_key );
+
+		if ( $count >= $limit ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'failed',
+					'message' => 'Too many submissions. Please try again later.',
+				),
+				429
+			);
+		}
+
+		set_transient( $transient_key, $count + 1, $window );
+
+		return null;
+	}
+
+	/**
+	 * Submit Form
+	 *
+	 * @param object $request .
+	 *
+	 * @return WP_Response
+	 */
+	public function submit_form( $request ) {
 		// -----------------------------
-		// 2. Validate form-entry structure
+		// 1. Validate form-entry structure
 		// -----------------------------
 		$form_entry = $request->get_param( 'form-entry' );
 
@@ -801,7 +940,7 @@ class Api {
 		}
 
 		// -----------------------------
-		// 3. Require login if enabled
+		// 2. Require login if enabled
 		// -----------------------------
 		if ( ! empty( $form_setting['require_login'] ) && ! is_user_logged_in() ) {
 			return new WP_REST_Response(
@@ -813,8 +952,18 @@ class Api {
 			);
 		}
 
+		$nonce_error = $this->maybe_verify_public_submit_nonce( $form_id, $request, $form_setting );
+		if ( $nonce_error ) {
+			return $nonce_error;
+		}
+
+		$spam_error = $this->validate_public_submit_spam_guards( $form_id, $request );
+		if ( $spam_error ) {
+			return $spam_error;
+		}
+
 		// -----------------------------
-		// 4. CAPTCHA validation (safe)
+		// 3. CAPTCHA validation (safe)
 		// -----------------------------
 		if ( ! empty( $form_setting['use_captcha'] ) ) {
 
@@ -850,7 +999,7 @@ class Api {
 					'body'    => array(
 						'secret'   => $secret,
 						'response' => $recaptcha,
-						'remoteip' => sanitize_text_field( $_SERVER['REMOTE_ADDR'] ?? '' ),
+							'remoteip' => sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ),
 					),
 				)
 			);
@@ -887,7 +1036,7 @@ class Api {
 		do_action( 'gutenverse_form_before_validation', $form_entry, $request );
 
 		// -----------------------------
-		// 5. Sanitize form data (CRITICAL FIX)
+		// 4. Sanitize form data (CRITICAL FIX)
 		// -----------------------------
 		if ( empty( $form_entry['data'] ) || ! is_array( $form_entry['data'] ) ) {
 			return new WP_REST_Response(
@@ -910,12 +1059,25 @@ class Api {
 		}
 		$form_data = $form_data_check['data'];
 		if ( isset( $form_data ) ) {
-
 			$settings_data = get_option( 'gutenverse-settings', array() );
 			$integrations  = array();
+			$post_id       = absint( $form_entry['postId'] ?? 0 );
 
-			if ( isset( $form_entry['integrations'] ) ) {
-				$integrations = is_string( $form_entry['integrations'] ) ? json_decode( $form_entry['integrations'], true ) : $form_entry['integrations'];
+			if ( isset( $form_entry['integrationSource'] ) ) {
+				$integration_source = is_string( $form_entry['integrationSource'] ) ? json_decode( $form_entry['integrationSource'], true ) : $form_entry['integrationSource'];
+				$integration_source = is_array( $integration_source ) ? $integration_source : array();
+				$source_type        = isset( $integration_source['type'] ) ? sanitize_key( $integration_source['type'] ) : '';
+				$element_id         = isset( $integration_source['elementId'] ) ? sanitize_key( $integration_source['elementId'] ) : '';
+
+				if ( 'block' === $source_type ) {
+					$integrations = \Gutenverse_Form\Integration::get_form_builder_integration_from_post( $post_id, $form_id, $element_id );
+				}
+
+				if ( empty( $integrations ) && $element_id ) {
+					$integrations = array(
+						'elementId' => $element_id,
+					);
+				}
 			}
 
 			$normalized_integrations = \Gutenverse_Form\Integration::normalize_entry_integrations(
@@ -925,7 +1087,7 @@ class Api {
 
 			$params = array(
 				'form-id'      => $form_id,
-				'post-id'      => absint( $form_entry['postId'] ?? 0 ),
+				'post-id'      => $post_id,
 				'entry-data'   => $form_data,
 				'browser-data' => $this->get_browser_data( $form_entry ),
 				'integrations' => $normalized_integrations,
