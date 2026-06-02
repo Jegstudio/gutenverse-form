@@ -510,10 +510,10 @@ class Api {
 				'title'                          => '',
 				'require_login'                  => '',
 				'user_browser'                   => '',
-				'entry_title_type'                => '',
-				'entry_title_static_text'         => '',
-				'entry_title_input_name'          => '',
-				'entry_title_custom_format'       => '',
+				'entry_title_type'               => '',
+				'entry_title_static_text'        => '',
+				'entry_title_input_name'         => '',
+				'entry_title_custom_format'      => '',
 				'user_confirm'                   => '',
 				'auto_select_email'              => '',
 				'email_input_name'               => '',
@@ -582,6 +582,315 @@ class Api {
 			'ip'         => $ip,
 			'user_agent' => $user_agent,
 		);
+	}
+
+	/**
+	 * Get submitted form builder integration source.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $form_entry Form entry data.
+	 *
+	 * @return array
+	 */
+	private function get_submission_integration_source( $form_entry ) {
+		if ( ! isset( $form_entry['integrationSource'] ) ) {
+			return array();
+		}
+
+		$integration_source = $form_entry['integrationSource'];
+
+		if ( is_string( $integration_source ) ) {
+			$integration_source = json_decode( $integration_source, true );
+		}
+
+		return is_array( $integration_source ) ? $integration_source : array();
+	}
+
+	/**
+	 * Normalize a form builder form reference.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param mixed $form_ref Form reference.
+	 *
+	 * @return int
+	 */
+	private function normalize_form_builder_form_id( $form_ref ) {
+		if ( is_array( $form_ref ) && isset( $form_ref['value'] ) ) {
+			return absint( $form_ref['value'] );
+		}
+
+		if ( is_scalar( $form_ref ) ) {
+			return absint( $form_ref );
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Find a matching form builder block in parsed block data.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array  $blocks     Parsed blocks.
+	 * @param int    $form_id    Assigned Gutenverse form ID.
+	 * @param string $element_id Form builder block element ID.
+	 *
+	 * @return array|null
+	 */
+	private function find_submission_form_builder_block( $blocks, $form_id, $element_id ) {
+		if ( empty( $blocks ) || ! is_array( $blocks ) ) {
+			return null;
+		}
+
+		foreach ( $blocks as $block ) {
+			if ( isset( $block['blockName'] ) && 'gutenverse/form-builder' === $block['blockName'] ) {
+				$attrs            = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+				$block_element_id = isset( $attrs['elementId'] ) && is_scalar( $attrs['elementId'] ) ? sanitize_key( $attrs['elementId'] ) : '';
+
+				if (
+					$block_element_id === $element_id &&
+					$this->normalize_form_builder_form_id( $attrs['formId'] ?? null ) === absint( $form_id )
+				) {
+					return $block;
+				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+				$found = $this->find_submission_form_builder_block( $block['innerBlocks'], $form_id, $element_id );
+
+				if ( $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the saved form builder block used by this submission.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $form_entry Form entry data.
+	 * @param int   $form_id    Form ID.
+	 *
+	 * @return array|null
+	 */
+	private function get_submission_form_builder_block( $form_entry, $form_id ) {
+		$post_id            = absint( $form_entry['postId'] ?? 0 );
+		$integration_source = $this->get_submission_integration_source( $form_entry );
+		$source_type        = isset( $integration_source['type'] ) && is_scalar( $integration_source['type'] ) ? sanitize_key( $integration_source['type'] ) : '';
+		$element_id         = isset( $integration_source['elementId'] ) && is_scalar( $integration_source['elementId'] ) ? sanitize_key( $integration_source['elementId'] ) : '';
+
+		if ( 'block' !== $source_type || ! $post_id || empty( $element_id ) ) {
+			return null;
+		}
+
+		$post = get_post( $post_id );
+		if ( ! $post || empty( $post->post_content ) ) {
+			return null;
+		}
+
+		return $this->find_submission_form_builder_block( parse_blocks( $post->post_content ), $form_id, $element_id );
+	}
+
+	/**
+	 * Map saved input blocks to submitted field types.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @return array
+	 */
+	private function get_form_input_block_type_map() {
+		$type_map = array(
+			'gutenverse/form-input-text'        => 'text',
+			'gutenverse/form-input-email'       => 'email',
+			'gutenverse/form-input-textarea'    => 'textarea',
+			'gutenverse/form-input-number'      => 'number',
+			'gutenverse/form-input-telp'        => 'telp',
+			'gutenverse/form-input-date'        => 'date',
+			'gutenverse/form-input-select'      => 'select',
+			'gutenverse/form-input-radio'       => 'radio',
+			'gutenverse/form-input-checkbox'    => 'checkbox',
+			'gutenverse/form-input-multiselect' => 'multiselect',
+			'gutenverse/form-input-switch'      => 'switch',
+			'gutenverse/form-input-gdpr'        => 'gdpr',
+		);
+
+		return apply_filters( 'gutenverse_form_public_submit_block_type_map', $type_map );
+	}
+
+	/**
+	 * Map saved input blocks to default input names.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @return array
+	 */
+	private function get_form_input_block_default_name_map() {
+		$default_name_map = array(
+			'gutenverse/form-input-text'        => 'input-text-name',
+			'gutenverse/form-input-email'       => 'input-email',
+			'gutenverse/form-input-textarea'    => 'input-textarea',
+			'gutenverse/form-input-number'      => 'input-number',
+			'gutenverse/form-input-telp'        => 'input-phone',
+			'gutenverse/form-input-date'        => 'input-date',
+			'gutenverse/form-input-select'      => 'input-select',
+			'gutenverse/form-input-radio'       => 'input-radio',
+			'gutenverse/form-input-checkbox'    => 'input-checkbox',
+			'gutenverse/form-input-multiselect' => 'input-multi-select',
+			'gutenverse/form-input-switch'      => 'input-switch',
+			'gutenverse/form-input-gdpr'        => 'input-gdpr',
+		);
+
+		return apply_filters( 'gutenverse_form_public_submit_block_default_name_map', $default_name_map );
+	}
+
+	/**
+	 * Build submitted field schema from saved form input blocks.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $blocks           Parsed blocks.
+	 * @param array $schema           Field schema keyed by input name.
+	 * @param array $type_map         Block-to-type map.
+	 * @param array $default_name_map Block-to-default-name map.
+	 */
+	private function collect_form_field_schema_from_blocks( $blocks, &$schema, $type_map, $default_name_map ) {
+		if ( empty( $blocks ) || ! is_array( $blocks ) ) {
+			return;
+		}
+
+		foreach ( $blocks as $block ) {
+			$block_name = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
+			$attrs      = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+
+			if ( isset( $type_map[ $block_name ] ) && is_scalar( $type_map[ $block_name ] ) ) {
+				$input_name = isset( $attrs['inputName'] ) && is_scalar( $attrs['inputName'] ) ? $attrs['inputName'] : ( $default_name_map[ $block_name ] ?? '' );
+				$field_id   = is_scalar( $input_name ) ? sanitize_key( $input_name ) : '';
+
+				if ( ! empty( $field_id ) ) {
+					$schema[ $field_id ] = array(
+						'id'        => $field_id,
+						'type'      => sanitize_key( $type_map[ $block_name ] ),
+						'blockName' => $block_name,
+					);
+				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+				$this->collect_form_field_schema_from_blocks( $block['innerBlocks'], $schema, $type_map, $default_name_map );
+			}
+		}
+	}
+
+	/**
+	 * Get submitted field schema from saved form builder content.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $form_entry Form entry data.
+	 * @param int   $form_id    Form ID.
+	 *
+	 * @return array|WP_REST_Response
+	 */
+	private function get_submission_field_schema( $form_entry, $form_id ) {
+		$block = $this->get_submission_form_builder_block( $form_entry, $form_id );
+
+		if ( empty( $block ) || ! is_array( $block ) ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'failed',
+					'message' => 'Invalid form context.',
+				),
+				400
+			);
+		}
+
+		$type_map         = $this->get_form_input_block_type_map();
+		$default_name_map = $this->get_form_input_block_default_name_map();
+		$schema           = array();
+
+		if ( ! is_array( $type_map ) ) {
+			$type_map = array();
+		}
+
+		if ( ! is_array( $default_name_map ) ) {
+			$default_name_map = array();
+		}
+
+		$inner_blocks = isset( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ? $block['innerBlocks'] : array();
+		$this->collect_form_field_schema_from_blocks( $inner_blocks, $schema, $type_map, $default_name_map );
+
+		$schema = apply_filters( 'gutenverse_form_public_submit_field_schema', $schema, $form_entry, $form_id, $block );
+
+		if ( ! is_array( $schema ) ) {
+			return array();
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * Validate submitted field IDs and types against saved form schema.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $form_entry Form entry data.
+	 * @param int   $form_id    Form ID.
+	 *
+	 * @return WP_REST_Response|null
+	 */
+	private function validate_public_submit_schema( $form_entry, $form_id ) {
+		$schema = $this->get_submission_field_schema( $form_entry, $form_id );
+
+		if ( $schema instanceof WP_REST_Response ) {
+			return $schema;
+		}
+
+		foreach ( $form_entry['data'] as $data ) {
+			if ( ! is_array( $data ) ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'failed',
+						'message' => 'Invalid form data.',
+					),
+					400
+				);
+			}
+
+			$field_id   = isset( $data['id'] ) && is_scalar( $data['id'] ) ? sanitize_key( $data['id'] ) : '';
+			$field_type = isset( $data['type'] ) && is_scalar( $data['type'] ) ? sanitize_key( $data['type'] ) : '';
+
+			if ( empty( $field_id ) || empty( $field_type ) || ! isset( $schema[ $field_id ] ) ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'failed',
+						'message' => 'Invalid form field.',
+					),
+					400
+				);
+			}
+
+			$schema_field  = $schema[ $field_id ];
+			$expected_type = is_array( $schema_field ) && isset( $schema_field['type'] ) ? $schema_field['type'] : $schema_field;
+			$expected_type = is_scalar( $expected_type ) ? sanitize_key( $expected_type ) : '';
+
+			if ( $expected_type !== $field_type ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'failed',
+						'message' => 'Invalid form field type.',
+					),
+					400
+				);
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -999,7 +1308,7 @@ class Api {
 					'body'    => array(
 						'secret'   => $secret,
 						'response' => $recaptcha,
-							'remoteip' => sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ),
+						'remoteip' => sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ),
 					),
 				)
 			);
@@ -1047,6 +1356,12 @@ class Api {
 				400
 			);
 		}
+
+		$schema_error = $this->validate_public_submit_schema( $form_entry, $form_id );
+		if ( $schema_error ) {
+			return $schema_error;
+		}
+
 		$form_data_check = $this->filter_form_params( $form_entry['data'], $request );
 		if ( ! $form_data_check['status'] ) {
 			return new WP_REST_Response(
@@ -1064,10 +1379,9 @@ class Api {
 			$post_id       = absint( $form_entry['postId'] ?? 0 );
 
 			if ( isset( $form_entry['integrationSource'] ) ) {
-				$integration_source = is_string( $form_entry['integrationSource'] ) ? json_decode( $form_entry['integrationSource'], true ) : $form_entry['integrationSource'];
-				$integration_source = is_array( $integration_source ) ? $integration_source : array();
-				$source_type        = isset( $integration_source['type'] ) ? sanitize_key( $integration_source['type'] ) : '';
-				$element_id         = isset( $integration_source['elementId'] ) ? sanitize_key( $integration_source['elementId'] ) : '';
+				$integration_source = $this->get_submission_integration_source( $form_entry );
+				$source_type        = isset( $integration_source['type'] ) && is_scalar( $integration_source['type'] ) ? sanitize_key( $integration_source['type'] ) : '';
+				$element_id         = isset( $integration_source['elementId'] ) && is_scalar( $integration_source['elementId'] ) ? sanitize_key( $integration_source['elementId'] ) : '';
 
 				if ( 'block' === $source_type ) {
 					$integrations = \Gutenverse_Form\Integration::get_form_builder_integration_from_post( $post_id, $form_id, $element_id );
