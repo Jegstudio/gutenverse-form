@@ -980,7 +980,9 @@ class Api {
 			}
 
 			$settings_data = get_option( 'gutenverse-settings', array() );
-			$secret        = $settings_data['form_captcha_settings']['captcha_key'] ?? '';
+			$secret        = $settings_data['form_settings']['form_captcha_settings']['captcha_key']
+				?? $settings_data['form_captcha_settings']['captcha_key']
+				?? '';
 
 			if ( empty( $secret ) ) {
 				return new WP_REST_Response(

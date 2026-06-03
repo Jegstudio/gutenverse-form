@@ -197,15 +197,6 @@ const TabGeneral = (props) => {
                 updateValue={updateValue}
             />,
         },
-        {
-            Component: <ControlCheckbox
-                id={'use_captcha'}
-                title={__('Enable Captcha', 'gutenverse-form')}
-                description={__('Protect your form from spam using captcha. Require you to enter captcha secret key in the form settings', 'gutenverse-form')}
-                value={values.use_captcha}
-                updateValue={updateValue}
-            />
-        }
     ];
     let formSettings = applyFilters('gutenverse-form.general-form-action-settings', defaultSettings);
 
@@ -214,7 +205,7 @@ const TabGeneral = (props) => {
         return setting ? setting.Component : null;
     };
 
-    const placedIds = ['title', 'require_login', 'user_browser', 'use_captcha', 'form_success_notice', 'form_error_notice'];
+    const placedIds = ['title', 'require_login', 'user_browser', 'form_success_notice', 'form_error_notice'];
     const extraSettings = formSettings.filter(el => !placedIds.includes(el.Component.props.id));
 
     return <div className="form-tab-body">
@@ -225,7 +216,6 @@ const TabGeneral = (props) => {
             {getControl('title')}
             {getControl('require_login')}
             {getControl('user_browser')}
-            {getControl('use_captcha')}
         </FormGroup>
 
         <FormGroup

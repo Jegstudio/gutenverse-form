@@ -2,6 +2,8 @@ import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { ControlText, ControlTextarea, ControlCheckbox } from 'gutenverse-core/backend';
 import { applyFilters } from '@wordpress/hooks';
+import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
+import { openFreemiusPopup, prefetchPricingPlanData } from 'gutenverse-core/helper';
 
 const formSettingKeys = ['form_settings'];
 
@@ -178,25 +180,56 @@ const FormReCaptcha = ({ settingValues, updateSettingValues, saving, saveData })
     const {
         form_captcha_settings = {}
     } = settingValues;
+    const emptyLicense = applyFilters('gutenverse.panel.tab.pro.content', true);
+    const isLocked = emptyLicense;
 
     const updateValue = (id, value) => {
+        if (isLocked) {
+            return;
+        }
         updateSettingValues('form_captcha_settings', id, value);
+    };
+
+    const openUpgradePopup = (event = null) => {
+        openFreemiusPopup(
+            event,
+            `${upgradeProUrl}?utm_source=gutenverse&utm_medium=formCaptchaSetting&utm_client_site=${clientUrl}&utm_client_theme=${activeTheme}`,
+            { medium: 'formCaptchaSetting' }
+        );
     };
 
     return <div className="form-captcha">
         <h2>{__('Form Captcha Settings', 'gutenverse-form')}</h2>
         <span>{__('This setting will be used in form reCaptcha feature', 'gutenverse-form')}</span>
-        <ControlText
-            id={'captcha_key'}
-            title={__('Captcha Secret Key', 'gutenverse-form')}
-            description={__('Enter your captcha secret here.', 'gutenverse-form')}
-            value={form_captcha_settings.captcha_key}
-            updateValue={updateValue}
-        />
+        <div
+            className={`form-captcha-field${isLocked ? ' is-locked' : ''}`}
+            onMouseEnter={isLocked ? prefetchPricingPlanData : undefined}
+            onFocus={isLocked ? prefetchPricingPlanData : undefined}
+        >
+            <ControlText
+                id={'captcha_key'}
+                title={<span className="form-captcha-title">
+                    <span>{__('Captcha Secret Key', 'gutenverse-form')}</span>
+                    {isLocked && <span className="pro-label">{__('PRO', 'gutenverse-form')}</span>}
+                </span>}
+                description={isLocked ? '' : __('Enter your captcha secret here.', 'gutenverse-form')}
+                value={form_captcha_settings.captcha_key}
+                updateValue={updateValue}
+                disabled={isLocked}
+            />
+            {isLocked && <>
+                <button
+                    type="button"
+                    className="form-captcha-lock-overlay"
+                    onClick={openUpgradePopup}
+                    aria-label={__('Upgrade to Pro to unlock Captcha Secret Key editing', 'gutenverse-form')}
+                />
+            </>}
+        </div>
         <div className="actions">
             {saving ? <div className="gutenverse-button">
                 {__('Saving...', 'gutenverse-form')}
-            </div> : <div className="gutenverse-button" onClick={() => saveData(formSettingKeys)}>
+            </div> : <div className={`gutenverse-button${isLocked ? ' disabled' : ''}`} onClick={() => !isLocked && saveData(formSettingKeys)}>
                 {__('Save Changes', 'gutenverse-form')}
             </div>}
         </div>

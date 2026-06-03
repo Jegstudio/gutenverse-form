@@ -309,7 +309,31 @@ class GutenverseFormValidation extends Default {
         }
 
         try {
-            return recaptcha.getResponse();
+            const form = u(captcha.nodes[0]).closest('form');
+            const responseField = form.find('textarea[name="g-recaptcha-response"]').nodes
+                .find(field => field?.value);
+
+            if (responseField?.value) {
+                return responseField.value;
+            }
+
+            const defaultResponse = recaptcha.getResponse();
+            if (defaultResponse) {
+                return defaultResponse;
+            }
+
+            const clientIds = Object.keys(window.___grecaptcha_cfg?.clients || {})
+                .map(id => Number(id))
+                .filter(id => Number.isInteger(id));
+
+            for (const clientId of clientIds) {
+                const response = recaptcha.getResponse(clientId);
+                if (response) {
+                    return response;
+                }
+            }
+
+            return null;
         } catch {
             return null;
         }
@@ -327,7 +351,7 @@ class GutenverseFormValidation extends Default {
         }
 
         try {
-            const recaptchaResponse = recaptcha.getResponse();
+            const recaptchaResponse = this._getRecaptchaResponse(captcha);
 
             if (recaptchaResponse) {
                 recaptcha.reset();
@@ -390,11 +414,8 @@ class GutenverseFormValidation extends Default {
             });
             if (captcha.nodes.length > 0 && !recaptchaResponse) {
                 validFlag = false;
-                const notifclass = 'guten-error';
                 const message = window?.GutenverseFormValidationData?.recaptchaLabel || 'Please confirm that you are not a robot.';
-                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
-                currentFormBuilder.find('.form-notification').remove();
-                currentFormBuilder.prepend(notice);
+                this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit, message);
             }
 
             //uncomment this when done debugging
@@ -446,24 +467,17 @@ class GutenverseFormValidation extends Default {
                             }).then((data) => {
                                 window.location = data.url;
                             }).catch((e) => {
-                                currentFormBuilder.find('.form-notification').remove();
                                 const message = (e.data && e.data.error) ? e.data.error : e.message;
-                                const notifclass = 'guten-error';
-                                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
-                                currentFormBuilder.prepend(notice);
+                                this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit, message);
                                 currentFormBuilder.removeClass('loading');
                             });
                         } else {
                             this._requestMessage(currentFormBuilder, formData, 'success', hideAfterSubmit);
                         }
                     }).catch((e) => {
-                        currentFormBuilder.find('.form-notification').remove();
                         const message = (e.data && e.data.error) ? e.data.error : e.message;
-                        const notifclass = 'guten-error';
-                        const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
-                        currentFormBuilder.prepend(notice);
+                        this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit, message);
                         currentFormBuilder.removeClass('loading');
-                        this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit);
                     }).finally(() => {
                         instance._resetRecaptcha(captcha);
                         currentFormBuilder.removeClass('loading');
@@ -478,7 +492,7 @@ class GutenverseFormValidation extends Default {
         });
     }
 
-    _requestMessage(currentFormBuilder, formData, notifClass, hideAfterSubmit) {
+    _requestMessage(currentFormBuilder, formData, notifClass, hideAfterSubmit, overrideMessage = '') {
         const noticeBlock = currentFormBuilder.find('.guten-form-notice');
         let message = '';
         let notifclass = '';
@@ -496,6 +510,10 @@ class GutenverseFormValidation extends Default {
                 break;
         }
 
+        if (!isEmpty(overrideMessage)) {
+            message = overrideMessage;
+        }
+
         if (noticeBlock.nodes.length > 0) {
             const noticeWrapper = noticeBlock.find(
                 '.guten-form-notice-wrapper',
@@ -510,7 +528,7 @@ class GutenverseFormValidation extends Default {
 
             // Determine message
             let finalMessage = message;
-            if (noticeData.messageSource === 'custom') {
+            if (isEmpty(overrideMessage) && noticeData.messageSource === 'custom') {
                 finalMessage =
                     notifClass === 'success'
                         ? noticeData.successMessage
