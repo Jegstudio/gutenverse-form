@@ -1,10 +1,11 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { createInterpolateElement, useEffect, useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
 import { IconTrashSVG } from 'gutenverse-core/icons';
 import { signal } from 'gutenverse-core/editor-helper';
+import { strongDescription } from './helper';
 
 const chartTop = 32;
 const chartBase = 168;
@@ -96,10 +97,6 @@ const PremiumDashboardLockIcon = ({ iconId }) => (
     </span>
 );
 
-const strongDescription = (text) => createInterpolateElement(text, {
-    strong: <strong />,
-});
-
 const lockedDashboardPanels = [
     {
         title: __('Needs Attention', 'gutenverse-form'),
@@ -107,11 +104,11 @@ const lockedDashboardPanels = [
     },
     {
         title: __('Top Forms', 'gutenverse-form'),
-        description: strongDescription(__('Stop guessing what works. <strong>PRO</strong> pinpoints the exact pages driving your submissions so you can double down on what makes you money.', 'gutenverse-form')),
+        description: strongDescription(__('One form could be carrying your entire site\'s conversions. <strong>Unlock PRO</strong> to find it, optimize it, and replicate its success.', 'gutenverse-form')),
     },
     {
         title: __('Top Entry Sources', 'gutenverse-form'),
-        description: strongDescription(__('One form could be carrying your entire site\'s conversions. <strong>Unlock PRO</strong> to find it, optimize it, and replicate its success.', 'gutenverse-form')),
+        description: strongDescription(__('Stop guessing what works. <strong>PRO</strong> pinpoints the exact pages driving your submissions so you can double down on what makes you money.', 'gutenverse-form')),
     },
     {
         title: __('Recent Activity', 'gutenverse-form'),
@@ -122,8 +119,8 @@ const lockedDashboardPanels = [
 const PremiumDashboardCallout = () => (
     <div className="dashboard-panel dashboard-panel--wide dashboard-panel--premium-callout">
         <div className="dashboard-premium-callout__content">
-            <h2>{__('Hidden Data = Lost Revenue.', 'gutenverse-form')}</h2>
-            <p>{strongDescription(__('Free only gives you a basic summary. <strong>Gutenverse PRO</strong> instantly unlocks the exact pages, forms, and traffic sources driving your revenue.', 'gutenverse-form'))}</p>
+            <h2>{__('You Are Losing Money on Hidden Pages and Traffic Sources.', 'gutenverse-form')}</h2>
+            <p>{strongDescription(__('Free plans hide your top performers. <strong>Upgrade to PRO</strong> to unlock specific page and traffic data to double your conversions.', 'gutenverse-form'))}</p>
         </div>
         <ButtonUpgradePro
             isBanner={true}

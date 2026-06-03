@@ -1289,15 +1289,15 @@ class Entries {
 								$value = implode( ', ', array_map( 'strval', $value ) );
 							}
 
-							$context_pairs[] = esc_html( $key ) . ': ' . esc_html( (string) $value );
+							$context_pairs[] = '<span class="integration-log-context-item"><strong>' . esc_html( $key ) . ':</strong> ' . esc_html( (string) $value ) . '</span>';
 						}
 
 						if ( ! empty( $context_pairs ) ) {
-							$context = '<br/><small>' . implode( ' | ', $context_pairs ) . '</small>';
+							$context = '<div class="integration-log-context">' . implode( '', $context_pairs ) . '</div>';
 						}
 					}
 
-					$result .= '<div class="entry-data integration-log-item">' . $time . ' <span class="integration-log-status integration-log-status-' . esc_attr( $status_class ) . '">[' . $status . ']</span> ' . $message . $context . '</div>';
+					$result .= '<div class="entry-data integration-log-item"><span class="integration-log-time">' . $time . '</span><div class="integration-log-message"><span class="integration-log-status integration-log-status-' . esc_attr( $status_class ) . '">[' . $status . ']</span> ' . $message . $context . '</div></div>';
 				}
 			}
 

@@ -5,6 +5,7 @@ import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
 import { IconCloseSVG, IconEyeSVG, IconTrashSVG } from 'gutenverse-core/icons';
 import { signal } from 'gutenverse-core/editor-helper';
+import { strongDescription } from './helper';
 
 const defaultCapabilities = {
     viewAll: false,
@@ -147,7 +148,8 @@ const EntryListCrownIcon = () => (
 const EntryListUpgrade = ({ config }) => (
     <div className="entry-list-upgrade">
         <div className="entry-list-upgrade__content">
-            <h2>{__('Unlock the Complete Entry Archive', 'gutenverse-form')}</h2>
+            <h2>{__('⚠️ Stop Losing Data Visibility!', 'gutenverse-form')}</h2>
+            <p>{strongDescription(__('Don\'t miss critical entries. <strong>Upgrade to PRO</strong> today to access the full archive instantly.', 'gutenverse-form'))}</p>
             <ul>
                 <li><EntryListCrownIcon />{__('View All Entries', 'gutenverse-form')}</li>
                 <li><EntryListCrownIcon />{__('Export All Entries', 'gutenverse-form')}</li>
@@ -165,31 +167,70 @@ const EntryListUpgrade = ({ config }) => (
     </div>
 );
 
+const ENTRY_PREVIEW_LIMIT = 3;
+
+const getEntryPreviewValue = value => {
+    if (value === null || value === undefined || value === '') {
+        return __('Empty', 'gutenverse-form');
+    }
+
+    if (Array.isArray(value)) {
+        const normalizedValues = value.filter(item => item !== null && item !== undefined && item !== '');
+
+        return normalizedValues.length ? normalizedValues.map(String).join(', ') : __('Empty', 'gutenverse-form');
+    }
+
+    if (typeof value === 'object') {
+        const normalizedValues = Object.values(value)
+            .filter(item => item !== null && item !== undefined && item !== '' && typeof item !== 'object');
+
+        return normalizedValues.length ? normalizedValues.map(String).join(', ') : __('Complex value', 'gutenverse-form');
+    }
+
+    return String(value);
+};
+
 const EntryPreview = ({ entry }) => {
     if (!entry.preview?.length) {
         return <span className="entry-list-muted">{__('No submitted fields', 'gutenverse-form')}</span>;
     }
 
+    const visibleFields = entry.preview.slice(0, ENTRY_PREVIEW_LIMIT);
+    const hiddenFieldsCount = entry.preview.length - visibleFields.length;
+
     return (
         <div className="entry-list-field-preview">
-            {entry.preview.map((field, index) => (
-                <span key={`${entry.id}-${field.id || index}`}>
-                    <strong>{field.id || __('Field', 'gutenverse-form')}:</strong>
-                    {' '}
-                    {field.value || __('Empty', 'gutenverse-form')}
+            {visibleFields.map((field, index) => {
+                const fieldLabel = field.id || __('Field', 'gutenverse-form');
+                const fieldValue = getEntryPreviewValue(field.value);
+
+                return (
+                    <span
+                        className="entry-list-preview-item"
+                        key={`${entry.id}-${field.id || index}`}
+                        title={`${fieldLabel}: ${fieldValue}`}
+                    >
+                        <strong className="entry-list-preview-label">{fieldLabel}:</strong>
+                        <span className="entry-list-preview-value">{fieldValue}</span>
+                    </span>
+                );
+            })}
+            {hiddenFieldsCount > 0 ? (
+                <span className="entry-list-preview-more">
+                    {sprintf(__('+%s more fields', 'gutenverse-form'), hiddenFieldsCount)}
                 </span>
-            ))}
+            ) : null}
         </div>
     );
 };
 
 const EntryRow = ({ entry, deletingEntryId, onDelete }) => (
     <tr>
-        <td className="entry-list-entry-title">
+        <td className="entry-list-entry-title" data-label={__('Entry', 'gutenverse-form')}>
             <strong>{entry.title}</strong>
             <span>{sprintf(__('%s submitted fields', 'gutenverse-form'), entry.fieldsCount || 0)}</span>
         </td>
-        <td>
+        <td data-label={__('Form', 'gutenverse-form')}>
             <span>{entry.formTitle}</span>
             {entry.referralUrl ? (
                 <a className="entry-list-referral" href={entry.referralUrl} target="_blank" rel="noreferrer">{entry.referralTitle}</a>
@@ -197,9 +238,9 @@ const EntryRow = ({ entry, deletingEntryId, onDelete }) => (
                 <span className="entry-list-muted">{entry.referralTitle}</span>
             )}
         </td>
-        <td>{entry.date}</td>
-        <td><EntryPreview entry={entry} /></td>
-        <td className="entry-list-actions-cell">
+        <td data-label={__('Submitted', 'gutenverse-form')}>{entry.date}</td>
+        <td data-label={__('Preview', 'gutenverse-form')}><EntryPreview entry={entry} /></td>
+        <td className="entry-list-actions-cell" data-label={__('Actions', 'gutenverse-form')}>
             <div className="entry-list-row-actions">
                 {entry.canViewDetail ? (
                     <a className="entry-list-icon-button" href={entry.detailUrl} aria-label={__('View entry details', 'gutenverse-form')} title={__('View entry details', 'gutenverse-form')}>
