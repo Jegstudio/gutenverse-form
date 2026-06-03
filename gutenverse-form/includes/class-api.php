@@ -510,10 +510,10 @@ class Api {
 				'title'                          => '',
 				'require_login'                  => '',
 				'user_browser'                   => '',
-				'entry_title_type'                => '',
-				'entry_title_static_text'         => '',
-				'entry_title_input_name'          => '',
-				'entry_title_custom_format'       => '',
+				'entry_title_type'               => '',
+				'entry_title_static_text'        => '',
+				'entry_title_input_name'         => '',
+				'entry_title_custom_format'      => '',
 				'user_confirm'                   => '',
 				'auto_select_email'              => '',
 				'email_input_name'               => '',
@@ -585,6 +585,857 @@ class Api {
 	}
 
 	/**
+	 * Get submitted form builder integration source.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $form_entry Form entry data.
+	 *
+	 * @return array
+	 */
+	private function get_submission_integration_source( $form_entry ) {
+		if ( ! isset( $form_entry['integrationSource'] ) ) {
+			return array();
+		}
+
+		$integration_source = $form_entry['integrationSource'];
+
+		if ( is_string( $integration_source ) ) {
+			$integration_source = json_decode( $integration_source, true );
+		}
+
+		return is_array( $integration_source ) ? $integration_source : array();
+	}
+
+	/**
+	 * Normalize a form builder form reference.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param mixed $form_ref Form reference.
+	 *
+	 * @return int
+	 */
+	private function normalize_form_builder_form_id( $form_ref ) {
+		if ( is_array( $form_ref ) && isset( $form_ref['value'] ) ) {
+			return absint( $form_ref['value'] );
+		}
+
+		if ( is_scalar( $form_ref ) ) {
+			return absint( $form_ref );
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Find a matching form builder block in parsed block data.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array  $blocks     Parsed blocks.
+	 * @param int    $form_id    Assigned Gutenverse form ID.
+	 * @param string $element_id Form builder block element ID.
+	 *
+	 * @return array|null
+	 */
+	private function find_submission_form_builder_block( $blocks, $form_id, $element_id ) {
+		if ( empty( $blocks ) || ! is_array( $blocks ) ) {
+			return null;
+		}
+
+		foreach ( $blocks as $block ) {
+			if ( isset( $block['blockName'] ) && 'gutenverse/form-builder' === $block['blockName'] ) {
+				$attrs            = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+				$block_element_id = isset( $attrs['elementId'] ) && is_scalar( $attrs['elementId'] ) ? sanitize_key( $attrs['elementId'] ) : '';
+
+				if (
+					$block_element_id === $element_id &&
+					$this->normalize_form_builder_form_id( $attrs['formId'] ?? null ) === absint( $form_id )
+				) {
+					return $block;
+				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+				$found = $this->find_submission_form_builder_block( $block['innerBlocks'], $form_id, $element_id );
+
+				if ( $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the saved form builder block used by this submission.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $form_entry Form entry data.
+	 * @param int   $form_id    Form ID.
+	 *
+	 * @return array|null
+	 */
+	private function get_submission_form_builder_block( $form_entry, $form_id ) {
+		$post_id            = absint( $form_entry['postId'] ?? 0 );
+		$integration_source = $this->get_submission_integration_source( $form_entry );
+		$source_type        = isset( $integration_source['type'] ) && is_scalar( $integration_source['type'] ) ? sanitize_key( $integration_source['type'] ) : '';
+		$element_id         = isset( $integration_source['elementId'] ) && is_scalar( $integration_source['elementId'] ) ? sanitize_key( $integration_source['elementId'] ) : '';
+
+		if ( 'block' !== $source_type || ! $post_id || empty( $element_id ) ) {
+			return null;
+		}
+
+		$post = get_post( $post_id );
+		if ( ! $post || empty( $post->post_content ) ) {
+			return null;
+		}
+
+		return $this->find_submission_form_builder_block( parse_blocks( $post->post_content ), $form_id, $element_id );
+	}
+
+	/**
+	 * Map saved input blocks to submitted field types.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @return array
+	 */
+	private function get_form_input_block_type_map() {
+		$type_map = array(
+			'gutenverse/form-input-text'        => 'text',
+			'gutenverse/form-input-email'       => 'email',
+			'gutenverse/form-input-textarea'    => 'textarea',
+			'gutenverse/form-input-number'      => 'number',
+			'gutenverse/form-input-telp'        => 'telp',
+			'gutenverse/form-input-date'        => 'date',
+			'gutenverse/form-input-select'      => 'select',
+			'gutenverse/form-input-radio'       => 'radio',
+			'gutenverse/form-input-checkbox'    => 'checkbox',
+			'gutenverse/form-input-multiselect' => 'multiselect',
+			'gutenverse/form-input-switch'      => 'switch',
+			'gutenverse/form-input-gdpr'        => 'gdpr',
+		);
+
+		return apply_filters( 'gutenverse_form_public_submit_block_type_map', $type_map );
+	}
+
+	/**
+	 * Map saved input blocks to default input names.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @return array
+	 */
+	private function get_form_input_block_default_name_map() {
+		$default_name_map = array(
+			'gutenverse/form-input-text'        => 'input-text-name',
+			'gutenverse/form-input-email'       => 'input-email',
+			'gutenverse/form-input-textarea'    => 'input-textarea',
+			'gutenverse/form-input-number'      => 'input-number',
+			'gutenverse/form-input-telp'        => 'input-phone',
+			'gutenverse/form-input-date'        => 'input-date',
+			'gutenverse/form-input-select'      => 'input-select',
+			'gutenverse/form-input-radio'       => 'input-radio',
+			'gutenverse/form-input-checkbox'    => 'input-checkbox',
+			'gutenverse/form-input-multiselect' => 'input-multi-select',
+			'gutenverse/form-input-switch'      => 'input-switch',
+			'gutenverse/form-input-gdpr'        => 'input-gdpr',
+		);
+
+		return apply_filters( 'gutenverse_form_public_submit_block_default_name_map', $default_name_map );
+	}
+
+	/**
+	 * Merge registered block defaults into saved attributes.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param string $block_name Block name.
+	 * @param array  $attrs      Saved block attributes.
+	 *
+	 * @return array
+	 */
+	private function get_form_block_attrs_with_defaults( $block_name, $attrs ) {
+		if ( ! class_exists( '\WP_Block_Type_Registry' ) ) {
+			return $attrs;
+		}
+
+		$block_type = \WP_Block_Type_Registry::get_instance()->get_registered( $block_name );
+
+		if ( empty( $block_type ) || empty( $block_type->attributes ) || ! is_array( $block_type->attributes ) ) {
+			return $attrs;
+		}
+
+		foreach ( $block_type->attributes as $key => $definition ) {
+			if ( is_array( $definition ) && array_key_exists( 'default', $definition ) && ! array_key_exists( $key, $attrs ) ) {
+				$attrs[ $key ] = $definition['default'];
+			}
+		}
+
+		return $attrs;
+	}
+
+	/**
+	 * Normalize saved option values for schema allowlists.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $options Saved option definitions.
+	 *
+	 * @return array
+	 */
+	private function normalize_form_schema_options( $options ) {
+		$values = array();
+
+		if ( ! is_array( $options ) ) {
+			return $values;
+		}
+
+		foreach ( $options as $option ) {
+			if ( is_array( $option ) && isset( $option['value'] ) && is_scalar( $option['value'] ) ) {
+				$value = sanitize_text_field( (string) $option['value'] );
+			} elseif ( is_scalar( $option ) ) {
+				$value = sanitize_text_field( (string) $option );
+			} else {
+				continue;
+			}
+
+			if ( '' !== $value ) {
+				$values[] = $value;
+			}
+		}
+
+		return array_values( array_unique( $values ) );
+	}
+
+	/**
+	 * Get saved option values for a form field.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array  $attrs Field block attributes.
+	 * @param string $type  Field type.
+	 *
+	 * @return array
+	 */
+	private function get_form_field_options( $attrs, $type ) {
+		switch ( $type ) {
+			case 'select':
+			case 'multiselect':
+				return $this->normalize_form_schema_options( $attrs['selectOptions'] ?? array() );
+			case 'radio':
+				return $this->normalize_form_schema_options( $attrs['radioOptions'] ?? array() );
+			case 'checkbox':
+				return $this->normalize_form_schema_options( $attrs['checkboxOptions'] ?? array() );
+			case 'gdpr':
+				return $this->normalize_form_schema_options(
+					array(
+						$attrs['gdprFormValue'] ?? '',
+						$attrs['gdprUncheckedFormValue'] ?? '',
+					)
+				);
+			default:
+				return array();
+		}
+	}
+
+	/**
+	 * Build a field schema item from saved block attributes.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param string $field_id   Field ID.
+	 * @param string $field_type Field type.
+	 * @param string $block_name Block name.
+	 * @param array  $attrs      Field block attributes.
+	 *
+	 * @return array
+	 */
+	private function build_form_field_schema( $field_id, $field_type, $block_name, $attrs ) {
+		$schema = array(
+			'id'            => $field_id,
+			'type'          => sanitize_key( $field_type ),
+			'blockName'     => $block_name,
+			'required'      => ! empty( $attrs['required'] ),
+			'options'       => $this->get_form_field_options( $attrs, $field_type ),
+			'defaultLogic'  => isset( $attrs['defaultLogic'] ) && is_scalar( $attrs['defaultLogic'] ) ? sanitize_key( $attrs['defaultLogic'] ) : '',
+			'hasFieldLogic' => ! empty( $attrs['displayLogic'] ) && is_array( $attrs['displayLogic'] ),
+		);
+
+		if ( isset( $attrs['validationType'] ) && is_scalar( $attrs['validationType'] ) ) {
+			$schema['validationType'] = sanitize_key( $attrs['validationType'] );
+		}
+
+		if ( isset( $attrs['validationMin'] ) && is_numeric( $attrs['validationMin'] ) ) {
+			$schema['validationMin'] = (float) $attrs['validationMin'];
+		}
+
+		if ( isset( $attrs['validationMax'] ) && is_numeric( $attrs['validationMax'] ) ) {
+			$schema['validationMax'] = (float) $attrs['validationMax'];
+		}
+
+		if ( 'number' === $field_type ) {
+			if ( isset( $attrs['inputMin'] ) && is_numeric( $attrs['inputMin'] ) ) {
+				$schema['min'] = (float) $attrs['inputMin'];
+			}
+
+			if ( isset( $attrs['inputMax'] ) && is_numeric( $attrs['inputMax'] ) ) {
+				$schema['max'] = (float) $attrs['inputMax'];
+			}
+		}
+
+		if ( 'date' === $field_type ) {
+			$schema['dateRange'] = ! empty( $attrs['dateRange'] );
+			$schema['dateStart'] = isset( $attrs['dateStart'] ) && is_scalar( $attrs['dateStart'] ) ? sanitize_text_field( (string) $attrs['dateStart'] ) : '';
+			$schema['dateEnd']   = isset( $attrs['dateEnd'] ) && is_scalar( $attrs['dateEnd'] ) ? sanitize_text_field( (string) $attrs['dateEnd'] ) : '';
+		}
+
+		return apply_filters( 'gutenverse_form_public_submit_field_schema_item', $schema, $attrs, $block_name );
+	}
+
+	/**
+	 * Build submitted field schema from saved form input blocks.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $blocks           Parsed blocks.
+	 * @param array $schema           Field schema keyed by input name.
+	 * @param array $type_map         Block-to-type map.
+	 * @param array $default_name_map Block-to-default-name map.
+	 */
+	private function collect_form_field_schema_from_blocks( $blocks, &$schema, $type_map, $default_name_map ) {
+		if ( empty( $blocks ) || ! is_array( $blocks ) ) {
+			return;
+		}
+
+		foreach ( $blocks as $block ) {
+			$block_name = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
+			$attrs      = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+
+			if ( isset( $type_map[ $block_name ] ) && is_scalar( $type_map[ $block_name ] ) ) {
+				$field_type = sanitize_key( $type_map[ $block_name ] );
+				$attrs      = $this->get_form_block_attrs_with_defaults( $block_name, $attrs );
+				$input_name = isset( $attrs['inputName'] ) && is_scalar( $attrs['inputName'] ) ? $attrs['inputName'] : ( $default_name_map[ $block_name ] ?? '' );
+				$field_id   = is_scalar( $input_name ) ? sanitize_key( $input_name ) : '';
+
+				if ( ! empty( $field_id ) ) {
+					$schema[ $field_id ] = $this->build_form_field_schema( $field_id, $field_type, $block_name, $attrs );
+				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+				$this->collect_form_field_schema_from_blocks( $block['innerBlocks'], $schema, $type_map, $default_name_map );
+			}
+		}
+	}
+
+	/**
+	 * Get submitted field schema from saved form builder content.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $form_entry Form entry data.
+	 * @param int   $form_id    Form ID.
+	 *
+	 * @return array|WP_REST_Response
+	 */
+	private function get_submission_field_schema( $form_entry, $form_id ) {
+		$block = $this->get_submission_form_builder_block( $form_entry, $form_id );
+
+		if ( empty( $block ) || ! is_array( $block ) ) {
+			return new WP_REST_Response(
+				array(
+					'status'  => 'failed',
+					'message' => 'Invalid form context.',
+				),
+				400
+			);
+		}
+
+		$type_map         = $this->get_form_input_block_type_map();
+		$default_name_map = $this->get_form_input_block_default_name_map();
+		$schema           = array();
+
+		if ( ! is_array( $type_map ) ) {
+			$type_map = array();
+		}
+
+		if ( ! is_array( $default_name_map ) ) {
+			$default_name_map = array();
+		}
+
+		$inner_blocks = isset( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ? $block['innerBlocks'] : array();
+		$this->collect_form_field_schema_from_blocks( $inner_blocks, $schema, $type_map, $default_name_map );
+
+		$schema = apply_filters( 'gutenverse_form_public_submit_field_schema', $schema, $form_entry, $form_id, $block );
+
+		if ( ! is_array( $schema ) ) {
+			return array();
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * Build a generic schema validation response.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param string $message Error message.
+	 *
+	 * @return WP_REST_Response
+	 */
+	private function make_public_submit_schema_error( $message ) {
+		return new WP_REST_Response(
+			array(
+				'status'  => 'failed',
+				'message' => $message,
+			),
+			400
+		);
+	}
+
+	/**
+	 * Get submitted field value from the payload shape used by FormData.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array      $data      Submitted field data.
+	 * @param string|int $key       Submitted field index.
+	 * @param bool       $has_value Whether the submitted value key exists.
+	 *
+	 * @return mixed
+	 */
+	private function get_submitted_form_field_value( $data, $key, &$has_value = null ) {
+		$has_value = false;
+
+		if ( ! isset( $data['id'] ) || ! is_scalar( $data['id'] ) ) {
+			return null;
+		}
+
+		$value_key = $data['id'] . '-' . $key . '-value';
+
+		if ( array_key_exists( $value_key, $data ) ) {
+			$has_value = true;
+			return $data[ $value_key ];
+		}
+
+		if ( array_key_exists( 'value', $data ) ) {
+			$has_value = true;
+			return $data['value'];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get a nested value from submitted file params.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $data File params.
+	 * @param array $path Nested path.
+	 *
+	 * @return mixed|null
+	 */
+	private function get_submitted_form_file_param( $data, $path ) {
+		foreach ( $path as $segment ) {
+			if ( ! is_array( $data ) || ! array_key_exists( $segment, $data ) ) {
+				return null;
+			}
+
+			$data = $data[ $segment ];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Check whether the request contains a submitted file for a field.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param object|null $request   Submit request.
+	 * @param string|int  $key       Submitted field index.
+	 * @param string      $value_key Submitted field value key.
+	 *
+	 * @return bool
+	 */
+	private function has_submitted_form_file_value( $request, $key, $value_key ) {
+		if ( ! is_object( $request ) || ! method_exists( $request, 'get_file_params' ) ) {
+			return false;
+		}
+
+		$files = $request->get_file_params();
+
+		if ( ! isset( $files['form-entry'] ) || ! is_array( $files['form-entry'] ) ) {
+			return false;
+		}
+
+		$file_name  = $this->get_submitted_form_file_param( $files['form-entry'], array( 'name', 'data', $key, $value_key ) );
+		$file_error = $this->get_submitted_form_file_param( $files['form-entry'], array( 'error', 'data', $key, $value_key ) );
+
+		if ( is_scalar( $file_error ) && UPLOAD_ERR_NO_FILE === (int) $file_error ) {
+			return false;
+		}
+
+		return is_scalar( $file_name ) && '' !== trim( (string) $file_name );
+	}
+
+	/**
+	 * Normalize submitted scalar value.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param mixed $value Submitted value.
+	 *
+	 * @return string
+	 */
+	private function normalize_submitted_form_scalar( $value ) {
+		if ( is_array( $value ) || is_object( $value ) ) {
+			return '';
+		}
+
+		return sanitize_text_field( wp_unslash( (string) $value ) );
+	}
+
+	/**
+	 * Normalize submitted list value.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param mixed $value Submitted value.
+	 *
+	 * @return array
+	 */
+	private function normalize_submitted_form_value_list( $value ) {
+		if ( is_array( $value ) ) {
+			$raw_values = $value;
+		} elseif ( is_object( $value ) ) {
+			return array();
+		} elseif ( function_exists( 'wp_parse_list' ) ) {
+			$raw_values = wp_parse_list( $value );
+		} else {
+			$raw_values = array_map( 'trim', explode( ',', (string) $value ) );
+		}
+
+		$values = array();
+
+		foreach ( $raw_values as $raw_value ) {
+			if ( ! is_scalar( $raw_value ) ) {
+				continue;
+			}
+
+			$value = sanitize_text_field( wp_unslash( (string) $raw_value ) );
+
+			if ( '' !== $value ) {
+				$values[] = $value;
+			}
+		}
+
+		return $values;
+	}
+
+	/**
+	 * Check whether a submitted value is empty.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param mixed $value Submitted value.
+	 *
+	 * @return bool
+	 */
+	private function is_empty_submitted_form_value( $value ) {
+		if ( null === $value ) {
+			return true;
+		}
+
+		if ( is_array( $value ) ) {
+			return empty( $this->normalize_submitted_form_value_list( $value ) );
+		}
+
+		if ( is_object( $value ) ) {
+			return true;
+		}
+
+		return '' === trim( (string) $value );
+	}
+
+	/**
+	 * Validate one submitted field value against schema.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array      $schema_field Field schema.
+	 * @param mixed      $value        Submitted field value.
+	 * @param array      $form_entry   Form entry data.
+	 * @param int        $form_id      Form ID.
+	 * @param array      $data         Submitted field data.
+	 * @param string|int $key          Submitted field index.
+	 *
+	 * @return WP_REST_Response|null
+	 */
+	private function validate_submitted_form_field_value( $schema_field, $value, $form_entry, $form_id, $data, $key ) {
+		$type     = isset( $schema_field['type'] ) && is_scalar( $schema_field['type'] ) ? sanitize_key( $schema_field['type'] ) : '';
+		$required = ! empty( $schema_field['required'] );
+
+		if ( $required && $this->is_empty_submitted_form_value( $value ) ) {
+			return $this->make_public_submit_schema_error( 'Required form field is empty.' );
+		}
+
+		if ( ! $required && $this->is_empty_submitted_form_value( $value ) ) {
+			return null;
+		}
+
+		if ( 'email' === $type && ! is_email( $this->normalize_submitted_form_scalar( $value ) ) ) {
+			return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+		}
+
+		if ( 'number' === $type ) {
+			if ( is_array( $value ) || ! is_numeric( $value ) ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+
+			$number = (float) $value;
+
+			if ( isset( $schema_field['min'] ) && is_numeric( $schema_field['min'] ) && $number < (float) $schema_field['min'] ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+
+			if ( isset( $schema_field['max'] ) && is_numeric( $schema_field['max'] ) && $number > (float) $schema_field['max'] ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+		}
+
+		if ( 'switch' === $type && ! is_bool( $value ) ) {
+			$boolean_values = array( '1', '0', 'true', 'false', 'yes', 'no', 'on', 'off' );
+			$boolean_value  = strtolower( trim( (string) $value ) );
+
+			if ( ! in_array( $boolean_value, $boolean_values, true ) ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+		}
+
+		if ( 'date' === $type && ( ! empty( $schema_field['dateStart'] ) || ! empty( $schema_field['dateEnd'] ) ) ) {
+			$date_values = ! empty( $schema_field['dateRange'] ) ? preg_split( '/\s+to\s+/', $this->normalize_submitted_form_scalar( $value ) ) : array( $this->normalize_submitted_form_scalar( $value ) );
+			$min_date    = ! empty( $schema_field['dateStart'] ) ? strtotime( $schema_field['dateStart'] ) : false;
+			$max_date    = ! empty( $schema_field['dateEnd'] ) ? strtotime( $schema_field['dateEnd'] ) : false;
+
+			if ( ! is_array( $date_values ) ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+
+			foreach ( $date_values as $date_value ) {
+				$date_timestamp = strtotime( trim( $date_value ) );
+
+				if ( false === $date_timestamp ) {
+					return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+				}
+
+				if ( false !== $min_date && $date_timestamp < $min_date ) {
+					return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+				}
+
+				if ( false !== $max_date && $date_timestamp > $max_date ) {
+					return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+				}
+			}
+		}
+
+		if ( ! empty( $schema_field['options'] ) && is_array( $schema_field['options'] ) ) {
+			$multiple_types = array( 'checkbox', 'multiselect', 'multi-group-select' );
+
+			if ( in_array( $type, $multiple_types, true ) ) {
+				foreach ( $this->normalize_submitted_form_value_list( $value ) as $item ) {
+					if ( ! in_array( $item, $schema_field['options'], true ) ) {
+						return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+					}
+				}
+			} elseif ( is_array( $value ) || ! in_array( $this->normalize_submitted_form_scalar( $value ), $schema_field['options'], true ) ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+		}
+
+		$validation_type = isset( $schema_field['validationType'] ) && is_scalar( $schema_field['validationType'] ) ? sanitize_key( $schema_field['validationType'] ) : '';
+
+		if ( in_array( $validation_type, array( 'character', 'word' ), true ) ) {
+			if ( is_array( $value ) ) {
+				$length = count( $this->normalize_submitted_form_value_list( $value ) );
+			} else {
+				$text = $this->normalize_submitted_form_scalar( $value );
+
+				if ( 'word' === $validation_type ) {
+					$words  = preg_split( '/\s+/', trim( $text ), -1, PREG_SPLIT_NO_EMPTY );
+					$length = is_array( $words ) ? count( $words ) : 0;
+				} else {
+					$length = function_exists( 'mb_strlen' ) ? mb_strlen( $text ) : strlen( $text );
+				}
+			}
+
+			if ( isset( $schema_field['validationMin'] ) && is_numeric( $schema_field['validationMin'] ) && $length < (float) $schema_field['validationMin'] ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+
+			if ( isset( $schema_field['validationMax'] ) && is_numeric( $schema_field['validationMax'] ) && $length > (float) $schema_field['validationMax'] ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+		}
+
+		/**
+		 * Filters schema validation result for a submitted field.
+		 *
+		 * @since 3.0.0-performance
+		 *
+		 * @param WP_REST_Response|null $error        Validation error.
+		 * @param array                 $schema_field Field schema.
+		 * @param mixed                 $value        Submitted field value.
+		 * @param array                 $form_entry   Form entry data.
+		 * @param int                   $form_id      Form ID.
+		 * @param array                 $data         Submitted field data.
+		 * @param string|int            $key          Submitted field index.
+		 */
+		$filtered_error = apply_filters( 'gutenverse_form_public_submit_field_value_error', null, $schema_field, $value, $form_entry, $form_id, $data, $key );
+
+		if ( $filtered_error instanceof WP_REST_Response ) {
+			return $filtered_error;
+		}
+
+		if ( is_string( $filtered_error ) && '' !== $filtered_error ) {
+			return $this->make_public_submit_schema_error( $filtered_error );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Decide whether a missing required field should fail validation.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $schema_field Field schema.
+	 * @param array $form_entry   Form entry data.
+	 * @param int   $form_id      Form ID.
+	 *
+	 * @return bool
+	 */
+	private function should_validate_missing_required_field( $schema_field, $form_entry, $form_id ) {
+		if ( empty( $schema_field['required'] ) ) {
+			return false;
+		}
+
+		if ( ! empty( $schema_field['hasFieldLogic'] ) || ( isset( $schema_field['defaultLogic'] ) && 'hide' === $schema_field['defaultLogic'] ) ) {
+			return false;
+		}
+
+		return (bool) apply_filters( 'gutenverse_form_public_submit_validate_missing_required_field', true, $schema_field, $form_entry, $form_id );
+	}
+
+	/**
+	 * Validate submitted field IDs, types, and values against saved form schema.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array       $form_entry Form entry data.
+	 * @param int         $form_id    Form ID.
+	 * @param object|null $request    Submit request.
+	 *
+	 * @return WP_REST_Response|null
+	 */
+	private function validate_public_submit_schema( $form_entry, $form_id, $request = null ) {
+		$schema = $this->get_submission_field_schema( $form_entry, $form_id );
+
+		if ( $schema instanceof WP_REST_Response ) {
+			return $schema;
+		}
+
+		$submitted_fields = array();
+
+		foreach ( $form_entry['data'] as $key => $data ) {
+			if ( ! is_array( $data ) ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'failed',
+						'message' => 'Invalid form data.',
+					),
+					400
+				);
+			}
+
+			$field_id   = isset( $data['id'] ) && is_scalar( $data['id'] ) ? sanitize_key( $data['id'] ) : '';
+			$field_type = isset( $data['type'] ) && is_scalar( $data['type'] ) ? sanitize_key( $data['type'] ) : '';
+
+			if ( empty( $field_id ) || empty( $field_type ) || ! isset( $schema[ $field_id ] ) ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'failed',
+						'message' => 'Invalid form field.',
+					),
+					400
+				);
+			}
+
+			$schema_field  = $schema[ $field_id ];
+			$expected_type = is_array( $schema_field ) && isset( $schema_field['type'] ) ? $schema_field['type'] : $schema_field;
+			$expected_type = is_scalar( $expected_type ) ? sanitize_key( $expected_type ) : '';
+
+			if ( $expected_type !== $field_type ) {
+				return new WP_REST_Response(
+					array(
+						'status'  => 'failed',
+						'message' => 'Invalid form field type.',
+					),
+					400
+				);
+			}
+
+			if ( 'file' === $expected_type ) {
+				$value_key = $data['id'] . '-' . $key . '-value';
+				$value     = $this->has_submitted_form_file_value( $request, $key, $value_key ) ? array( '__gutenverse_uploaded_file__' ) : '';
+				$has_value = true;
+			} else {
+				$value = $this->get_submitted_form_field_value( $data, $key, $has_value );
+			}
+
+			if ( ! $has_value ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
+			}
+
+			if ( is_array( $schema_field ) ) {
+				$value_error = $this->validate_submitted_form_field_value( $schema_field, $value, $form_entry, $form_id, $data, $key );
+
+				if ( $value_error ) {
+					return $value_error;
+				}
+			}
+
+			$submitted_fields[ $field_id ] = true;
+		}
+
+		foreach ( $schema as $field_id => $schema_field ) {
+			if ( ! isset( $submitted_fields[ $field_id ] ) && is_array( $schema_field ) && $this->should_validate_missing_required_field( $schema_field, $form_entry, $form_id ) ) {
+				return $this->make_public_submit_schema_error( 'Required form field is missing.' );
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Send no-cache headers for public form endpoints.
+	 *
+	 * @since 3.0.0-performance
+	 */
+	private function send_form_endpoint_no_cache_headers() {
+		if ( ! headers_sent() ) {
+			nocache_headers();
+		}
+	}
+
+	/**
 	 * Filter Form Params
 	 *
 	 * @param array     $entry_data .
@@ -599,10 +1450,6 @@ class Api {
 		$form_entry    = $request->get_param( 'form-entry' );
 		$form_id       = $form_entry['formId'];
 		$form_options  = get_post_meta( (int) $form_id, 'form-data', true );
-		$file_rules    = array(
-			'max_size'           => isset( $form_options['max_size_file'] ) ? $form_options['max_size_file'] : false,
-			'allowed_extensions' => isset( $form_options['allowed_extensions'] ) ? $form_options['allowed_extensions'] : false,
-		);
 		if ( isset( $entry_data ) ) {
 			foreach ( $entry_data as $key => $data ) {
 				$value_key = $data['id'] . '-' . $key . '-value';
@@ -665,68 +1512,48 @@ class Api {
 						);
 						break;
 					case 'file':
-						$id    = sanitize_key( $data['id'] );
-						$files = $request->get_file_params();
+						/**
+						 * Filters submitted file field handling.
+						 *
+						 * @since 3.0.0-performance
+						 *
+						 * @param array|null $file_result File handling result.
+						 * @param array      $data Submitted field data.
+						 * @param string|int $key Submitted field index.
+						 * @param string     $value_key Submitted field value key.
+						 * @param object     $request Submit request.
+						 * @param array      $form_options Form options.
+						 */
+						$file_result = apply_filters(
+							'gutenverse_form_submit_file_field',
+							null,
+							$data,
+							$key,
+							$value_key,
+							$request,
+							$form_options
+						);
 
-						if ( ! isset( $files['form-entry'] ) ) {
+						if ( null === $file_result ) {
+							$error[] = 'File upload handler is unavailable.';
 							break;
 						}
 
-						$file_names = $files['form-entry']['name']['data'][ $key ][ $value_key ];
-						if ( ! empty( $file_names ) ) {
-							$file_info = array(
-								'name'      => $files['form-entry']['name']['data'][ $key ][ $value_key ],
-								'type'      => $files['form-entry']['type']['data'][ $key ][ $value_key ],
-								'tmp_name'  => $files['form-entry']['tmp_name']['data'][ $key ][ $value_key ],
-								'error'     => $files['form-entry']['error']['data'][ $key ][ $value_key ],
-								'size'      => $files['form-entry']['size']['data'][ $key ][ $value_key ],
-								'full_path' => $files['form-entry']['full_path']['data'][ $key ][ $value_key ],
+						if ( ! is_array( $file_result ) || ! array_key_exists( 'status', $file_result ) ) {
+							$error[] = 'Invalid file upload response.';
+							break;
+						}
+
+						if ( ! $file_result['status'] ) {
+							$error[] = isset( $file_result['message'] ) && is_scalar( $file_result['message'] ) ? sanitize_text_field( $file_result['message'] ) : 'File upload failed.';
+							break;
+						}
+
+						if ( isset( $file_result['data'] ) && is_array( $file_result['data'] ) ) {
+							$filtered_data[] = array(
+								'id'    => isset( $file_result['data']['id'] ) ? sanitize_key( $file_result['data']['id'] ) : sanitize_key( $data['id'] ),
+								'value' => isset( $file_result['data']['value'] ) ? esc_url_raw( $file_result['data']['value'] ) : null,
 							);
-
-							if ( $file_rules['max_size'] && intval( $file_info['size'] ) > intval( $file_rules['max_size'] ) * 1024 ) {
-								array_push( $error, $file_info['name'] . ' exceeds max size of ' . $file_rules['max_size'] . 'KB.' );
-							}
-
-							$allowed_ext = array();
-							if ( $file_rules['allowed_extensions'] && 0 < count( $file_rules['allowed_extensions'] ) ) {
-								$allowed_ext = array_column( $file_rules['allowed_extensions'], 'value' );
-							} else {
-								$allowed_ext = array( 'jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'zip' );
-							}
-
-							$file_ext = strtolower( pathinfo( $file_info['name'], PATHINFO_EXTENSION ) );
-							if ( ! in_array( $file_ext, $allowed_ext, true ) ) {
-								array_push( $error, $file_info['name'] . '\'s extensions not allowed.' );
-							}
-							if ( count( $error ) > 0 ) {
-								break;
-							}
-							$uploaded = wp_handle_upload( $file_info, array( 'test_form' => false ) );
-							if ( ! isset( $uploaded['error'] ) ) {
-								$file_url = $uploaded['url'];
-
-								// SVG Safety Check .
-								if ( 'image/svg+xml' === $uploaded['type'] || 'svg' === strtolower( pathinfo( $uploaded['file'], PATHINFO_EXTENSION ) ) ) {
-									if ( function_exists( 'gutenverse_is_svg_safe' ) ) {
-										$svg_content = file_get_contents( $uploaded['file'] );
-										if ( ! gutenverse_is_svg_safe( $svg_content ) ) {
-											unlink( $uploaded['file'] );
-											array_push( $error, $file_info['name'] . ' contains unsafe SVG content.' );
-											break;
-										}
-									}
-								}
-
-								$filtered_data[] = array(
-									'id'    => $id,
-									'value' => $file_url,
-								);
-							} else {
-								$filtered_data[] = array(
-									'id'    => $id,
-									'value' => null,
-								);
-							}
 						}
 						break;
 					default:
@@ -901,6 +1728,8 @@ class Api {
 	 * @return WP_Response
 	 */
 	public function submit_form( $request ) {
+		$this->send_form_endpoint_no_cache_headers();
+
 		// -----------------------------
 		// 1. Validate form-entry structure
 		// -----------------------------
@@ -1001,7 +1830,7 @@ class Api {
 					'body'    => array(
 						'secret'   => $secret,
 						'response' => $recaptcha,
-							'remoteip' => sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ),
+						'remoteip' => sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ),
 					),
 				)
 			);
@@ -1049,6 +1878,12 @@ class Api {
 				400
 			);
 		}
+
+		$schema_error = $this->validate_public_submit_schema( $form_entry, $form_id, $request );
+		if ( $schema_error ) {
+			return $schema_error;
+		}
+
 		$form_data_check = $this->filter_form_params( $form_entry['data'], $request );
 		if ( ! $form_data_check['status'] ) {
 			return new WP_REST_Response(
@@ -1066,10 +1901,9 @@ class Api {
 			$post_id       = absint( $form_entry['postId'] ?? 0 );
 
 			if ( isset( $form_entry['integrationSource'] ) ) {
-				$integration_source = is_string( $form_entry['integrationSource'] ) ? json_decode( $form_entry['integrationSource'], true ) : $form_entry['integrationSource'];
-				$integration_source = is_array( $integration_source ) ? $integration_source : array();
-				$source_type        = isset( $integration_source['type'] ) ? sanitize_key( $integration_source['type'] ) : '';
-				$element_id         = isset( $integration_source['elementId'] ) ? sanitize_key( $integration_source['elementId'] ) : '';
+				$integration_source = $this->get_submission_integration_source( $form_entry );
+				$source_type        = isset( $integration_source['type'] ) && is_scalar( $integration_source['type'] ) ? sanitize_key( $integration_source['type'] ) : '';
+				$element_id         = isset( $integration_source['elementId'] ) && is_scalar( $integration_source['elementId'] ) ? sanitize_key( $integration_source['elementId'] ) : '';
 
 				if ( 'block' === $source_type ) {
 					$integrations = \Gutenverse_Form\Integration::get_form_builder_integration_from_post( $post_id, $form_id, $element_id );
@@ -1339,6 +2173,8 @@ class Api {
 	 * @return WP_Rest.
 	 */
 	public function form_init( $request ) {
+		$this->send_form_endpoint_no_cache_headers();
+
 		$form_id   = $request->get_param( 'form_id' );
 		$post_type = get_post_type( (int) $form_id );
 		$result    = array(

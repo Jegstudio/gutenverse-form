@@ -1200,6 +1200,16 @@ class Entries {
 				'side',
 				'high'
 			);
+
+			// Payment metabox.
+			add_meta_box(
+				'gutenverse-payment-data',
+				__( 'Payment Info', 'gutenverse-form' ),
+				array( $this, 'payment_data_metabox' ),
+				self::POST_TYPE,
+				'side',
+				'default'
+			);
 		}
 	}
 
@@ -1417,6 +1427,33 @@ class Entries {
 	}
 
 	/**
+	 * Add Payment metaboxes.
+	 *
+	 * @param - $post post.
+	 */
+	public function payment_data_metabox( $post ) {
+		$payment = get_post_meta( $post->ID, 'form-payment', true );
+		$method  = esc_html__( 'none', 'gutenverse-form' );
+		$status  = esc_html__( 'none', 'gutenverse-form' );
+
+		if ( is_array( $payment ) ) {
+			$method = ! empty( $payment['payment'] ) ? $payment['payment'] : $method;
+			$method = ! empty( $payment['paymentMethod'] ) ? $payment['paymentMethod'] : $method;
+			$method = ! empty( $payment['payment_method'] ) ? $payment['payment_method'] : $method;
+			$status = ! empty( $payment['status'] ) ? $payment['status'] : $status;
+			$status = ! empty( $payment['paymentStatus'] ) ? $payment['paymentStatus'] : $status;
+			$status = ! empty( $payment['payment_status'] ) ? $payment['payment_status'] : $status;
+		}
+
+		$result  = '<div class="gutenverse-entry-detail-list">';
+		$result .= $this->entry_detail_item( esc_html__( 'Payment Method', 'gutenverse-form' ), esc_html( $method ) );
+		$result .= $this->entry_detail_item( esc_html__( 'Payment Status', 'gutenverse-form' ), esc_html( $status ) );
+		$result .= '</div>';
+
+		gutenverse_print_html( $result, 'post' );
+	}
+
+	/**
 	 * Get Total Entries
 	 *
 	 * @param integer $form_id Form Action ID.
@@ -1494,19 +1531,41 @@ class Entries {
 			return;
 		}
 		?>
-		<div id="gutenverse-form-toast">
-			<div class="toast-title"></div>
-			<div class="toast-message"></div>
+		<div id="gutenverse-form-toast" role="status" aria-live="polite">
+			<span class="toast-icon" aria-hidden="true"></span>
+			<span class="toast-message"></span>
 		</div>
 
 		<script type="text/javascript">
 		jQuery(document).ready(function($) {
-			function showToast(title, message, type) {
+			var entryListUrl = <?php echo wp_json_encode( self::get_admin_page_url() ); ?>;
+			var backLabel = <?php echo wp_json_encode( __( 'Back to entries', 'gutenverse-form' ) ); ?>;
+			var allSuccessMessage = <?php echo wp_json_encode( __( 'All Integation Retriggered Successfully', 'gutenverse-form' ) ); ?>;
+			var allErrorMessage = <?php echo wp_json_encode( __( 'All Integation Retriggered Failed', 'gutenverse-form' ) ); ?>;
+			var defaultErrorMessage = <?php echo wp_json_encode( __( 'Error occurred', 'gutenverse-form' ) ); ?>;
+			var ajaxErrorMessage = <?php echo wp_json_encode( __( 'AJAX error occurred', 'gutenverse-form' ) ); ?>;
+			var $heading = $('.wrap h1.wp-heading-inline').first();
+
+			if (!$heading.length) {
+				$heading = $('.wrap h1').first();
+			}
+
+			if ($heading.length && !$heading.parent().hasClass('gutenverse-entry-view-heading')) {
+				$heading.wrap('<div class="gutenverse-entry-view-heading"></div>');
+				$heading.before(
+					$('<a/>', {
+						class: 'gutenverse-entry-back-button',
+						href: entryListUrl,
+						'aria-label': backLabel
+					}).append('<span class="dashicons dashicons-arrow-left-alt2"></span>')
+				);
+			}
+
+			function showToast(message, type) {
 				var $toast = $('#gutenverse-form-toast');
 				$toast.removeClass('success error').addClass(type);
-				$toast.find('.toast-title').text(title);
 				$toast.find('.toast-message').text(message);
-				$toast.stop(true, true).fadeIn().css('display', 'block');
+				$toast.stop(true, true).fadeIn().css('display', 'flex');
 				
 				setTimeout(function() {
 					$toast.css('animation', 'gv-fade-out 0.5s forwards');
@@ -1522,6 +1581,7 @@ class Entries {
 				var entryId = $this.data('entry-id');
 				var service = $this.data('service') || '';
 				var nonce = '<?php echo wp_create_nonce( 'gutenverse_form_retrigger' ); ?>';
+				var isAll = $this.hasClass('retrigger-integrations-all');
 
 				if ($this.hasClass('loading')) return;
 
@@ -1538,13 +1598,13 @@ class Entries {
 					},
 					success: function(response) {
 						if (response.success) {
-							showToast('Success', response.data.message, 'success');
+							showToast(isAll ? allSuccessMessage : response.data.message, 'success');
 						} else {
-							showToast('Error', response.data.message || 'Error occurred', 'error');
+							showToast(isAll ? allErrorMessage : response.data.message || defaultErrorMessage, 'error');
 						}
 					},
 					error: function() {
-						showToast('Error', 'AJAX error occurred', 'error');
+						showToast(isAll ? allErrorMessage : ajaxErrorMessage, 'error');
 					},
 					complete: function() {
 						$this.removeClass('loading').css('opacity', '1');
