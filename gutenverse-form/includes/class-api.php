@@ -1033,6 +1033,60 @@ class Api {
 	}
 
 	/**
+	 * Get a nested value from submitted file params.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param array $data File params.
+	 * @param array $path Nested path.
+	 *
+	 * @return mixed|null
+	 */
+	private function get_submitted_form_file_param( $data, $path ) {
+		foreach ( $path as $segment ) {
+			if ( ! is_array( $data ) || ! array_key_exists( $segment, $data ) ) {
+				return null;
+			}
+
+			$data = $data[ $segment ];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Check whether the request contains a submitted file for a field.
+	 *
+	 * @since 3.0.0-performance
+	 *
+	 * @param object|null $request   Submit request.
+	 * @param string|int  $key       Submitted field index.
+	 * @param string      $value_key Submitted field value key.
+	 *
+	 * @return bool
+	 */
+	private function has_submitted_form_file_value( $request, $key, $value_key ) {
+		if ( ! is_object( $request ) || ! method_exists( $request, 'get_file_params' ) ) {
+			return false;
+		}
+
+		$files = $request->get_file_params();
+
+		if ( ! isset( $files['form-entry'] ) || ! is_array( $files['form-entry'] ) ) {
+			return false;
+		}
+
+		$file_name  = $this->get_submitted_form_file_param( $files['form-entry'], array( 'name', 'data', $key, $value_key ) );
+		$file_error = $this->get_submitted_form_file_param( $files['form-entry'], array( 'error', 'data', $key, $value_key ) );
+
+		if ( is_scalar( $file_error ) && UPLOAD_ERR_NO_FILE === (int) $file_error ) {
+			return false;
+		}
+
+		return is_scalar( $file_name ) && '' !== trim( (string) $file_name );
+	}
+
+	/**
 	 * Normalize submitted scalar value.
 	 *
 	 * @since 3.0.0-performance
@@ -1285,12 +1339,13 @@ class Api {
 	 *
 	 * @since 3.0.0-performance
 	 *
-	 * @param array $form_entry Form entry data.
-	 * @param int   $form_id    Form ID.
+	 * @param array       $form_entry Form entry data.
+	 * @param int         $form_id    Form ID.
+	 * @param object|null $request    Submit request.
 	 *
 	 * @return WP_REST_Response|null
 	 */
-	private function validate_public_submit_schema( $form_entry, $form_id ) {
+	private function validate_public_submit_schema( $form_entry, $form_id, $request = null ) {
 		$schema = $this->get_submission_field_schema( $form_entry, $form_id );
 
 		if ( $schema instanceof WP_REST_Response ) {
@@ -1337,7 +1392,13 @@ class Api {
 				);
 			}
 
-			$value = $this->get_submitted_form_field_value( $data, $key, $has_value );
+			if ( 'file' === $expected_type ) {
+				$value_key = $data['id'] . '-' . $key . '-value';
+				$value     = $this->has_submitted_form_file_value( $request, $key, $value_key ) ? array( '__gutenverse_uploaded_file__' ) : '';
+				$has_value = true;
+			} else {
+				$value = $this->get_submitted_form_field_value( $data, $key, $has_value );
+			}
 
 			if ( ! $has_value ) {
 				return $this->make_public_submit_schema_error( 'Invalid form field value.' );
@@ -1816,7 +1877,7 @@ class Api {
 			);
 		}
 
-		$schema_error = $this->validate_public_submit_schema( $form_entry, $form_id );
+		$schema_error = $this->validate_public_submit_schema( $form_entry, $form_id, $request );
 		if ( $schema_error ) {
 			return $schema_error;
 		}
