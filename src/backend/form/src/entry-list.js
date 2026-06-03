@@ -135,16 +135,24 @@ const EntryListSkeleton = () => (
 
 const ProBadge = () => <span className="entry-list-pro-badge">{__('Pro', 'gutenverse-form')}</span>;
 
+const EntryListCrownIcon = () => (
+    <span className="entry-list-crown-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="20" rx="10" fill="#E62E68" />
+            <path d="M6.11111 12.25L5 6.0625L8.05556 8.875L10 5.5L11.9444 8.875L15 6.0625L13.8889 12.25H6.11111ZM13.8889 13.9375C13.8889 14.275 13.6667 14.5 13.3333 14.5H6.66667C6.33333 14.5 6.11111 14.275 6.11111 13.9375V13.375H13.8889V13.9375Z" fill="white" />
+        </svg>
+    </span>
+);
+
 const EntryListUpgrade = ({ config }) => (
     <div className="entry-list-upgrade">
         <div className="entry-list-upgrade__content">
-            <ProBadge />
-            <h2>{__('Unlock the complete entry archive', 'gutenverse-form')}</h2>
+            <h2>{__('Unlock the Complete Entry Archive', 'gutenverse-form')}</h2>
             <ul>
-                <li>{__('View all entries', 'gutenverse-form')}</li>
-                <li>{__('Export all entries', 'gutenverse-form')}</li>
-                <li>{__('Filter entries', 'gutenverse-form')}</li>
-                <li>{__('Access older entry details', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('View All Entries', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('Export All Entries', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('Filter All Entries', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('Access Older Entry Details', 'gutenverse-form')}</li>
             </ul>
         </div>
         <ButtonUpgradePro
@@ -390,7 +398,6 @@ const EntryList = () => {
 
     const entries = data?.entries || [];
     const limit = data?.limit || config.limit || 10;
-    const isLimited = data?.limited ?? !capabilities.viewAll;
     const selectedForm = (data?.forms || []).find(form => String(form.id) === String(query.formId));
     const title = query.formId && selectedForm?.title
         ? sprintf(__('Entries from %s', 'gutenverse-form'), selectedForm.title)
@@ -476,7 +483,6 @@ const EntryList = () => {
                         <h1>{title}</h1>
                         {countLabel && <span className="entry-list-count">{countLabel}</span>}
                     </div>
-                    {isLimited && <p>{sprintf(__('Showing the latest %s entries.', 'gutenverse-form'), limit)}</p>}
                 </div>
                 {actions}
             </div>

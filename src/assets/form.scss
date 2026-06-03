@@ -3232,27 +3232,30 @@ body[class*="_page_gutenverse-form-entries"] {
 
     .dashboard-panel--premium-callout {
         align-items: center;
-        background: linear-gradient(90deg, #fff1f3 0%, #ffe7ec 100%);
-        border-color: #ff9aaa;
+        background: radial-gradient(148.62% 124.31% at 50% 0%, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%),
+            linear-gradient(278.44deg, #1EE8F5 -17.39%, rgba(30, 232, 245, 0) 52.85%),
+            linear-gradient(294.09deg, #BC50FF 10.84%, #FFFFFF 76.14%);
+        border-color: #d9dee8;
+        border-radius: 12px;
         box-shadow: none;
         display: flex;
-        gap: 20px;
+        gap: 24px;
         justify-content: space-between;
-        min-height: 96px;
-        padding: 20px;
+        min-height: 118px;
+        padding: 26px 30px;
 
         .button-upgrade-pro {
             align-items: center;
-            background: #f02f79;
-            border: 1px solid #f02f79;
-            border-radius: 5px;
+            background: linear-gradient(247.17deg, #FF808B 27.14%, #E32D64 104.63%);
+            border: 0;
+            border-radius: 8px;
             color: #fff;
             display: inline-flex;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             gap: 8px;
             line-height: 1;
-            min-height: 34px;
+            min-height: 44px;
             text-decoration: none;
 
             svg {
@@ -3631,7 +3634,7 @@ body[class*="_page_gutenverse-form-entries"] {
 
 .gutenverse-form-entry-list {
     color: #0f1f2c;
-    margin: 26px 0 0 0;
+    margin: 28px 20px 40px 0;
     position: relative;
 
     *,
@@ -3640,6 +3643,7 @@ body[class*="_page_gutenverse-form-entries"] {
         box-sizing: border-box;
     }
 
+    .gutenverse-form-entry-list__header,
     .entry-list-upgrade,
     .entry-list-notice,
     .entry-list-error,
@@ -3649,6 +3653,7 @@ body[class*="_page_gutenverse-form-entries"] {
         background: #ffffff;
         border: 1px solid #d9dee8;
         border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
     }
 
     .gutenverse-form-entry-list__header {
@@ -3656,13 +3661,15 @@ body[class*="_page_gutenverse-form-entries"] {
         display: flex;
         gap: 18px;
         justify-content: space-between;
-        margin: 0 0 22px;
-        min-height: 48px;
+        margin: 0 0 18px;
+        min-height: 80px;
+        padding: 24px 26px;
 
         h1 {
             color: #0f1f2c;
+            font-family: "Roboto", sans-serif;
             font-size: 26px;
-            font-weight: 600;
+            font-weight: 500;
             line-height: 1.15;
             margin: 0;
             padding: 0;
@@ -3693,7 +3700,7 @@ body[class*="_page_gutenverse-form-entries"] {
 
     .entry-list-count {
         color: #667085;
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 500;
     }
 
@@ -3852,51 +3859,100 @@ body[class*="_page_gutenverse-form-entries"] {
 
     .entry-list-upgrade {
         align-items: center;
+        background: linear-gradient(90deg, #fff1f3 0%, #ffe7ec 100%);
+        border-color: #ff9aaa;
+        box-shadow: none;
         display: flex;
-        gap: 18px;
+        gap: 24px;
         justify-content: space-between;
-        margin-bottom: 16px;
-        padding: 18px 20px;
+        margin-bottom: 20px;
+        min-height: 124px;
+        padding: 26px 28px;
 
         h2 {
             color: #111827;
-            font-size: 18px;
-            font-weight: 700;
+            font-family: "Roboto", sans-serif;
+            font-size: 22px;
+            font-weight: 500;
             line-height: 1.3;
-            margin: 8px 0 10px;
+            margin: 0 0 16px;
         }
 
         ul {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
             margin: 0;
             padding: 0;
         }
 
         li {
-            background: #f8fafc;
-            border: 1px solid #dbe3ef;
+            align-items: center;
+            background: #ffffff;
+            border: 0;
             border-radius: 999px;
-            color: #344054;
-            font-size: 12px;
+            color: #111827;
+            display: inline-flex;
+            font-size: 14px;
             font-weight: 600;
+            gap: 8px;
+            line-height: 1;
             list-style: none;
             margin: 0;
-            padding: 6px 10px;
+            min-height: 34px;
+            padding: 7px 14px 7px 7px;
+            white-space: nowrap;
+        }
+
+        .button-upgrade-pro {
+            align-items: center;
+            background: linear-gradient(247.17deg, #FF808B 27.14%, #E32D64 104.63%);
+            border: 0;
+            border-radius: 6px;
+            color: #ffffff;
+            display: inline-flex;
+            font-size: 14px;
+            font-weight: 700;
+            gap: 8px;
+            line-height: 1;
+            min-height: 44px;
+            text-decoration: none;
+
+            svg {
+                height: 14px;
+                width: 14px;
+            }
+        }
+    }
+
+    .entry-list-crown-icon {
+        display: inline-flex;
+        flex: 0 0 20px;
+        height: 20px;
+        line-height: 0;
+        width: 20px;
+
+        svg {
+            display: block;
+            height: 20px;
+            width: 20px;
         }
     }
 
     .entry-list-pro-badge {
-        background: #f59e0b;
+        align-items: center;
+        background: linear-gradient(247.17deg, #FF808B 27.14%, #E32D64 104.63%);
         border-radius: 999px;
-        color: #111827;
+        color: #ffffff;
         display: inline-flex;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0;
-        line-height: 1;
+        font-family: "Roboto", sans-serif;
+        font-size: 10px;
+        font-weight: 600;
+        justify-content: center;
+        letter-spacing: 0.02em;
+        line-height: 100%;
         padding: 5px 7px;
+        text-align: center;
         text-transform: uppercase;
     }
 
@@ -3939,7 +3995,7 @@ body[class*="_page_gutenverse-form-entries"] {
         th,
         td {
             border-bottom: 1px solid #e5e7eb;
-            padding: 21px 22px;
+            padding: 24px 26px;
             text-align: left;
             vertical-align: middle;
         }
@@ -3947,14 +4003,14 @@ body[class*="_page_gutenverse-form-entries"] {
         th {
             background: #f7f7fb;
             color: #0f1f2c;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             line-height: 1.2;
         }
 
         td {
             color: #475467;
-            font-size: 14px;
+            font-size: 15px;
             line-height: 1.45;
         }
 
@@ -3991,7 +4047,7 @@ body[class*="_page_gutenverse-form-entries"] {
 
         strong {
             color: #0f1f2c;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             overflow-wrap: anywhere;
         }
