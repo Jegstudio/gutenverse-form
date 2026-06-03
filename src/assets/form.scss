@@ -654,6 +654,70 @@
     padding: 0 25px 50px;
     height: 100%;
 
+    > .title {
+        align-items: flex-start;
+        border-bottom: 1px solid #e3e8f2;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        padding: 8px 0 18px;
+
+        > div {
+            color: #0f172a;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            margin: 0;
+        }
+    }
+
+    > .tab-navigation {
+        align-items: center;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        display: flex;
+        width: fit-content;
+        gap: 6px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 28px;
+        padding: 6px;
+        align-self: center;
+    }
+
+    > .tab-navigation .tab-nav {
+        border-radius: 8px;
+        color: #475569;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        line-height: 1;
+        min-width: 120px;
+        padding: 11px 18px;
+        text-align: center;
+        text-transform: capitalize;
+        transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+
+        &:hover,
+        &.current,
+        &.active,
+        &[aria-selected="true"] {
+            background: rgba(59, 87, 247, 0.08);
+            color: #1d4ed8;
+        }
+
+        &.current,
+        &.active,
+        &[aria-selected="true"] {
+            background: #fff;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 6px 18px rgba(59, 87, 247, 0.12);
+            color: #1d4ed8;
+        }
+    }
+
     .control-wrapper {
         text-align: left;
         padding: 30px 0 0;
@@ -1353,6 +1417,29 @@
 
 @media (max-width: 782px) {
     .form-tab-body {
+        padding: 0 16px 36px;
+
+        > .title {
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+
+            > div {
+                font-size: 20px;
+            }
+        }
+
+        > .tab-navigation {
+            display: flex;
+            width: 100%;
+        }
+
+        > .tab-navigation .tab-nav {
+            flex: 1 1 0;
+            min-width: 0;
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
         .gutenverse-example-fill {
             align-items: flex-start;
             flex-direction: column;
@@ -2263,6 +2350,10 @@
     padding: 20px;
     background: white;
     border-top: 1px solid #eee;
+}
+
+.gutenverse-integration-select__menu-portal {
+    z-index: 999999 !important;
 }
 
 .gutenverse-form-modal-content {

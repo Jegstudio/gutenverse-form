@@ -324,84 +324,6 @@ class Integration {
 	}
 
 	/**
-	 * Load saved form builder integration settings from a rendered post.
-	 *
-	 * @param int    $post_id    Post ID containing the form builder block.
-	 * @param int    $form_id    Assigned Gutenverse form ID.
-	 * @param string $element_id Form builder block element ID.
-	 *
-	 * @return array
-	 */
-	public static function get_form_builder_integration_from_post( $post_id, $form_id, $element_id ) {
-		$post_id    = absint( $post_id );
-		$form_id    = absint( $form_id );
-		$element_id = sanitize_key( $element_id );
-
-		if ( ! $post_id || ! $form_id || empty( $element_id ) ) {
-			return array();
-		}
-
-		$post = get_post( $post_id );
-		if ( ! $post || empty( $post->post_content ) ) {
-			return array();
-		}
-
-		$block = self::find_form_builder_block( parse_blocks( $post->post_content ), $form_id, $element_id );
-		if ( empty( $block['attrs'] ) || ! is_array( $block['attrs'] ) ) {
-			return array();
-		}
-
-		$integration              = isset( $block['attrs']['integration'] ) && is_array( $block['attrs']['integration'] ) ? $block['attrs']['integration'] : array();
-		$integration['elementId'] = $element_id;
-		$integration['_source']   = 'server';
-
-		return $integration;
-	}
-
-	/**
-	 * Find a matching form builder block in parsed block data.
-	 *
-	 * @param array  $blocks     Parsed blocks.
-	 * @param int    $form_id    Assigned Gutenverse form ID.
-	 * @param string $element_id Form builder block element ID.
-	 *
-	 * @return array|null
-	 */
-	private static function find_form_builder_block( $blocks, $form_id, $element_id ) {
-		foreach ( $blocks as $block ) {
-			if ( isset( $block['blockName'] ) && 'gutenverse/form-builder' === $block['blockName'] ) {
-				$attrs          = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
-				$block_form_id  = 0;
-				$block_form_ref = isset( $attrs['formId'] ) ? $attrs['formId'] : null;
-
-				if ( is_array( $block_form_ref ) && isset( $block_form_ref['value'] ) ) {
-					$block_form_id = absint( $block_form_ref['value'] );
-				} elseif ( is_scalar( $block_form_ref ) ) {
-					$block_form_id = absint( $block_form_ref );
-				}
-
-				if (
-					isset( $attrs['elementId'] ) &&
-					sanitize_key( $attrs['elementId'] ) === $element_id &&
-					$block_form_id === $form_id
-				) {
-					return $block;
-				}
-			}
-
-			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-				$found = self::find_form_builder_block( $block['innerBlocks'], $form_id, $element_id );
-
-				if ( $found ) {
-					return $found;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/**
 	 * Find a stored action secret map by action key across all block element IDs.
 	 *
 	 * @param array  $secret_map Full post secret map.
@@ -601,6 +523,10 @@ class Integration {
 			return rest_sanitize_boolean( $integrations['useDashboardSettings'] );
 		}
 
+		if ( isset( $form_setting['integrations']['useDashboardSettings'] ) ) {
+			return rest_sanitize_boolean( $form_setting['integrations']['useDashboardSettings'] );
+		}
+
 		$request_actions = isset( $integrations['actions'] ) && is_array( $integrations['actions'] ) ? $integrations['actions'] : array();
 		foreach ( $request_actions as $action ) {
 			if ( self::action_has_meaningful_config( $action ) ) {
@@ -758,8 +684,7 @@ class Integration {
 	}
 
 	/**
-	 * Normalize integrations saved on an entry so entries and retriggers can
-	 * treat builder actions and dashboard fallbacks the same way.
+	 * Normalize integrations saved on an entry for entries and retriggers.
 	 *
 	 * @param array $integrations Saved/request integrations payload.
 	 * @param array $form_setting Saved form settings.
@@ -769,8 +694,11 @@ class Integration {
 	public static function normalize_entry_integrations( $integrations, $form_setting ) {
 		$normalized = is_array( $integrations ) ? $integrations : array();
 		$actions    = isset( $normalized['actions'] ) && is_array( $normalized['actions'] ) ? $normalized['actions'] : array();
+		$use_dashboard_settings = self::use_dashboard_settings( $normalized, $form_setting );
 
-		if ( self::use_dashboard_settings( $normalized, $form_setting ) ) {
+		$normalized['useDashboardSettings'] = $use_dashboard_settings;
+
+		if ( $use_dashboard_settings ) {
 			$actions = self::get_global_service_actions();
 
 			if ( ! empty( $actions ) ) {
@@ -807,9 +735,9 @@ class Integration {
 	}
 
 	/**
-	 * Get block action settings for a service.
+	 * Get action settings for a service.
 	 *
-	 * Prefer the server-side saved form configuration over request payloads.
+	 * Prefer the saved form configuration over request payloads.
 	 *
 	 * @param string $service      Service name.
 	 * @param array  $params       Submission params.
@@ -820,26 +748,27 @@ class Integration {
 	public static function get_service_actions( $service, $params, $form_setting ) {
 		$actions = array();
 
-		if ( self::request_has_integration_actions( $params ) ) {
+		if ( self::request_has_integration_payload( $params ) ) {
 			$integration = isset( $params['integrations'] ) && is_array( $params['integrations'] ) ? $params['integrations'] : array();
+			$use_dashboard_settings = self::use_dashboard_settings( $integration, $form_setting );
 			$post_id     = isset( $params['post-id'] ) ? (int) $params['post-id'] : 0;
 			$element_id  = isset( $integration['elementId'] ) ? (string) $integration['elementId'] : '';
 
-			if ( $post_id > 0 && '' !== $element_id ) {
+			if ( ! $use_dashboard_settings && $post_id > 0 && '' !== $element_id ) {
 				$integration = ( new self() )->hydrate_block_integration_secrets( $integration, $post_id, $element_id );
 			}
 
-			$actions = isset( $integration['actions'] ) && is_array( $integration['actions'] ) ? $integration['actions'] : array();
-		} elseif ( self::request_has_integration_payload( $params ) ) {
-			$integration = isset( $params['integrations'] ) && is_array( $params['integrations'] ) ? $params['integrations'] : array();
-
-			if ( ! self::use_dashboard_settings( $integration, $form_setting ) ) {
+			if ( $use_dashboard_settings ) {
 				return array();
 			}
+
+			$actions = isset( $integration['actions'] ) && is_array( $integration['actions'] ) ? $integration['actions'] : array();
 		} elseif ( isset( $form_setting['integrations']['actions'] ) && is_array( $form_setting['integrations']['actions'] ) ) {
 			$integration = array(
 				'actions'   => $form_setting['integrations']['actions'],
-				'elementId' => isset( $form_setting['elementId'] ) ? (string) $form_setting['elementId'] : '',
+				'elementId' => isset( $form_setting['id'] ) && '' !== (string) $form_setting['id']
+					? (string) $form_setting['id']
+					: ( isset( $form_setting['elementId'] ) ? (string) $form_setting['elementId'] : '' ),
 			);
 			$post_id     = isset( $params['form-id'] ) ? (int) $params['form-id'] : 0;
 			$element_id  = isset( $integration['elementId'] ) ? (string) $integration['elementId'] : '';

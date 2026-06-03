@@ -3,7 +3,6 @@ import { advancePanel, positioningPanel, animationPanel, backgroundPanel, border
 import { errorNoticePanel } from './panel-error-notice';
 import { formPanel } from './panel-form';
 import { stickyPanel } from './panel-sticky';
-import { integrationPanel } from './panel-integration';
 import { successNoticePanel } from './panel-success-notice';
 import { bulkInputStylePanel } from './panel-bulk-input-style';
 import { TabSetting, TabStyle } from 'gutenverse-core/controls';
@@ -14,12 +13,6 @@ export const panelList = () => {
             title: __('Form Setting', 'gutenverse-form'),
             panelArray: formPanel,
             tabRole: TabSetting
-        },
-        {
-            title: __('Integration', 'gutenverse-form'),
-            panelArray: integrationPanel,
-            tabRole: TabSetting,
-            pro: true
         },
         {
             title: __('Bulk Input Styles', 'gutenverse-form'),

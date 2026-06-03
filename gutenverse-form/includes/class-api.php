@@ -1897,27 +1897,10 @@ class Api {
 		$form_data = $form_data_check['data'];
 		if ( isset( $form_data ) ) {
 			$settings_data = get_option( 'gutenverse-settings', array() );
-			$integrations  = array();
 			$post_id       = absint( $form_entry['postId'] ?? 0 );
 
-			if ( isset( $form_entry['integrationSource'] ) ) {
-				$integration_source = $this->get_submission_integration_source( $form_entry );
-				$source_type        = isset( $integration_source['type'] ) && is_scalar( $integration_source['type'] ) ? sanitize_key( $integration_source['type'] ) : '';
-				$element_id         = isset( $integration_source['elementId'] ) && is_scalar( $integration_source['elementId'] ) ? sanitize_key( $integration_source['elementId'] ) : '';
-
-				if ( 'block' === $source_type ) {
-					$integrations = \Gutenverse_Form\Integration::get_form_builder_integration_from_post( $post_id, $form_id, $element_id );
-				}
-
-				if ( empty( $integrations ) && $element_id ) {
-					$integrations = array(
-						'elementId' => $element_id,
-					);
-				}
-			}
-
 			$normalized_integrations = \Gutenverse_Form\Integration::normalize_entry_integrations(
-				is_array( $integrations ) ? $integrations : array(),
+				array(),
 				$form_setting
 			);
 

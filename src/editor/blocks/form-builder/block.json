@@ -289,13 +289,6 @@
 			"type": "object",
 			"default": {}
 		},
-		"integration": {
-			"type": "object",
-			"default": {
-				"actions": [],
-				"useDashboardSettings": false
-			}
-		},
 		"flexAlignSelf": {
 			"type": "object",
 			"default": {},

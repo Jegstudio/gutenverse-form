@@ -1532,6 +1532,7 @@ class Form {
 				'use_captcha'                    => '',
 				'max_size_file'                  => '',
 				'allowed_extensions'             => '',
+				'integrations'                   => array(),
 				'variable_mapping'               => array(),
 			)
 		);
@@ -1562,6 +1563,10 @@ class Form {
 
 		if ( ! is_array( $params['variable_mapping'] ) ) {
 			$params['variable_mapping'] = array();
+		}
+
+		if ( ! isset( $params['integrations'] ) || ! is_array( $params['integrations'] ) ) {
+			$params['integrations'] = array();
 		}
 
 		return $params;
@@ -1657,6 +1662,7 @@ class Form {
 				'use_captcha'                    => $params['use_captcha'],
 				'max_size_file'                  => $params['max_size_file'],
 				'allowed_extensions'             => $params['allowed_extensions'],
+				'integrations'                   => isset( $params['integrations'] ) ? $params['integrations'] : array(),
 				'variable_mapping'               => isset( $params['variable_mapping'] ) ? $params['variable_mapping'] : array(),
 			)
 		);

@@ -10,8 +10,9 @@ import { CardPro } from 'gutenverse-core/components';
 import { Modal } from '@wordpress/components';
 import { isEmpty, openFreemiusPopup, prefetchPricingPlanData } from 'gutenverse-core/helper';
 import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
-import { CardBannerPro, PopupInsufficientTier } from 'gutenverse-core/components';
+import { CardBannerPro, PopupInsufficientTier, DefaultLayout } from 'gutenverse-core/components';
 import { createGutenverseEmailDesign } from '../../email-template/data-model';
+import { useInstanceId } from '@wordpress/compose';
 
 const FormGroup = ({ title, description, children, className = '' }) => {
     return (
@@ -1387,10 +1388,26 @@ export const FormContent = (props) => {
         tabProps
     );
 
+    const imageBase = window?.GutenverseConfig?.gutenverseFormVideoDir || '';
+
+    const LockedIntegrationControl = ({isOpen}) => {
+        const id = useInstanceId(LockedIntegrationControl, 'inspector-locked-integration-control');
+        return <div id={id} className={'gutenverse-control-wrapper gutenverse-control-locked-integration gutenverse-control-locked-layout'}>
+            <DefaultLayout
+                title={__( 'Stop Wasting Conversion Opportunities', 'gutenverse-form' )}
+                description={__( 'Sync submissions with WhatsApp, Mailchimp, Google Sheets, Telegram, Discord, and more to reduce manual work and act on leads faster.', 'gutenverse-form' )}
+                img={'integration-form.mp4'}
+                isOpen={isOpen}
+                permaLink={__('#integration')}
+                assetDir={imageBase}
+            />
+        </div>;
+    };
+
     const ProTab = applyFilters(
         'gutenverse-form.pro-form-action-settings',
         <div className="form-tab-body">
-            <CardPro />
+            <LockedIntegrationControl isOpen={true} />
         </div>,
         props
     );
@@ -1463,9 +1480,10 @@ export const FormContent = (props) => {
                         <div
                             className={classes}
                             key={key}
-                            onClick={openUpgradePopup}
-                            onMouseEnter={prefetchUpgradePopup}
-                            onFocus={prefetchUpgradePopup}
+                            onClick={() => changeActive(key)}
+                            // onClick={openUpgradePopup}
+                            // onMouseEnter={prefetchUpgradePopup}
+                            // onFocus={prefetchUpgradePopup}
                         >
                             {item.label}
                         </div>,
