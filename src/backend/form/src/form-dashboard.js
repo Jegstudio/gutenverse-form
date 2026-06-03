@@ -39,6 +39,63 @@ const Row = ({ title, meta, actions }) => (
 
 const DashboardProBadge = () => <span className="dashboard-pro-badge">{__('Pro', 'gutenverse-form')}</span>;
 
+const RangeToggleLockIcon = () => (
+    <span className="dashboard-range-toggle__lock" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fillRule="evenodd" clipRule="evenodd" d="M4.08464 4.08464C4.08464 2.47347 5.39014 1.16797 7.0013 1.16797C8.61247 1.16797 9.91797 2.47347 9.91797 4.08464V5.83463H10.1513C10.6646 5.83463 11.0846 6.25463 11.0846 6.76797V10.8513C11.0846 11.6213 10.4546 12.2513 9.68464 12.2513H4.31797C3.54797 12.2513 2.91797 11.6213 2.91797 10.8513V6.76797C2.91797 6.25463 3.33797 5.83463 3.8513 5.83463H4.08464V4.08464ZM8.7513 4.08464V5.83463H5.2513V4.08464C5.2513 3.11747 6.03414 2.33464 7.0013 2.33464C7.96847 2.33464 8.7513 3.11747 8.7513 4.08464ZM7.0013 7.14713C6.76933 7.14689 6.5442 7.22566 6.36298 7.37047C6.18176 7.51528 6.05526 7.71749 6.00432 7.9438C5.95339 8.1701 5.98104 8.40701 6.08274 8.6155C6.18443 8.82399 6.3541 8.99163 6.5638 9.0908V10.5013C6.5638 10.6173 6.6099 10.7286 6.69194 10.8107C6.77399 10.8927 6.88527 10.9388 7.0013 10.9388C7.11733 10.9388 7.22861 10.8927 7.31066 10.8107C7.39271 10.7286 7.4388 10.6173 7.4388 10.5013V9.0908C7.6485 8.99163 7.81817 8.82399 7.91987 8.6155C8.02156 8.40701 8.04922 8.1701 7.99828 7.9438C7.94734 7.71749 7.82084 7.51528 7.63963 7.37047C7.45841 7.22566 7.23327 7.14689 7.0013 7.14713Z" fill="#99A2A9" />
+        </svg>
+    </span>
+);
+
+const PremiumDashboardLockIcon = ({ iconId }) => (
+    <span className="dashboard-premium-panel__lock" aria-hidden="true">
+        <svg width="61" height="63" viewBox="0 0 61 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g filter={`url(#${iconId}-filter)`}>
+                <rect x="6.35156" y="5.46484" width="48" height="48" rx="24" fill={`url(#${iconId}-background)`} shapeRendering="crispEdges" />
+                <rect x="7.10269" y="6.21597" width="46.4978" height="46.4978" rx="23.2489" stroke={`url(#${iconId}-border)`} strokeWidth="1.50225" shapeRendering="crispEdges" />
+                <rect x="7.10269" y="6.21597" width="46.4978" height="46.4978" rx="23.2489" stroke={`url(#${iconId}-shine)`} strokeWidth="1.50225" shapeRendering="crispEdges" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M25.3516 23.4687C25.3516 20.7067 27.5896 18.4688 30.3516 18.4688C33.1136 18.4688 35.3516 20.7067 35.3516 23.4687V26.4687H35.7516C36.6316 26.4687 37.3516 27.1887 37.3516 28.0687V35.0687C37.3516 36.3887 36.2716 37.4687 34.9516 37.4687H25.7516C24.4316 37.4687 23.3516 36.3887 23.3516 35.0687V28.0687C23.3516 27.1887 24.0716 26.4687 24.9516 26.4687H25.3516V23.4687ZM33.3516 23.4687V26.4687H27.3516V23.4687C27.3516 21.8107 28.6936 20.4687 30.3516 20.4687C32.0096 20.4687 33.3516 21.8107 33.3516 23.4687ZM30.3516 28.7187C29.9539 28.7183 29.568 28.8534 29.2573 29.1016C28.9466 29.3499 28.7298 29.6965 28.6425 30.0845C28.5551 30.4724 28.6025 30.8785 28.7769 31.2359C28.9512 31.5934 29.2421 31.8807 29.6016 32.0507V34.4687C29.6016 34.6677 29.6806 34.8584 29.8212 34.9991C29.9619 35.1397 30.1527 35.2187 30.3516 35.2187C30.5505 35.2187 30.7412 35.1397 30.8819 34.9991C31.0225 34.8584 31.1016 34.6677 31.1016 34.4687V32.0507C31.4611 31.8807 31.7519 31.5934 31.9262 31.2359C32.1006 30.8785 32.148 30.4724 32.0607 30.0845C31.9733 29.6965 31.7565 29.3499 31.4458 29.1016C31.1352 28.8534 30.7492 28.7183 30.3516 28.7187Z" fill={`url(#${iconId}-lock)`} />
+            </g>
+            <defs>
+                <filter id={`${iconId}-filter`} x="-0.000732899" y="-0.000391483" width="60.7046" height="62.822" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                    <feMorphology radius="2.66118" operator="erode" in="SourceAlpha" result="effect1_dropShadow" />
+                    <feOffset dy="3.00449" />
+                    <feGaussianBlur stdDeviation="4.50674" />
+                    <feComposite in2="hardAlpha" operator="out" />
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.890196 0 0 0 0 0.176471 0 0 0 0 0.392157 0 0 0 0.15 0" />
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                    <feMorphology radius="5.32236" operator="erode" in="SourceAlpha" result="effect2_dropShadow" />
+                    <feOffset dy="-1.77412" />
+                    <feGaussianBlur stdDeviation="4.50674" />
+                    <feComposite in2="hardAlpha" operator="out" />
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.890196 0 0 0 0 0.176471 0 0 0 0 0.392157 0 0 0 0.16 0" />
+                    <feBlend mode="normal" in2="effect1_dropShadow" result="effect2_dropShadow" />
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow" result="shape" />
+                </filter>
+                <linearGradient id={`${iconId}-background`} x1="22.7516" y1="5.46485" x2="38.3516" y2="53.4648" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="white" />
+                    <stop offset="1" stopColor="#FFF2F7" />
+                </linearGradient>
+                <radialGradient id={`${iconId}-border`} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(8.4236 7.5193) rotate(45) scale(60.7449 69.0143)">
+                    <stop stopColor="#E32D64" />
+                    <stop offset="1" stopColor="#FB398A" />
+                </radialGradient>
+                <radialGradient id={`${iconId}-shine`} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(17.2113 53.4648) rotate(-76.8098) scale(49.3007 71.7198)">
+                    <stop stopColor="white" />
+                    <stop offset="1" stopColor="white" stopOpacity="0" />
+                </radialGradient>
+                <linearGradient id={`${iconId}-lock`} x1="26.3506" y1="19.4648" x2="35.3506" y2="38.4648" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#FB398A" />
+                    <stop offset="1" stopColor="#E32D64" />
+                </linearGradient>
+            </defs>
+        </svg>
+    </span>
+);
+
 const strongDescription = (text) => createInterpolateElement(text, {
     strong: <strong />,
 });
@@ -65,7 +122,6 @@ const lockedDashboardPanels = [
 const PremiumDashboardCallout = () => (
     <div className="dashboard-panel dashboard-panel--wide dashboard-panel--premium-callout">
         <div className="dashboard-premium-callout__content">
-            <DashboardProBadge />
             <h2>{__('Hidden Data = Lost Revenue.', 'gutenverse-form')}</h2>
             <p>{strongDescription(__('Free only gives you a basic summary. <strong>Gutenverse PRO</strong> instantly unlocks the exact pages, forms, and traffic sources driving your revenue.', 'gutenverse-form'))}</p>
         </div>
@@ -77,22 +133,24 @@ const PremiumDashboardCallout = () => (
     </div>
 );
 
-const PremiumDashboardPanel = ({ title, description }) => (
+const PremiumDashboardPanel = ({ title, description, iconId }) => (
     <div className="dashboard-panel dashboard-panel--premium">
         <div className="dashboard-panel__title">
             <h3>{title}</h3>
             <DashboardProBadge />
         </div>
         <div className="dashboard-premium-panel__body">
-            <span className="dashboard-premium-panel__lock" aria-hidden="true" />
-            <div>
+            <div className="dashboard-premium-panel__preview" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+                <span />
+            </div>
+            <div className="dashboard-premium-panel__overlay">
+                <PremiumDashboardLockIcon iconId={iconId} />
                 <strong>{__('Premium dashboard insight', 'gutenverse-form')}</strong>
                 <span>{description}</span>
             </div>
-        </div>
-        <div className="dashboard-premium-panel__preview" aria-hidden="true">
-            <span />
-            <span />
         </div>
     </div>
 );
@@ -101,11 +159,12 @@ const PremiumDashboardPanels = () => (
     <>
         <PremiumDashboardCallout />
         <div className="dashboard-masonry dashboard-masonry--premium-locked">
-            {lockedDashboardPanels.map((panel) => (
+            {lockedDashboardPanels.map((panel, index) => (
                 <PremiumDashboardPanel
                     key={panel.title}
                     title={panel.title}
                     description={panel.description}
+                    iconId={`premium-dashboard-lock-${index}`}
                 />
             ))}
         </div>
@@ -196,6 +255,7 @@ const MigrationNotice = () => {
 
     return (
         <div className="gutenverse-form-action-migration-notice">
+            <span className="gutenverse-form-action-migration-notice__icon" aria-hidden="true">i</span>
             <div>
                 <strong>{__('Form actions have moved to Form Builder', 'gutenverse-form')}</strong>
                 <p>{__('Form actions are now bound to each Form Builder block and can be created, edited, or deleted directly from the Form Builder. They are no longer managed from this admin dashboard.', 'gutenverse-form')}</p>
@@ -463,8 +523,8 @@ const FormDashboard = () => {
         <>
             <button type="button" className="active" onClick={() => setRange('7')}>{__('7 days', 'gutenverse-form')}</button>
             <button type="button" className="locked" disabled>
-                <span className="dashboard-range-toggle__lock" aria-hidden="true" />
-                {__('30 days', 'gutenverse-form')}
+                <RangeToggleLockIcon />
+                {__('30 Days', 'gutenverse-form')}
                 <span className="dashboard-range-toggle__badge">{__('Pro', 'gutenverse-form')}</span>
             </button>
         </>,
