@@ -99,11 +99,39 @@ class Email_Template {
 			return $prepared_post;
 		}
 
+		if ( $this->is_starter_template_create_request( $request ) ) {
+			return $prepared_post;
+		}
+
 		return new \WP_Error(
 			'gutenverse_form_email_template_pro_required',
 			__( 'Saving email templates requires Gutenverse PRO.', 'gutenverse-form' ),
 			array( 'status' => 403 )
 		);
+	}
+
+	/**
+	 * Check whether the request is creating an initial starter template from the form builder.
+	 *
+	 * @param \WP_REST_Request $request REST request.
+	 * @return bool
+	 */
+	private function is_starter_template_create_request( $request ) {
+		if ( 'POST' !== $request->get_method() || ! empty( $request['id'] ) ) {
+			return false;
+		}
+
+		if ( ! rest_sanitize_boolean( $request->get_param( 'gutenverse_form_starter_template' ) ) ) {
+			return false;
+		}
+
+		$meta = $request->get_param( 'meta' );
+
+		return is_array( $meta )
+			&& ! empty( $meta[ self::META_DESIGN ] )
+			&& ! empty( $meta[ self::META_HTML ] )
+			&& ! empty( $meta[ self::META_MJML ] )
+			&& self::is_gutenverse_design( $meta[ self::META_DESIGN ] );
 	}
 
 	/**
