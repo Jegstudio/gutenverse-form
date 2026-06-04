@@ -291,7 +291,7 @@ class Integration {
 	 * @return array
 	 */
 	public function hydrate_block_integration_secrets( $integration, $post_id, $element_id ) {
-		if ( empty( $integration['actions'] ) || ! is_array( $integration['actions'] ) || $post_id <= 0 || empty( $element_id ) ) {
+		if ( empty( $integration['actions'] ) || ! is_array( $integration['actions'] ) || $post_id <= 0 ) {
 			if ( empty( $integration['actions'] ) || ! is_array( $integration['actions'] ) || $post_id <= 0 ) {
 				return $integration;
 			}
@@ -299,7 +299,6 @@ class Integration {
 
 		$secret_map  = get_post_meta( $post_id, 'gutenverse_form_block_secrets', true );
 		$secret_map  = is_array( $secret_map ) ? $secret_map : array();
-		$element_map = isset( $secret_map[ $element_id ] ) && is_array( $secret_map[ $element_id ] ) ? $secret_map[ $element_id ] : array();
 
 		foreach ( $integration['actions'] as $index => $action ) {
 			if ( empty( $action['type'] ) || empty( $action['_key'] ) ) {
@@ -307,14 +306,14 @@ class Integration {
 			}
 
 			$secret_fields = $this->get_sensitive_service_fields( $action['type'] );
-			$action_map    = isset( $element_map[ $action['_key'] ] ) && is_array( $element_map[ $action['_key'] ] ) ? $element_map[ $action['_key'] ] : array();
-
-			if ( empty( $action_map ) ) {
-				$action_map = $this->find_action_secret_map( $secret_map, $action['_key'] );
-			}
+			$action_map    = isset( $secret_map[ $action['_key'] ] ) && is_array( $secret_map[ $action['_key'] ] ) ? $secret_map[ $action['_key'] ] : array();
 
 			foreach ( $secret_fields as $field_key ) {
-				if ( isset( $action[ $field_key ] ) && self::SERVER_SECRET_MARKER === $action[ $field_key ] && isset( $action_map[ $field_key ] ) ) {
+				$has_marker     = isset( $action[ $field_key ] ) && self::SERVER_SECRET_MARKER === $action[ $field_key ];
+				$has_secret_map = isset( $action_map[ $field_key ] );
+				$should_hydrate = $has_secret_map && ( ! isset( $action[ $field_key ] ) || '' === (string) $action[ $field_key ] || $has_marker || (string) $action_map[ $field_key ] !== (string) $action[ $field_key ] );
+
+				if ( $should_hydrate ) {
 					$integration['actions'][ $index ][ $field_key ] = $action_map[ $field_key ];
 				}
 			}
@@ -322,33 +321,6 @@ class Integration {
 
 		return $integration;
 	}
-
-	/**
-	 * Find a stored action secret map by action key across all block element IDs.
-	 *
-	 * @param array  $secret_map Full post secret map.
-	 * @param string $action_key Action key.
-	 *
-	 * @return array
-	 */
-	private function find_action_secret_map( $secret_map, $action_key ) {
-		if ( empty( $secret_map ) || empty( $action_key ) ) {
-			return array();
-		}
-
-		foreach ( $secret_map as $element_actions ) {
-			if ( ! is_array( $element_actions ) ) {
-				continue;
-			}
-
-			if ( isset( $element_actions[ $action_key ] ) && is_array( $element_actions[ $action_key ] ) ) {
-				return $element_actions[ $action_key ];
-			}
-		}
-
-		return array();
-	}
-
 	/**
 	 * Prepare field metadata for the admin UI.
 	 *
@@ -751,7 +723,7 @@ class Integration {
 		if ( self::request_has_integration_payload( $params ) ) {
 			$integration = isset( $params['integrations'] ) && is_array( $params['integrations'] ) ? $params['integrations'] : array();
 			$use_dashboard_settings = self::use_dashboard_settings( $integration, $form_setting );
-			$post_id     = isset( $params['post-id'] ) ? (int) $params['post-id'] : 0;
+			$post_id     = isset( $params['form-id'] ) ? (int) $params['form-id'] : 0;
 			$element_id  = isset( $integration['elementId'] ) ? (string) $integration['elementId'] : '';
 
 			if ( ! $use_dashboard_settings && $post_id > 0 && '' !== $element_id ) {
@@ -822,15 +794,6 @@ class Integration {
 			update_post_meta( $entry_id, 'integration_logs', $logs );
 		}
 
-		error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			sprintf(
-				'[Gutenverse Form][%1$s][entry:%2$d][%3$s] %4$s',
-				$service,
-				(int) $entry_id,
-				$record['status'],
-				$record['message']
-			)
-		);
 	}
 
 	/**

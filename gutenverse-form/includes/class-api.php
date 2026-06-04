@@ -1905,9 +1905,19 @@ class Api {
 		if ( isset( $form_data ) ) {
 			$settings_data = get_option( 'gutenverse-settings', array() );
 			$post_id       = absint( $form_entry['postId'] ?? 0 );
+			$integration_source = $this->get_submission_integration_source( $form_entry );
+			$integration_context = array();
+
+			if ( isset( $integration_source['type'] ) && is_scalar( $integration_source['type'] ) ) {
+				$integration_context['type'] = sanitize_key( $integration_source['type'] );
+			}
+
+			if ( isset( $integration_source['elementId'] ) && is_scalar( $integration_source['elementId'] ) ) {
+				$integration_context['elementId'] = sanitize_key( $integration_source['elementId'] );
+			}
 
 			$normalized_integrations = \Gutenverse_Form\Integration::normalize_entry_integrations(
-				array(),
+				$integration_context,
 				$form_setting
 			);
 
@@ -2330,13 +2340,12 @@ class Api {
 
 		$params     = $request->get_params();
 		$post_id    = isset( $params['postId'] ) ? absint( $params['postId'] ) : 0;
-		$element_id = isset( $params['elementId'] ) ? sanitize_key( $params['elementId'] ) : '';
 		$action_key = isset( $params['actionKey'] ) ? preg_replace( '/[^A-Za-z0-9_\-]/', '', (string) $params['actionKey'] ) : '';
 		$field_key  = isset( $params['fieldKey'] ) ? preg_replace( '/[^A-Za-z0-9_\-]/', '', (string) $params['fieldKey'] ) : '';
 		$value      = isset( $params['value'] ) ? (string) $params['value'] : '';
 		$service    = isset( $params['service'] ) ? sanitize_key( $params['service'] ) : '';
 
-		if ( ! $post_id || empty( $element_id ) || empty( $action_key ) || empty( $field_key ) || empty( $service ) ) {
+		if ( ! $post_id || empty( $action_key ) || empty( $field_key ) || empty( $service ) ) {
 			return new WP_REST_Response(
 				array(
 					'success' => false,
@@ -2382,26 +2391,18 @@ class Api {
 		$secret_map = get_post_meta( $post_id, 'gutenverse_form_block_secrets', true );
 		$secret_map = is_array( $secret_map ) ? $secret_map : array();
 
-		if ( ! isset( $secret_map[ $element_id ] ) || ! is_array( $secret_map[ $element_id ] ) ) {
-			$secret_map[ $element_id ] = array();
-		}
-
-		if ( ! isset( $secret_map[ $element_id ][ $action_key ] ) || ! is_array( $secret_map[ $element_id ][ $action_key ] ) ) {
-			$secret_map[ $element_id ][ $action_key ] = array();
+		if ( ! isset( $secret_map[ $action_key ] ) || ! is_array( $secret_map[ $action_key ] ) ) {
+			$secret_map[ $action_key ] = array();
 		}
 
 		if ( '' === trim( $value ) ) {
-			unset( $secret_map[ $element_id ][ $action_key ][ $field_key ] );
+			unset( $secret_map[ $action_key ][ $field_key ] );
 
-			if ( empty( $secret_map[ $element_id ][ $action_key ] ) ) {
-				unset( $secret_map[ $element_id ][ $action_key ] );
-			}
-
-			if ( empty( $secret_map[ $element_id ] ) ) {
-				unset( $secret_map[ $element_id ] );
+			if ( empty( $secret_map[ $action_key ] ) ) {
+				unset( $secret_map[ $action_key ] );
 			}
 		} else {
-			$secret_map[ $element_id ][ $action_key ][ $field_key ] = $value;
+			$secret_map[ $action_key ][ $field_key ] = $value;
 		}
 
 		update_post_meta( $post_id, 'gutenverse_form_block_secrets', $secret_map );
