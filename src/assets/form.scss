@@ -833,43 +833,40 @@
             line-height: 1.2;
         }
     }
+
+    .form-tab-label {
+        align-items: center;
+        display: inline-flex;
+        gap: 6px;
+        justify-content: center;
+    }
+
+    .form-tab-pro-badge {
+        align-items: center;
+        border-radius: 4px;
+        color: #fff;
+        display: inline-flex;
+        padding: 3px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        background: linear-gradient(247.17deg, #FF808B 27.14%, #E32D64 104.63%);
+        font-family: "Roboto", sans-serif;
+        font-weight: 600;
+        font-size: 8px;
+        letter-spacing: 2%;
+        text-align: center;
+        vertical-align: middle;
+    }
 }
 
 .form-tab-body {
     padding: 0 25px 50px;
     height: 100%;
 
-    > .title {
-        align-items: flex-start;
-        border-bottom: 1px solid #e3e8f2;
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 24px;
-        padding: 8px 0 18px;
-
+    .general-settings {
         > div {
-            color: #0f172a;
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            line-height: 1.25;
-            margin: 0;
+            padding-top: 30px !important;
         }
-    }
-
-    > .tab-navigation {
-        align-items: center;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        display: flex;
-        width: fit-content;
-        gap: 6px;
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 28px;
-        padding: 6px;
-        align-self: center;
     }
 
     > .tab-navigation .tab-nav {

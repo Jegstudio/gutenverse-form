@@ -1309,6 +1309,7 @@ export const FormContent = (props) => {
     const [hideFormNotice, setHideFormNotice] = !isEmpty(window['GutenverseConfig']) ? useState(window['GutenverseConfig']['hideFormNotice']) : useState(false);
     const [popupInsufficientTier, setPopupInsufficientTier] = useState(false);
     const [insufficientTierDesc, setInsufficientTierDesc] = useState('');
+    const emptyLicense = applyFilters('gutenverse.panel.tab.pro.content', true);
 
     const tabs = {
         general: {
@@ -1320,8 +1321,12 @@ export const FormContent = (props) => {
         notification: {
             label: __('Notification', 'gutenverse-form'),
         },
-        pro: {
-            label: __('PRO', 'gutenverse-form'),
+        proSetting: {
+            label: __('Setting', 'gutenverse-form'),
+            pro: true
+        },
+        proIntegration: {
+            label: __('Integration', 'gutenverse-form'),
             pro: true
         },
     };
@@ -1404,12 +1409,24 @@ export const FormContent = (props) => {
         </div>;
     };
 
-    const ProTab = applyFilters(
+    const ProTabSetting = applyFilters(
+        'gutenverse-form.pro-form-action-settings',
+        <div className="form-tab-body">
+            <CardPro />
+        </div>,
+        {...props,
+            tab: 'ProTabSetting'
+        }
+    );
+
+    const ProTabIntegration = applyFilters(
         'gutenverse-form.pro-form-action-settings',
         <div className="form-tab-body">
             <LockedIntegrationControl isOpen={true} />
         </div>,
-        props
+        {...props,
+            tab: 'ProTabIntegration'
+        }
     );
 
     const closeNotice = (id) => {
@@ -1437,6 +1454,14 @@ export const FormContent = (props) => {
     const proPopupProps = {
         changeActive,
     };
+
+    const renderTabLabel = (item) => (
+        <span className="form-tab-label">
+            <span>{item.label}</span>
+            {item.pro && emptyLicense && <span className="form-tab-pro-badge">{__('PRO', 'gutenverse-form')}</span>}
+        </span>
+    );
+
     return <div>
         {!hideFormNotice && <div className="form-notice-wrapper">
             <AlertControl>
@@ -1474,24 +1499,23 @@ export const FormContent = (props) => {
                     active: key === tab
                 });
 
-                return item.pro
+                return key === 'proSetting'
                     ? applyFilters(
                         'gutenverse-form.tab-pro-button',
                         <div
                             className={classes}
                             key={key}
-                            onClick={() => changeActive(key)}
-                            // onClick={openUpgradePopup}
-                            // onMouseEnter={prefetchUpgradePopup}
-                            // onFocus={prefetchUpgradePopup}
+                            onClick={openUpgradePopup}
+                            onMouseEnter={prefetchUpgradePopup}
+                            onFocus={prefetchUpgradePopup}
                         >
-                            {item.label}
+                            {renderTabLabel(item)}
                         </div>,
                         { ...proPopupProps, item, classes, key }
                     )
                     : (
                         <div className={classes} key={key} onClick={() => changeActive(key)}>
-                            <span>{item.label}</span>
+                            {renderTabLabel(item)}
                         </div>
                     );
             })}
@@ -1499,7 +1523,8 @@ export const FormContent = (props) => {
         {tab === 'general' && <TabGeneral {...tabProps} />}
         {tab === 'confirmation' && ConfirmationTab}
         {tab === 'notification' && NotificationTab}
-        {tab === 'pro' && ProTab}
+        {tab === 'proSetting' && ProTabSetting}
+        {tab === 'proIntegration' && ProTabIntegration}
     </div>;
 };
 
