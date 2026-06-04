@@ -5,7 +5,7 @@ import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
 import { IconCloseSVG, IconEyeSVG, IconTrashSVG } from 'gutenverse-core/icons';
 import { signal } from 'gutenverse-core/editor-helper';
-import { strongDescription } from './helper';
+import { ActivateLicenseButton, hasProLicenseData, strongDescription } from './helper';
 
 const defaultCapabilities = {
     viewAll: false,
@@ -157,13 +157,17 @@ const EntryListUpgrade = ({ config }) => (
                 <li><EntryListCrownIcon />{__('Access Older Entry Details', 'gutenverse-form')}</li>
             </ul>
         </div>
-        <ButtonUpgradePro
-            text={__('Upgrade to PRO', 'gutenverse-form')}
-            isBanner={true}
-            location="entry-list"
-            link={config.upgradeProUrl}
-            customStyles={{ padding: '10px 14px' }}
-        />
+        {hasProLicenseData() ? (
+            <ActivateLicenseButton />
+        ) : (
+            <ButtonUpgradePro
+                text={__('Upgrade to PRO', 'gutenverse-form')}
+                isBanner={true}
+                location="entry-list"
+                link={config.upgradeProUrl}
+                customStyles={{ padding: '10px 14px' }}
+            />
+        )}
     </div>
 );
 

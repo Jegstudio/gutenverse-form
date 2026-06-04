@@ -5,7 +5,7 @@ import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
 import { IconTrashSVG } from 'gutenverse-core/icons';
 import { signal } from 'gutenverse-core/editor-helper';
-import { strongDescription } from './helper';
+import { ActivateLicenseButton, hasProLicenseData, strongDescription } from './helper';
 
 const chartTop = 32;
 const chartBase = 168;
@@ -13,7 +13,6 @@ const dashboardFilterWaitDelay = 1000;
 const proDashboardContentFilter = 'gutenverse-form.pro-dashboard-content';
 
 const getConfig = () => window?.GutenverseConfig?.formDashboard || {};
-const hasProLicenseData = () => Boolean(window?.gprodata && Object.keys(window.gprodata).length);
 const hasDashboardContentFilter = () => Boolean(hasFilter(proDashboardContentFilter));
 const shouldWaitForDashboardFilters = () => hasProLicenseData() && !hasDashboardContentFilter();
 
@@ -122,11 +121,15 @@ const PremiumDashboardCallout = () => (
             <h2>{__('You Are Losing Money on Hidden Pages and Traffic Sources.', 'gutenverse-form')}</h2>
             <p>{strongDescription(__('Free plans hide your top performers. <strong>Upgrade to PRO</strong> to unlock specific page and traffic data to double your conversions.', 'gutenverse-form'))}</p>
         </div>
-        <ButtonUpgradePro
-            isBanner={true}
-            location="form-dashboard"
-            customStyles={{ padding: '10px 14px' }}
-        />
+        {hasProLicenseData() ? (
+            <ActivateLicenseButton />
+        ) : (
+            <ButtonUpgradePro
+                isBanner={true}
+                location="form-dashboard"
+                customStyles={{ padding: '10px 14px' }}
+            />
+        )}
     </div>
 );
 

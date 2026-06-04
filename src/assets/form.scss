@@ -3810,7 +3810,8 @@ body[class*="_page_gutenverse-form-entries"] {
         }
 
         .dashboard-actions .dashboard-button,
-        .dashboard-panel--premium-callout .button-upgrade-pro {
+        .dashboard-panel--premium-callout .button-upgrade-pro,
+        .dashboard-panel--premium-callout .gutenverse-form-activate-license-button {
             justify-content: center;
             width: 100%;
         }
@@ -3889,6 +3890,52 @@ body[class*="_page_gutenverse-form-entries"] {
             align-items: flex-start;
             flex-direction: column;
         }
+    }
+}
+
+.gutenverse-form-admin-dashboard,
+.gutenverse-form-entry-list {
+    .gutenverse-form-activate-license-button {
+        align-items: center;
+        background: #3f55f6;
+        border: 0;
+        border-radius: 5px;
+        box-shadow: none;
+        box-sizing: border-box;
+        color: #ffffff !important;
+        cursor: pointer;
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 400;
+        gap: 7px;
+        height: 38px;
+        justify-content: center;
+        line-height: 1.1;
+        min-height: 38px;
+        padding: 0 14px;
+        text-decoration: none;
+        transition: background-color 0.15s ease, box-shadow 0.15s ease;
+        white-space: nowrap;
+
+        &:hover,
+        &:focus {
+            background: #3348df;
+            color: #ffffff !important;
+            text-decoration: none;
+        }
+
+        &:focus {
+            box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgba(63, 85, 246, 0.28);
+            outline: none;
+        }
+    }
+
+    .gutenverse-form-activate-license-button__icon {
+        color: currentColor;
+        display: block;
+        flex: 0 0 auto;
+        height: 8px;
+        width: 18px;
     }
 }
 
@@ -4772,7 +4819,8 @@ body[class*="_page_gutenverse-form-entries"] {
             }
         }
 
-        .entry-list-upgrade .button-upgrade-pro {
+        .entry-list-upgrade .button-upgrade-pro,
+        .entry-list-upgrade .gutenverse-form-activate-license-button {
             align-self: flex-start;
         }
     }
@@ -4821,7 +4869,8 @@ body[class*="_page_gutenverse-form-entries"] {
                 white-space: normal;
             }
 
-            .button-upgrade-pro {
+            .button-upgrade-pro,
+            .gutenverse-form-activate-license-button {
                 align-self: stretch;
                 justify-content: center;
                 width: 100%;
