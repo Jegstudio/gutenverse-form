@@ -631,7 +631,7 @@ const createEmailTemplate = ({ fieldName, formTitle, starter = 'blank', inputFie
     const templateInputNames = templateInputFields.map(input => input.name);
 
     return apiFetch({
-        path: '/wp/v2/gutenverse-email-tpl',
+        path: '/wp/v2/gutenverse-email-tpl?gutenverse_form_starter_template=1',
         method: 'POST',
         data: {
             title: name,

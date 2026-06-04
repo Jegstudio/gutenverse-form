@@ -1496,6 +1496,13 @@ class Api {
 							'value' => floatval( $data[ $value_key ] ),
 						);
 						break;
+					case 'calculation':
+						$filtered_data[] = array(
+							'id'    => sanitize_key( $data['id'] ),
+							'value' => floatval( $data[ $value_key ] ),
+							'type'  => 'calculation',
+						);
+						break;
 					case 'switch':
 						$filtered_data[] = array(
 							'id'    => sanitize_key( $data['id'] ),

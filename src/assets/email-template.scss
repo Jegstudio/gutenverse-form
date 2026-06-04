@@ -355,43 +355,74 @@
         .button-upgrade-pro,
         .upgrade-button {
             align-items: center;
-            background: #2563eb;
+            background: #3f55f6;
             border: 0;
-            border-radius: 3px;
+            border-radius: 5px;
             box-shadow: none;
             box-sizing: border-box;
             color: #fff !important;
             cursor: pointer;
             display: inline-flex;
-            font-size: 13px;
-            font-weight: 600;
-            gap: 8px;
-            height: 36px;
+            font-size: 14px;
+            font-weight: 400;
+            gap: 7px;
+            height: 38px;
             justify-content: center;
-            line-height: 1;
-            min-width: 120px;
-            padding: 0 16px;
+            line-height: 1.1;
+            padding: 0 14px;
             text-decoration: none;
-            transition: background-color 0.15s ease, box-shadow 0.15s ease;
+            transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
             white-space: nowrap;
 
             &:hover,
             &:focus {
-                background: #1d4ed8;
+                background: #3348df;
                 color: #fff !important;
                 text-decoration: none;
             }
 
             &:focus {
-                box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(37, 99, 235, 0.35);
+                box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(63, 85, 246, 0.28);
                 outline: none;
             }
 
+            &.is-upgrade {
+                background: #ef2f7b;
+                padding: 0 12px 0 14px;
+
+                &:hover,
+                &:focus {
+                    background: #db236d;
+                }
+
+                &:focus {
+                    box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(239, 47, 123, 0.26);
+                }
+            }
             svg {
                 display: block;
                 flex: 0 0 auto;
-                height: 14px;
-                width: 14px;
+                height: 17px;
+                width: 17px;
+            }
+
+            .email-template-upgrade-icon--key {
+                height: 8px;
+                width: 18px;
+            }
+
+            .email-template-upgrade-icon--crown {
+                height: 16px;
+                margin-left: -1px;
+                margin-right: -1px;
+                transform: translateY(1px);
+                width: 16px;
+            }
+
+            svg[viewBox="0 0 15 15"] {
+                margin-left: -1px;
+                margin-right: -1px;
+                transform: translateY(1px);
             }
         }
 
@@ -401,41 +432,50 @@
             position: relative;
 
             &__tooltip {
-                align-items: center;
-                background: #111827;
-                border: 1px solid #1f2937;
-                border-radius: 5px;
-                box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22);
+                align-items: flex-start;
+                background: #001827;
+                border: 0;
+                border-radius: 6px;
+                box-shadow: 0 14px 34px rgba(0, 12, 24, 0.28);
                 box-sizing: border-box;
-                color: #fff;
+                color: #cbd5e1;
                 display: flex;
                 font-size: 13px;
-                font-weight: 600;
-                gap: 10px;
-                line-height: 1.4;
-                max-width: 320px;
-                min-width: 270px;
-                padding: 12px 14px;
+                font-weight: 400;
+                gap: 12px;
+                line-height: 1.55;
+                max-width: calc(100vw - 40px);
+                min-width: 360px;
+                padding: 14px 40px 15px 18px;
                 position: absolute;
                 right: 0;
-                top: calc(100% + 14px);
+                top: calc(100% + 18px);
+                width: 420px;
                 z-index: 1000001;
 
                 &::before {
-                    background: #111827;
-                    border-left: 1px solid #1f2937;
-                    border-top: 1px solid #1f2937;
+                    background: #001827;
                     content: "";
-                    height: 12px;
+                    height: 16px;
                     position: absolute;
-                    right: 24px;
-                    top: -7px;
+                    right: 56px;
+                    top: -8px;
                     transform: rotate(45deg);
-                    width: 12px;
+                    width: 16px;
                 }
 
-                span {
+                .email-template-save-lock__message {
                     flex: 1 1 auto;
+                    min-width: 0;
+                }
+
+                .email-template-save-lock__intro {
+                    color: #cbd5e1;
+                }
+
+                strong {
+                    color: #fff;
+                    font-weight: 800;
                 }
 
                 button {
@@ -446,15 +486,20 @@
                     color: #d1d5db;
                     cursor: pointer;
                     display: inline-flex;
-                    flex: 0 0 auto;
-                    font-size: 16px;
-                    font-weight: 600;
-                    height: 24px;
+                    height: 26px;
                     justify-content: center;
                     line-height: 1;
-                    margin: -4px -4px -4px 0;
                     padding: 0;
-                    width: 24px;
+                    position: absolute;
+                    right: 10px;
+                    top: 10px;
+                    width: 26px;
+
+                    svg {
+                        display: block;
+                        height: 15px;
+                        width: 15px;
+                    }
 
                     &:hover,
                     &:focus {
@@ -1825,6 +1870,14 @@
         .header-left,
         .header-right {
             flex: 1 1 calc(50% - 8px);
+        }
+
+        .header-right {
+            .email-template-save-lock__tooltip {
+                max-width: calc(100vw - 28px);
+                min-width: 0;
+                width: calc(100vw - 28px);
+            }
         }
 
         .header-center {
