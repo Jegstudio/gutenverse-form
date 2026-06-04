@@ -5,6 +5,7 @@ import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
 import { IconCloseSVG, IconEyeSVG, IconTrashSVG } from 'gutenverse-core/icons';
 import { signal } from 'gutenverse-core/editor-helper';
+import { ActivateLicenseButton, hasProLicenseData, strongDescription } from './helper';
 
 const defaultCapabilities = {
     viewAll: false,
@@ -135,53 +136,105 @@ const EntryListSkeleton = () => (
 
 const ProBadge = () => <span className="entry-list-pro-badge">{__('Pro', 'gutenverse-form')}</span>;
 
+const EntryListCrownIcon = () => (
+    <span className="entry-list-crown-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="20" height="20" rx="10" fill="#E62E68" />
+            <path d="M6.11111 12.25L5 6.0625L8.05556 8.875L10 5.5L11.9444 8.875L15 6.0625L13.8889 12.25H6.11111ZM13.8889 13.9375C13.8889 14.275 13.6667 14.5 13.3333 14.5H6.66667C6.33333 14.5 6.11111 14.275 6.11111 13.9375V13.375H13.8889V13.9375Z" fill="white" />
+        </svg>
+    </span>
+);
+
 const EntryListUpgrade = ({ config }) => (
     <div className="entry-list-upgrade">
         <div className="entry-list-upgrade__content">
-            <ProBadge />
-            <h2>{__('Unlock the complete entry archive', 'gutenverse-form')}</h2>
+            <h2>{__('⚠️ Stop Losing Data Visibility!', 'gutenverse-form')}</h2>
+            <p>{strongDescription(__('Don\'t miss critical entries. <strong>Upgrade to PRO</strong> today to access the full archive instantly.', 'gutenverse-form'))}</p>
             <ul>
-                <li>{__('View all entries', 'gutenverse-form')}</li>
-                <li>{__('Export all entries', 'gutenverse-form')}</li>
-                <li>{__('Filter entries', 'gutenverse-form')}</li>
-                <li>{__('Access older entry details', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('View All Entries', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('Export All Entries', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('Filter All Entries', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('Access Older Entry Details', 'gutenverse-form')}</li>
             </ul>
         </div>
-        <ButtonUpgradePro
-            text={__('Upgrade to PRO', 'gutenverse-form')}
-            isBanner={true}
-            location="entry-list"
-            link={config.upgradeProUrl}
-            customStyles={{ padding: '10px 14px' }}
-        />
+        {hasProLicenseData() ? (
+            <ActivateLicenseButton />
+        ) : (
+            <ButtonUpgradePro
+                text={__('Upgrade to PRO', 'gutenverse-form')}
+                isBanner={true}
+                location="entry-list"
+                link={config.upgradeProUrl}
+                customStyles={{ padding: '10px 14px' }}
+            />
+        )}
     </div>
 );
+
+const ENTRY_PREVIEW_LIMIT = 3;
+
+const getEntryPreviewValue = value => {
+    if (value === null || value === undefined || value === '') {
+        return __('Empty', 'gutenverse-form');
+    }
+
+    if (Array.isArray(value)) {
+        const normalizedValues = value.filter(item => item !== null && item !== undefined && item !== '');
+
+        return normalizedValues.length ? normalizedValues.map(String).join(', ') : __('Empty', 'gutenverse-form');
+    }
+
+    if (typeof value === 'object') {
+        const normalizedValues = Object.values(value)
+            .filter(item => item !== null && item !== undefined && item !== '' && typeof item !== 'object');
+
+        return normalizedValues.length ? normalizedValues.map(String).join(', ') : __('Complex value', 'gutenverse-form');
+    }
+
+    return String(value);
+};
 
 const EntryPreview = ({ entry }) => {
     if (!entry.preview?.length) {
         return <span className="entry-list-muted">{__('No submitted fields', 'gutenverse-form')}</span>;
     }
 
+    const visibleFields = entry.preview.slice(0, ENTRY_PREVIEW_LIMIT);
+    const hiddenFieldsCount = entry.preview.length - visibleFields.length;
+
     return (
         <div className="entry-list-field-preview">
-            {entry.preview.map((field, index) => (
-                <span key={`${entry.id}-${field.id || index}`}>
-                    <strong>{field.id || __('Field', 'gutenverse-form')}:</strong>
-                    {' '}
-                    {field.value || __('Empty', 'gutenverse-form')}
+            {visibleFields.map((field, index) => {
+                const fieldLabel = field.id || __('Field', 'gutenverse-form');
+                const fieldValue = getEntryPreviewValue(field.value);
+
+                return (
+                    <span
+                        className="entry-list-preview-item"
+                        key={`${entry.id}-${field.id || index}`}
+                        title={`${fieldLabel}: ${fieldValue}`}
+                    >
+                        <strong className="entry-list-preview-label">{fieldLabel}:</strong>
+                        <span className="entry-list-preview-value">{fieldValue}</span>
+                    </span>
+                );
+            })}
+            {hiddenFieldsCount > 0 ? (
+                <span className="entry-list-preview-more">
+                    {sprintf(__('+%s more fields', 'gutenverse-form'), hiddenFieldsCount)}
                 </span>
-            ))}
+            ) : null}
         </div>
     );
 };
 
 const EntryRow = ({ entry, deletingEntryId, onDelete }) => (
     <tr>
-        <td className="entry-list-entry-title">
+        <td className="entry-list-entry-title" data-label={__('Entry', 'gutenverse-form')}>
             <strong>{entry.title}</strong>
             <span>{sprintf(__('%s submitted fields', 'gutenverse-form'), entry.fieldsCount || 0)}</span>
         </td>
-        <td>
+        <td data-label={__('Form', 'gutenverse-form')}>
             <span>{entry.formTitle}</span>
             {entry.referralUrl ? (
                 <a className="entry-list-referral" href={entry.referralUrl} target="_blank" rel="noreferrer">{entry.referralTitle}</a>
@@ -189,9 +242,9 @@ const EntryRow = ({ entry, deletingEntryId, onDelete }) => (
                 <span className="entry-list-muted">{entry.referralTitle}</span>
             )}
         </td>
-        <td>{entry.date}</td>
-        <td><EntryPreview entry={entry} /></td>
-        <td className="entry-list-actions-cell">
+        <td data-label={__('Submitted', 'gutenverse-form')}>{entry.date}</td>
+        <td data-label={__('Preview', 'gutenverse-form')}><EntryPreview entry={entry} /></td>
+        <td className="entry-list-actions-cell" data-label={__('Actions', 'gutenverse-form')}>
             <div className="entry-list-row-actions">
                 {entry.canViewDetail ? (
                     <a className="entry-list-icon-button" href={entry.detailUrl} aria-label={__('View entry details', 'gutenverse-form')} title={__('View entry details', 'gutenverse-form')}>
@@ -390,7 +443,6 @@ const EntryList = () => {
 
     const entries = data?.entries || [];
     const limit = data?.limit || config.limit || 10;
-    const isLimited = data?.limited ?? !capabilities.viewAll;
     const selectedForm = (data?.forms || []).find(form => String(form.id) === String(query.formId));
     const title = query.formId && selectedForm?.title
         ? sprintf(__('Entries from %s', 'gutenverse-form'), selectedForm.title)
@@ -476,7 +528,6 @@ const EntryList = () => {
                         <h1>{title}</h1>
                         {countLabel && <span className="entry-list-count">{countLabel}</span>}
                     </div>
-                    {isLimited && <p>{sprintf(__('Showing the latest %s entries.', 'gutenverse-form'), limit)}</p>}
                 </div>
                 {actions}
             </div>
