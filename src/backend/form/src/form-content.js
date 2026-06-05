@@ -1415,7 +1415,8 @@ export const FormContent = (props) => {
             <CardPro />
         </div>,
         {...props,
-            tab: 'ProTabSetting'
+            tab: 'ProTabSetting',
+            proCaptcha: true,
         }
     );
 
@@ -1425,7 +1426,8 @@ export const FormContent = (props) => {
             <LockedIntegrationControl isOpen={true} />
         </div>,
         {...props,
-            tab: 'ProTabIntegration'
+            tab: 'ProTabIntegration',
+            proCaptcha: true,
         }
     );
 
