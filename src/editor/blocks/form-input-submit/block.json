@@ -76,7 +76,7 @@
 		},
 		"iconType": {
 			"type": "string",
-			"default": "svg"
+			"default": "icon"
 		},
 		"icon": {
 			"type": "string",
