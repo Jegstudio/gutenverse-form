@@ -212,6 +212,11 @@ New and improved:
 * Improve Icon SVG loading
 * Improve Speed Performance Frontend
 
+= 2.8.0 =
+
+New and improved:
+* Add LemonSqueezy payment gateway integration.
+
 = 2.7.1 =
 
 New and improved:
