@@ -556,37 +556,24 @@ const FormDashboard = () => {
                 </div>
             </div>
 
-            {!forms.length ? (
-                <div className="gutenverse-form-admin-dashboard__empty dashboard-empty-state">
-                    <span className="dashboard-empty-state__icon" aria-hidden="true" />
-                    <div className="dashboard-empty-state__content">
-                        <h2>{__('No forms found yet', 'gutenverse-form')}</h2>
-                        <p>{__('Create a form with the Form Builder block, then submissions and form locations will appear in this dashboard.', 'gutenverse-form')}</p>
-                        <div className="dashboard-actions">
-                            <a className="dashboard-button dashboard-button--primary" href={config.entriesUrl}>{__('View Entries', 'gutenverse-form')}</a>
+            <div className="gutenverse-form-admin-dashboard__list dashboard-grid">
+                <div className="dashboard-panel dashboard-panel--wide dashboard-panel--chart">
+                    <div className="dashboard-block__header">
+                        <div>
+                            <h2>{sprintf(__('Last %s Days', 'gutenverse-form'), range)}</h2>
+                            <div className="dashboard-form-card__meta">{sprintf(__('Daily entries for the last %s days.', 'gutenverse-form'), range)}</div>
                         </div>
+                        <div className="dashboard-range-toggle" aria-label={__('Chart date range', 'gutenverse-form')}>
+                            {rangeToggle}
+                        </div>
+                    </div>
+                    <div className="trend-chart trend-chart--compact">
+                        <TrendChart trend={trend} />
                     </div>
                 </div>
-            ) : (
-                <div className="gutenverse-form-admin-dashboard__list dashboard-grid">
-                    <div className="dashboard-panel dashboard-panel--wide dashboard-panel--chart">
-                        <div className="dashboard-block__header">
-                            <div>
-                                <h2>{sprintf(__('Last %s Days', 'gutenverse-form'), range)}</h2>
-                                <div className="dashboard-form-card__meta">{sprintf(__('Daily entries for the last %s days.', 'gutenverse-form'), range)}</div>
-                            </div>
-                            <div className="dashboard-range-toggle" aria-label={__('Chart date range', 'gutenverse-form')}>
-                                {rangeToggle}
-                            </div>
-                        </div>
-                        <div className="trend-chart trend-chart--compact">
-                            <TrendChart trend={trend} />
-                        </div>
-                    </div>
 
-                    {proDashboardContent}
-                </div>
-            )}
+                {proDashboardContent}
+            </div>
 
             <DeleteModal
                 form={pendingDelete}
