@@ -187,7 +187,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['iconBorder']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'iconBorder',
         'selector': `.${elementId} .main-wrapper .input-icon-wrapper .form-input-textarea-icon .icon`,
         'responsive': true,
@@ -249,7 +249,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['iconBorderHover']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'iconBorderHover',
         'selector': `.${elementId} .main-wrapper .input-icon-wrapper:hover .form-input-textarea-icon .icon`,
     });
@@ -310,7 +310,7 @@ const getBlockStyle = (elementId, attributes) => {
     });
 
     isNotEmpty(attributes['iconBorderFocus']) && data.push({
-        'type': 'border',
+        'type': 'borderResponsive',
         'id': 'iconBorderFocus',
         'selector': `.${elementId} .main-wrapper .input-icon-wrapper:focus-within .form-input-textarea-icon .icon`,
     });
