@@ -4584,6 +4584,18 @@ body[class*="_page_gutenverse-form-entries"] {
             line-height: 1.35;
         }
 
+        tbody tr {
+            background: #ffffff;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background: #eef4ff;
+        }
+
         th:nth-child(1) {
             width: 30%;
         }
