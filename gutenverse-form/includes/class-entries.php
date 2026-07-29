@@ -53,11 +53,13 @@ class Entries {
 		add_filter( 'manage_edit-' . self::POST_TYPE . '_sortable_columns', array( $this, 'sortable_columns' ) );
 		add_filter( 'post_row_actions', array( $this, 'modify_row_actions' ), 10, 2 );
 		add_filter( 'hidden_meta_boxes', array( $this, 'hide_meta_box' ), 10, 2 );
+		add_filter( 'wp_insert_post_data', array( $this, 'protect_entry_title' ), 10, 2 );
 		add_filter( 'posts_join', array( $this, 'search_join' ) );
 		add_filter( 'posts_where', array( $this, 'search_where' ) );
 		add_filter( 'posts_groupby', array( $this, 'search_groupby' ) );
 
 		add_action( 'wp_ajax_gutenverse_form_retrigger_integration', array( $this, 'retrigger_integration' ) );
+		add_action( 'do_meta_boxes', array( $this, 'remove_default_entry_meta_boxes' ), 99, 0 );
 		add_action( 'admin_footer', array( $this, 'admin_footer_scripts' ) );
 	}
 
@@ -769,12 +771,89 @@ class Entries {
 	 * @return array
 	 */
 	public function hide_meta_box( $hidden, $screen ) {
-		if ( self::POST_TYPE === $screen->post_type ) {
+		if ( $screen && self::POST_TYPE === $screen->post_type ) {
 			$hidden[] = 'submitdiv';
 			$hidden[] = 'pageparentdiv';
+			$hidden[] = 'revisionsdiv';
 		}
 
 		return $hidden;
+	}
+
+	/**
+	 * Remove non-entry metaboxes from the entry detail screen.
+	 */
+	public function remove_default_entry_meta_boxes() {
+		$screen = get_current_screen();
+
+		if ( ! $screen || self::POST_TYPE !== $screen->post_type || 'post' !== $screen->base ) {
+			return;
+		}
+
+		global $wp_meta_boxes;
+
+		if ( empty( $wp_meta_boxes[ self::POST_TYPE ] ) || ! is_array( $wp_meta_boxes[ self::POST_TYPE ] ) ) {
+			return;
+		}
+
+		$allowed_boxes = array(
+			'gutenverse-entries-form'      => true,
+			'gutenverse-entries-data'      => true,
+			'gutenverse-entry-integrations' => true,
+			'gutenverse-browser-data'      => true,
+			'gutenverse-payment-data'      => true,
+		);
+
+		foreach ( $wp_meta_boxes[ self::POST_TYPE ] as $context => $priorities ) {
+			if ( ! is_array( $priorities ) ) {
+				continue;
+			}
+
+			foreach ( $priorities as $priority => $boxes ) {
+				if ( ! is_array( $boxes ) ) {
+					continue;
+				}
+
+				foreach ( $boxes as $box_id => $box ) {
+					if ( ! isset( $allowed_boxes[ $box_id ] ) ) {
+						unset( $wp_meta_boxes[ self::POST_TYPE ][ $context ][ $priority ][ $box_id ] );
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Keep entry titles immutable after an entry has been created.
+	 *
+	 * @param array $data    Sanitized post data.
+	 * @param array $postarr Raw post data.
+	 *
+	 * @return array
+	 */
+	public function protect_entry_title( $data, $postarr ) {
+		$post_type = isset( $data['post_type'] ) ? $data['post_type'] : ( isset( $postarr['post_type'] ) ? $postarr['post_type'] : '' );
+
+		if ( self::POST_TYPE !== $post_type ) {
+			return $data;
+		}
+
+		$post_id = isset( $postarr['ID'] ) ? absint( $postarr['ID'] ) : 0;
+
+		if ( ! $post_id ) {
+			return $data;
+		}
+
+		$entry = get_post( $post_id );
+
+		if ( ! $entry || self::POST_TYPE !== $entry->post_type ) {
+			return $data;
+		}
+
+		$data['post_title'] = $entry->post_title;
+		$data['post_name']  = $entry->post_name;
+
+		return $data;
 	}
 
 	/**
@@ -1192,7 +1271,7 @@ class Entries {
 					'create_posts' => 'do_not_allow',
 				),
 				'hierarchical'        => false,
-				'supports'            => array( 'title', 'revisions', 'page-attributes' ),
+				'supports'            => array( 'title' ),
 				'map_meta_cap'        => true,
 				'show_in_menu'        => Form::POST_TYPE,
 				'rewrite'             => array(
@@ -1274,10 +1353,12 @@ class Entries {
 
 		if ( is_array( $entry ) ) {
 			foreach ( $entry as $item ) {
+				$input_id = isset( $item['id'] ) ? sanitize_key( $item['id'] ) : '';
+
 				$result .= $this->entry_detail_item(
-					esc_html__( 'Input ID', 'gutenverse-form' ),
+					$this->entry_field_label( $input_id ),
 					$this->entry_value_html( isset( $item['value'] ) ? $item['value'] : '' ),
-					isset( $item['id'] ) ? $item['id'] : ''
+					$input_id
 				);
 			}
 		}
@@ -1301,22 +1382,22 @@ class Entries {
 		$services     = $this->get_entry_integration_services( $integrations, $logs );
 
 		if ( ! empty( $services ) ) {
-			$retrigger_all_btn = current_user_can( 'manage_options' ) ? ' <button type="button" class="button button-small retrigger-integrations-all" data-entry-id="' . $post->ID . '">' . __( 'Resubmit All', 'gutenverse-form' ) . '</button>' : '';
-			$result           .= '<div class="gutenverse-entry-section"><div class="entry-title">' . __( 'Integrations Triggered', 'gutenverse-form' ) . $retrigger_all_btn . '</div>';
+			$retrigger_all_btn = current_user_can( 'manage_options' ) ? ' <button type="button" class="button button-small retrigger-integrations-all" data-entry-id="' . $post->ID . '">' . esc_html__( 'Resubmit All', 'gutenverse-form' ) . '</button>' : '';
+			$result           .= '<div class="gutenverse-entry-section"><div class="entry-title">' . esc_html__( 'Integrations Triggered', 'gutenverse-form' ) . $retrigger_all_btn . '</div>';
 
 			$integration_list = array();
 			foreach ( $services as $service ) {
 				$service_label      = $this->get_integration_label( $service );
 				$retrigger_btn      = current_user_can( 'manage_options' )
-					? '<button type="button" class="button button-small retrigger-integration-item" data-entry-id="' . $post->ID . '" data-service="' . esc_attr( $service ) . '">' . __( 'Resend Submission', 'gutenverse-form' ) . '</button>'
+					? '<button type="button" class="button button-small retrigger-integration-item" data-entry-id="' . $post->ID . '" data-service="' . esc_attr( $service ) . '">' . esc_html__( 'Resend Submission', 'gutenverse-form' ) . '</button>'
 					: '';
-				$integration_list[] = '<div class="integration-tag"><span class="integration-tag-label">' . esc_html( $service_label ) . '</span>' . $retrigger_btn . '</div>';
+				$integration_list[] = '<div class="integration-tag"><div class="integration-tag-main">' . $this->render_integration_icon( $service ) . '<span class="integration-tag-copy"><span class="integration-tag-label">' . esc_html( $service_label ) . '</span><span class="integration-tag-note">' . esc_html__( 'Submission action', 'gutenverse-form' ) . '</span></span></div>' . $retrigger_btn . '</div>';
 			}
 			$result .= '<div class="entry-data integration-tag-list">' . implode( '', $integration_list ) . '</div></div>';
 		}
 
 		if ( ! empty( $logs ) && is_array( $logs ) ) {
-			$result .= '<div class="gutenverse-entry-section integration-log-section"><div class="entry-title">' . __( 'Integration Logs', 'gutenverse-form' ) . '</div>';
+			$result .= '<div class="gutenverse-entry-section integration-log-section"><div class="entry-title">' . esc_html__( 'Integration Logs', 'gutenverse-form' ) . '</div>';
 
 			foreach ( $logs as $service => $service_logs ) {
 				if ( empty( $service_logs ) || ! is_array( $service_logs ) ) {
@@ -1355,7 +1436,7 @@ class Entries {
 		}
 
 		if ( '' === $result ) {
-			$result = '<div class="entry-data entry-data-empty">' . __( 'No integrations were recorded for this entry.', 'gutenverse-form' ) . '</div>';
+			$result = '<div class="entry-data entry-data-empty">' . esc_html__( 'No integrations were recorded for this entry.', 'gutenverse-form' ) . '</div>';
 		}
 
 		gutenverse_print_html( $result, 'post' );
@@ -1415,11 +1496,19 @@ class Entries {
 	 * @return string
 	 */
 	private function entry_value_html( $value ) {
-		if ( is_array( $value ) ) {
-			return esc_html( implode( ', ', array_map( 'strval', $value ) ) );
+		if ( is_bool( $value ) ) {
+			return $value ? esc_html__( 'Yes', 'gutenverse-form' ) : esc_html__( 'No', 'gutenverse-form' );
 		}
 
-		$value = (string) $value;
+		if ( is_array( $value ) ) {
+			$value = implode( ', ', array_map( 'strval', $value ) );
+		} else {
+			$value = (string) $value;
+		}
+
+		if ( '' === trim( $value ) ) {
+			return '<span class="entry-empty-value">' . esc_html__( 'Empty', 'gutenverse-form' ) . '</span>';
+		}
 
 		if ( filter_var( $value, FILTER_VALIDATE_URL ) ) {
 			return '<a href="' . esc_url( $value ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $value ) . '</a>';
@@ -1429,27 +1518,101 @@ class Entries {
 	}
 
 	/**
+	 * Get a readable fallback label from an entry input ID.
+	 *
+	 * @param string $input_id Input ID.
+	 *
+	 * @return string
+	 */
+	private function entry_field_label( $input_id ) {
+		$input_id = sanitize_key( $input_id );
+
+		if ( ! $input_id ) {
+			return esc_html__( 'Submitted Field', 'gutenverse-form' );
+		}
+
+		$field_types = array(
+			'calculation',
+			'checkbox',
+			'date',
+			'email',
+			'file',
+			'gdpr',
+			'mobile',
+			'multiselect',
+			'number',
+			'payment',
+			'radio',
+			'select',
+			'switch',
+			'telp',
+			'text',
+			'textarea',
+		);
+		$label       = preg_replace( '/^input-/', '', $input_id );
+		$parts       = array_values( array_filter( explode( '-', $label ) ) );
+
+		if ( count( $parts ) > 1 && in_array( $parts[0], $field_types, true ) ) {
+			array_shift( $parts );
+		}
+
+		$label = implode( ' ', $parts );
+
+		if ( '' === $label ) {
+			return $input_id;
+		}
+
+		return ucwords( $label );
+	}
+
+	/**
+	 * Get the source page link for an entry.
+	 *
+	 * @param mixed $source_id Source post ID.
+	 *
+	 * @return string
+	 */
+	private function entry_source_link_html( $source_id ) {
+		$source_id = absint( $source_id );
+
+		if ( ! $source_id ) {
+			return esc_html__( 'No source', 'gutenverse-form' );
+		}
+
+		$source_title = get_the_title( $source_id );
+		$source_url   = get_permalink( $source_id );
+
+		if ( ! $source_title ) {
+			$source_title = sprintf(
+				/* translators: %d: Source post ID. */
+				__( 'Source #%d', 'gutenverse-form' ),
+				$source_id
+			);
+		}
+
+		if ( ! $source_url ) {
+			return esc_html( $source_title );
+		}
+
+		return '<a href="' . esc_url( $source_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $source_title ) . '</a>';
+	}
+
+	/**
 	 * Add Entry metaboxes
 	 *
 	 * @param - $post post.
 	 */
 	public function form_data_metabox( $post ) {
-		$form_id = get_post_meta( $post->ID, 'form-id', true );
+		$form_id     = get_post_meta( $post->ID, 'form-id', true );
+		$source_id   = get_post_meta( $post->ID, 'post-id', true );
+		$form_title  = $form_id ? get_the_title( $form_id ) : '';
+		$form_action = $form_title ? esc_html( $form_title ) : esc_html__( 'Not found', 'gutenverse-form' );
 
-		if ( $form_id ) {
-			$form_title = get_the_title( $form_id );
-			$form_link  = self::get_admin_page_url( array( 'form_id' => $form_id ) );
-
-			$result = '<div class="gutenverse-entry-detail-list">';
-			$result .= $this->entry_detail_item( esc_html__( 'Form ID', 'gutenverse-form' ), esc_html( $form_id ) );
-			$result .= $this->entry_detail_item( esc_html__( 'Form Action', 'gutenverse-form' ), '<a href="' . esc_url( $form_link ) . '">' . esc_html( $form_title ) . '</a>' );
-			$result .= '</div>';
-		} else {
-			$result = '<div class="gutenverse-entry-detail-list">';
-			$result .= $this->entry_detail_item( esc_html__( 'Form ID', 'gutenverse-form' ), esc_html__( 'Form is not set', 'gutenverse-form' ) );
-			$result .= $this->entry_detail_item( esc_html__( 'Form Action', 'gutenverse-form' ), esc_html__( 'Not found', 'gutenverse-form' ) );
-			$result .= '</div>';
-		}
+		$result  = '<div class="gutenverse-entry-detail-list">';
+		$result .= $this->entry_detail_item( esc_html__( 'Form ID', 'gutenverse-form' ), $form_id ? esc_html( $form_id ) : esc_html__( 'Form is not set', 'gutenverse-form' ) );
+		$result .= $this->entry_detail_item( esc_html__( 'Form Action', 'gutenverse-form' ), $form_action );
+		$result .= $this->entry_detail_item( esc_html__( 'Source', 'gutenverse-form' ), $this->entry_source_link_html( $source_id ) );
+		$result .= '</div>';
 
 		gutenverse_print_html( $result, 'post' );
 	}
@@ -1495,9 +1658,11 @@ class Entries {
 			$status = ! empty( $payment['payment_status'] ) ? $payment['payment_status'] : $status;
 		}
 
-		$result  = '<div class="gutenverse-entry-detail-list">';
-		$result .= $this->entry_detail_item( esc_html__( 'Payment Method', 'gutenverse-form' ), esc_html( $method ) );
-		$result .= $this->entry_detail_item( esc_html__( 'Payment Status', 'gutenverse-form' ), esc_html( $status ) );
+		$status_class = sanitize_html_class( strtolower( (string) $status ) );
+		$method_class = sanitize_html_class( strtolower( (string) $method ) );
+		$result       = '<div class="gutenverse-payment-summary">';
+		$result      .= '<div class="payment-summary-row"><span class="payment-summary-label">' . esc_html__( 'Method', 'gutenverse-form' ) . '</span><span class="payment-summary-value payment-method payment-method-' . esc_attr( $method_class ) . '">' . esc_html( $method ) . '</span></div>';
+		$result      .= '<div class="payment-summary-row"><span class="payment-summary-label">' . esc_html__( 'Status', 'gutenverse-form' ) . '</span><span class="payment-summary-value payment-status payment-status-' . esc_attr( $status_class ) . '">' . esc_html( $status ) . '</span></div>';
 		$result .= '</div>';
 
 		gutenverse_print_html( $result, 'post' );
@@ -1594,7 +1759,9 @@ class Entries {
 			var allErrorMessage = <?php echo wp_json_encode( __( 'All Integation Retriggered Failed', 'gutenverse-form' ) ); ?>;
 			var defaultErrorMessage = <?php echo wp_json_encode( __( 'Error occurred', 'gutenverse-form' ) ); ?>;
 			var ajaxErrorMessage = <?php echo wp_json_encode( __( 'AJAX error occurred', 'gutenverse-form' ) ); ?>;
+			var readonlyTitle = <?php echo wp_json_encode( __( 'Entry title is view only', 'gutenverse-form' ) ); ?>;
 			var $heading = $('.wrap h1.wp-heading-inline').first();
+			var $title = $('#title');
 
 			if (!$heading.length) {
 				$heading = $('.wrap h1').first();
@@ -1609,6 +1776,23 @@ class Entries {
 						'aria-label': backLabel
 					}).append('<span class="dashicons dashicons-arrow-left-alt2"></span>')
 				);
+			}
+
+			if ($title.length) {
+				$title
+					.prop('readonly', true)
+					.attr('aria-readonly', 'true')
+					.attr('title', readonlyTitle)
+					.addClass('gutenverse-entry-title-readonly');
+
+				if (!$title.next('.gutenverse-entry-title-display').length) {
+					$title.after(
+						$('<div/>', {
+							class: 'gutenverse-entry-title-display',
+							text: $title.val()
+						})
+					);
+				}
 			}
 
 			function showToast(message, type) {
