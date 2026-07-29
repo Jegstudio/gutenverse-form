@@ -550,7 +550,7 @@ const FormDashboard = () => {
                 </div>
                 <div className="gutenverse-form-admin-dashboard__summary">
                     <div className="summary-card"><strong>{data.totalEntries || 0}</strong><span>{__('Total Entries', 'gutenverse-form')}</span></div>
-                    <div className="summary-card"><strong>{data.entriesLastWeek || 0}</strong><span>{__('Entries In Last 7 Days', 'gutenverse-form')}</span></div>
+                    <div className="summary-card"><strong>{data.entriesLastWeek || 0}</strong><span>{__('The Last 7 Days', 'gutenverse-form')}</span></div>
                     <div className="summary-card"><strong>{data.totalLocations || 0}</strong><span>{__('Live Locations', 'gutenverse-form')}</span></div>
                     <div className="summary-card"><strong>{forms.length}</strong><span>{__('Tracked Forms', 'gutenverse-form')}</span></div>
                 </div>
