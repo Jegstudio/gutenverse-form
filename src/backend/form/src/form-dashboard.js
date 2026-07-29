@@ -99,27 +99,31 @@ const PremiumDashboardLockIcon = ({ iconId }) => (
 const lockedDashboardPanels = [
     {
         title: __('Needs Attention', 'gutenverse-form'),
-        description: strongDescription(__('Database bloat slows you down. <strong>Upgrade to PRO</strong> to instantly spot and purge unused forms to keep your site lean and fast.', 'gutenverse-form')),
-    },
-    {
-        title: __('Top Forms', 'gutenverse-form'),
-        description: strongDescription(__('One form could be carrying your entire site\'s conversions. <strong>Unlock PRO</strong> to find it, optimize it, and replicate its success.', 'gutenverse-form')),
+        insightTitle: __('Silent form issues can cost leads', 'gutenverse-form'),
+        description: strongDescription(__('Unlock priority alerts for quiet forms, unused actions, and submission issues before hidden problems turn into missed conversions.', 'gutenverse-form')),
     },
     {
         title: __('Top Entry Sources', 'gutenverse-form'),
-        description: strongDescription(__('Stop guessing what works. <strong>PRO</strong> pinpoints the exact pages driving your submissions so you can double down on what makes you money.', 'gutenverse-form')),
+        insightTitle: __('Your best traffic may be hidden', 'gutenverse-form'),
+        description: strongDescription(__('Reveal which pages and sources are already sending submissions, so you do not waste effort on channels that are not converting.', 'gutenverse-form')),
+    },
+    {
+        title: __('Top Forms', 'gutenverse-form'),
+        insightTitle: __('Do not optimize the wrong form', 'gutenverse-form'),
+        description: strongDescription(__('See which forms actually bring in opportunities, then double down on the forms that deserve your attention first.', 'gutenverse-form')),
     },
     {
         title: __('Recent Activity', 'gutenverse-form'),
-        description: strongDescription(__('A hot lead just interacted with your site. Did you miss it? <strong>Upgrade to PRO</strong> for real-time tracking so you can strike while the iron is hot.', 'gutenverse-form')),
+        insightTitle: __('Follow up before leads go cold', 'gutenverse-form'),
+        description: strongDescription(__('Track submissions as they happen, spot fresh activity faster, and avoid letting high-intent visitors wait too long.', 'gutenverse-form')),
     },
 ];
 
 const PremiumDashboardCallout = () => (
     <div className="dashboard-panel dashboard-panel--wide dashboard-panel--premium-callout">
         <div className="dashboard-premium-callout__content">
-            <h2>{__('You Are Losing Money on Hidden Pages and Traffic Sources.', 'gutenverse-form')}</h2>
-            <p>{strongDescription(__('Free plans hide your top performers. <strong>Upgrade to PRO</strong> to unlock specific page and traffic data to double your conversions.', 'gutenverse-form'))}</p>
+            <h2>{__('Hidden Form Signals Can Cost You Leads', 'gutenverse-form')}</h2>
+            <p>{strongDescription(__('Totals only tell part of the story. <strong>Upgrade to PRO</strong> to reveal source, form, and activity insights before your best opportunities slip by unnoticed.', 'gutenverse-form'))}</p>
         </div>
         {hasProLicenseData() ? (
             <ActivateLicenseButton />
@@ -133,7 +137,7 @@ const PremiumDashboardCallout = () => (
     </div>
 );
 
-const PremiumDashboardPanel = ({ title, description, iconId }) => (
+const PremiumDashboardPanel = ({ title, insightTitle, description, iconId }) => (
     <div className="dashboard-panel dashboard-panel--premium">
         <div className="dashboard-panel__title">
             <h3>{title}</h3>
@@ -148,7 +152,7 @@ const PremiumDashboardPanel = ({ title, description, iconId }) => (
             </div>
             <div className="dashboard-premium-panel__overlay">
                 <PremiumDashboardLockIcon iconId={iconId} />
-                <strong>{__('Premium dashboard insight', 'gutenverse-form')}</strong>
+                <strong>{insightTitle}</strong>
                 <span>{description}</span>
             </div>
         </div>
@@ -163,6 +167,7 @@ const PremiumDashboardPanels = () => (
                 <PremiumDashboardPanel
                     key={panel.title}
                     title={panel.title}
+                    insightTitle={panel.insightTitle}
                     description={panel.description}
                     iconId={`premium-dashboard-lock-${index}`}
                 />

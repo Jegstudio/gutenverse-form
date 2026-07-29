@@ -159,13 +159,13 @@ const EntryListCrownIcon = () => (
 const EntryListUpgrade = ({ config }) => (
     <div className="entry-list-upgrade">
         <div className="entry-list-upgrade__content">
-            <h2>{__('⚠️ Stop Losing Data Visibility!', 'gutenverse-form')}</h2>
-            <p>{strongDescription(__('Don\'t miss critical entries. <strong>Upgrade to PRO</strong> today to access the full archive instantly.', 'gutenverse-form'))}</p>
+            <h2>{__('Do Not Let Older Leads Stay Hidden', 'gutenverse-form')}</h2>
+            <p>{strongDescription(__('Your free archive only shows the newest entries. <strong>Upgrade to PRO</strong> to reveal older submissions, export the full record, and filter missed opportunities before they go cold.', 'gutenverse-form'))}</p>
             <ul>
-                <li><EntryListCrownIcon />{__('View All Entries', 'gutenverse-form')}</li>
-                <li><EntryListCrownIcon />{__('Export All Entries', 'gutenverse-form')}</li>
-                <li><EntryListCrownIcon />{__('Filter All Entries', 'gutenverse-form')}</li>
-                <li><EntryListCrownIcon />{__('Access Older Entry Details', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('Reveal Hidden Entries', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('Export the Full Record', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('Find Missed Opportunities', 'gutenverse-form')}</li>
+                <li><EntryListCrownIcon />{__('Open Older Details', 'gutenverse-form')}</li>
             </ul>
         </div>
         {hasProLicenseData() ? (
@@ -497,8 +497,8 @@ const EntryList = () => {
 
             {lockedDetailNotice && (
                 <div className="entry-list-notice">
-                    <strong>{__('Older entry details are locked.', 'gutenverse-form')}</strong>
-                    <span>{__('Upgrade to PRO to open details beyond the latest entries.', 'gutenverse-form')}</span>
+                    <strong>{__('Older entry details are hidden.', 'gutenverse-form')}</strong>
+                    <span>{__('Upgrade to PRO to inspect older submissions before valuable follow-ups go cold.', 'gutenverse-form')}</span>
                 </div>
             )}
 
