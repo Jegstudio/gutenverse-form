@@ -3454,18 +3454,45 @@ body[class*="_page_gutenverse-form-entries"] {
 
     .dashboard-row__actions {
         align-items: center;
+        flex-wrap: nowrap;
         justify-content: flex-end;
         min-width: 96px;
 
         a {
+            align-items: center;
             background: #f8fafc;
             border: 1px solid #d7deea;
             border-radius: 4px;
             color: #1d4ed8;
+            display: inline-flex;
             font-size: 12px;
             font-weight: 700;
+            gap: 5px;
             padding: 7px 9px;
             text-decoration: none;
+
+            svg {
+                flex: 0 0 auto;
+            }
+        }
+
+        .dashboard-row-edit-link {
+            box-sizing: border-box;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: center;
+            line-height: 1;
+            min-height: 34px;
+            min-width: 74px;
+            white-space: nowrap;
+
+            span {
+                color: inherit;
+                display: inline-block;
+                font-size: inherit;
+                font-weight: inherit;
+                line-height: 1;
+            }
         }
     }
 
