@@ -379,6 +379,51 @@ class Entries {
 	}
 
 	/**
+	 * Get source options for the React entry list filter.
+	 *
+	 * @return array
+	 */
+	private static function get_source_options() {
+		global $wpdb;
+
+		$query      = "
+			SELECT DISTINCT CAST(source_meta.meta_value AS UNSIGNED) AS source_id
+			FROM {$wpdb->posts} entries
+			INNER JOIN {$wpdb->postmeta} source_meta ON entries.ID = source_meta.post_id AND source_meta.meta_key = 'post-id'
+			WHERE entries.post_type = %s
+				AND entries.post_status = %s
+				AND CAST(source_meta.meta_value AS UNSIGNED) > 0
+		";
+		$source_ids = $wpdb->get_col( $wpdb->prepare( $query, self::POST_TYPE, 'publish' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$sources    = array();
+
+		foreach ( $source_ids as $source_id ) {
+			$source_post = get_post( (int) $source_id );
+
+			if ( ! $source_post ) {
+				continue;
+			}
+
+			$type_object = get_post_type_object( $source_post->post_type );
+
+			$sources[] = array(
+				'id'    => (int) $source_post->ID,
+				'title' => get_the_title( $source_post ),
+				'type'  => $type_object ? $type_object->labels->singular_name : $source_post->post_type,
+			);
+		}
+
+		usort(
+			$sources,
+			static function ( $a, $b ) {
+				return strcasecmp( $a['title'], $b['title'] );
+			}
+		);
+
+		return $sources;
+	}
+
+	/**
 	 * Get latest entry IDs available to free users.
 	 *
 	 * @return array
@@ -475,18 +520,34 @@ class Entries {
 		);
 
 		if ( ! empty( $capabilities['filter'] ) && $view_all ) {
-			$form_id = absint( $request->get_param( 'form_id' ) );
-			$month   = sanitize_text_field( (string) $request->get_param( 'month' ) );
-			$search  = sanitize_text_field( (string) $request->get_param( 'search' ) );
+			$form_id    = absint( $request->get_param( 'form_id' ) );
+			$source_id  = absint( $request->get_param( 'source_id' ) );
+			$month      = sanitize_text_field( (string) $request->get_param( 'month' ) );
+			$search     = sanitize_text_field( (string) $request->get_param( 'search' ) );
+			$meta_query = array();
 
 			if ( $form_id ) {
-				$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-					array(
-						'key'     => 'form-id',
-						'compare' => '=',
-						'value'   => $form_id,
-					),
+				$meta_query[] = array(
+					'key'     => 'form-id',
+					'compare' => '=',
+					'value'   => $form_id,
 				);
+			}
+
+			if ( $source_id ) {
+				$meta_query[] = array(
+					'key'     => 'post-id',
+					'compare' => '=',
+					'value'   => $source_id,
+				);
+			}
+
+			if ( ! empty( $meta_query ) ) {
+				if ( 1 < count( $meta_query ) ) {
+					$meta_query = array_merge( array( 'relation' => 'AND' ), $meta_query );
+				}
+
+				$args['meta_query'] = $meta_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			}
 
 			if ( preg_match( '/^\d{4}-\d{2}$/', $month ) ) {
@@ -527,17 +588,7 @@ class Entries {
 	private static function prepare_entry_for_list( $post ) {
 		$form_id       = (int) get_post_meta( $post->ID, 'form-id', true );
 		$ref_id        = (int) get_post_meta( $post->ID, 'post-id', true );
-		$entry_data    = get_post_meta( $post->ID, 'entry-data', true );
-		$entry_data    = is_array( $entry_data ) ? $entry_data : array();
-		$preview       = array();
 		$detail_access = self::can_view_entry_detail( $post->ID );
-
-		foreach ( array_slice( $entry_data, 0, 3 ) as $item ) {
-			$preview[] = array(
-				'id'    => isset( $item['id'] ) ? (string) $item['id'] : '',
-				'value' => self::entry_value_text( isset( $item['value'] ) ? $item['value'] : '' ),
-			);
-		}
 
 		return array(
 			'id'              => (int) $post->ID,
@@ -549,8 +600,6 @@ class Entries {
 			'referralId'      => $ref_id,
 			'referralTitle'   => $ref_id ? get_the_title( $ref_id ) : __( 'No referral', 'gutenverse-form' ),
 			'referralUrl'     => $ref_id ? get_permalink( $ref_id ) : '',
-			'fieldsCount'     => count( $entry_data ),
-			'preview'         => $preview,
 			'canViewDetail'   => $detail_access,
 			'detailUrl'       => $detail_access ? admin_url( 'post.php?post=' . (int) $post->ID . '&action=edit' ) : '',
 			'lockedDetail'    => ! $detail_access,
@@ -589,6 +638,7 @@ class Entries {
 			'limit'        => self::FREE_ENTRY_LIMIT,
 			'limited'      => $is_limited,
 			'forms'        => ! empty( $capabilities['filter'] ) ? self::get_form_options() : array(),
+			'sources'      => ! empty( $capabilities['filter'] ) ? self::get_source_options() : array(),
 			'capabilities' => $capabilities,
 		);
 	}

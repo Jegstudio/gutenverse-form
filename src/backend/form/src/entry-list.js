@@ -20,6 +20,12 @@ const entryListFooterFilter = 'gutenverse-form.entry-list-footer';
 const proEntryListContentFilter = 'gutenverse-form.pro-entry-list-content';
 const entriesPerPage = 10;
 
+const OpenNewTabIcon = ({ size = 12, ...props }) => (
+    <svg {...props} width={size} height={size} viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fillRule="evenodd" clipRule="evenodd" d="M5 3H3v10h10v-2h1v2.5l-.5.5h-11l-.5-.5v-11l.5-.5H5v1zm3-1h6v6h-1V3.707L7.354 9.354l-.708-.708L12.293 3H8V2z" />
+    </svg>
+);
+
 const getConfig = () => window?.GutenverseConfig?.entryList || {};
 const hasEntryListFilter = () => (
     hasFilter(entryListActionsFilter) ||
@@ -62,7 +68,7 @@ const normalizeMonth = value => {
 const getInitialQuery = (capabilities) => {
     const params = new URLSearchParams(window.location.search);
     const requestedView = params.get('view');
-    const hasRequestedFilter = Boolean(params.get('form_id') || params.get('month') || params.get('m') || params.get('search'));
+    const hasRequestedFilter = Boolean(params.get('form_id') || params.get('source_id') || params.get('month') || params.get('m') || params.get('search'));
     const view = capabilities.viewAll && (requestedView !== 'recent' || hasRequestedFilter) ? 'all' : 'recent';
 
     return {
@@ -70,6 +76,7 @@ const getInitialQuery = (capabilities) => {
         page: Math.max(1, Number(params.get('paged') || params.get('page_num') || 1)),
         perPage: entriesPerPage,
         formId: params.get('form_id') || '',
+        sourceId: params.get('source_id') || '',
         month: normalizeMonth(params.get('month') || params.get('m') || ''),
         search: params.get('search') || '',
     };
@@ -96,6 +103,10 @@ const buildPath = (config, query, capabilities) => {
     if (capabilities.filter && view === 'all') {
         if (query.formId) {
             params.set('form_id', query.formId);
+        }
+
+        if (query.sourceId) {
+            params.set('source_id', query.sourceId);
         }
 
         if (query.month) {
@@ -171,79 +182,31 @@ const EntryListUpgrade = ({ config }) => (
     </div>
 );
 
-const ENTRY_PREVIEW_LIMIT = 3;
-
-const getEntryPreviewValue = value => {
-    if (value === null || value === undefined || value === '') {
-        return __('Empty', 'gutenverse-form');
-    }
-
-    if (Array.isArray(value)) {
-        const normalizedValues = value.filter(item => item !== null && item !== undefined && item !== '');
-
-        return normalizedValues.length ? normalizedValues.map(String).join(', ') : __('Empty', 'gutenverse-form');
-    }
-
-    if (typeof value === 'object') {
-        const normalizedValues = Object.values(value)
-            .filter(item => item !== null && item !== undefined && item !== '' && typeof item !== 'object');
-
-        return normalizedValues.length ? normalizedValues.map(String).join(', ') : __('Complex value', 'gutenverse-form');
-    }
-
-    return String(value);
-};
-
-const EntryPreview = ({ entry }) => {
-    if (!entry.preview?.length) {
-        return <span className="entry-list-muted">{__('No submitted fields', 'gutenverse-form')}</span>;
-    }
-
-    const visibleFields = entry.preview.slice(0, ENTRY_PREVIEW_LIMIT);
-    const hiddenFieldsCount = entry.preview.length - visibleFields.length;
-
-    return (
-        <div className="entry-list-field-preview">
-            {visibleFields.map((field, index) => {
-                const fieldLabel = field.id || __('Field', 'gutenverse-form');
-                const fieldValue = getEntryPreviewValue(field.value);
-
-                return (
-                    <span
-                        className="entry-list-preview-item"
-                        key={`${entry.id}-${field.id || index}`}
-                        title={`${fieldLabel}: ${fieldValue}`}
-                    >
-                        <strong className="entry-list-preview-label">{fieldLabel}:</strong>
-                        <span className="entry-list-preview-value">{fieldValue}</span>
-                    </span>
-                );
-            })}
-            {hiddenFieldsCount > 0 ? (
-                <span className="entry-list-preview-more">
-                    {sprintf(__('+%s more fields', 'gutenverse-form'), hiddenFieldsCount)}
-                </span>
-            ) : null}
-        </div>
-    );
-};
-
 const EntryRow = ({ entry, deletingEntryId, onDelete }) => (
     <tr>
         <td className="entry-list-entry-title" data-label={__('Entry', 'gutenverse-form')}>
             <strong>{entry.title}</strong>
-            <span>{sprintf(__('%s submitted fields', 'gutenverse-form'), entry.fieldsCount || 0)}</span>
         </td>
-        <td data-label={__('Form', 'gutenverse-form')}>
+        <td className="entry-list-form-cell" data-label={__('Form', 'gutenverse-form')}>
             <span>{entry.formTitle}</span>
+        </td>
+        <td className="entry-list-source-cell" data-label={__('Source', 'gutenverse-form')}>
             {entry.referralUrl ? (
-                <a className="entry-list-referral" href={entry.referralUrl} target="_blank" rel="noreferrer">{entry.referralTitle}</a>
+                <a
+                    className="entry-list-referral"
+                    href={entry.referralUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={sprintf(__('%s opens in a new tab', 'gutenverse-form'), entry.referralTitle)}
+                >
+                    <span>{entry.referralTitle}</span>
+                    <OpenNewTabIcon aria-hidden="true" focusable="false" />
+                </a>
             ) : (
                 <span className="entry-list-muted">{entry.referralTitle}</span>
             )}
         </td>
         <td data-label={__('Submitted', 'gutenverse-form')}>{entry.date}</td>
-        <td data-label={__('Preview', 'gutenverse-form')}><EntryPreview entry={entry} /></td>
         <td className="entry-list-actions-cell" data-label={__('Actions', 'gutenverse-form')}>
             <div className="entry-list-row-actions">
                 {entry.canViewDetail ? (
@@ -288,8 +251,8 @@ const EntryListTable = ({ entries, deletingEntryId, onDelete }) => {
                     <tr>
                         <th>{__('Entry', 'gutenverse-form')}</th>
                         <th>{__('Form', 'gutenverse-form')}</th>
+                        <th>{__('Source', 'gutenverse-form')}</th>
                         <th>{__('Submitted', 'gutenverse-form')}</th>
-                        <th>{__('Preview', 'gutenverse-form')}</th>
                         <th>{__('Actions', 'gutenverse-form')}</th>
                     </tr>
                 </thead>

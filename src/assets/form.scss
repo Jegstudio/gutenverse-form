@@ -4083,14 +4083,14 @@ body[class*="_page_gutenverse-form-entries"] {
         display: flex;
         gap: 18px;
         justify-content: space-between;
-        margin: 0 0 18px;
-        min-height: 80px;
-        padding: 24px 26px;
+        margin: 0 0 14px;
+        min-height: 64px;
+        padding: 18px 22px;
 
         h1 {
             color: #0f1f2c;
             font-family: "Roboto", sans-serif;
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 500;
             line-height: 1.15;
             margin: 0;
@@ -4117,12 +4117,12 @@ body[class*="_page_gutenverse-form-entries"] {
 
     .entry-list-title-row {
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 10px;
     }
 
     .entry-list-count {
         color: #667085;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 500;
     }
 
@@ -4167,10 +4167,10 @@ body[class*="_page_gutenverse-form-entries"] {
         display: inline-flex;
         font-size: 13px;
         font-weight: 600;
-        gap: 8px;
+        gap: 6px;
         justify-content: center;
-        min-height: 42px;
-        padding: 10px 14px;
+        min-height: 34px;
+        padding: 7px 11px;
         text-decoration: none;
         white-space: nowrap;
     }
@@ -4201,10 +4201,10 @@ body[class*="_page_gutenverse-form-entries"] {
 
     .entry-list-controls {
         flex-wrap: wrap;
-        gap: 14px;
+        gap: 8px;
         justify-content: space-between;
-        margin-bottom: 22px;
-        padding: 14px;
+        margin-bottom: 12px;
+        padding: 10px;
 
         select,
         input[type="month"],
@@ -4214,13 +4214,13 @@ body[class*="_page_gutenverse-form-entries"] {
             border-radius: 6px;
             box-shadow: none;
             color: #344054;
-            font-size: 14px;
-            min-height: 42px;
+            font-size: 13px;
+            min-height: 34px;
         }
 
         select,
         input[type="month"] {
-            min-width: 210px;
+            min-width: 172px;
         }
 
         input[type="month"] {
@@ -4230,7 +4230,7 @@ body[class*="_page_gutenverse-form-entries"] {
             background-repeat: no-repeat;
             background-size: 20px 20px;
             cursor: pointer;
-            padding-right: 42px;
+            padding-right: 38px;
             position: relative;
 
             &::-webkit-calendar-picker-indicator {
@@ -4252,28 +4252,28 @@ body[class*="_page_gutenverse-form-entries"] {
     .entry-list-search {
         align-items: center;
         display: flex;
-        flex: 1 1 440px;
-        gap: 10px;
+        flex: 1 1 360px;
+        gap: 8px;
         margin: 0;
-        max-width: 520px;
+        max-width: 480px;
         position: relative;
 
         svg {
             color: #98a2b3;
-            height: 17px;
-            left: 16px;
+            height: 16px;
+            left: 14px;
             pointer-events: none;
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 17px;
+            width: 16px;
             z-index: 1;
         }
 
         input[type="search"] {
             flex: 1 1 auto;
             min-width: 0;
-            padding-left: 44px;
+            padding-left: 38px;
             width: auto;
         }
 
@@ -4286,9 +4286,9 @@ body[class*="_page_gutenverse-form-entries"] {
     }
 
     .entry-list-filter-controls {
-        flex: 1 1 520px;
+        flex: 1 1 600px;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
         justify-content: flex-end;
         margin-left: auto;
     }
@@ -4432,14 +4432,14 @@ body[class*="_page_gutenverse-form-entries"] {
     .entry-list-table {
         border-collapse: separate;
         border-spacing: 0;
-        min-width: 980px;
+        min-width: 900px;
         table-layout: fixed;
         width: 100%;
 
         th,
         td {
             border-bottom: 1px solid #e5e7eb;
-            padding: 24px 26px;
+            padding: 14px 20px;
             text-align: left;
             vertical-align: middle;
         }
@@ -4447,35 +4447,35 @@ body[class*="_page_gutenverse-form-entries"] {
         th {
             background: #f7f7fb;
             color: #0f1f2c;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 600;
             line-height: 1.2;
         }
 
         td {
             color: #475467;
-            font-size: 15px;
-            line-height: 1.45;
+            font-size: 13px;
+            line-height: 1.35;
         }
 
         th:nth-child(1) {
-            width: 24%;
+            width: 30%;
         }
 
         th:nth-child(2) {
-            width: 24%;
+            width: 22%;
         }
 
         th:nth-child(3) {
-            width: 18%;
+            width: 24%;
         }
 
         th:nth-child(4) {
-            width: 21%;
+            width: 14%;
         }
 
         th:nth-child(5) {
-            width: 13%;
+            width: 10%;
         }
 
         tr:last-child td {
@@ -4484,80 +4484,44 @@ body[class*="_page_gutenverse-form-entries"] {
     }
 
     .entry-list-entry-title {
-        strong,
-        span {
-            display: block;
-        }
-
         strong {
             color: #0f1f2c;
-            font-size: 15px;
+            display: block;
+            font-size: 13px;
             font-weight: 600;
+            line-height: 1.3;
             overflow-wrap: anywhere;
-        }
-
-        span {
-            color: #667085;
-            margin-top: 4px;
         }
     }
 
+    .entry-list-form-cell,
+    .entry-list-source-cell {
+        overflow-wrap: anywhere;
+    }
+
     .entry-list-referral {
+        align-items: center;
         color: #3856ff;
-        display: block;
+        display: inline-flex;
+        gap: 5px;
         font-weight: 600;
-        margin-top: 4px;
+        max-width: 100%;
         text-decoration: none;
+
+        span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        svg {
+            flex: 0 0 auto;
+        }
     }
 
     .entry-list-muted {
         color: #667085;
-    }
-
-    .entry-list-field-preview {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        max-width: 340px;
-        min-width: 0;
-
-        .entry-list-preview-item {
-            align-items: baseline;
-            color: #475467;
-            display: flex;
-            gap: 6px;
-            line-height: 1.35;
-            min-width: 0;
-        }
-
-        .entry-list-preview-label {
-            color: #0f1f2c;
-            flex: 0 1 auto;
-            font-weight: 600;
-            max-width: 130px;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .entry-list-preview-value {
-            color: #475467;
-            flex: 1 1 auto;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .entry-list-preview-more {
-            color: #667085;
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            line-height: 1.35;
-            margin-top: 1px;
-        }
     }
 
     .entry-list-actions-cell {
@@ -4565,7 +4529,7 @@ body[class*="_page_gutenverse-form-entries"] {
     }
 
     .entry-list-row-actions {
-        gap: 10px;
+        gap: 8px;
     }
 
     .entry-list-icon-button {
@@ -4576,10 +4540,10 @@ body[class*="_page_gutenverse-form-entries"] {
         color: #3856ff;
         cursor: pointer;
         display: inline-flex;
-        height: 36px;
+        height: 32px;
         justify-content: center;
         padding: 0;
-        width: 36px;
+        width: 32px;
 
         &:hover,
         &:focus {
@@ -4903,7 +4867,7 @@ body[class*="_page_gutenverse-form-entries"] {
             align-items: center;
             display: grid;
             gap: 12px;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
             justify-content: stretch;
         }
 
@@ -4927,7 +4891,7 @@ body[class*="_page_gutenverse-form-entries"] {
         .entry-list-filter-controls {
             display: grid;
             grid-column: 1 / -1;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
             margin-left: 0;
 
             select,
@@ -5064,15 +5028,6 @@ body[class*="_page_gutenverse-form-entries"] {
             font-size: 14px;
         }
 
-        .entry-list-field-preview {
-            gap: 6px;
-            max-width: 100%;
-
-            .entry-list-preview-label {
-                max-width: 104px;
-            }
-        }
-
         .entry-list-actions-cell {
             text-align: left;
         }
@@ -5147,16 +5102,6 @@ body[class*="_page_gutenverse-form-entries"] {
 
         .entry-delete-modal__cancel {
             order: 2;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .entry-list-field-preview {
-            .entry-list-preview-label,
-            .entry-list-preview-value {
-                max-width: 100%;
-                width: 100%;
-            }
         }
     }
 }
