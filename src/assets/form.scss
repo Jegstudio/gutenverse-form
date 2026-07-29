@@ -4229,15 +4229,22 @@ body[class*="_page_gutenverse-form-entries"] {
             background-position: right 16px center;
             background-repeat: no-repeat;
             background-size: 20px 20px;
+            cursor: pointer;
             padding-right: 42px;
+            position: relative;
 
             &::-webkit-calendar-picker-indicator {
                 background: transparent;
+                bottom: 0;
                 cursor: pointer;
-                height: 100%;
+                height: auto;
+                left: 0;
                 margin: 0;
                 opacity: 0;
-                width: 38px;
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: auto;
             }
         }
     }
