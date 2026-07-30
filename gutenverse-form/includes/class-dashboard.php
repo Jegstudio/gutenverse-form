@@ -55,6 +55,13 @@ class Dashboard {
 			array(),
 			GUTENVERSE_FORM_VERSION
 		);
+
+		wp_enqueue_style(
+			'gutenverse-form-dashboard-inntegrations',
+			GUTENVERSE_FORM_URL . '/assets/css/integration.css',
+			array(),
+			GUTENVERSE_FORM_VERSION
+		);
 	}
 
 	/**

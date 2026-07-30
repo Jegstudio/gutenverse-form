@@ -10,7 +10,11 @@ import { u } from 'gutenverse-core/components';
 const CreateForm = () => {
     const [open, setOpen] = useState(false);
     const [values, setValues] = useState({
-        title: 'Form Action'
+        title: 'Form Action',
+        integrations: {
+            useDashboardSettings: false,
+            use_dashboard_settings: false,
+        },
     });
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
@@ -36,6 +40,12 @@ const CreateForm = () => {
 
         setValues({
             ...values,
+            integrations: {
+                useDashboardSettings: false,
+                use_dashboard_settings: false,
+                ...(values.integrations || {}),
+                ...(data.integrations || {}),
+            },
             ...data
         });
     }, []);
