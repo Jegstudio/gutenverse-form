@@ -1929,6 +1929,23 @@ class Api {
 				'integrations' => $normalized_integrations,
 			);
 
+			$use_akismet = ! empty( $settings_data['form_settings']['form_spam_settings']['use_akismet'] )
+				|| ! empty( $settings_data['form_spam_settings']['use_akismet'] )
+				|| ! empty( $form_setting['use_akismet'] );
+
+			if ( $use_akismet ) {
+				$akismet_result = Akismet_Service::check_submission( $params, $form_entry, $request );
+				gutenverse_rlog($akismet_result);
+				if (
+					! empty( $akismet_result ) &&
+					is_array( $akismet_result ) &&
+					! empty( $akismet_result['status'] ) &&
+					! in_array( $akismet_result['status'], array( 'disabled', 'unavailable' ), true )
+				) {
+					$params['akismet'] = $akismet_result;
+				}
+			}
+
 			/**
 			 * Hook after validation before store.
 			 * This hook can be used to abort submission.
@@ -1940,7 +1957,17 @@ class Api {
 
 			do_action( 'gutenverse_form_after_validation_before_store', $params, $request );
 
-			$result = array( 'entry_id' => Entries::submit_form_data( $params ) );
+			$is_spam_submission = ! empty( $params['akismet']['is_spam'] );
+
+			if ( $is_spam_submission ) {
+				$result = array(
+					'entry_id' => 0,
+					'status' => 'success',
+					'spam'   => true,
+				);
+			} else {
+				$result = array( 'entry_id' => Entries::submit_form_data( $params ) );
+			}
 
 			if ( (int) $result['entry_id'] > 0 ) {
 				/**

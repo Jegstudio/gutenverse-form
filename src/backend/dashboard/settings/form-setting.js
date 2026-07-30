@@ -348,6 +348,35 @@ const FormReCaptcha = ({ settingValues, updateSettingValues, saving, saveData })
     </div>;
 };
 
+const FormSpamProtection = ({ settingValues, updateSettingValues, saving, saveData }) => {
+    const {
+        form_spam_settings = {}
+    } = settingValues;
+
+    const updateValue = (id, value) => {
+        updateSettingValues('form_spam_settings', id, value);
+    };
+
+    return <div className="form-tab-body">
+        <h2>{__('Form Spam Protection', 'gutenverse-form')}</h2>
+        <span>{__('Choose how Gutenverse Form should use available anti-spam services during submission.', 'gutenverse-form')}</span>
+        <ControlCheckbox
+            id={'use_akismet'}
+            title={__('Use Akismet Anti-Spam', 'gutenverse-form')}
+            description={__('When enabled, submissions will be checked with the Akismet plugin before emails and integrations are triggered.', 'gutenverse-form')}
+            value={form_spam_settings.use_akismet}
+            updateValue={updateValue}
+        />
+        <div className="actions">
+            {saving ? <div className="gutenverse-button">
+                {__('Saving...', 'gutenverse-form')}
+            </div> : <div className="gutenverse-button" onClick={() => saveData(formSettingKeys)}>
+                {__('Save Changes', 'gutenverse-form')}
+            </div>}
+        </div>
+    </div>;
+};
+
 const FormSetting = (props) => {
     const [formActive, setFormActive] = useState('dashboard');
 
@@ -371,6 +400,7 @@ const FormSetting = (props) => {
     const additionalMenu = [];
 
     return <>
+        <FormSpamProtection {...props} />
         <FormReCaptcha {...props} />
         <div className="form-setting">
             <div className={`${formActive === 'dashboard' ? 'active' : ''}`} onClick={() => setFormActive('dashboard')}>{__('Dashboard', 'gutenverse-form')}</div>
