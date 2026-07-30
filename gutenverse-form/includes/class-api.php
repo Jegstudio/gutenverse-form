@@ -1953,16 +1953,16 @@ class Api {
 				$mail_form_data     = is_array( $form_data_settings ) ? $form_data_settings : $form_setting;
 				$entry_id           = $result['entry_id'];
 
-				if ( isset( $settings_data['form'] ) ) {
-					if ( isset( $settings_data['form']['confirmation'] ) && true !== ( $mail_form_data['overwrite_default_confirmation'] ?? false ) ) {
-						$mail_form_data = $this->merge_form_setting_defaults( $mail_form_data, $settings_data['form']['confirmation'] );
-					}
+				$confirmation_defaults = $this->get_dashboard_form_setting_defaults( $settings_data, 'confirmation' );
+				$notification_defaults = $this->get_dashboard_form_setting_defaults( $settings_data, 'notification' );
 
-					if ( isset( $settings_data['form']['notification'] ) && true !== ( $mail_form_data['overwrite_default_notification'] ?? false ) ) {
-						$mail_form_data = $this->merge_form_setting_defaults( $mail_form_data, $settings_data['form']['notification'] );
-					}
+				if ( ! empty( $confirmation_defaults ) && true !== ( $mail_form_data['overwrite_default_confirmation'] ?? false ) ) {
+					$mail_form_data = $this->merge_form_setting_defaults( $mail_form_data, $confirmation_defaults );
 				}
 
+				if ( ! empty( $notification_defaults ) && true !== ( $mail_form_data['overwrite_default_notification'] ?? false ) ) {
+					$mail_form_data = $this->merge_form_setting_defaults( $mail_form_data, $notification_defaults );
+				}
 				$mail_list = $this->mail_list( $params['entry-data'], $mail_form_data );
 
 				if ( ! empty( $mail_list ) ) {
@@ -2034,12 +2034,72 @@ class Api {
 		}
 
 		foreach ( $defaults as $key => $value ) {
-			if ( ! array_key_exists( $key, $form_data ) || '' === $form_data[ $key ] || null === $form_data[ $key ] ) {
+			if ( $this->is_form_setting_value_missing( $form_data, $key ) ) {
 				$form_data[ $key ] = $value;
 			}
 		}
 
 		return $form_data;
+	}
+
+	/**
+	 * Get dashboard-level default form settings from the saved option structure.
+	 *
+	 * @param array  $settings_data Saved Gutenverse settings.
+	 * @param string $type Default type. Accepted values: confirmation, notification.
+	 *
+	 * @return array
+	 */
+	private function get_dashboard_form_setting_defaults( $settings_data, $type ) {
+		$dashboard_map = array(
+			'confirmation' => 'form_confirmation',
+			'notification' => 'form_notification',
+		);
+
+		$dashboard_key = isset( $dashboard_map[ $type ] ) ? $dashboard_map[ $type ] : '';
+
+		if ( $dashboard_key && isset( $settings_data['form_settings'][ $dashboard_key ] ) && is_array( $settings_data['form_settings'][ $dashboard_key ] ) ) {
+			return $settings_data['form_settings'][ $dashboard_key ];
+		}
+
+		if ( isset( $settings_data['form'][ $type ] ) && is_array( $settings_data['form'][ $type ] ) ) {
+			return $settings_data['form'][ $type ];
+		}
+
+		return array();
+	}
+
+	/**
+	 * Determine whether a form action value is effectively unset and can fall back to dashboard defaults.
+	 *
+	 * @param array  $form_data Form action data.
+	 * @param string $key Form setting key.
+	 *
+	 * @return bool
+	 */
+	private function is_form_setting_value_missing( $form_data, $key ) {
+		if ( ! array_key_exists( $key, $form_data ) || '' === $form_data[ $key ] || null === $form_data[ $key ] ) {
+			return true;
+		}
+
+		switch ( $key ) {
+			case 'user_email_subject_type':
+				return empty( $form_data['user_email_subject'] ) && empty( $form_data['user_email_subject_meta_key'] );
+			case 'user_email_reply_to_type':
+				return empty( $form_data['user_email_reply_to'] ) && empty( $form_data['user_email_reply_to_dynamic'] );
+			case 'user_message_type':
+				return empty( $form_data['user_email_body'] ) && empty( $form_data['user_email_template'] );
+			case 'admin_email_subject_type':
+				return empty( $form_data['admin_email_subject'] ) && empty( $form_data['admin_email_subject_meta_key'] );
+			case 'admin_email_reply_to_type':
+				return empty( $form_data['admin_email_reply_to'] ) && empty( $form_data['admin_email_reply_to_dynamic'] );
+			case 'admin_email_type':
+				return empty( $form_data['admin_email_to'] ) && empty( $form_data['admin_email_meta_key'] );
+			case 'admin_message_type':
+				return empty( $form_data['admin_note'] ) && empty( $form_data['admin_email_template'] ) && empty( $form_data['admin_message_input_name'] );
+			default:
+				return false;
+		}
 	}
 
 	/**

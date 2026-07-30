@@ -1,19 +1,66 @@
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
-import { ControlText, ControlTextarea, ControlCheckbox } from 'gutenverse-core/backend';
+import { ControlText, ControlTextarea, ControlCheckbox, ControlSelect } from 'gutenverse-core/backend';
 import { applyFilters } from '@wordpress/hooks';
 import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
 import { openFreemiusPopup, prefetchPricingPlanData } from 'gutenverse-core/helper';
+import { EmailTemplateManager } from '../../form/src/form-content';
 
 const formSettingKeys = ['form_settings'];
 
-const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData }) => {
+const ExampleFillButton = ({
+    onClick,
+    title = __('Need a quick starting point?', 'gutenverse-form'),
+    description = __('Auto-fill these fields with sample values you can edit afterward.', 'gutenverse-form'),
+    label = __('Use Example Data', 'gutenverse-form'),
+    success = false
+}) => (
+    <div className={`gutenverse-example-fill ${success ? 'is-success' : ''}`}>
+        <div className="gutenverse-example-fill-copy">
+            <div className="gutenverse-example-fill-title">
+                {success ? __('Example data inserted', 'gutenverse-form') : title}
+            </div>
+            <div className="gutenverse-example-fill-description">
+                {success
+                    ? __('You can tweak the values below to match your real setup.', 'gutenverse-form')
+                    : description}
+            </div>
+        </div>
+        <button
+            type="button"
+            className="gutenverse-example-fill-button"
+            onClick={onClick}
+        >
+            {label}
+        </button>
+    </div>
+);
+
+const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData, emailTemplates, refreshTemplates }) => {
     const {
         form_confirmation = {}
     } = settingValues;
+    const [exampleFilled, setExampleFilled] = useState(false);
 
     const updateValue = (id, value) => {
         updateSettingValues('form_confirmation', id, value);
+    };
+
+    const fillConfirmationExample = () => {
+        updateValue('email_input_name', 'input-email');
+        updateValue('user_email_form', __('johndoe@gmail.com', 'gutenverse-form'));
+        if (form_confirmation.user_email_subject_type === 'post_meta') {
+            updateValue('user_email_subject_meta_key', __('custom_email_subject', 'gutenverse-form'));
+        } else {
+            updateValue('user_email_subject', __('Thank you for contacting us', 'gutenverse-form'));
+        }
+        if (!form_confirmation.user_email_reply_to_type || form_confirmation.user_email_reply_to_type === 'static') {
+            updateValue('user_email_reply_to', __('johndoe@gmail.com', 'gutenverse-form'));
+        }
+        if (!form_confirmation.user_message_type || form_confirmation.user_message_type === 'static') {
+            updateValue('user_email_body', __('Hi {{name}}, thanks for your submission.', 'gutenverse-form'));
+        }
+        setExampleFilled(true);
     };
 
     return <div className="form-tab-body">
@@ -27,49 +74,114 @@ const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData
             updateValue={updateValue}
         />
         {form_confirmation.user_confirm && <>
-            <ControlCheckbox
-                id={'auto_select_email'}
-                title={__('Auto Select Email', 'gutenverse-form')}
-                description={__('This will automatically select emails inputted from email\'s fields.', 'gutenverse-form')}
-                value={form_confirmation.auto_select_email}
-                updateValue={updateValue}
+            <ExampleFillButton
+                onClick={fillConfirmationExample}
+                title={__('Want help filling this email?', 'gutenverse-form')}
+                description={__('Insert a sample confirmation setup so you can edit from a realistic starting point.', 'gutenverse-form')}
+                success={exampleFilled}
             />
-            {!form_confirmation.auto_select_email && <ControlText
+            <ControlText
                 id={'email_input_name'}
-                title={__('Use Input\'s Name', 'gutenverse-form')}
-                description={__('Only the selected input name will be sent email. (e.g : input-email).', 'gutenverse-form')}
+                title={__('Recipient Field ID', 'gutenverse-form')}
+                description={__('The specific input ID (name) to use as the recipient email address.', 'gutenverse-form')}
                 defaultValue={'input-email'}
                 value={form_confirmation.email_input_name}
                 updateValue={updateValue}
-            />}
-            <ControlText
-                id={'user_email_subject'}
-                title={__('Email\'s Subject', 'gutenverse-form')}
-                description={__('This will be your email\'s subject or title.', 'gutenverse-form')}
-                value={form_confirmation.user_email_subject}
+            />
+            <ControlSelect
+                id={'user_email_subject_type'}
+                title={__('Subject Type', 'gutenverse-form')}
+                description={__('Choose between static text or a meta action value.', 'gutenverse-form')}
+                value={form_confirmation.user_email_subject_type || 'static'}
+                options={[
+                    { label: __('Static Text', 'gutenverse-form'), value: 'static' },
+                    { label: __('Meta Action', 'gutenverse-form'), value: 'post_meta' },
+                ]}
                 updateValue={updateValue}
             />
+            {form_confirmation.user_email_subject_type === 'post_meta' ? (
+                <ControlText
+                    id={'user_email_subject_meta_key'}
+                    title={__('Meta Key', 'gutenverse-form')}
+                    description={__('The custom field name containing the subject.', 'gutenverse-form')}
+                    value={form_confirmation.user_email_subject_meta_key}
+                    updateValue={updateValue}
+                />
+            ) : (
+                <ControlText
+                    id={'user_email_subject'}
+                    title={__('Email Subject', 'gutenverse-form')}
+                    description={__('The subject line for the confirmation email.', 'gutenverse-form')}
+                    value={form_confirmation.user_email_subject}
+                    updateValue={updateValue}
+                />
+            )}
             <ControlText
                 id={'user_email_form'}
-                title={__('Email\'s Sender', 'gutenverse-form')}
-                description={__('Enter the sender email by which you want to send email to user. (Please make sure you use the same email in your SMTP setup).', 'gutenverse-form')}
+                title={__('Sender Email', 'gutenverse-form')}
+                description={__('The email address the confirmation is sent from. Must match your SMTP settings.', 'gutenverse-form')}
                 value={form_confirmation.user_email_form}
                 updateValue={updateValue}
             />
-            <ControlText
-                id={'user_email_reply_to'}
-                title={__('Email\'s Reply Target', 'gutenverse-form')}
-                description={__('Enter email where user can reply/ you want to get reply.', 'gutenverse-form')}
-                value={form_confirmation.user_email_reply_to}
+            <ControlSelect
+                id={'user_email_reply_to_type'}
+                title={__('Reply-To Type', 'gutenverse-form')}
+                description={__('Choose a fixed reply address or use the current post author with the site admin as fallback.', 'gutenverse-form')}
+                value={form_confirmation.user_email_reply_to_type || 'static'}
+                options={[
+                    { label: __('Static Email', 'gutenverse-form'), value: 'static' },
+                    { label: __('Post Author / Site Admin', 'gutenverse-form'), value: 'dynamic' },
+                ]}
                 updateValue={updateValue}
             />
-            <ControlTextarea
-                id={'user_email_body'}
-                title={__('Messages to User', 'gutenverse-form')}
-                description={__('Enter your messages to include it in email\'s body which will be send to user.', 'gutenverse-form')}
-                value={form_confirmation.user_email_body}
-                updateValue={updateValue}
-            />
+            {form_confirmation.user_email_reply_to_type === 'dynamic' ? (
+                <p className="gutenverse-form-description">
+                    {__('Replies to this confirmation email will go to the current post author when available. If the form is not submitted from a post, replies go to the site admin email.', 'gutenverse-form')}
+                </p>
+            ) : (
+                <ControlText
+                    id={'user_email_reply_to'}
+                    title={__('Reply-To Address', 'gutenverse-form')}
+                    description={__('The static email address where user replies will be sent.', 'gutenverse-form')}
+                    value={form_confirmation.user_email_reply_to}
+                    updateValue={updateValue}
+                />
+            )}
+            <div className="gutenverse-form-group">
+                <h4 className="gutenverse-form-group-title">{__('Email Content', 'gutenverse-form')}</h4>
+                <p className="gutenverse-form-group-description">{__('Use a quick text message or design a reusable email template.', 'gutenverse-form')}</p>
+                <ControlSelect
+                    id={'user_message_type'}
+                    title={__('Email Content Type', 'gutenverse-form')}
+                    description={__('Choose between a custom static message or an email template.', 'gutenverse-form')}
+                    value={form_confirmation.user_message_type || 'static'}
+                    options={[
+                        { label: __('Static Text', 'gutenverse-form'), value: 'static' },
+                        { label: __('Email Template', 'gutenverse-form'), value: 'template' },
+                    ]}
+                    updateValue={updateValue}
+                />
+                {(!form_confirmation.user_message_type || form_confirmation.user_message_type === 'static') && (
+                    <ControlTextarea
+                        id={'user_email_body'}
+                        title={__('Email Body', 'gutenverse-form')}
+                        description={__('The content of the confirmation email.', 'gutenverse-form')}
+                        value={form_confirmation.user_email_body}
+                        updateValue={updateValue}
+                    />
+                )}
+                {form_confirmation.user_message_type === 'template' && (
+                    <EmailTemplateManager
+                        templateId={form_confirmation.user_email_template}
+                        fieldName={'user_email_template'}
+                        updateValue={updateValue}
+                        emailTemplates={emailTemplates}
+                        onRefresh={refreshTemplates}
+                        formTitle={__('Default Confirmation Email', 'gutenverse-form')}
+                        formValues={form_confirmation}
+                    />
+                )}
+            </div>
         </>}
         <div className="actions">
             {saving ? <div className="gutenverse-button">

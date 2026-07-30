@@ -647,13 +647,15 @@ const createEmailTemplate = ({ fieldName, formTitle, starter = 'blank', inputFie
     });
 };
 
-const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplates, onRefresh, formTitle, clientId, formActionId, formValues }) => {
+export const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplates, onRefresh, formTitle, clientId, formActionId, formValues }) => {
     const [saving, setSaving] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [currentTemplateId, setCurrentTemplateId] = useState(templateId);
     const adminUrl = getAdminUrl();
-    const template = emailTemplates ? emailTemplates.find(t => String(t.value) === String(templateId)) : null;
+    const activeTemplateId = currentTemplateId ?? templateId;
+    const template = emailTemplates ? emailTemplates.find(t => String(t.value) === String(activeTemplateId)) : null;
     const templateTitle = template ? normalizeTemplateTitle(template.label) : __('(No Template Found)', 'gutenverse-form');
     const templateHtml = template?.html || '';
     const templateType = fieldName === 'user_email_template'
@@ -698,6 +700,10 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
         ]),
     ];
 
+    useEffect(() => {
+        setCurrentTemplateId(templateId);
+    }, [templateId]);
+
     const handleCreate = (starter = 'blank') => {
         setSaving(true);
         setMessage('');
@@ -710,6 +716,7 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
             formActionId,
         }).then(response => {
             if (response && response.id) {
+                setCurrentTemplateId(response.id);
                 updateValue(fieldName, response.id);
                 if (onRefresh) onRefresh();
                 setMessage(createInterpolateElement(
@@ -730,9 +737,10 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
         setMessage('');
         setError('');
         apiFetch({
-            path: `/wp/v2/gutenverse-email-tpl/${templateId}?force=true`,
+            path: `/wp/v2/gutenverse-email-tpl/${activeTemplateId}?force=true`,
             method: 'DELETE',
         }).then(() => {
+            setCurrentTemplateId('');
             updateValue(fieldName, '');
             if (onRefresh) onRefresh();
             setSaving(false);
@@ -746,11 +754,13 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
         });
     };
 
-    if (!templateId) {
+    if (!activeTemplateId || !template) {
         return (
             <div className="gutenverse-email-template-manager">
                 <InlineNotice type="warning email-template-notice">
-                    {__('Choose how to start this email template. You can begin with a blank canvas or a starter layout and customize it afterward.', 'gutenverse-form')}
+                    {!activeTemplateId || saving
+                        ? __('Choose how to start this email template. You can begin with a blank canvas or a starter layout and customize it afterward.', 'gutenverse-form')
+                        : __('The selected email template could not be found. Choose a new starter template to continue.', 'gutenverse-form')}
                 </InlineNotice>
                 <div className="email-template-starters">
                     {templateStarters.map(starter => (
@@ -774,7 +784,7 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
         );
     }
 
-    const editUrl = `${adminUrl}post.php?post=${templateId}&action=edit`;
+    const editUrl = `${adminUrl}post.php?post=${activeTemplateId}&action=edit`;
     const templateActions = (
         <div className="template-actions">
             <a
@@ -825,7 +835,7 @@ const EmailTemplateManager = ({ templateId, fieldName, updateValue, emailTemplat
                     </span>
                 </div>
                 <div className="template-card-meta">
-                    <span className="template-id">ID: {templateId}</span>
+                    <span className="template-id">ID: {activeTemplateId}</span>
                 </div>
             </div>
             <div className="template-preview-wrapper">
