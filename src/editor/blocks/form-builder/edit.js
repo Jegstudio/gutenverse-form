@@ -161,8 +161,7 @@ const TemplatePreview = ({ templateId, template = {} }) => {
     return <div className="template-preview-box" />;
 };
 
-const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, ownershipNotice, isPreviewContext = false }) => {
-    const [blankMode, setBlankMode] = useState(false);
+const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, ownershipNotice, isPreviewContext = false, blankMode, setBlankMode }) => {
     const [creatingForm, setCreatingForm] = useState(false);
     const [error, setError] = useState('');
     const [templateFilterVersion, setTemplateFilterVersion] = useState(0);
@@ -174,6 +173,7 @@ const FormPlaceholder = ({ blockProps, attributes, clientId, setAttributes, owne
     const adminUrl = window?.GutenverseConfig?.adminUrl || '/wp-admin/';
     const upgradeUrl = window?.GutenverseConfig?.upgradeProUrl || `${adminUrl}admin.php?page=gutenverse&path=license`;
     const licenseUrl = window?.GutenverseConfig?.updateLicensePage || `${adminUrl}admin.php?page=gutenverse&path=license`;
+
     useEffect(() => {
         const bindFormBuilderTemplate = signal.afterFilterSignal.add(() => {
             setTemplateFilterVersion(current => current + 1);
@@ -598,9 +598,11 @@ const FormBuilderBlock = compose(
     } = attributes;
 
     const elementRef = useRef();
+    const [blankMode, setBlankMode] = useState(false);
     const animationClass = useAnimationEditor(attributes);
     const displayClass = useDisplayEditor(attributes);
     const hasChildBlocks = getBlockOrder(clientId).length > 0;
+    const isSelectingTemplate = !hasChildBlocks && !blankMode;
     const isPreviewContext = isBlockPreviewContext(elementRef.current);
 
     const blockProps = useBlockProps({
@@ -619,6 +621,7 @@ const FormBuilderBlock = compose(
     });
 
     const Component = hasChildBlocks ? FormWrapper : FormPlaceholder;
+    const showFormActionInspector = !isSelectingTemplate;
     const ownershipNotice = useFormActionOwnership({
         attributes,
         clientId,
@@ -672,18 +675,29 @@ const FormBuilderBlock = compose(
                     },
                 ]}
             />
-            <div className="gutenverse-form-action-inspector">
-                <CreateForm
-                    attributes={attributes}
-                    clientId={clientId}
-                    setAttributes={props.setAttributes}
-                    compact
-                    showEntriesLink
-                />
-            </div>
+            {showFormActionInspector && (
+                <div className="gutenverse-form-action-inspector">
+                    <CreateForm
+                        attributes={attributes}
+                        clientId={clientId}
+                        setAttributes={props.setAttributes}
+                        compact
+                        showEntriesLink
+                    />
+                </div>
+            )}
         </InspectorControls>
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} panelState={panelState} setPanelIsClicked={setPanelIsClicked} />
-        <Component blockProps={blockProps} attributes={attributes} clientId={clientId} setAttributes={props.setAttributes} ownershipNotice={ownershipNotice} isPreviewContext={isPreviewContext} />
+        <Component
+            blockProps={blockProps}
+            attributes={attributes}
+            clientId={clientId}
+            setAttributes={props.setAttributes}
+            ownershipNotice={ownershipNotice}
+            isPreviewContext={isPreviewContext}
+            blankMode={blankMode}
+            setBlankMode={setBlankMode}
+        />
     </>;
 });
 
