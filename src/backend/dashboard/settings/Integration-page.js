@@ -238,7 +238,7 @@ const TabSetting = ({ integrations, setIntegrations, onSetup }) => {
     return (
         <div className="form-tab-body">
             <div className="integration-list">
-                <p><span><InfoIcon /></span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings. Please refresh the page after you finsh setting up the intergrations', 'gutenverse-form')}</p>
+                <p><span><InfoIcon /></span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings. Please refresh the page after you finish setting up the intergrations', 'gutenverse-form')}</p>
                 {services.map((service) => (
                     <IntegrationItem
                         key={service.id}
