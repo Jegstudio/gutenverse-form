@@ -587,7 +587,7 @@ class Api {
 	/**
 	 * Get submitted form builder integration source.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array $form_entry Form entry data.
 	 *
@@ -610,7 +610,7 @@ class Api {
 	/**
 	 * Normalize a form builder form reference.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param mixed $form_ref Form reference.
 	 *
@@ -631,7 +631,7 @@ class Api {
 	/**
 	 * Find a matching form builder block in parsed block data.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array  $blocks     Parsed blocks.
 	 * @param int    $form_id    Assigned Gutenverse form ID.
@@ -672,7 +672,7 @@ class Api {
 	/**
 	 * Get the saved form builder block used by this submission.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array $form_entry Form entry data.
 	 * @param int   $form_id    Form ID.
@@ -700,7 +700,7 @@ class Api {
 	/**
 	 * Map saved input blocks to submitted field types.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @return array
 	 */
@@ -726,7 +726,7 @@ class Api {
 	/**
 	 * Map saved input blocks to default input names.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @return array
 	 */
@@ -752,7 +752,7 @@ class Api {
 	/**
 	 * Merge registered block defaults into saved attributes.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param string $block_name Block name.
 	 * @param array  $attrs      Saved block attributes.
@@ -782,7 +782,7 @@ class Api {
 	/**
 	 * Normalize saved option values for schema allowlists.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array $options Saved option definitions.
 	 *
@@ -815,7 +815,7 @@ class Api {
 	/**
 	 * Get saved option values for a form field.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array  $attrs Field block attributes.
 	 * @param string $type  Field type.
@@ -846,7 +846,7 @@ class Api {
 	/**
 	 * Build a field schema item from saved block attributes.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param string $field_id   Field ID.
 	 * @param string $field_type Field type.
@@ -900,7 +900,7 @@ class Api {
 	/**
 	 * Build submitted field schema from saved form input blocks.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array $blocks           Parsed blocks.
 	 * @param array $schema           Field schema keyed by input name.
@@ -936,7 +936,7 @@ class Api {
 	/**
 	 * Get submitted field schema from saved form builder content.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array $form_entry Form entry data.
 	 * @param int   $form_id    Form ID.
@@ -983,7 +983,7 @@ class Api {
 	/**
 	 * Build a generic schema validation response.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param string $message Error message.
 	 *
@@ -1002,7 +1002,7 @@ class Api {
 	/**
 	 * Get submitted field value from the payload shape used by FormData.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array      $data      Submitted field data.
 	 * @param string|int $key       Submitted field index.
@@ -1035,7 +1035,7 @@ class Api {
 	/**
 	 * Get a nested value from submitted file params.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array $data File params.
 	 * @param array $path Nested path.
@@ -1057,7 +1057,7 @@ class Api {
 	/**
 	 * Check whether the request contains a submitted file for a field.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param object|null $request   Submit request.
 	 * @param string|int  $key       Submitted field index.
@@ -1089,7 +1089,7 @@ class Api {
 	/**
 	 * Normalize submitted scalar value.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param mixed $value Submitted value.
 	 *
@@ -1106,7 +1106,7 @@ class Api {
 	/**
 	 * Normalize submitted list value.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param mixed $value Submitted value.
 	 *
@@ -1143,7 +1143,7 @@ class Api {
 	/**
 	 * Check whether a submitted value is empty.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param mixed $value Submitted value.
 	 *
@@ -1168,7 +1168,7 @@ class Api {
 	/**
 	 * Validate one submitted field value against schema.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array      $schema_field Field schema.
 	 * @param mixed      $value        Submitted field value.
@@ -1288,7 +1288,7 @@ class Api {
 		/**
 		 * Filters schema validation result for a submitted field.
 		 *
-		 * @since 3.0.0-performance
+		 * @since 3.0.0
 		 *
 		 * @param WP_REST_Response|null $error        Validation error.
 		 * @param array                 $schema_field Field schema.
@@ -1314,7 +1314,7 @@ class Api {
 	/**
 	 * Decide whether a missing required field should fail validation.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array $schema_field Field schema.
 	 * @param array $form_entry   Form entry data.
@@ -1337,7 +1337,7 @@ class Api {
 	/**
 	 * Validate submitted field IDs, types, and values against saved form schema.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 *
 	 * @param array       $form_entry Form entry data.
 	 * @param int         $form_id    Form ID.
@@ -1427,7 +1427,7 @@ class Api {
 	/**
 	 * Send no-cache headers for public form endpoints.
 	 *
-	 * @since 3.0.0-performance
+	 * @since 3.0.0
 	 */
 	private function send_form_endpoint_no_cache_headers() {
 		if ( ! headers_sent() ) {
@@ -1522,7 +1522,7 @@ class Api {
 						/**
 						 * Filters submitted file field handling.
 						 *
-						 * @since 3.0.0-performance
+						 * @since 3.0.0
 						 *
 						 * @param array|null $file_result File handling result.
 						 * @param array      $data Submitted field data.
@@ -1903,9 +1903,9 @@ class Api {
 		}
 		$form_data = $form_data_check['data'];
 		if ( isset( $form_data ) ) {
-			$settings_data = get_option( 'gutenverse-settings', array() );
-			$post_id       = absint( $form_entry['postId'] ?? 0 );
-			$integration_source = $this->get_submission_integration_source( $form_entry );
+			$settings_data       = get_option( 'gutenverse-settings', array() );
+			$post_id             = absint( $form_entry['postId'] ?? 0 );
+			$integration_source  = $this->get_submission_integration_source( $form_entry );
 			$integration_context = array();
 
 			if ( isset( $integration_source['type'] ) && is_scalar( $integration_source['type'] ) ) {

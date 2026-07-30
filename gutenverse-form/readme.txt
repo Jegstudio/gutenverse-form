@@ -5,7 +5,7 @@ Tags: form, form builder, contact form, block form, booking form
 Requires at least: 5.9
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 3.0.0-performance
+Stable tag: 3.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -288,7 +288,7 @@ Terms: https://gutenverse.com/terms-and-conditions/
 
 == Changelog ==
 
-= 3.0.0-performance =
+= 3.0.0 =
 
 New and improved:
 * Added a new Form Dashboard with total entries, entries in the last 7 days, live locations, tracked forms, trend charts, and [PRO] premium insight panels for top forms, top entry sources, recent activity, and needs-attention signals.
