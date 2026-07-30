@@ -37,6 +37,13 @@ class Entries {
 	const FREE_ENTRY_LIMIT = 10;
 
 	/**
+	 * Entry ID allowed to receive the first generated title write during creation.
+	 *
+	 * @var int
+	 */
+	private static $entry_title_update_id = 0;
+
+	/**
 	 * Init constructor.
 	 */
 	public function __construct() {
@@ -373,7 +380,7 @@ class Entries {
 		foreach ( self::get_form_list() as $form ) {
 			$forms[] = array(
 				'id'    => (int) $form->ID,
-				'title' => get_the_title( $form ),
+				'title' => self::plain_post_title( $form ),
 			);
 		}
 
@@ -410,7 +417,7 @@ class Entries {
 
 			$sources[] = array(
 				'id'    => (int) $source_post->ID,
-				'title' => get_the_title( $source_post ),
+				'title' => self::plain_post_title( $source_post ),
 				'type'  => $type_object ? $type_object->labels->singular_name : $source_post->post_type,
 			);
 		}
@@ -581,6 +588,26 @@ class Entries {
 	}
 
 	/**
+	 * Get a post title as plain text without WordPress display entities.
+	 *
+	 * @param int|\WP_Post $post     Post ID or object.
+	 * @param string       $fallback Fallback title.
+	 *
+	 * @return string
+	 */
+	private static function plain_post_title( $post, $fallback = '' ) {
+		$post  = get_post( $post );
+		$title = $post ? $post->post_title : '';
+		$title = '' !== $title ? $title : $fallback;
+
+		return html_entity_decode(
+			wp_strip_all_tags( (string) $title ),
+			ENT_QUOTES | ENT_HTML5,
+			get_bloginfo( 'charset' )
+		);
+	}
+
+	/**
 	 * Prepare one entry for the React list.
 	 *
 	 * @param \WP_Post $post Entry post.
@@ -594,13 +621,13 @@ class Entries {
 
 		return array(
 			'id'              => (int) $post->ID,
-			'title'           => get_the_title( $post ),
+			'title'           => self::plain_post_title( $post ),
 			'date'            => get_the_date( '', $post ),
 			'dateGmt'         => get_gmt_from_date( $post->post_date ),
 			'formId'          => $form_id,
-			'formTitle'       => $form_id ? get_the_title( $form_id ) : __( 'No form', 'gutenverse-form' ),
+			'formTitle'       => $form_id ? self::plain_post_title( $form_id ) : __( 'No form', 'gutenverse-form' ),
 			'referralId'      => $ref_id,
-			'referralTitle'   => $ref_id ? get_the_title( $ref_id ) : __( 'No referral', 'gutenverse-form' ),
+			'referralTitle'   => $ref_id ? self::plain_post_title( $ref_id ) : __( 'No referral', 'gutenverse-form' ),
 			'referralUrl'     => $ref_id ? get_permalink( $ref_id ) : '',
 			'canViewDetail'   => $detail_access,
 			'detailUrl'       => $detail_access ? admin_url( 'post.php?post=' . (int) $post->ID . '&action=edit' ) : '',
@@ -744,9 +771,9 @@ class Entries {
 			$row      = array(
 				$post->ID,
 				get_the_date( '', $post ),
-				get_the_title( $post ),
-				$form_id ? get_the_title( $form_id ) : '',
-				$ref_id ? get_the_title( $ref_id ) : '',
+				self::plain_post_title( $post ),
+				$form_id ? self::plain_post_title( $form_id ) : '',
+				$ref_id ? self::plain_post_title( $ref_id ) : '',
 			);
 			$values   = isset( $prepared_entry_map[ $post->ID ] ) ? $prepared_entry_map[ $post->ID ] : array();
 
@@ -841,6 +868,10 @@ class Entries {
 		$post_id = isset( $postarr['ID'] ) ? absint( $postarr['ID'] ) : 0;
 
 		if ( ! $post_id ) {
+			return $data;
+		}
+
+		if ( $post_id === self::$entry_title_update_id ) {
 			return $data;
 		}
 
@@ -1090,7 +1121,9 @@ class Entries {
 				'post_title' => self::generate_entry_title( $result, $params ),
 			);
 
+			self::$entry_title_update_id = (int) $result;
 			$result = wp_update_post( $update_title );
+			self::$entry_title_update_id = 0;
 		}
 
 		return $result;
@@ -1106,7 +1139,7 @@ class Entries {
 	 */
 	private static function generate_entry_title( $entry_id, $params ) {
 		$form_id    = isset( $params['form-id'] ) ? absint( $params['form-id'] ) : 0;
-		$form_title = $form_id ? get_the_title( $form_id ) : '';
+		$form_title = $form_id ? self::plain_post_title( $form_id ) : '';
 		$form_title = $form_title ? $form_title : __( 'Form', 'gutenverse-form' );
 		$form_data  = $form_id ? get_post_meta( $form_id, 'form-data', true ) : array();
 		$form_data  = is_array( $form_data ) ? $form_data : array();
@@ -1138,7 +1171,13 @@ class Entries {
 				break;
 		}
 
-		$title = sanitize_text_field( wp_strip_all_tags( $title ) );
+		$title = sanitize_text_field(
+			html_entity_decode(
+				wp_strip_all_tags( $title ),
+				ENT_QUOTES | ENT_HTML5,
+				get_bloginfo( 'charset' )
+			)
+		);
 
 		if ( strlen( $title ) > 150 ) {
 			$title = wp_html_excerpt( $title, 150, '...' );
@@ -1579,7 +1618,7 @@ class Entries {
 			return esc_html__( 'No source', 'gutenverse-form' );
 		}
 
-		$source_title = get_the_title( $source_id );
+		$source_title = self::plain_post_title( $source_id );
 		$source_url   = get_permalink( $source_id );
 
 		if ( ! $source_title ) {
@@ -1605,7 +1644,7 @@ class Entries {
 	public function form_data_metabox( $post ) {
 		$form_id     = get_post_meta( $post->ID, 'form-id', true );
 		$source_id   = get_post_meta( $post->ID, 'post-id', true );
-		$form_title  = $form_id ? get_the_title( $form_id ) : '';
+		$form_title  = $form_id ? self::plain_post_title( $form_id ) : '';
 		$form_action = $form_title ? esc_html( $form_title ) : esc_html__( 'Not found', 'gutenverse-form' );
 
 		$result  = '<div class="gutenverse-entry-detail-list">';
