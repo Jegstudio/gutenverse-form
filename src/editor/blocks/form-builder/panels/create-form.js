@@ -25,7 +25,11 @@ export const CreateForm = (props) => {
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [values, setValues] = useState({
-        title: 'Form Action'
+        title: 'Form Action',
+        integrations: {
+            useDashboardSettings: false,
+            use_dashboard_settings: false,
+        },
     });
     const [saving, setSaving] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
@@ -180,6 +184,11 @@ export const CreateForm = (props) => {
         );
         setValues({
             title: 'Form Action',
+            integrations: {
+                useDashboardSettings: false,
+                use_dashboard_settings: false,
+                ...(data.integrations || {}),
+            },
             ...data
         });
     };
