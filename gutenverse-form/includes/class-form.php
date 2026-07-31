@@ -794,12 +794,19 @@ class Form {
 	 * @return array
 	 */
 	public static function get_form_dashboard_summary() {
-		$forms            = self::get_all_form_dashboard_data();
-		$forms_by_entries = wp_list_sort( $forms, 'total_entries', 'DESC' );
-		$forms_by_recent  = wp_list_sort( $forms, 'last_entry_timestamp', 'DESC' );
-		$forms_by_usage   = wp_list_sort( $forms, 'location_count', 'DESC' );
-		$recent_forms     = array_filter(
-			array_slice( $forms_by_recent, 0, 3 ),
+		$forms              = self::get_all_form_dashboard_data();
+		$forms_with_entries = array_filter(
+			$forms,
+			static function ( $form ) {
+				return ! empty( $form['total_entries'] );
+			}
+		);
+		$forms_by_entries   = wp_list_sort( $forms_with_entries, 'total_entries', 'DESC' );
+		$forms_by_recent    = wp_list_sort( $forms_with_entries, 'last_entry_timestamp', 'DESC' );
+		$forms_by_usage     = wp_list_sort( $forms, 'location_count', 'DESC' );
+		$summary_list_limit = 5;
+		$recent_forms       = array_filter(
+			$forms_by_recent,
 			static function ( $form ) {
 				return ! empty( $form['last_entry_timestamp'] );
 			}
@@ -838,10 +845,10 @@ class Form {
 				7  => self::get_entry_trend_chart_context( 7 ),
 				30 => self::get_entry_trend_chart_context( 30 ),
 			),
-			'needsAttention'  => self::get_forms_needing_attention( $forms, 3 ),
-			'unusedForms'     => self::get_unused_form_actions( $forms, 3 ),
-			'topSources'      => self::get_top_entry_sources( $forms, 3 ),
-			'recentForms'     => array_values( $recent_forms ),
+			'needsAttention'  => self::get_forms_needing_attention( $forms, $summary_list_limit ),
+			'unusedForms'     => self::get_unused_form_actions( $forms, $summary_list_limit ),
+			'topSources'      => self::get_top_entry_sources( $forms_with_entries, $summary_list_limit ),
+			'recentForms'     => array_slice( array_values( $recent_forms ), 0, $summary_list_limit ),
 		);
 	}
 
@@ -1033,8 +1040,9 @@ class Form {
 
 			foreach ( $form['top_sources'] as $source ) {
 				$source_id = isset( $source['id'] ) ? (int) $source['id'] : 0;
+				$count     = isset( $source['count'] ) ? (int) $source['count'] : 0;
 
-				if ( ! $source_id ) {
+				if ( ! $source_id || ! $count ) {
 					continue;
 				}
 

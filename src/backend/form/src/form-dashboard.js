@@ -103,14 +103,14 @@ const lockedDashboardPanels = [
         description: strongDescription(__('Unlock priority alerts for quiet forms, unused actions, and submission issues before hidden problems turn into missed conversions.', 'gutenverse-form')),
     },
     {
-        title: __('Top Entry Sources', 'gutenverse-form'),
-        insightTitle: __('Your best traffic may be hidden', 'gutenverse-form'),
-        description: strongDescription(__('Reveal which pages and sources are already sending submissions, so you do not waste effort on channels that are not converting.', 'gutenverse-form')),
-    },
-    {
         title: __('Top Forms', 'gutenverse-form'),
         insightTitle: __('Do not optimize the wrong form', 'gutenverse-form'),
         description: strongDescription(__('See which forms actually bring in opportunities, then double down on the forms that deserve your attention first.', 'gutenverse-form')),
+    },
+    {
+        title: __('Top Entry Sources', 'gutenverse-form'),
+        insightTitle: __('Your best traffic may be hidden', 'gutenverse-form'),
+        description: strongDescription(__('Reveal which pages and sources are already sending submissions, so you do not waste effort on channels that are not converting.', 'gutenverse-form')),
     },
     {
         title: __('Recent Activity', 'gutenverse-form'),
@@ -220,7 +220,7 @@ const FormDashboardSkeleton = () => (
                         <div className="dashboard-panel__title">
                             <SkeletonLine className="dashboard-skeleton-heading" />
                         </div>
-                        {[1, 2, 3].map(row => (
+                        {[1, 2, 3, 4, 5].map(row => (
                             <div className="dashboard-row dashboard-skeleton-row" key={row}>
                                 <div>
                                     <SkeletonLine className="dashboard-skeleton-row-title" />
