@@ -5262,6 +5262,10 @@ body[class*="_page_gutenverse-form-entries"] {
     }
 }
 
+.components-modal__screen-overlay:has(.components-modal__frame.gutenverse-form-builder-modal) {
+    z-index: 99999 !important;
+}
+
 .components-modal__frame.gutenverse-form-builder-modal {
     .components-modal__header {
         border-bottom: 1px solid #eee;
