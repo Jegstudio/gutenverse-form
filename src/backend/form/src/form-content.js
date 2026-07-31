@@ -929,7 +929,7 @@ const TabConfirmation = (props) => {
             updateValue('user_email_reply_to', __('johndoe@gmail.com', 'gutenverse-form'));
         }
         if (!values.user_message_type || values.user_message_type === 'static') {
-            updateValue('user_email_body', __('Hi {{name}}, thanks for your submission.', 'gutenverse-form'));
+            updateValue('user_email_body', __('Hi {{input-email}}, thanks for your submission.', 'gutenverse-form'));
         }
         setExampleFilled(true);
     };
