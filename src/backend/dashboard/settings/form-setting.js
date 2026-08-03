@@ -58,7 +58,7 @@ const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData
             updateValue('user_email_reply_to', __('johndoe@gmail.com', 'gutenverse-form'));
         }
         if (!form_confirmation.user_message_type || form_confirmation.user_message_type === 'static') {
-            updateValue('user_email_body', __('Hi {{name}}, thanks for your submission.', 'gutenverse-form'));
+            updateValue('user_email_body', __('Hi {{input-email}}, thanks for your submission.', 'gutenverse-form'));
         }
         setExampleFilled(true);
     };
