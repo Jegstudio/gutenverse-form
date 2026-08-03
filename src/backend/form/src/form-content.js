@@ -275,7 +275,10 @@ const TabGeneral = (props) => {
         </FormGroup>
 
         {extraSettings.length > 0 && (
-            <FormGroup title={__('Additional Settings', 'gutenverse-form')}>
+            <FormGroup
+                title={__('Additional Settings', 'gutenverse-form')}
+                description={__('Review extra form action settings added by available extensions or filters.', 'gutenverse-form')}
+            >
                 {extraSettings.map((el, index) => (
                     <div key={index}>{el.Component}</div>
                 ))}
@@ -958,6 +961,7 @@ const TabConfirmation = (props) => {
         </div>}
         <FormGroup
             title={__('Send Confirmation Email', 'gutenverse-form')}
+            description={__('Enable a form-specific confirmation email for users who submit this form.', 'gutenverse-form')}
         >
             <ControlCheckbox
                 id={'user_confirm'}
@@ -1151,6 +1155,7 @@ const TabNotification = (props) => {
         </div>}
         <FormGroup
             title={__('Send Admin Notification', 'gutenverse-form')}
+            description={__('Enable a form-specific notification email for site admins when this form is submitted.', 'gutenverse-form')}
         >
             <ControlCheckbox
                 id={'admin_confirm'}
