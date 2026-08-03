@@ -65,10 +65,42 @@ const normalizeMonth = value => {
     return '';
 };
 
+const isValidDateParts = (year, month, day) => {
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return (
+        date.getUTCFullYear() === year &&
+        date.getUTCMonth() === month - 1 &&
+        date.getUTCDate() === day
+    );
+};
+
+const normalizeExactDate = value => {
+    const trimmedValue = String(value || '').trim();
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) {
+        return '';
+    }
+
+    const [year, month, day] = trimmedValue.split('-').map(Number);
+
+    return isValidDateParts(year, month, day) ? trimmedValue : '';
+};
+
 const getInitialQuery = (capabilities) => {
     const params = new URLSearchParams(window.location.search);
     const requestedView = params.get('view');
-    const hasRequestedFilter = Boolean(params.get('form_id') || params.get('source_id') || params.get('month') || params.get('m') || params.get('search'));
+    const hasRequestedFilter = Boolean(
+        params.get('form_id') ||
+        params.get('source_id') ||
+        params.get('month') ||
+        params.get('m') ||
+        params.get('date_filter') ||
+        params.get('date_from') ||
+        params.get('date_to') ||
+        params.get('date') ||
+        params.get('search')
+    );
     const view = capabilities.viewAll && (requestedView !== 'recent' || hasRequestedFilter) ? 'all' : 'recent';
 
     return {
@@ -78,6 +110,9 @@ const getInitialQuery = (capabilities) => {
         formId: params.get('form_id') || '',
         sourceId: params.get('source_id') || '',
         month: normalizeMonth(params.get('month') || params.get('m') || ''),
+        dateFilter: params.get('date_filter') || '',
+        dateFrom: normalizeExactDate(params.get('date_from') || params.get('date') || ''),
+        dateTo: normalizeExactDate(params.get('date_to') || params.get('date') || ''),
         search: params.get('search') || '',
     };
 };
@@ -111,6 +146,18 @@ const buildPath = (config, query, capabilities) => {
 
         if (query.month) {
             params.set('month', query.month);
+        }
+
+        if (query.dateFilter) {
+            params.set('date_filter', query.dateFilter);
+        }
+
+        if (query.dateFrom) {
+            params.set('date_from', query.dateFrom);
+        }
+
+        if (query.dateTo) {
+            params.set('date_to', query.dateTo);
         }
 
         if (query.search) {

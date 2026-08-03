@@ -4352,6 +4352,8 @@ body[class*="_page_gutenverse-form-entries"] {
 
         select,
         input[type="month"],
+        .entry-list-date-input,
+        input[type="date"],
         input[type="search"] {
             background: #ffffff;
             border: 1px solid #d0d5dd;
@@ -4363,7 +4365,9 @@ body[class*="_page_gutenverse-form-entries"] {
         }
 
         select,
-        input[type="month"] {
+        input[type="month"],
+        input[type="date"],
+        .entry-list-date-input {
             min-width: 172px;
         }
 
@@ -5051,7 +5055,8 @@ body[class*="_page_gutenverse-form-entries"] {
             margin-left: 0;
 
             select,
-            input[type="month"] {
+            input[type="month"],
+            .entry-list-date-input {
                 min-width: 0;
                 width: 100%;
             }
@@ -5139,7 +5144,8 @@ body[class*="_page_gutenverse-form-entries"] {
         .entry-list-search input[type="search"],
         .entry-list-filter-controls,
         .entry-list-controls select,
-        .entry-list-controls input[type="month"] {
+        .entry-list-controls input[type="month"],
+        .entry-list-controls .entry-list-date-input {
             max-width: none;
             width: 100%;
         }

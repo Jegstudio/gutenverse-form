@@ -532,6 +532,10 @@ class Entries {
 			$form_id    = absint( $request->get_param( 'form_id' ) );
 			$source_id  = absint( $request->get_param( 'source_id' ) );
 			$month      = sanitize_text_field( (string) $request->get_param( 'month' ) );
+			$date_filter = sanitize_text_field( (string) $request->get_param( 'date_filter' ) );
+			$date       = sanitize_text_field( (string) $request->get_param( 'date' ) );
+			$date_from  = sanitize_text_field( (string) $request->get_param( 'date_from' ) );
+			$date_to    = sanitize_text_field( (string) $request->get_param( 'date_to' ) );
 			$search     = sanitize_text_field( (string) $request->get_param( 'search' ) );
 			$meta_query = array();
 
@@ -562,6 +566,51 @@ class Entries {
 			if ( preg_match( '/^\d{4}-\d{2}$/', $month ) ) {
 				$args['year']     = (int) substr( $month, 0, 4 );
 				$args['monthnum'] = (int) substr( $month, 5, 2 );
+			}
+
+			if ( 'last_7_days' === $date_filter ) {
+				unset( $args['year'], $args['monthnum'] );
+
+				$args['date_query'] = array(
+					array(
+						'after'     => '7 days ago',
+						'inclusive' => true,
+						'column'    => 'post_date',
+					),
+				);
+			}
+
+			if ( 'custom' === $date_filter || $date_from || $date_to || $date ) {
+				$range_start = preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_from ) ? $date_from : $date;
+				$range_end   = preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date_to ) ? $date_to : $date;
+
+				$parsed_start = $range_start ? date_create_immutable( $range_start, wp_timezone() ) : false;
+				$parsed_end   = $range_end ? date_create_immutable( $range_end, wp_timezone() ) : false;
+
+				if ( false !== $parsed_start || false !== $parsed_end ) {
+					unset( $args['year'], $args['monthnum'] );
+
+					if ( false !== $parsed_start && false !== $parsed_end && $parsed_start > $parsed_end ) {
+						$swap          = $parsed_start;
+						$parsed_start  = $parsed_end;
+						$parsed_end    = $swap;
+					}
+
+					$date_query = array(
+						'inclusive' => true,
+						'column'    => 'post_date',
+					);
+
+					if ( false !== $parsed_start ) {
+						$date_query['after'] = $parsed_start->setTime( 0, 0, 0 )->format( 'Y-m-d H:i:s' );
+					}
+
+					if ( false !== $parsed_end ) {
+						$date_query['before'] = $parsed_end->setTime( 23, 59, 59 )->format( 'Y-m-d H:i:s' );
+					}
+
+					$args['date_query'] = array( $date_query );
+				}
 			}
 
 			if ( '' !== $search ) {
