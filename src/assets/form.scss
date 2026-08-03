@@ -989,12 +989,6 @@
     padding: 0 25px 50px;
     height: 100%;
 
-    .general-settings {
-        > div {
-            padding-top: 30px !important;
-        }
-    }
-
     > .tab-navigation .tab-nav {
         border-radius: 8px;
         color: #475569;
@@ -1403,6 +1397,11 @@
 
 .gutenverse-inline-notice-content {
     display: block;
+
+    a {
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
 }
 
 .gutenverse-inline-notice.success {

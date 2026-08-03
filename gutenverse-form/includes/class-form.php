@@ -377,6 +377,7 @@ class Form {
 			$data = array(
 				'title' => get_the_title( $id ),
 			);
+
 			$data['is_data_empty'] = empty( $meta );
 
 			// Extract input names from post content.
@@ -490,9 +491,9 @@ class Form {
 				'update_post_term_cache' => false,
 			)
 		);
-		$data     = array();
-		$form_ids = wp_list_pluck( $forms, 'ID' );
+		$data  = array();
 
+		$form_ids      = wp_list_pluck( $forms, 'ID' );
 		$entry_stats   = self::get_entry_dashboard_stats( $form_ids );
 		$locations_map = self::get_form_locations_map( $form_ids );
 
@@ -1502,10 +1503,10 @@ class Form {
 				'user_browser'                   => '',
 				'form_success_notice'            => '',
 				'form_error_notice'              => '',
-				'entry_title_type'                => 'form',
-				'entry_title_static_text'         => '',
-				'entry_title_input_name'          => '',
-				'entry_title_custom_format'       => '',
+				'entry_title_type'               => 'form',
+				'entry_title_static_text'        => '',
+				'entry_title_input_name'         => '',
+				'entry_title_custom_format'      => '',
 				'user_confirm'                   => '',
 				'auto_select_email'              => '',
 				'email_input_name'               => '',
@@ -1632,10 +1633,10 @@ class Form {
 				'user_browser'                   => $params['user_browser'],
 				'form_success_notice'            => $params['form_success_notice'],
 				'form_error_notice'              => $params['form_error_notice'],
-				'entry_title_type'                => isset( $params['entry_title_type'] ) ? $params['entry_title_type'] : 'form',
-				'entry_title_static_text'         => isset( $params['entry_title_static_text'] ) ? $params['entry_title_static_text'] : '',
-				'entry_title_input_name'          => isset( $params['entry_title_input_name'] ) ? $params['entry_title_input_name'] : '',
-				'entry_title_custom_format'       => isset( $params['entry_title_custom_format'] ) ? $params['entry_title_custom_format'] : '',
+				'entry_title_type'               => isset( $params['entry_title_type'] ) ? $params['entry_title_type'] : 'form',
+				'entry_title_static_text'        => isset( $params['entry_title_static_text'] ) ? $params['entry_title_static_text'] : '',
+				'entry_title_input_name'         => isset( $params['entry_title_input_name'] ) ? $params['entry_title_input_name'] : '',
+				'entry_title_custom_format'      => isset( $params['entry_title_custom_format'] ) ? $params['entry_title_custom_format'] : '',
 				'user_confirm'                   => $params['user_confirm'],
 				'auto_select_email'              => $params['auto_select_email'],
 				'email_input_name'               => $params['email_input_name'],
