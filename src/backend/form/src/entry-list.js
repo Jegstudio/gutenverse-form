@@ -5,7 +5,7 @@ import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
 import { IconCloseSVG, IconEyeSVG, IconTrashSVG } from 'gutenverse-core/icons';
 import { signal } from 'gutenverse-core/editor-helper';
-import { ActivateLicenseButton, hasProLicenseData, strongDescription } from './helper';
+import { ActivateLicenseButton, hasActiveProLicense, hasProLicenseData, strongDescription } from './helper';
 
 const defaultCapabilities = {
     viewAll: false,
@@ -47,6 +47,7 @@ const hasExplicitRecentView = () => {
 };
 
 const hasAllEntryListCapabilities = (capabilities = {}) => (
+    ! hasActiveProLicense() &&
     capabilities.viewAll &&
     capabilities.export &&
     capabilities.filter &&

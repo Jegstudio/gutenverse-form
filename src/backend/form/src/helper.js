@@ -11,6 +11,44 @@ const ActivateLicenseKeyIcon = () => (
 
 export const hasProLicenseData = () => Boolean(window?.gprodata && Object.keys(window.gprodata).length);
 
+const inactiveLicenseStatuses = [
+    'cancelled',
+    'canceled',
+    'deactivated',
+    'disabled',
+    'expired',
+    'inactive',
+    'invalid',
+    'revoked',
+];
+
+const getNormalizedLicenseValue = (value) => `${value || ''}`.trim().toLowerCase();
+
+export const hasActiveProLicense = () => {
+    const licenseData = window?.gprodata;
+
+    if (!licenseData || !Object.keys(licenseData).length) {
+        return false;
+    }
+
+    const possibleStatuses = [
+        licenseData.status,
+        licenseData.license_status,
+        licenseData.licenseStatus,
+        licenseData.state,
+    ].map(getNormalizedLicenseValue).filter(Boolean);
+
+    if (possibleStatuses.some(status => inactiveLicenseStatuses.includes(status))) {
+        return false;
+    }
+
+    if (licenseData.expired === true || licenseData.isExpired === true) {
+        return false;
+    }
+
+    return true;
+};
+
 export const ActivateLicenseButton = () => (
     <a className="gutenverse-form-activate-license-button" href={`${getAdminUrl()}admin.php?page=gutenverse&path=license`} target="_blank" rel="noreferrer">
         <ActivateLicenseKeyIcon />
