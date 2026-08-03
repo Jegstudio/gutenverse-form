@@ -1403,6 +1403,7 @@ export const FormContent = (props) => {
     );
 
     const imageBase = window?.GutenverseConfig?.gutenverseFormVideoDir || '';
+    const formImageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
 
     const LockedIntegrationControl = ({isOpen}) => {
         const id = useInstanceId(LockedIntegrationControl, 'inspector-locked-integration-control');
@@ -1410,7 +1411,7 @@ export const FormContent = (props) => {
             <DefaultLayout
                 title={__( 'Stop Wasting Conversion Opportunities', 'gutenverse-form' )}
                 description={__( 'Sync submissions with WhatsApp, Mailchimp, Google Sheets, Telegram, Discord, and more to reduce manual work and act on leads faster.', 'gutenverse-form' )}
-                img={'integration-form.mp4'}
+                // img={'integration-form.mp4'}
                 isOpen={isOpen}
                 permaLink={__('#integration')}
                 assetDir={imageBase}
@@ -1425,7 +1426,14 @@ export const FormContent = (props) => {
                 <span>{__('Unlock Advanced Form Settings', 'gutenverse-form')}</span>
                 {__('Unlock captcha protection, file upload validation, and advanced form controls to secure submissions and customize how your forms behave.', 'gutenverse-form')}
             </p>
-            <CardPro num={true} />
+            <CardPro
+                num={true}
+                mockupLibrarySrc={`${formImageBase}/form-action-mockup-editor-settings.png`}
+                iconLottieSrc={`${formImageBase}/form-action-icon-protection-pro.png`}
+                iconNavSrc={`${formImageBase}/form-action-icon-file-upload-pro.png`}
+                numIconSrc={`${formImageBase}/form-action-icon-gutenverse-news-pro.png`}
+                text={__('This Feature Available at Professional or Higher Plan!', 'gutenverse-form')}
+            />
         </div>,
         {...props,
             tab: 'ProTabSetting',
