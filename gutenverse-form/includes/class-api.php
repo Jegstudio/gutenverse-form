@@ -1956,11 +1956,11 @@ class Api {
 				$confirmation_defaults = $this->get_dashboard_form_setting_defaults( $settings_data, 'confirmation' );
 				$notification_defaults = $this->get_dashboard_form_setting_defaults( $settings_data, 'notification' );
 
-				if ( ! empty( $confirmation_defaults ) && true !== ( $mail_form_data['overwrite_default_confirmation'] ?? false ) ) {
+				if ( ! empty( $confirmation_defaults ) && ! $this->is_form_setting_truthy( $mail_form_data['overwrite_default_confirmation'] ?? false ) ) {
 					$mail_form_data = $this->merge_form_setting_defaults( $mail_form_data, $confirmation_defaults );
 				}
 
-				if ( ! empty( $notification_defaults ) && true !== ( $mail_form_data['overwrite_default_notification'] ?? false ) ) {
+				if ( ! empty( $notification_defaults ) && ! $this->is_form_setting_truthy( $mail_form_data['overwrite_default_notification'] ?? false ) ) {
 					$mail_form_data = $this->merge_form_setting_defaults( $mail_form_data, $notification_defaults );
 				}
 				$mail_list = $this->mail_list( $params['entry-data'], $mail_form_data );
@@ -2070,6 +2070,29 @@ class Api {
 	}
 
 	/**
+	 * Normalize form setting checkbox values from REST/meta into a boolean.
+	 *
+	 * @param mixed $value Form setting value.
+	 *
+	 * @return bool
+	 */
+	private function is_form_setting_truthy( $value ) {
+		if ( is_bool( $value ) ) {
+			return $value;
+		}
+
+		if ( is_string( $value ) ) {
+			return in_array( strtolower( $value ), array( '1', 'true', 'yes', 'on' ), true );
+		}
+
+		if ( is_numeric( $value ) ) {
+			return 1 === (int) $value;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Determine whether a form action value is effectively unset and can fall back to dashboard defaults.
 	 *
 	 * @param array  $form_data Form action data.
@@ -2083,6 +2106,9 @@ class Api {
 		}
 
 		switch ( $key ) {
+			case 'user_confirm':
+			case 'admin_confirm':
+				return ! $this->is_form_setting_truthy( $form_data[ $key ] );
 			case 'user_email_subject_type':
 				return empty( $form_data['user_email_subject'] ) && empty( $form_data['user_email_subject_meta_key'] );
 			case 'user_email_reply_to_type':

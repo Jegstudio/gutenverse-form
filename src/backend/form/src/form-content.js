@@ -274,7 +274,10 @@ const TabGeneral = (props) => {
         </FormGroup>
 
         {extraSettings.length > 0 && (
-            <FormGroup title={__('Additional Settings', 'gutenverse-form')}>
+            <FormGroup
+                title={__('Additional Settings', 'gutenverse-form')}
+                description={__('Review extra form action settings added by available extensions or filters.', 'gutenverse-form')}
+            >
                 {extraSettings.map((el, index) => (
                     <div key={index}>{el.Component}</div>
                 ))}
@@ -290,6 +293,8 @@ const getAdminUrl = () => {
     }
     return '/wp-admin/';
 };
+
+const getDashboardFormSettingsUrl = () => `${getAdminUrl()}admin.php?page=gutenverse&path=settings&settings=form&sub-menu=form_settings`;
 
 const decodeEntities = (html) => {
     if (!html) return '';
@@ -933,16 +938,38 @@ const TabConfirmation = (props) => {
         setExampleFilled(true);
     };
 
+    const dashboardFormSettingsUrl = getDashboardFormSettingsUrl();
+
     return <div className="form-tab-body">
-        <div style={{ marginBottom: '20px' }}>
+        {!values.user_confirm && <div style={{ marginBottom: '20px' }}>
+            <InlineNotice type="info warning">
+                {createInterpolateElement(
+                    __('This form will use the default confirmation email settings from <dashboard>Dashboard Form Settings</dashboard>, even if Send Confirmation Email is disabled.', 'gutenverse-form'),
+                    {
+                        dashboard: <a href={dashboardFormSettingsUrl} target="_blank" rel="noopener noreferrer" />,
+                    }
+                )}
+            </InlineNotice>
+            <ControlCheckbox
+                id={'overwrite_default_confirmation'}
+                title={__('Do Not Use Default Settings', 'gutenverse-form')}
+                description={__('Ignore the default confirmation email settings saved in Dashboard Form Settings for this form.', 'gutenverse-form')}
+                value={values.overwrite_default_confirmation}
+                updateValue={updateValue}
+            />
+        </div>}
+        <FormGroup
+            title={__('Send Confirmation Email', 'gutenverse-form')}
+            description={__('Enable a form-specific confirmation email for users who submit this form.', 'gutenverse-form')}
+        >
             <ControlCheckbox
                 id={'user_confirm'}
-                title={__('Send Confirmation Email', 'gutenverse-form')}
+                title={__('Enable Confirmation Email', 'gutenverse-form')}
                 description={__('Send an automated confirmation email to the user upon submission.', 'gutenverse-form')}
                 value={values.user_confirm}
                 updateValue={updateValue}
             />
-        </div>
+        </FormGroup>
         {values.user_confirm && <>
             <ExampleFillButton
                 onClick={fillConfirmationExample}
@@ -1105,16 +1132,38 @@ const TabNotification = (props) => {
         setExampleFilled(true);
     };
 
+    const dashboardFormSettingsUrl = getDashboardFormSettingsUrl();
+
     return <div className="form-tab-body">
-        <div style={{ marginBottom: '20px' }}>
+        {!values.admin_confirm && <div style={{ marginBottom: '20px' }}>
+            <InlineNotice type="info warning">
+                {createInterpolateElement(
+                    __('This form will use the default admin notification settings from <dashboard>Dashboard Form Settings</dashboard>, even if Send Admin Notification is disabled.', 'gutenverse-form'),
+                    {
+                        dashboard: <a href={dashboardFormSettingsUrl} target="_blank" rel="noopener noreferrer" />,
+                    }
+                )}
+            </InlineNotice>
+            <ControlCheckbox
+                id={'overwrite_default_notification'}
+                title={__('Do Not Use Default Settings', 'gutenverse-form')}
+                description={__('Ignore the default admin notification settings saved in Dashboard Form Settings for this form.', 'gutenverse-form')}
+                value={values.overwrite_default_notification}
+                updateValue={updateValue}
+            />
+        </div>}
+        <FormGroup
+            title={__('Send Admin Notification', 'gutenverse-form')}
+            description={__('Enable a form-specific notification email for site admins when this form is submitted.', 'gutenverse-form')}
+        >
             <ControlCheckbox
                 id={'admin_confirm'}
-                title={__('Send Admin Notification', 'gutenverse-form')}
+                title={__('Enable Admin Notification', 'gutenverse-form')}
                 description={__('Send an email notification to the site administrator upon submission.', 'gutenverse-form')}
                 value={values.admin_confirm}
                 updateValue={updateValue}
             />
-        </div>
+        </FormGroup>
         {values.admin_confirm && <>
             <ExampleFillButton
                 onClick={fillNotificationExample}
