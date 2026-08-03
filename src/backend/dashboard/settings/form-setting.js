@@ -372,14 +372,19 @@ const FormSetting = (props) => {
 
     return <>
         <FormReCaptcha {...props} />
-        <div className="form-setting">
-            <div className={`${formActive === 'dashboard' ? 'active' : ''}`} onClick={() => setFormActive('dashboard')}>{__('Dashboard', 'gutenverse-form')}</div>
-            <div className={`${formActive === 'confirmation' ? 'active' : ''}`} onClick={() => setFormActive('confirmation')}>{__('User Confirmation', 'gutenverse-form')}</div>
-            <div className={`${formActive === 'notification' ? 'active' : ''}`} onClick={() => setFormActive('notification')}>{__('Admin Notification', 'gutenverse-form')}</div>
+        <div className="form-notification-settings">
+            <h2>{__('Form Notification Settings', 'gutenverse-form')}</h2>
+            <p>{__('This setting will be used for form on submit notifications', 'gutenverse-form')}</p>
+            <div className="form-setting">
+                <div className={`${formActive === 'dashboard' ? 'active' : ''}`} onClick={() => setFormActive('dashboard')}>{__('Dashboard', 'gutenverse-form')}</div>
+                <div className={`${formActive === 'confirmation' ? 'active' : ''}`} onClick={() => setFormActive('confirmation')}>{__('User Confirmation', 'gutenverse-form')}</div>
+                <div className={`${formActive === 'notification' ? 'active' : ''}`} onClick={() => setFormActive('notification')}>{__('Admin Notification', 'gutenverse-form')}</div>
+            </div>
+            <div className="form-setting-content">
+                {form}
+            </div>
         </div>
-        <div>
-            {form}
-        </div>
+
         {applyFilters('gutenverse.dashboard.form.body', additionalMenu, props)}
     </>;
 };
