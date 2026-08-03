@@ -1403,6 +1403,11 @@
 
 .gutenverse-inline-notice-content {
     display: block;
+
+    a {
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
 }
 
 .gutenverse-inline-notice.success {
