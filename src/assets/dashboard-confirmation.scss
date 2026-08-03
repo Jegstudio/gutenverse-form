@@ -1,11 +1,17 @@
 #gutenverse-dashboard .content-wrapper .dashboard-content {
-    .form-notification-settings{
+    .form-notification-settings {
         margin-bottom: 30px;
     }
+
     .gutenverse-form-group {
         margin-top: 30px;
         padding-bottom: 30px;
         border-bottom: 1px solid #e6e6ef;
+
+        > .control-wrapper:last-of-type {
+            border-bottom: none;
+            padding-bottom: 0px;
+        }
 
         .gutenverse-email-template-manager {
             margin-top: 10px;
