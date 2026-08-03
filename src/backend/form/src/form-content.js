@@ -8,8 +8,7 @@ import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { CardPro } from 'gutenverse-core/components';
 import { Modal } from '@wordpress/components';
-import { isEmpty, openFreemiusPopup, prefetchPricingPlanData } from 'gutenverse-core/helper';
-import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
+import { isEmpty } from 'gutenverse-core/helper';
 import { CardBannerPro, PopupInsufficientTier, DefaultLayout } from 'gutenverse-core/components';
 import { createGutenverseEmailDesign } from '../../email-template/data-model';
 import { useInstanceId } from '@wordpress/compose';
@@ -1422,7 +1421,11 @@ export const FormContent = (props) => {
     const ProTabSetting = applyFilters(
         'gutenverse-form.pro-form-action-settings',
         <div className="form-tab-body">
-            <CardPro />
+            <p className="form-setting-upgrade-title">
+                <span>{__('Unlock Advanced Form Settings', 'gutenverse-form')}</span>
+                {__('Unlock captcha protection, file upload validation, and advanced form controls to secure submissions and customize how your forms behave.', 'gutenverse-form')}
+            </p>
+            <CardPro num={true} />
         </div>,
         {...props,
             tab: 'ProTabSetting',
@@ -1449,18 +1452,6 @@ export const FormContent = (props) => {
                 id: id
             }
         }).then(() => { });
-    };
-
-    const openUpgradePopup = (event = null) => {
-        openFreemiusPopup(
-            event,
-            `${upgradeProUrl}?utm_source=gutenverse&utm_medium=formProNotice&utm_client_site=${clientUrl}&utm_client_theme=${activeTheme}`,
-            { medium: 'formProNotice' }
-        );
-    };
-
-    const prefetchUpgradePopup = () => {
-        prefetchPricingPlanData();
     };
 
     const proPopupProps = {
@@ -1517,9 +1508,7 @@ export const FormContent = (props) => {
                         <div
                             className={classes}
                             key={key}
-                            onClick={openUpgradePopup}
-                            onMouseEnter={prefetchUpgradePopup}
-                            onFocus={prefetchUpgradePopup}
+                            onClick={() => changeActive(key)}
                         >
                             {renderTabLabel(item)}
                         </div>,

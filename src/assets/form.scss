@@ -927,7 +927,7 @@
     display: flex;
     gap: 0;
     padding: 10px;
-    margin: 20px;
+    margin: 32px 20px;
     background: #fff;
     border: 1px solid #d9dce2;
     border-radius: 3px;
@@ -992,6 +992,82 @@
     .general-settings {
         > div {
             padding-top: 30px !important;
+        }
+    }
+
+    .form-setting-upgrade-title,
+    .gutenverse-control-locked-integration {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        text-align: center;
+        font-family: "Roboto", sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 150%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        margin: 0 auto 32px;
+        max-width: 490px;
+        color: #8181A5;
+        align-items: center;
+
+        > span,
+        h2.title {
+            color: black;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 22px;
+            text-align: center !important;
+        }
+    }
+
+    .guten-pro-themes-wrapper {
+        max-width: 460px;
+        margin: 0 auto;
+        border-radius: 10px;
+
+        .guten-card-pro-wrapper {
+            box-shadow: unset !important;
+            border: 1px solid #E3E4E6;
+            border-radius: inherit;
+
+            .guten-card-pro-image-wrappe {
+
+            }
+
+            .guten-card-pro-mockup-library {
+                margin-top: 40px;
+            }
+
+            .guten-card-pro-icon-num {
+                position: absolute;
+                width: 10%;
+                left: 45px;
+                top: 10px;
+            }
+            
+            .guten-card-pro-mockup-library {
+                width: 56%;
+            }
+
+            .guten-card-pro-icon-lottie {
+                left: 45px;
+                width: 12%;
+            }
+
+            .guten-card-pro-icon-nav {
+                right: 45px;
+                top: 35px;
+                width: 11%;
+            }
+
+            .guten-card-pro-3d-cube {
+                right: 0px;
+                transform: rotate(-4deg);
+                width: 47%;
+            }
         }
     }
 
