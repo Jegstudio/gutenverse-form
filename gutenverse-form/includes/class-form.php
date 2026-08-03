@@ -287,9 +287,16 @@ class Form {
 			wp_enqueue_script( 'gutenverse-form' );
 
 			wp_enqueue_style(
+				'gutenverse-roboto-font',
+				GUTENVERSE_FRAMEWORK_URL_PATH . '/assets/fonts/roboto/roboto.css',
+				array(),
+				GUTENVERSE_FRAMEWORK_VERSION
+			);
+
+			wp_enqueue_style(
 				'gutenverse-form',
 				GUTENVERSE_FORM_URL . '/assets/css/form.css',
-				null,
+				array( 'gutenverse-roboto-font' ),
 				GUTENVERSE_FORM_VERSION
 			);
 		}
