@@ -46,6 +46,26 @@ class Api {
 	}
 
 	/**
+	 * Check whether Gutenverse PRO is active.
+	 *
+	 * @return bool
+	 */
+	private function has_pro_plugin() {
+		return function_exists( 'gutenverse_pro_active' ) && gutenverse_pro_active();
+	}
+
+	/**
+	 * Check whether spam protection features that require PRO can run.
+	 *
+	 * @return bool
+	 */
+	private function can_use_pro_spam_protection() {
+		$has_license = $this->has_pro_plugin() && ! empty( get_option( 'gutenverse-license', '' ) );
+
+		return (bool) apply_filters( 'gutenverse_form_can_use_pro_spam_protection', $has_license );
+	}
+
+	/**
 	 * Blocks constructor.
 	 */
 	private function __construct() {
@@ -1929,13 +1949,14 @@ class Api {
 				'integrations' => $normalized_integrations,
 			);
 
-			$use_akismet = ! empty( $settings_data['form_settings']['form_spam_settings']['use_akismet'] )
+			$use_akismet = $this->can_use_pro_spam_protection() && (
+				! empty( $settings_data['form_settings']['form_spam_settings']['use_akismet'] )
 				|| ! empty( $settings_data['form_spam_settings']['use_akismet'] )
-				|| ! empty( $form_setting['use_akismet'] );
+				|| ! empty( $form_setting['use_akismet'] )
+			);
 
 			if ( $use_akismet ) {
 				$akismet_result = Akismet_Service::check_submission( $params, $form_entry, $request );
-				gutenverse_rlog($akismet_result);
 				if (
 					! empty( $akismet_result ) &&
 					is_array( $akismet_result ) &&
@@ -1957,7 +1978,7 @@ class Api {
 
 			do_action( 'gutenverse_form_after_validation_before_store', $params, $request );
 
-			$is_spam_submission = ! empty( $params['akismet']['is_spam'] );
+			$is_spam_submission = $use_akismet && ! empty( $params['akismet']['is_spam'] );
 
 			if ( $is_spam_submission ) {
 				$result = array(
