@@ -142,7 +142,7 @@ export const CreateForm = (props) => {
     const FormActionLoadingSkeleton = () => (
         <div className="gutenverse-form-action-modal-skeleton" aria-hidden="true">
             <div className="form-action-skeleton-tabs">
-                {[1, 2, 3, 4].map(item => (
+                {[1, 2, 3, 4, 5].map(item => (
                     <span key={item} />
                 ))}
             </div>
@@ -151,6 +151,12 @@ export const CreateForm = (props) => {
                 <span className="form-action-skeleton-copy" />
                 <span className="form-action-skeleton-control" />
                 <span className="form-action-skeleton-copy short" />
+            </div>
+            <div className="form-action-skeleton-section">
+                <span className="form-action-skeleton-heading" />
+                <span className="form-action-skeleton-copy" />
+                <span className="form-action-skeleton-row" />
+                <span className="form-action-skeleton-row" />
             </div>
             <div className="form-action-skeleton-section">
                 <span className="form-action-skeleton-heading" />
