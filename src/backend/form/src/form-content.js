@@ -1460,7 +1460,7 @@ export const FormContent = (props) => {
             <DefaultLayout
                 title={__( 'Stop Wasting Conversion Opportunities', 'gutenverse-form' )}
                 description={__( 'Sync submissions with WhatsApp, Mailchimp, Google Sheets, Telegram, Discord, and more to reduce manual work and act on leads faster.', 'gutenverse-form' )}
-                // img={'integration-form.mp4'}
+                img={'integration-form.mp4'}
                 isOpen={isOpen}
                 permaLink={__('#integration')}
                 assetDir={imageBase}
