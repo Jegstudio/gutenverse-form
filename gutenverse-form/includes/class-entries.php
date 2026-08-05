@@ -879,6 +879,11 @@ class Entries {
 			'gutenverse-browser-data'      => true,
 			'gutenverse-payment-data'      => true,
 		);
+		$advanced_boxes = array(
+			'gutenverse-entries-form'       => 'high',
+			'gutenverse-entries-data'       => 'default',
+			'gutenverse-entry-integrations' => 'default',
+		);
 
 		foreach ( $wp_meta_boxes[ self::POST_TYPE ] as $context => $priorities ) {
 			if ( ! is_array( $priorities ) ) {
@@ -893,6 +898,12 @@ class Entries {
 				foreach ( $boxes as $box_id => $box ) {
 					if ( ! isset( $allowed_boxes[ $box_id ] ) ) {
 						unset( $wp_meta_boxes[ self::POST_TYPE ][ $context ][ $priority ][ $box_id ] );
+						continue;
+					}
+
+					if ( isset( $advanced_boxes[ $box_id ] ) && ( 'advanced' !== $context || $advanced_boxes[ $box_id ] !== $priority ) ) {
+						unset( $wp_meta_boxes[ self::POST_TYPE ][ $context ][ $priority ][ $box_id ] );
+						$wp_meta_boxes[ self::POST_TYPE ]['advanced'][ $advanced_boxes[ $box_id ] ][ $box_id ] = $box;
 					}
 				}
 			}
@@ -1395,7 +1406,7 @@ class Entries {
 				array( $this, 'entry_data_metabox' ),
 				self::POST_TYPE,
 				'advanced',
-				'high'
+				'default'
 			);
 
 			// Integrations metabox.
@@ -1686,6 +1697,35 @@ class Entries {
 	}
 
 	/**
+	 * Get a custom source link label for an entry.
+	 *
+	 * @param mixed  $source_id Source post ID.
+	 * @param string $label     Link label.
+	 *
+	 * @return string
+	 */
+	private function entry_source_link_html_with_label( $source_id, $label ) {
+		$source_id = absint( $source_id );
+		$label     = trim( (string) $label );
+
+		if ( '' === $label ) {
+			return esc_html__( 'Not found', 'gutenverse-form' );
+		}
+
+		if ( ! $source_id ) {
+			return esc_html( $label );
+		}
+
+		$source_url = get_permalink( $source_id );
+
+		if ( ! $source_url ) {
+			return esc_html( $label );
+		}
+
+		return '<a href="' . esc_url( $source_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $label ) . '</a>';
+	}
+
+	/**
 	 * Add Entry metaboxes
 	 *
 	 * @param - $post post.
@@ -1694,12 +1734,11 @@ class Entries {
 		$form_id     = get_post_meta( $post->ID, 'form-id', true );
 		$source_id   = get_post_meta( $post->ID, 'post-id', true );
 		$form_title  = $form_id ? self::plain_post_title( $form_id ) : '';
-		$form_action = $form_title ? esc_html( $form_title ) : esc_html__( 'Not found', 'gutenverse-form' );
+		$form_action = $form_title ? $this->entry_source_link_html_with_label( $source_id, $form_title ) : esc_html__( 'Not found', 'gutenverse-form' );
 
 		$result  = '<div class="gutenverse-entry-detail-list">';
 		$result .= $this->entry_detail_item( esc_html__( 'Form ID', 'gutenverse-form' ), $form_id ? esc_html( $form_id ) : esc_html__( 'Form is not set', 'gutenverse-form' ) );
 		$result .= $this->entry_detail_item( esc_html__( 'Form Action', 'gutenverse-form' ), $form_action );
-		$result .= $this->entry_detail_item( esc_html__( 'Source', 'gutenverse-form' ), $this->entry_source_link_html( $source_id ) );
 		$result .= '</div>';
 
 		gutenverse_print_html( $result, 'post' );
@@ -1882,6 +1921,43 @@ class Entries {
 					);
 				}
 			}
+
+			function normalizeEntryMetaboxLayout() {
+				var $normalSortables = $('#normal-sortables');
+				var $advancedContainer = $('#postbox-container-2');
+				var $advancedSortables = $('#advanced-sortables');
+				var $formInfo = $('#gutenverse-entries-form');
+				var $entryInfo = $('#gutenverse-entries-data');
+				var $integrations = $('#gutenverse-entry-integrations');
+
+				if (!$advancedContainer.length || !$formInfo.length || !$entryInfo.length) {
+					return;
+				}
+
+				if (!$advancedSortables.length) {
+					$advancedSortables = $('<div/>', {
+						id: 'advanced-sortables',
+						class: 'meta-box-sortables ui-sortable'
+					}).appendTo($advancedContainer);
+				}
+
+				if ($normalSortables.length && !$advancedContainer.find('#post-body-content').length) {
+					var $postBodyContent = $('#post-body-content');
+
+					if ($postBodyContent.length) {
+						$advancedContainer.prepend($postBodyContent);
+					}
+				}
+
+				$advancedSortables.append($formInfo);
+				$advancedSortables.append($entryInfo);
+
+				if ($integrations.length) {
+					$advancedSortables.append($integrations);
+				}
+			}
+
+			normalizeEntryMetaboxLayout();
 
 			function showToast(message, type) {
 				var $toast = $('#gutenverse-form-toast');
