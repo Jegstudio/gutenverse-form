@@ -305,6 +305,9 @@ New and improved:
 * Improved Icon SVG loading.
 * Improved frontend speed performance.
 
+Bug fixes:
+* Move frontend styling into inline, not using file anymore
+
 = 2.8.0 =
 
 New and improved:
