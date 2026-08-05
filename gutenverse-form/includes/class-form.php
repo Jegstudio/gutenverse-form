@@ -287,9 +287,16 @@ class Form {
 			wp_enqueue_script( 'gutenverse-form' );
 
 			wp_enqueue_style(
+				'gutenverse-roboto-font',
+				GUTENVERSE_FRAMEWORK_URL_PATH . '/assets/fonts/roboto/roboto.css',
+				array(),
+				GUTENVERSE_FRAMEWORK_VERSION
+			);
+
+			wp_enqueue_style(
 				'gutenverse-form',
 				GUTENVERSE_FORM_URL . '/assets/css/form.css',
-				null,
+				array( 'gutenverse-roboto-font' ),
 				GUTENVERSE_FORM_VERSION
 			);
 		}
@@ -377,6 +384,7 @@ class Form {
 			$data = array(
 				'title' => get_the_title( $id ),
 			);
+
 			$data['is_data_empty'] = empty( $meta );
 
 			// Extract input names from post content.
@@ -490,9 +498,9 @@ class Form {
 				'update_post_term_cache' => false,
 			)
 		);
-		$data     = array();
-		$form_ids = wp_list_pluck( $forms, 'ID' );
+		$data  = array();
 
+		$form_ids      = wp_list_pluck( $forms, 'ID' );
 		$entry_stats   = self::get_entry_dashboard_stats( $form_ids );
 		$locations_map = self::get_form_locations_map( $form_ids );
 
@@ -794,12 +802,19 @@ class Form {
 	 * @return array
 	 */
 	public static function get_form_dashboard_summary() {
-		$forms            = self::get_all_form_dashboard_data();
-		$forms_by_entries = wp_list_sort( $forms, 'total_entries', 'DESC' );
-		$forms_by_recent  = wp_list_sort( $forms, 'last_entry_timestamp', 'DESC' );
-		$forms_by_usage   = wp_list_sort( $forms, 'location_count', 'DESC' );
-		$recent_forms     = array_filter(
-			array_slice( $forms_by_recent, 0, 3 ),
+		$forms              = self::get_all_form_dashboard_data();
+		$forms_with_entries = array_filter(
+			$forms,
+			static function ( $form ) {
+				return ! empty( $form['total_entries'] );
+			}
+		);
+		$forms_by_entries   = wp_list_sort( $forms_with_entries, 'total_entries', 'DESC' );
+		$forms_by_recent    = wp_list_sort( $forms_with_entries, 'last_entry_timestamp', 'DESC' );
+		$forms_by_usage     = wp_list_sort( $forms, 'location_count', 'DESC' );
+		$summary_list_limit = 5;
+		$recent_forms       = array_filter(
+			$forms_by_recent,
 			static function ( $form ) {
 				return ! empty( $form['last_entry_timestamp'] );
 			}
@@ -838,10 +853,10 @@ class Form {
 				7  => self::get_entry_trend_chart_context( 7 ),
 				30 => self::get_entry_trend_chart_context( 30 ),
 			),
-			'needsAttention'  => self::get_forms_needing_attention( $forms, 3 ),
-			'unusedForms'     => self::get_unused_form_actions( $forms, 3 ),
-			'topSources'      => self::get_top_entry_sources( $forms, 3 ),
-			'recentForms'     => array_values( $recent_forms ),
+			'needsAttention'  => self::get_forms_needing_attention( $forms, $summary_list_limit ),
+			'unusedForms'     => self::get_unused_form_actions( $forms, $summary_list_limit ),
+			'topSources'      => self::get_top_entry_sources( $forms_with_entries, $summary_list_limit ),
+			'recentForms'     => array_slice( array_values( $recent_forms ), 0, $summary_list_limit ),
 		);
 	}
 
@@ -1033,8 +1048,9 @@ class Form {
 
 			foreach ( $form['top_sources'] as $source ) {
 				$source_id = isset( $source['id'] ) ? (int) $source['id'] : 0;
+				$count     = isset( $source['count'] ) ? (int) $source['count'] : 0;
 
-				if ( ! $source_id ) {
+				if ( ! $source_id || ! $count ) {
 					continue;
 				}
 
@@ -1494,10 +1510,10 @@ class Form {
 				'user_browser'                   => '',
 				'form_success_notice'            => '',
 				'form_error_notice'              => '',
-				'entry_title_type'                => 'form',
-				'entry_title_static_text'         => '',
-				'entry_title_input_name'          => '',
-				'entry_title_custom_format'       => '',
+				'entry_title_type'               => 'form',
+				'entry_title_static_text'        => '',
+				'entry_title_input_name'         => '',
+				'entry_title_custom_format'      => '',
 				'user_confirm'                   => '',
 				'auto_select_email'              => '',
 				'email_input_name'               => '',
@@ -1624,10 +1640,10 @@ class Form {
 				'user_browser'                   => $params['user_browser'],
 				'form_success_notice'            => $params['form_success_notice'],
 				'form_error_notice'              => $params['form_error_notice'],
-				'entry_title_type'                => isset( $params['entry_title_type'] ) ? $params['entry_title_type'] : 'form',
-				'entry_title_static_text'         => isset( $params['entry_title_static_text'] ) ? $params['entry_title_static_text'] : '',
-				'entry_title_input_name'          => isset( $params['entry_title_input_name'] ) ? $params['entry_title_input_name'] : '',
-				'entry_title_custom_format'       => isset( $params['entry_title_custom_format'] ) ? $params['entry_title_custom_format'] : '',
+				'entry_title_type'               => isset( $params['entry_title_type'] ) ? $params['entry_title_type'] : 'form',
+				'entry_title_static_text'        => isset( $params['entry_title_static_text'] ) ? $params['entry_title_static_text'] : '',
+				'entry_title_input_name'         => isset( $params['entry_title_input_name'] ) ? $params['entry_title_input_name'] : '',
+				'entry_title_custom_format'      => isset( $params['entry_title_custom_format'] ) ? $params['entry_title_custom_format'] : '',
 				'user_confirm'                   => $params['user_confirm'],
 				'auto_select_email'              => $params['auto_select_email'],
 				'email_input_name'               => $params['email_input_name'],

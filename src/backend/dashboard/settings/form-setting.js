@@ -36,6 +36,14 @@ const ExampleFillButton = ({
     </div>
 );
 
+const FormGroup = ({ title, description, children, className = '' }) => (
+    <div className={`gutenverse-form-group ${className}`}>
+        {title && <h4 className="gutenverse-form-group-title">{title}</h4>}
+        {description && <p className="gutenverse-form-group-description">{description}</p>}
+        {children}
+    </div>
+);
+
 const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData, emailTemplates, refreshTemplates }) => {
     const {
         form_confirmation = {}
@@ -46,20 +54,31 @@ const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData
         updateSettingValues('form_confirmation', id, value);
     };
 
+    const updateValues = (nextValues) => {
+        updateSettingValues('form_confirmation', nextValues);
+    };
+
     const fillConfirmationExample = () => {
-        updateValue('email_input_name', 'input-email');
-        updateValue('user_email_form', __('johndoe@gmail.com', 'gutenverse-form'));
+        const nextValues = {
+            email_input_name: 'input-email',
+            user_email_form: __('johndoe@gmail.com', 'gutenverse-form'),
+        };
+
         if (form_confirmation.user_email_subject_type === 'post_meta') {
-            updateValue('user_email_subject_meta_key', __('custom_email_subject', 'gutenverse-form'));
+            nextValues.user_email_subject_meta_key = __('custom_email_subject', 'gutenverse-form');
         } else {
-            updateValue('user_email_subject', __('Thank you for contacting us', 'gutenverse-form'));
+            nextValues.user_email_subject = __('Thank you for contacting us', 'gutenverse-form');
         }
+
         if (!form_confirmation.user_email_reply_to_type || form_confirmation.user_email_reply_to_type === 'static') {
-            updateValue('user_email_reply_to', __('johndoe@gmail.com', 'gutenverse-form'));
+            nextValues.user_email_reply_to = __('johndoe@gmail.com', 'gutenverse-form');
         }
+
         if (!form_confirmation.user_message_type || form_confirmation.user_message_type === 'static') {
-            updateValue('user_email_body', __('Hi {{name}}, thanks for your submission.', 'gutenverse-form'));
+            nextValues.user_email_body = __('Hi {{input-email}}, thanks for your submission.', 'gutenverse-form');
         }
+
+        updateValues(nextValues);
         setExampleFilled(true);
     };
 
@@ -222,18 +241,68 @@ const FormDailySummary = ({ settingValues, updateSettingValues, saving, saveData
     </div>;
 };
 
-const FormNotification = ({ settingValues, updateSettingValues, saving, saveData }) => {
+const FormNotification = ({ settingValues, updateSettingValues, saving, saveData, emailTemplates, refreshTemplates }) => {
     const {
         form_notification = {}
     } = settingValues;
+    const [exampleFilled, setExampleFilled] = useState(false);
 
     const updateValue = (id, value) => {
         updateSettingValues('form_notification', id, value);
     };
 
+    const updateValues = (nextValues) => {
+        updateSettingValues('form_notification', nextValues);
+    };
+
+    const placeholderDescription = (original) => (
+        <>
+            {original}
+            <br />
+            <span className="gutenverse-placeholder-hint">
+                {__('Use {{site_title}}, {{form_title}}, {{entry_id}}, or field names from your form inputs.', 'gutenverse-form')}
+            </span>
+        </>
+    );
+
+    const fillNotificationExample = () => {
+        const nextValues = {
+            admin_email_from: __('johndoe@gmail.com', 'gutenverse-form'),
+        };
+
+        if (form_notification.admin_email_subject_type === 'post_meta') {
+            nextValues.admin_email_subject_meta_key = __('custom_email_subject', 'gutenverse-form');
+        } else {
+            nextValues.admin_email_subject = __('New form submission from {{site_title}}', 'gutenverse-form');
+        }
+
+        if (form_notification.admin_email_reply_to_type === 'dynamic') {
+            nextValues.admin_email_reply_to_dynamic = 'input-email';
+        } else {
+            nextValues.admin_email_reply_to = __('johndoe@gmail.com', 'gutenverse-form');
+        }
+
+        if (form_notification.admin_email_type === 'dynamic') {
+            if (form_notification.admin_email_source === 'post_meta') {
+                nextValues.admin_email_meta_key = __('assigned_email', 'gutenverse-form');
+            }
+        } else {
+            nextValues.admin_email_to = __('johndoe@gmail.com, janedoe@gmail.com', 'gutenverse-form');
+        }
+
+        if (form_notification.admin_message_type === 'dynamic') {
+            nextValues.admin_message_input_name = 'message';
+        } else if (!form_notification.admin_message_type || form_notification.admin_message_type === 'static') {
+            nextValues.admin_note = __('A new entry was submitted on {{site_title}}.', 'gutenverse-form');
+        }
+
+        updateValues(nextValues);
+        setExampleFilled(true);
+    };
+
     return <div className="form-tab-body">
         <h2>{__('Notification Mail to Admin (Default Setting)', 'gutenverse-form')}</h2>
-        <span>{__('This setting will be the default for "admin notification" when you create a new form.', 'gutenverse-form')}</span>
+        <span>{__('These values are used as fallback defaults for admin notifications when a form does not define its own notification setup.', 'gutenverse-form')}</span>
         <ControlCheckbox
             id={'admin_confirm'}
             title={__('Notification Mail to Admin', 'gutenverse-form')}
@@ -242,41 +311,176 @@ const FormNotification = ({ settingValues, updateSettingValues, saving, saveData
             updateValue={updateValue}
         />
         {form_notification.admin_confirm && <>
-            <ControlText
-                id={'admin_email_subject'}
-                title={__('Email Subject', 'gutenverse-form')}
-                description={__('This will be your email\'s subject or title.', 'gutenverse-form')}
-                value={form_notification.admin_email_subject}
-                updateValue={updateValue}
+            <ExampleFillButton
+                onClick={fillNotificationExample}
+                title={__('Need a notification example?', 'gutenverse-form')}
+                description={__('Insert sample notification values for recipients, subject, sender, and message content.', 'gutenverse-form')}
+                success={exampleFilled}
             />
-            <ControlText
-                id={'admin_email_to'}
-                title={__('Email\'s Recipient', 'gutenverse-form')}
-                description={__('Enter admin email where you want to send mail (For multiple email addresses please use "," as separator).', 'gutenverse-form')}
-                value={form_notification.admin_email_to}
-                updateValue={updateValue}
-            />
-            <ControlText
-                id={'admin_email_from'}
-                title={__('Email\'s Sender', 'gutenverse-form')}
-                description={__('Enter the sender email by which you want to send email to admin. (Please make sure you use the same email in your SMTP setup).', 'gutenverse-form')}
-                value={form_notification.admin_email_from}
-                updateValue={updateValue}
-            />
-            <ControlText
-                id={'admin_email_reply_to'}
-                title={__('Email\'s Reply Target', 'gutenverse-form')}
-                description={__('Enter email where admin can reply/ you want to get reply.', 'gutenverse-form')}
-                value={form_notification.admin_email_reply_to}
-                updateValue={updateValue}
-            />
-            <ControlTextarea
-                id={'admin_note'}
-                title={__('Messages to Admin', 'gutenverse-form')}
-                description={__('Enter your messages to include it in email\'s body which will be send to admin.', 'gutenverse-form')}
-                value={form_notification.admin_note}
-                updateValue={updateValue}
-            />
+            <FormGroup
+                title={__('Email Details', 'gutenverse-form')}
+                description={__('Set the subject, sender, and reply-to address for the default admin notification.', 'gutenverse-form')}
+            >
+                <ControlSelect
+                    id={'admin_email_subject_type'}
+                    title={__('Subject Type', 'gutenverse-form')}
+                    description={__('Choose between static text or a meta action value.', 'gutenverse-form')}
+                    value={form_notification.admin_email_subject_type || 'static'}
+                    options={[
+                        { label: __('Static Text', 'gutenverse-form'), value: 'static' },
+                        { label: __('Meta Action', 'gutenverse-form'), value: 'post_meta' },
+                    ]}
+                    updateValue={updateValue}
+                />
+                {form_notification.admin_email_subject_type === 'post_meta' ? (
+                    <ControlText
+                        id={'admin_email_subject_meta_key'}
+                        title={__('Meta Key', 'gutenverse-form')}
+                        description={__('The custom field name containing the subject.', 'gutenverse-form')}
+                        value={form_notification.admin_email_subject_meta_key}
+                        updateValue={updateValue}
+                    />
+                ) : (
+                    <ControlText
+                        id={'admin_email_subject'}
+                        title={__('Email Subject', 'gutenverse-form')}
+                        description={placeholderDescription(__('The subject line for the notification email.', 'gutenverse-form'))}
+                        value={form_notification.admin_email_subject}
+                        updateValue={updateValue}
+                    />
+                )}
+                <ControlText
+                    id={'admin_email_from'}
+                    title={__('Sender Email', 'gutenverse-form')}
+                    description={__('The email address the notification is sent from. Must match your SMTP settings.', 'gutenverse-form')}
+                    value={form_notification.admin_email_from}
+                    updateValue={updateValue}
+                />
+                <ControlSelect
+                    id={'admin_email_reply_to_type'}
+                    title={__('Reply-To Type', 'gutenverse-form')}
+                    description={__('Choose a fixed reply address or use a submitted field value.', 'gutenverse-form')}
+                    value={form_notification.admin_email_reply_to_type || 'static'}
+                    options={[
+                        { label: __('Static Email', 'gutenverse-form'), value: 'static' },
+                        { label: __('Dynamic Recipient', 'gutenverse-form'), value: 'dynamic' },
+                    ]}
+                    updateValue={updateValue}
+                />
+                {form_notification.admin_email_reply_to_type === 'dynamic' ? (
+                    <ControlText
+                        id={'admin_email_reply_to_dynamic'}
+                        title={__('Reply-To Field ID', 'gutenverse-form')}
+                        description={__('The form input ID to use as the reply-to email address when this default is applied.', 'gutenverse-form')}
+                        value={form_notification.admin_email_reply_to_dynamic}
+                        updateValue={updateValue}
+                    />
+                ) : (
+                    <ControlText
+                        id={'admin_email_reply_to'}
+                        title={__('Reply-To Address', 'gutenverse-form')}
+                        description={__('The static email address where admin replies will be sent.', 'gutenverse-form')}
+                        value={form_notification.admin_email_reply_to}
+                        updateValue={updateValue}
+                    />
+                )}
+            </FormGroup>
+
+            <FormGroup
+                title={__('Recipient Settings', 'gutenverse-form')}
+                description={__('Choose who receives the default admin notification when a form does not override it.', 'gutenverse-form')}
+            >
+                <ControlSelect
+                    id={'admin_email_type'}
+                    title={__('Recipient Type', 'gutenverse-form')}
+                    description={__('Choose between a static email address or a dynamic recipient based on post data.', 'gutenverse-form')}
+                    value={form_notification.admin_email_type || 'static'}
+                    options={[
+                        { label: __('Static Email', 'gutenverse-form'), value: 'static' },
+                        { label: __('Dynamic Recipient', 'gutenverse-form'), value: 'dynamic' },
+                    ]}
+                    updateValue={updateValue}
+                />
+                {form_notification.admin_email_type === 'dynamic' ? (
+                    <>
+                        <ControlSelect
+                            id={'admin_email_source'}
+                            title={__('Recipient Source', 'gutenverse-form')}
+                            description={__('Select the source to get the recipient email address.', 'gutenverse-form')}
+                            value={form_notification.admin_email_source || 'post_author'}
+                            options={[
+                                { label: __('Post Author', 'gutenverse-form'), value: 'post_author' },
+                                { label: __('Meta Action', 'gutenverse-form'), value: 'post_meta' },
+                            ]}
+                            updateValue={updateValue}
+                        />
+                        {form_notification.admin_email_source === 'post_meta' && (
+                            <ControlText
+                                id={'admin_email_meta_key'}
+                                title={__('Meta Key', 'gutenverse-form')}
+                                description={__('The custom field name containing the recipient\'s email address.', 'gutenverse-form')}
+                                value={form_notification.admin_email_meta_key}
+                                updateValue={updateValue}
+                            />
+                        )}
+                    </>
+                ) : (
+                    <ControlText
+                        id={'admin_email_to'}
+                        title={__('Recipient Email', 'gutenverse-form')}
+                        description={__('The email address(es) to receive notifications. Separate multiple emails with commas.', 'gutenverse-form')}
+                        value={form_notification.admin_email_to}
+                        updateValue={updateValue}
+                    />
+                )}
+            </FormGroup>
+
+            <FormGroup
+                title={__('Email Content', 'gutenverse-form')}
+                description={__('Use a static note, a submitted field, or a designed email template.', 'gutenverse-form')}
+            >
+                <ControlSelect
+                    id={'admin_message_type'}
+                    title={__('Email Content Type', 'gutenverse-form')}
+                    description={__('Choose between a custom static message, content from a form input, or an email template.', 'gutenverse-form')}
+                    value={form_notification.admin_message_type || 'static'}
+                    options={[
+                        { label: __('Static Text', 'gutenverse-form'), value: 'static' },
+                        { label: __('Form Input (Dynamic)', 'gutenverse-form'), value: 'dynamic' },
+                        { label: __('Email Template', 'gutenverse-form'), value: 'template' },
+                    ]}
+                    updateValue={updateValue}
+                />
+                {form_notification.admin_message_type === 'dynamic' && (
+                    <ControlText
+                        id={'admin_message_input_name'}
+                        title={__('Message Field ID', 'gutenverse-form')}
+                        description={__('The form input ID that contains the message body when this default is applied.', 'gutenverse-form')}
+                        value={form_notification.admin_message_input_name}
+                        updateValue={updateValue}
+                    />
+                )}
+                {(!form_notification.admin_message_type || form_notification.admin_message_type === 'static') && (
+                    <ControlTextarea
+                        id={'admin_note'}
+                        title={__('Email Body', 'gutenverse-form')}
+                        description={placeholderDescription(__('The content of the notification email. You can use field tags to include form data.', 'gutenverse-form'))}
+                        value={form_notification.admin_note}
+                        updateValue={updateValue}
+                    />
+                )}
+                {form_notification.admin_message_type === 'template' && (
+                    <EmailTemplateManager
+                        templateId={form_notification.admin_email_template}
+                        fieldName={'admin_email_template'}
+                        updateValue={updateValue}
+                        emailTemplates={emailTemplates}
+                        onRefresh={refreshTemplates}
+                        formTitle={__('Default Admin Notification', 'gutenverse-form')}
+                        formValues={form_notification}
+                    />
+                )}
+            </FormGroup>
         </>}
         <div className="actions">
             {saving ? <div className="gutenverse-button">
@@ -439,14 +643,19 @@ const FormSetting = (props) => {
     return <>
         <FormSpamProtection {...props} />
         <FormReCaptcha {...props} />
-        <div className="form-setting">
-            <div className={`${formActive === 'dashboard' ? 'active' : ''}`} onClick={() => setFormActive('dashboard')}>{__('Dashboard', 'gutenverse-form')}</div>
-            <div className={`${formActive === 'confirmation' ? 'active' : ''}`} onClick={() => setFormActive('confirmation')}>{__('User Confirmation', 'gutenverse-form')}</div>
-            <div className={`${formActive === 'notification' ? 'active' : ''}`} onClick={() => setFormActive('notification')}>{__('Admin Notification', 'gutenverse-form')}</div>
+        <div className="form-notification-settings">
+            <h2>{__('Form Notification Settings', 'gutenverse-form')}</h2>
+            <p>{__('This setting will be used for form on submit notifications', 'gutenverse-form')}</p>
+            <div className="form-setting">
+                <div className={`${formActive === 'dashboard' ? 'active' : ''}`} onClick={() => setFormActive('dashboard')}>{__('Dashboard', 'gutenverse-form')}</div>
+                <div className={`${formActive === 'confirmation' ? 'active' : ''}`} onClick={() => setFormActive('confirmation')}>{__('User Confirmation', 'gutenverse-form')}</div>
+                <div className={`${formActive === 'notification' ? 'active' : ''}`} onClick={() => setFormActive('notification')}>{__('Admin Notification', 'gutenverse-form')}</div>
+            </div>
+            <div className="form-setting-content">
+                {form}
+            </div>
         </div>
-        <div>
-            {form}
-        </div>
+
         {applyFilters('gutenverse.dashboard.form.body', additionalMenu, props)}
     </>;
 };

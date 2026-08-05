@@ -8,8 +8,7 @@ import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { CardPro } from 'gutenverse-core/components';
 import { Modal } from '@wordpress/components';
-import { isEmpty, openFreemiusPopup, prefetchPricingPlanData } from 'gutenverse-core/helper';
-import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
+import { isEmpty } from 'gutenverse-core/helper';
 import { CardBannerPro, PopupInsufficientTier, DefaultLayout } from 'gutenverse-core/components';
 import { createGutenverseEmailDesign } from '../../email-template/data-model';
 import { useInstanceId } from '@wordpress/compose';
@@ -275,7 +274,10 @@ const TabGeneral = (props) => {
         </FormGroup>
 
         {extraSettings.length > 0 && (
-            <FormGroup title={__('Additional Settings', 'gutenverse-form')}>
+            <FormGroup
+                title={__('Additional Settings', 'gutenverse-form')}
+                description={__('Review extra form action settings added by available extensions or filters.', 'gutenverse-form')}
+            >
                 {extraSettings.map((el, index) => (
                     <div key={index}>{el.Component}</div>
                 ))}
@@ -291,6 +293,8 @@ const getAdminUrl = () => {
     }
     return '/wp-admin/';
 };
+
+const getDashboardFormSettingsUrl = () => `${getAdminUrl()}admin.php?page=gutenverse&path=settings&settings=form&sub-menu=form_settings`;
 
 const decodeEntities = (html) => {
     if (!html) return '';
@@ -929,21 +933,43 @@ const TabConfirmation = (props) => {
             updateValue('user_email_reply_to', __('johndoe@gmail.com', 'gutenverse-form'));
         }
         if (!values.user_message_type || values.user_message_type === 'static') {
-            updateValue('user_email_body', __('Hi {{name}}, thanks for your submission.', 'gutenverse-form'));
+            updateValue('user_email_body', __('Hi {{input-email}}, thanks for your submission.', 'gutenverse-form'));
         }
         setExampleFilled(true);
     };
 
+    const dashboardFormSettingsUrl = getDashboardFormSettingsUrl();
+
     return <div className="form-tab-body">
-        <div style={{ marginBottom: '20px' }}>
+        {!values.user_confirm && <div style={{ marginBottom: '20px' }}>
+            <InlineNotice type="info warning">
+                {createInterpolateElement(
+                    __('This form will use the default confirmation email settings from <dashboard>Dashboard Form Settings</dashboard>, even if Send Confirmation Email is disabled.', 'gutenverse-form'),
+                    {
+                        dashboard: <a href={dashboardFormSettingsUrl} target="_blank" rel="noopener noreferrer" />,
+                    }
+                )}
+            </InlineNotice>
+            <ControlCheckbox
+                id={'overwrite_default_confirmation'}
+                title={__('Do Not Use Default Settings', 'gutenverse-form')}
+                description={__('Ignore the default confirmation email settings saved in Dashboard Form Settings for this form.', 'gutenverse-form')}
+                value={values.overwrite_default_confirmation}
+                updateValue={updateValue}
+            />
+        </div>}
+        <FormGroup
+            title={__('Send Confirmation Email', 'gutenverse-form')}
+            description={__('Enable a form-specific confirmation email for users who submit this form.', 'gutenverse-form')}
+        >
             <ControlCheckbox
                 id={'user_confirm'}
-                title={__('Send Confirmation Email', 'gutenverse-form')}
+                title={__('Enable Confirmation Email', 'gutenverse-form')}
                 description={__('Send an automated confirmation email to the user upon submission.', 'gutenverse-form')}
                 value={values.user_confirm}
                 updateValue={updateValue}
             />
-        </div>
+        </FormGroup>
         {values.user_confirm && <>
             <ExampleFillButton
                 onClick={fillConfirmationExample}
@@ -1106,16 +1132,38 @@ const TabNotification = (props) => {
         setExampleFilled(true);
     };
 
+    const dashboardFormSettingsUrl = getDashboardFormSettingsUrl();
+
     return <div className="form-tab-body">
-        <div style={{ marginBottom: '20px' }}>
+        {!values.admin_confirm && <div style={{ marginBottom: '20px' }}>
+            <InlineNotice type="info warning">
+                {createInterpolateElement(
+                    __('This form will use the default admin notification settings from <dashboard>Dashboard Form Settings</dashboard>, even if Send Admin Notification is disabled.', 'gutenverse-form'),
+                    {
+                        dashboard: <a href={dashboardFormSettingsUrl} target="_blank" rel="noopener noreferrer" />,
+                    }
+                )}
+            </InlineNotice>
+            <ControlCheckbox
+                id={'overwrite_default_notification'}
+                title={__('Do Not Use Default Settings', 'gutenverse-form')}
+                description={__('Ignore the default admin notification settings saved in Dashboard Form Settings for this form.', 'gutenverse-form')}
+                value={values.overwrite_default_notification}
+                updateValue={updateValue}
+            />
+        </div>}
+        <FormGroup
+            title={__('Send Admin Notification', 'gutenverse-form')}
+            description={__('Enable a form-specific notification email for site admins when this form is submitted.', 'gutenverse-form')}
+        >
             <ControlCheckbox
                 id={'admin_confirm'}
-                title={__('Send Admin Notification', 'gutenverse-form')}
+                title={__('Enable Admin Notification', 'gutenverse-form')}
                 description={__('Send an email notification to the site administrator upon submission.', 'gutenverse-form')}
                 value={values.admin_confirm}
                 updateValue={updateValue}
             />
-        </div>
+        </FormGroup>
         {values.admin_confirm && <>
             <ExampleFillButton
                 onClick={fillNotificationExample}
@@ -1404,25 +1452,23 @@ export const FormContent = (props) => {
     );
 
     const imageBase = window?.GutenverseConfig?.gutenverseFormVideoDir || '';
-
-    const LockedIntegrationControl = ({isOpen}) => {
-        const id = useInstanceId(LockedIntegrationControl, 'inspector-locked-integration-control');
-        return <div id={id} className={'gutenverse-control-wrapper gutenverse-control-locked-integration gutenverse-control-locked-layout'}>
-            <DefaultLayout
-                title={__( 'Stop Wasting Conversion Opportunities', 'gutenverse-form' )}
-                description={__( 'Sync submissions with WhatsApp, Mailchimp, Google Sheets, Telegram, Discord, and more to reduce manual work and act on leads faster.', 'gutenverse-form' )}
-                img={'integration-form.mp4'}
-                isOpen={isOpen}
-                permaLink={__('#integration')}
-                assetDir={imageBase}
-            />
-        </div>;
-    };
+    const formImageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
 
     const ProTabSetting = applyFilters(
         'gutenverse-form.pro-form-action-settings',
         <div className="form-tab-body">
-            <CardPro />
+            <p className="form-setting-upgrade-title">
+                <span>{__('Unlock Advanced Form Settings', 'gutenverse-form')}</span>
+                {__('Unlock captcha protection, file upload validation, and advanced form controls to secure submissions and customize how your forms behave.', 'gutenverse-form')}
+            </p>
+            <CardPro
+                num={true}
+                mockupLibrarySrc={`${formImageBase}/form-action-mockup-editor-settings.png`}
+                iconLottieSrc={`${formImageBase}/form-action-icon-protection-pro.png`}
+                iconNavSrc={`${formImageBase}/form-action-icon-file-upload-pro.png`}
+                numIconSrc={`${formImageBase}/form-action-icon-gutenverse-news-pro.png`}
+                text={__('This Feature Available at Professional or Higher Plan!', 'gutenverse-form')}
+            />
         </div>,
         {...props,
             tab: 'ProTabSetting',
@@ -1430,10 +1476,19 @@ export const FormContent = (props) => {
         }
     );
 
+    const { videoDir } = window['GutenverseConfig'];
+    const dir = imageBase ? imageBase : videoDir;
+
     const ProTabIntegration = applyFilters(
         'gutenverse-form.pro-form-action-settings',
         <div className="form-tab-body">
-            <LockedIntegrationControl isOpen={true} />
+            <p className="form-setting-upgrade-title">
+                <span>{__('Stop Wasting Conversion Opportunities', 'gutenverse-form')}</span>
+                {__('Sync submissions with WhatsApp, Mailchimp, Google Sheets, Telegram, Discord, and more to reduce manual work and act on leads faster.', 'gutenverse-form')}
+            </p>
+            <video className="integration-video" autoPlay={true} loop={true}>
+                <source src={`${dir}/integration-form.mp4`} type="video/mp4" />
+            </video>
         </div>,
         {...props,
             tab: 'ProTabIntegration',
@@ -1449,18 +1504,6 @@ export const FormContent = (props) => {
                 id: id
             }
         }).then(() => { });
-    };
-
-    const openUpgradePopup = (event = null) => {
-        openFreemiusPopup(
-            event,
-            `${upgradeProUrl}?utm_source=gutenverse&utm_medium=formProNotice&utm_client_site=${clientUrl}&utm_client_theme=${activeTheme}`,
-            { medium: 'formProNotice' }
-        );
-    };
-
-    const prefetchUpgradePopup = () => {
-        prefetchPricingPlanData();
     };
 
     const proPopupProps = {
@@ -1517,9 +1560,7 @@ export const FormContent = (props) => {
                         <div
                             className={classes}
                             key={key}
-                            onClick={openUpgradePopup}
-                            onMouseEnter={prefetchUpgradePopup}
-                            onFocus={prefetchUpgradePopup}
+                            onClick={() => changeActive(key)}
                         >
                             {renderTabLabel(item)}
                         </div>,

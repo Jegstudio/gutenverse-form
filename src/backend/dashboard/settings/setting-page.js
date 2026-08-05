@@ -26,11 +26,18 @@ export const SettingPage = (props) => {
     }, []);
 
     const updateformSettings = (setting, id, value) => {
+        const currentSetting = form_settings[setting] || {};
+        const nextValue = typeof id === 'object' && id !== null && value === undefined
+            ? {
+                ...currentSetting,
+                ...id,
+            }
+            : {
+                ...currentSetting,
+                [id]: value
+            };
 
-        updateSettingValues('form_settings', [setting], {
-            ...form_settings[setting],
-            [id]: value
-        });
+        updateSettingValues('form_settings', [setting], nextValue);
     };
 
     let content = '';

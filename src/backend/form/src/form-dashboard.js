@@ -220,7 +220,7 @@ const FormDashboardSkeleton = () => (
                         <div className="dashboard-panel__title">
                             <SkeletonLine className="dashboard-skeleton-heading" />
                         </div>
-                        {[1, 2, 3].map(row => (
+                        {[1, 2, 3, 4, 5].map(row => (
                             <div className="dashboard-row dashboard-skeleton-row" key={row}>
                                 <div>
                                     <SkeletonLine className="dashboard-skeleton-row-title" />
