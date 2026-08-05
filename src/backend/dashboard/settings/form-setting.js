@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { ControlText, ControlTextarea, ControlCheckbox, ControlSelect } from 'gutenverse-core/backend';
 import { applyFilters } from '@wordpress/hooks';
 import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
@@ -552,6 +552,72 @@ const FormReCaptcha = ({ settingValues, updateSettingValues, saving, saveData })
     </div>;
 };
 
+const FormSpamProtection = ({ settingValues, updateSettingValues, saving, saveData }) => {
+    const {
+        form_spam_settings = {}
+    } = settingValues;
+    const emptyLicense = applyFilters('gutenverse.panel.tab.pro.content', true);
+    const isLocked = emptyLicense;
+
+    useEffect(() => {
+        if (isLocked && form_spam_settings.use_akismet) {
+            updateSettingValues('form_spam_settings', 'use_akismet', false);
+        }
+    }, [isLocked, form_spam_settings.use_akismet, updateSettingValues]);
+
+    const updateValue = (id, value) => {
+        if (isLocked) {
+            return;
+        }
+        updateSettingValues('form_spam_settings', id, value);
+    };
+
+    const openUpgradePopup = (event = null) => {
+        openFreemiusPopup(
+            event,
+            `${upgradeProUrl}?utm_source=gutenverse&utm_medium=formSpamSetting&utm_client_site=${clientUrl}&utm_client_theme=${activeTheme}`,
+            { medium: 'formSpamSetting' }
+        );
+    };
+
+    return <div className="form-tab-body">
+        <h2>{__('Form Spam Protection', 'gutenverse-form')}</h2>
+        <span>{__('Choose how Gutenverse Form should use available anti-spam services during submission.', 'gutenverse-form')}</span>
+        <div
+            className={`form-captcha-field${isLocked ? ' is-locked' : ''}`}
+            onMouseEnter={isLocked ? prefetchPricingPlanData : undefined}
+            onFocus={isLocked ? prefetchPricingPlanData : undefined}
+        >
+            <ControlCheckbox
+                id={'use_akismet'}
+                title={<span className="form-captcha-title">
+                    <span>{__('Use Akismet Anti-Spam', 'gutenverse-form')}</span>
+                    {isLocked && <span className="pro-label">{__('PRO', 'gutenverse-form')}</span>}
+                </span>}
+                description={isLocked ? '' : __('When enabled, submissions will be checked with the Akismet plugin before emails and integrations are triggered.', 'gutenverse-form')}
+                value={isLocked ? false : form_spam_settings.use_akismet}
+                updateValue={updateValue}
+                disabled={isLocked}
+            />
+            {isLocked && (
+                <button
+                    type="button"
+                    className="form-captcha-lock-overlay"
+                    onClick={openUpgradePopup}
+                    aria-label={__('Upgrade to Pro to unlock Akismet Anti-Spam', 'gutenverse-form')}
+                />
+            )}
+        </div>
+        <div className="actions">
+            {saving ? <div className="gutenverse-button">
+                {__('Saving...', 'gutenverse-form')}
+            </div> : <div className={`gutenverse-button${isLocked ? ' disabled' : ''}`} onClick={() => !isLocked && saveData(formSettingKeys)}>
+                {__('Save Changes', 'gutenverse-form')}
+            </div>}
+        </div>
+    </div>;
+};
+
 const FormSetting = (props) => {
     const [formActive, setFormActive] = useState('dashboard');
 
@@ -575,6 +641,7 @@ const FormSetting = (props) => {
     const additionalMenu = [];
 
     return <>
+        <FormSpamProtection {...props} />
         <FormReCaptcha {...props} />
         <div className="form-notification-settings">
             <h2>{__('Form Notification Settings', 'gutenverse-form')}</h2>

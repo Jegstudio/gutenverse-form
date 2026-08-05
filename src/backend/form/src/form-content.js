@@ -1454,20 +1454,6 @@ export const FormContent = (props) => {
     const imageBase = window?.GutenverseConfig?.gutenverseFormVideoDir || '';
     const formImageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
 
-    const LockedIntegrationControl = ({isOpen}) => {
-        const id = useInstanceId(LockedIntegrationControl, 'inspector-locked-integration-control');
-        return <div id={id} className={'gutenverse-control-wrapper gutenverse-control-locked-integration gutenverse-control-locked-layout'}>
-            <DefaultLayout
-                title={__( 'Stop Wasting Conversion Opportunities', 'gutenverse-form' )}
-                description={__( 'Sync submissions with WhatsApp, Mailchimp, Google Sheets, Telegram, Discord, and more to reduce manual work and act on leads faster.', 'gutenverse-form' )}
-                img={'integration-form.mp4'}
-                isOpen={isOpen}
-                permaLink={__('#integration')}
-                assetDir={imageBase}
-            />
-        </div>;
-    };
-
     const ProTabSetting = applyFilters(
         'gutenverse-form.pro-form-action-settings',
         <div className="form-tab-body">
@@ -1490,10 +1476,19 @@ export const FormContent = (props) => {
         }
     );
 
+    const { videoDir } = window['GutenverseConfig'];
+    const dir = imageBase ? imageBase : videoDir;
+
     const ProTabIntegration = applyFilters(
         'gutenverse-form.pro-form-action-settings',
         <div className="form-tab-body">
-            <LockedIntegrationControl isOpen={true} />
+            <p className="form-setting-upgrade-title">
+                <span>{__('Stop Wasting Conversion Opportunities', 'gutenverse-form')}</span>
+                {__('Sync submissions with WhatsApp, Mailchimp, Google Sheets, Telegram, Discord, and more to reduce manual work and act on leads faster.', 'gutenverse-form')}
+            </p>
+            <video className="integration-video" autoPlay={true} loop={true}>
+                <source src={`${dir}/integration-form.mp4`} type="video/mp4" />
+            </video>
         </div>,
         {...props,
             tab: 'ProTabIntegration',

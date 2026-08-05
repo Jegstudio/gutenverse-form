@@ -1447,8 +1447,16 @@ class Entries {
 	 * @param - $post post.
 	 */
 	public function entry_data_metabox( $post ) {
-		$entry  = get_post_meta( $post->ID, 'entry-data', true );
-		$result = '<div class="gutenverse-entry-detail-list">';
+		$entry          = get_post_meta( $post->ID, 'entry-data', true );
+		$akismet_result = get_post_meta( $post->ID, 'akismet', true );
+		$result         = '<div class="gutenverse-entry-detail-list">';
+
+		if ( is_array( $akismet_result ) && ! empty( $akismet_result['status'] ) ) {
+			$result .= $this->entry_detail_item(
+				esc_html__( 'Spam Status', 'gutenverse-form' ),
+				$this->entry_spam_status_html( $akismet_result )
+			);
+		}
 
 		if ( is_array( $entry ) ) {
 			foreach ( $entry as $item ) {
@@ -1585,6 +1593,47 @@ class Entries {
 		$meta_html = $meta ? '<span class="entry-title-meta">' . esc_html( $meta ) . '</span>' : '';
 
 		return '<div class="gutenverse-entry-detail-item"><div class="entry-title"><span>' . esc_html( $label ) . '</span>' . $meta_html . '</div><div class="entry-data">' . $value . '</div></div>';
+	}
+
+	/**
+	 * Render a concise spam status block for the entry detail screen.
+	 *
+	 * @param array $akismet_result Saved Akismet metadata.
+	 *
+	 * @return string
+	 */
+	private function entry_spam_status_html( $akismet_result ) {
+		$status   = isset( $akismet_result['status'] ) ? sanitize_key( (string) $akismet_result['status'] ) : 'unknown';
+		$provider = isset( $akismet_result['provider'] ) ? sanitize_text_field( (string) $akismet_result['provider'] ) : 'akismet';
+		$message  = isset( $akismet_result['message'] ) ? sanitize_text_field( (string) $akismet_result['message'] ) : '';
+		$checked  = isset( $akismet_result['checked_at'] ) ? sanitize_text_field( (string) $akismet_result['checked_at'] ) : '';
+		$pro_tip  = isset( $akismet_result['pro_tip'] ) ? sanitize_text_field( (string) $akismet_result['pro_tip'] ) : '';
+		$lines    = array();
+
+		$labels = array(
+			'ham'         => esc_html__( 'Not spam', 'gutenverse-form' ),
+			'spam'        => esc_html__( 'Spam', 'gutenverse-form' ),
+			'unknown'     => esc_html__( 'Unknown', 'gutenverse-form' ),
+			'unavailable' => esc_html__( 'Unavailable', 'gutenverse-form' ),
+			'disabled'    => esc_html__( 'Disabled', 'gutenverse-form' ),
+		);
+
+		$lines[] = '<strong>' . esc_html( isset( $labels[ $status ] ) ? $labels[ $status ] : ucfirst( $status ) ) . '</strong>';
+		$lines[] = esc_html( sprintf( __( 'Provider: %s', 'gutenverse-form' ), $provider ) );
+
+		if ( $message ) {
+			$lines[] = esc_html( $message );
+		}
+
+		if ( $pro_tip ) {
+			$lines[] = esc_html( sprintf( __( 'Akismet hint: %s', 'gutenverse-form' ), $pro_tip ) );
+		}
+
+		if ( $checked ) {
+			$lines[] = esc_html( sprintf( __( 'Checked: %s', 'gutenverse-form' ), $checked ) );
+		}
+
+		return implode( '<br>', $lines );
 	}
 
 	/**
