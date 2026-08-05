@@ -446,7 +446,7 @@ const createEmailStarterDesign = mjml => createGutenverseEmailDesign({
     ],
 });
 
-const withEmailStarterDesign = starterContent => {
+const withEmailStarterDesign = (starterContent = {}) => {
     const mjml = starterContent.mjml || BLANK_EMAIL_TEMPLATE_MJML;
 
     return {
@@ -1364,7 +1364,7 @@ const autoGenerateTags = ({ clientId, values, updateValue }) => {
 
 export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
-    const [hideFormNotice, setHideFormNotice] = !isEmpty(window['GutenverseConfig']) ? useState(window['GutenverseConfig']['hideFormNotice']) : useState(false);
+    const [hideFormNotice, setHideFormNotice] = useState(window?.GutenverseConfig?.hideFormNotice || false);
     const [popupInsufficientTier, setPopupInsufficientTier] = useState(false);
     const [insufficientTierDesc, setInsufficientTierDesc] = useState('');
     const emptyLicense = applyFilters('gutenverse.panel.tab.pro.content', true);
@@ -1476,7 +1476,7 @@ export const FormContent = (props) => {
         }
     );
 
-    const { videoDir } = window['GutenverseConfig'];
+    const videoDir = window?.GutenverseConfig?.videoDir || '';
     const dir = imageBase ? imageBase : videoDir;
 
     const ProTabIntegration = applyFilters(

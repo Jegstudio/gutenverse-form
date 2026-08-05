@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
 const getAssetURL = (fileName) => {
-    const { gutenverseFormAssetURL: assetURL } = window['GutenverseDashboard'];
+    const assetURL = window?.GutenverseDashboard?.gutenverseFormAssetURL || window?.GutenverseConfig?.gutenverseFormAssetURL || '';
 
     return `${assetURL}/img/${fileName}`;
 };

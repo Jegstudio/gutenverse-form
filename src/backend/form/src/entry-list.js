@@ -388,8 +388,10 @@ const EntryList = () => {
 
         apiFetch({ path: buildPath(config, query, capabilities) })
             .then(response => {
-                setData(response);
-                setCapabilities(normalizeCapabilities(response.capabilities));
+                const nextData = response && typeof response === 'object' ? response : {};
+
+                setData(nextData);
+                setCapabilities(normalizeCapabilities(nextData.capabilities));
                 setLoading(false);
             })
             .catch(error => {
@@ -452,9 +454,10 @@ const EntryList = () => {
         };
     }, []);
 
-    const entries = data?.entries || [];
+    const entries = Array.isArray(data?.entries) ? data.entries : [];
     const limit = data?.limit || config.limit || 10;
-    const selectedForm = (data?.forms || []).find(form => String(form.id) === String(query.formId));
+    const forms = Array.isArray(data?.forms) ? data.forms : [];
+    const selectedForm = forms.find(form => String(form.id) === String(query.formId));
     const title = query.formId && selectedForm?.title
         ? sprintf(__('Entries from %s', 'gutenverse-form'), selectedForm.title)
         : __('Entries from All Forms', 'gutenverse-form');
