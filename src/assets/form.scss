@@ -3016,7 +3016,7 @@ body[class*="_page_gutenverse-form-entries"] {
             color: var(--gutenverse-form-dark);
             display: block;
             font-size: 14px;
-            font-weight: 800;
+            font-weight: 600;
             line-height: 1.35;
             margin: 0 0 6px;
         }
@@ -3060,13 +3060,14 @@ body[class*="_page_gutenverse-form-entries"] {
 
     .gutenverse-form-admin-dashboard__intro {
         display: grid;
-        gap: 10px;
+        gap: 8px;
         min-width: 0;
     }
 
     h1 {
         color: var(--gutenverse-form-dark);
         margin: 0;
+        padding: 0;
         font-family: "Roboto", sans-serif;
         font-weight: 500;
         font-size: 20px;
@@ -3077,7 +3078,7 @@ body[class*="_page_gutenverse-form-entries"] {
         color: var(--gutenverse-form-gray);
         margin: 0;
         font-family: "Roboto", sans-serif;
-        font-weight: 300;
+        font-weight: 400;
         font-size: 13px;
         line-height: 1.4;
     }
@@ -3088,6 +3089,11 @@ body[class*="_page_gutenverse-form-entries"] {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
+    }
+
+
+    .dashboard-actions {
+        margin-top: 6px;
     }
 
     .dashboard-button,
@@ -3320,12 +3326,12 @@ body[class*="_page_gutenverse-form-entries"] {
 
     .dashboard-range-toggle {
         align-items: center;
-        background: #f7f7fb;
-        border: 1px solid #d9dce6;
-        border-radius: 12px;
+        background: #f9f9ff;
+        border: 1px solid #E3E4E5;
+        border-radius: 8px;
         display: flex;
         gap: 4px;
-        padding: 3px;
+        padding: 4px;
 
         button {
             background: transparent;
@@ -3341,7 +3347,7 @@ body[class*="_page_gutenverse-form-entries"] {
                 background: var(--gutenverse-form-blue);
                 color: #fff;
                 padding: 0 10px;
-                border-radius: 6px;
+                border-radius: 5px;
             }
 
             &.locked {
@@ -3356,7 +3362,7 @@ body[class*="_page_gutenverse-form-entries"] {
                     align-items: center;
                     background: linear-gradient(247.17deg, #FF808B 27.14%, #E32D64 104.63%);
                     border: 0;
-                    border-radius: 6px;
+                    border-radius: 5px;
                     color: #fff;
                     display: inline-flex;
                     font-family: "Roboto", sans-serif;
@@ -3697,7 +3703,7 @@ body[class*="_page_gutenverse-form-entries"] {
     .dashboard-premium-callout__content {
         display: grid;
         gap: 7px;
-        max-width: 680px;
+        max-width: 480px;
 
         h2 {
             color: var(--gutenverse-form-dark);
@@ -4461,10 +4467,10 @@ body[class*="_page_gutenverse-form-entries"] {
         p {
             color: var(--gutenverse-form-dark);
             font-size: 14px;
-            font-weight: 300;
+            font-weight: 400;
             line-height: 1.5;
             margin: 0 0 16px;
-            max-width: 720px;
+            max-width: 620px;
         }
 
         ul {
@@ -4735,19 +4741,21 @@ body[class*="_page_gutenverse-form-entries"] {
     }
 
     .entry-list-empty {
-        padding: 34px 24px;
+        padding: 80px 24px;
         text-align: center;
 
         h2 {
             color: var(--gutenverse-form-dark);
             font-size: 20px;
-            font-weight: 700;
-            margin: 0 0 8px;
+            font-weight: 600;
+            margin: 0 0 12px;
+            text-transform: capitalize;
         }
 
         p {
             color: var(--gutenverse-form-gray);
             margin: 0;
+            font-size: 14px;
         }
     }
 
