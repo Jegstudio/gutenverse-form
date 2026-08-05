@@ -6,6 +6,7 @@
 
 body {
     --gutenverse-form-blue: #3B57F7;
+    --gutenverse-form-blue-hover: #2435EC;
     --gutenverse-form-purple: #3B57F7;
     --gutenverse-form-dark: #011627;
 	--gutenverse-form-gray: #40505D;
@@ -322,7 +323,7 @@ body {
 
             &:hover,
             &:focus {
-                color: #3B57F7;
+                color: var(--gutenverse-form-blue-hover);
                 text-decoration: none;
             }
         }
@@ -457,12 +458,14 @@ body {
             letter-spacing: 0%;
             text-align: center;
             vertical-align: middle;
+            transition: all .3s ease;
 
             &:hover,
             &:focus {
                 background: var(--gutenverse-form-blue);
                 border-color: var(--gutenverse-form-blue);
                 color: #ffffff;
+                box-shadow: unset !important;
             }
         }
     }
@@ -478,12 +481,15 @@ body {
             letter-spacing: 0%;
             text-align: center;
             vertical-align: middle;
+            background: var(--gutenverse-form-blue);
+            border-color: var(--gutenverse-form-blue);
+            color: #ffffff;
 
-            &:hover,
-            &:focus {
-                background: var(--gutenverse-form-blue);
-                border-color: var(--gutenverse-form-blue);
+            &:hover {
+                background: var(--gutenverse-form-blue-hover);
+                border-color: var(--gutenverse-form-blue-hover);
                 color: #ffffff;
+                box-shadow: unset !important;
             }
         }
     }
@@ -512,6 +518,18 @@ body {
                 letter-spacing: 0.04em;
                 text-transform: uppercase;
                 width: 22px;
+            }
+
+            &.integration-log-service-whatsapp {
+                .integration-service-icon {
+                    background: linear-gradient(180deg, #61FD7D 0%, #2BB826 100%);
+                }
+            }
+
+            &.integration-log-service-telegram {
+                .integration-service-icon {
+                    background: linear-gradient(180deg, #2AABEE 0%, #229ED9 99.26%);
+                }
             }
         }
 
@@ -3120,6 +3138,15 @@ body[class*="_page_gutenverse-form-entries"] {
         background: var(--gutenverse-form-blue);
         border-color: var(--gutenverse-form-blue);
         color: #fff;
+        transition: all .3s ease;
+
+        &:hover,
+        &:focus {
+            background: var(--gutenverse-form-blue-hover);
+            border-color: var(--gutenverse-form-blue-hover);
+            color: #ffffff;
+            box-shadow: unset !important;
+        }
     }
 
     .gutenverse-form-admin-dashboard__summary,
@@ -4425,13 +4452,23 @@ body[class*="_page_gutenverse-form-entries"] {
             min-width: 0;
             padding-left: 38px;
             width: auto;
+            padding-top: 12px;
+            padding-bottom: 12px;
         }
 
         button {
             background: #e9efff;
-            border-color: #e9efff;
+            border: 1px solid #e9efff;
             color: #3856ff;
             flex: 0 0 auto;
+            font-family: "Roboto", sans-serif;
+            font-weight: 500;
+            font-size: 13px;
+            line-height: 100%;
+            letter-spacing: 0%;
+            text-align: center;
+            vertical-align: middle;
+            padding: 12.5px 14px;
         }
     }
 
