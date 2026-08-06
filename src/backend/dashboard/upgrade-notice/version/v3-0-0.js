@@ -33,6 +33,20 @@ export const HeaderV300 = () => (
             {__('Gutenverse Form', 'gutenverse-form')}
             &nbsp;
             <span>{__('Version 3.0.0', 'gutenverse-form')}</span>
+            <svg width="30" height="32" viewBox="0 0 30 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.8868 21.7738C13.1677 15.0164 15.0163 13.1676 21.7738 10.8869C15.0163 8.6063 13.1677 6.75738 10.8868 0C8.6063 6.75738 6.75726 8.6063 0 10.8869C6.75726 13.1676 8.6063 15.0164 10.8868 21.7738Z" fill="url(#paint0_linear_2398_9104)"/>
+                <path d="M23.371 20.1211C22.1267 23.8075 21.1182 24.8162 17.4316 26.0604C21.1182 27.3045 22.1267 28.3132 23.371 31.9996C24.6151 28.3132 25.6238 27.3045 29.3102 26.0604C25.6238 24.8162 24.6151 23.8075 23.371 20.1211Z" fill="url(#paint1_linear_2398_9104)"/>
+                <defs>
+                    <linearGradient id="paint0_linear_2398_9104" x1="6.5" y1="14.5" x2="28.6108" y2="1.0004" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#5AF0C2"/>
+                        <stop offset="1" stopColor="#5AF0C2" stopOpacity="0"/>
+                    </linearGradient>
+                    <linearGradient id="paint1_linear_2398_9104" x1="20.9777" y1="28.0315" x2="33.0401" y2="20.6669" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#5AF0C2"/>
+                        <stop offset="1" stopColor="#5AF0C2" stopOpacity="0"/>
+                    </linearGradient>
+                </defs>
+            </svg>
         </h3>
     </div>
 );
