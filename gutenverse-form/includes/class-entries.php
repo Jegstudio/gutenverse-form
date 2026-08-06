@@ -1781,7 +1781,7 @@ class Entries {
 		$message  = isset( $akismet_result['message'] ) ? sanitize_text_field( (string) $akismet_result['message'] ) : '';
 		$checked  = isset( $akismet_result['checked_at'] ) ? sanitize_text_field( (string) $akismet_result['checked_at'] ) : '';
 		$pro_tip  = isset( $akismet_result['pro_tip'] ) ? sanitize_text_field( (string) $akismet_result['pro_tip'] ) : '';
-		$lines    = array();
+		$details  = array();
 
 		$labels = array(
 			'ham'         => esc_html__( 'Not spam', 'gutenverse-form' ),
@@ -1791,22 +1791,47 @@ class Entries {
 			'disabled'    => esc_html__( 'Disabled', 'gutenverse-form' ),
 		);
 
-		$lines[] = '<strong>' . esc_html( isset( $labels[ $status ] ) ? $labels[ $status ] : ucfirst( $status ) ) . '</strong>';
-		$lines[] = esc_html( sprintf( __( 'Provider: %s', 'gutenverse-form' ), $provider ) );
+		$status_label = isset( $labels[ $status ] ) ? $labels[ $status ] : ucfirst( $status );
+		$status_class = sanitize_html_class( $status );
+		$provider     = ucwords( str_replace( array( '-', '_' ), ' ', $provider ) );
+
+		$details[] = array(
+			'label' => esc_html__( 'Provider', 'gutenverse-form' ),
+			'value' => $provider,
+		);
 
 		if ( $message ) {
-			$lines[] = esc_html( $message );
+			$details[] = array(
+				'label' => esc_html__( 'Result', 'gutenverse-form' ),
+				'value' => $message,
+			);
 		}
 
 		if ( $pro_tip ) {
-			$lines[] = esc_html( sprintf( __( 'Akismet hint: %s', 'gutenverse-form' ), $pro_tip ) );
+			$details[] = array(
+				'label' => esc_html__( 'Hint', 'gutenverse-form' ),
+				'value' => $pro_tip,
+			);
 		}
 
 		if ( $checked ) {
-			$lines[] = esc_html( sprintf( __( 'Checked: %s', 'gutenverse-form' ), $checked ) );
+			$checked_timestamp = strtotime( $checked );
+			$checked_display   = $checked_timestamp ? wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $checked_timestamp, wp_timezone() ) : $checked;
+
+			$details[] = array(
+				'label' => esc_html__( 'Checked', 'gutenverse-form' ),
+				'value' => $checked_display,
+			);
 		}
 
-		return implode( '<br>', $lines );
+		$details = array_map(
+			function ( $detail ) {
+				return '<span class="entry-spam-status-detail"><span class="entry-spam-status-detail-label">' . esc_html( $detail['label'] ) . '</span><span class="entry-spam-status-detail-value">' . esc_html( $detail['value'] ) . '</span></span>';
+			},
+			$details
+		);
+
+		return '<div class="entry-spam-status entry-spam-status-' . esc_attr( $status_class ) . '"><span class="entry-spam-status-badge">' . esc_html( $status_label ) . '</span><span class="entry-spam-status-details">' . implode( '', $details ) . '</span></div>';
 	}
 
 	/**

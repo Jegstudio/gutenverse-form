@@ -344,6 +344,93 @@ body {
         font-weight: 500;
     }
 
+    .entry-spam-status {
+        align-items: flex-start;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        line-height: 1.4;
+        width: 100%;
+    }
+
+    .entry-spam-status-badge {
+        align-items: center;
+        border-radius: 4px;
+        box-sizing: border-box;
+        display: inline-flex;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.3;
+        min-height: 24px;
+        padding: 3px 9px;
+        white-space: nowrap;
+    }
+
+    .entry-spam-status-details {
+        color: var(--gutenverse-form-gray);
+        display: grid;
+        flex: 1 1 220px;
+        gap: 5px;
+        min-width: 0;
+    }
+
+    .entry-spam-status-detail {
+        align-items: baseline;
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 68px minmax(0, 1fr);
+        line-height: 1.45;
+    }
+
+    .entry-spam-status-detail-label {
+        color: #667085;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.45;
+        white-space: nowrap;
+
+        &::after {
+            content: ":";
+        }
+    }
+
+    .entry-spam-status-detail-value {
+        color: var(--gutenverse-form-gray);
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.45;
+        min-width: 0;
+    }
+
+    .entry-spam-status-ham {
+        .entry-spam-status-badge {
+            background: #eaf8f1;
+            color: var(--gutenverse-form-success);
+        }
+    }
+
+    .entry-spam-status-spam {
+        .entry-spam-status-badge {
+            background: #fdeceb;
+            color: var(--gutenverse-form-error);
+        }
+    }
+
+    .entry-spam-status-unknown {
+        .entry-spam-status-badge {
+            background: #fff7df;
+            color: #8a6100;
+        }
+    }
+
+    .entry-spam-status-unavailable,
+    .entry-spam-status-disabled {
+        .entry-spam-status-badge {
+            background: #f4f5f7;
+            color: #667085;
+        }
+    }
+
     .gutenverse-entry-section {
         background: #ffffff;
         border: 1px solid var(--gutenverse-form-border);
