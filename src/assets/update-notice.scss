@@ -89,7 +89,7 @@
             z-index: 1;
 
             span {
-                background: -webkit-linear-gradient(45deg, #15adf7, #3b57f7);
+                background: -webkit-radial-gradient(100% 2347.61% at 100% 15.18%, #5BF1C0 0%, #15ADF7 100%);
                 background-clip: text;
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -97,7 +97,7 @@
         }
 
         .upgrade-notice-body {
-            padding-top: 26px;
+            padding-top: 35px;
 
             > div {
                 max-width: 1000px;
@@ -105,10 +105,10 @@
         }
 
         .form-300-content {
-            padding: 40px;
+            padding: 0 45px;
 
             p {
-                color: #011627;
+                color: #40505D;
                 font-family: "Roboto", serif;
                 font-size: 16px;
                 font-weight: 400;
@@ -117,16 +117,24 @@
                 margin: 0;
             }
 
+            span {
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 150%;
+                letter-spacing: 0%;
+            }
+
             img {
                 display: block;
                 width: 100%;
+                border: 1px solid #00223D1A;
             }
         }
 
         .form-300-callout {
             background: #effbf7;
             border-radius: 8px;
-            padding: 16px 18px;
+            padding: 24px;
 
             strong {
                 align-items: center;
@@ -135,38 +143,35 @@
                 font-size: 18px;
                 font-family: "Roboto", serif;
                 font-weight: 600;
-                gap: 8px;
+                gap: 13px;
                 letter-spacing: 0;
                 line-height: 140%;
                 margin-bottom: 8px;
                 vertical-align: middle;
-
-                &::before {
-                    background: #68dbcf;
+                > span {
+                    background: linear-gradient(76.95deg, #40CFAE -4.37%, #5BB7F8 159.08%);
                     border-radius: 4px;
-                    color: #fff;
-                    content: "+";
-                    display: inline-flex;
-                    font-size: 12px;
+                    padding: 5px 10px;
+                    font-family: "Roboto", sans-serif;
                     font-weight: 700;
-                    height: 20px;
-                    align-items: center;
-                    justify-content: center;
-                    line-height: 1;
-                    width: 20px;
+                    font-size: 14px;
+                    line-height: 140%;
+                    letter-spacing: 0%;
+                    vertical-align: middle;
+                    color: white;
                 }
             }
         }
 
         .form-300-section {
-            margin-top: 38px;
+            margin-top: 60px;
         }
 
         .form-300-section-title {
             align-items: center;
             display: flex;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
 
             img {
                 border-radius: 4px;
@@ -195,7 +200,7 @@
         }
 
         .form-300-media-note {
-            margin-top: 20px;
+            margin-top: 30px !important;
         }
 
         .form-300-media-grid {

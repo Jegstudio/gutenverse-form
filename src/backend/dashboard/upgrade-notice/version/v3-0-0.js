@@ -40,9 +40,9 @@ export const HeaderV300 = () => (
 export const ContentV300 = () => (
     <div className="form-300-content">
         <div className="form-300-callout">
-            <strong>{__('Multi Site', 'gutenverse-form')}</strong>
+            <strong><span className="badge">{__('Update', 'gutenverse-form')}</span>{__('Whats New?', 'gutenverse-form')}</strong>
             <p>
-                {__('Gutenverse Form 3.0.0 improves support for multisite networks, keeping forms, entries, integrations, templates, and notices consistent across your sites.', 'gutenverse-form')}
+                {__('We’ve made a major update to Gutenverse Form, adding new dashboard tools, integrations, email management, reporting, and form-building improvements to make the whole experience more powerful and easier to manage.', 'gutenverse-form')}
             </p>
         </div>
 
@@ -52,14 +52,16 @@ export const ContentV300 = () => (
                 title={__('New Form Dashboard', 'gutenverse-form')}
             />
             <p>
-                {__('Track submissions, monitor active forms, and jump into the most important form locations from a cleaner dashboard built for everyday form management.', 'gutenverse-form')}
+                {__('Gutenverse Form now includes a dedicated form dashboard. Users can manage forms from one place, review form statistics, check entry activity in charts, and see clearer empty states when no data is available yet.\nThe dashboard also includes chart hover details, so users can quickly see entry totals and understand how each form is performing.', 'gutenverse-form')}
             </p>
             <NoticeImage
                 fileName="update-notice-3.0.0-mockup-new-form-dashboard.png"
                 alt={__('New form dashboard overview', 'gutenverse-form')}
             />
             <p className="form-300-media-note">
-                {__('Daily summary emails now help administrators review recent form activity and return to the dashboard with less manual checking.', 'gutenverse-form')}
+                {__('We also added ', 'gutenverse-form')}
+                <span>{__('Daily Summary Email', 'gutenverse-form')}</span>
+                {__(', allowing users to receive form activity reports in a cleaner, more readable email format from the Gutenverse dashboard.', 'gutenverse-form')}
             </p>
             <NoticeImage
                 fileName="update-notice-3.0.0-mockup-daily-summary-email.png"
@@ -73,7 +75,7 @@ export const ContentV300 = () => (
                 title={__('New Integrations', 'gutenverse-form')}
             />
             <p>
-                {__('Connect forms with more services, manage integrations globally, and choose the right action directly from the Form Builder settings panel.', 'gutenverse-form')}
+                {__('We added a new integrations area inside the Gutenverse dashboard, making it easier to connect and manage third-party services.\nThis update includes integration support and improvements for Google Sheets, ActiveCampaign, MailerLite, and ConvertKit.', 'gutenverse-form')}
             </p>
             <NoticeImage
                 fileName="update-notice-3.0.0-mockup-new-integrations.png"
@@ -87,7 +89,7 @@ export const ContentV300 = () => (
                 title={__('New Email Templates', 'gutenverse-form')}
             />
             <p>
-                {__('Confirmation and notification emails can now start from reusable templates, with clearer message settings and dynamic field tags.', 'gutenverse-form')}
+                {__('Email template management is now available in Gutenverse Form. Users can manage admin notification templates and confirmation email templates with improved field tag handling and a cleaner template list experience.', 'gutenverse-form')}
             </p>
             <div className="form-300-media-grid">
                 <figure>
@@ -113,7 +115,10 @@ export const ContentV300 = () => (
                 title={__('Form Builder And Notice Improvements', 'gutenverse-form')}
             />
             <p>
-                {__('The Form Builder now makes form actions and success notices easier to connect, so visitors get the right message after every submission.', 'gutenverse-form')}
+                {__('The form builder has been improved with a cleaner interface, better loading states using skeleton loading, updated starter templates for contact, subscribe, booking, and appointment forms, and a new Form Notice block.', 'gutenverse-form')}
+            </p>
+            <p>
+                {__('The new Form Notice block includes controls for container, content, and icon styling. Notice designs across form actions, form inputs, and the builder interface were also improved for better clarity and consistency.', 'gutenverse-form')}
             </p>
             <NoticeImage
                 fileName="update-notice-3.0.0-mockup-new-form-notice.png"
@@ -127,7 +132,10 @@ export const ContentV300 = () => (
                 title={__('Better Entries, Inputs, And Form Actions', 'gutenverse-form')}
             />
             <p>
-                {__('Entries and inputs are easier to maintain with CSV export, bulk input styling, and a smoother flow for creating and managing form actions.', 'gutenverse-form')}
+                {__('Entries are now easier to review and manage, with CSV export moved directly into the entries page, a refreshed entry view design, and an option to modify entry titles.', 'gutenverse-form')}
+            </p>
+            <p>
+                {__('Form inputs also received better controls, including input value settings, improved placeholder and dynamic value handling, and bulk input style options.', 'gutenverse-form')}
             </p>
             <div className="form-300-media-grid">
                 <figure>
@@ -146,7 +154,7 @@ export const ContentV300 = () => (
                 </figure>
             </div>
             <p className="form-300-media-note">
-                {__('Form actions are now handled in the builder with a clearer setup flow for confirmations, notifications, integrations, and advanced options.', 'gutenverse-form')}
+                {__('Form actions are no longer managed separately from the WordPress admin area. They are now part of the form builder creation flow, so users can set up what happens after submission while building the form itself.\nForm action management was also improved with clearer notices, example data notices, confirmation email autofill support, and an option to remove unused form actions.', 'gutenverse-form')}
             </p>
             <NoticeImage
                 fileName="update-notice-3.0.0-mockup-new-form-action.png"
@@ -160,10 +168,24 @@ export const ContentV300 = () => (
                 title={__('Design Polish And Fixes', 'gutenverse-form')}
             />
             <p>
-                {__('The builder experience has been refined with smoother loading states, more consistent layouts, clearer controls, and improved admin UI details.', 'gutenverse-form')}
+                {__('Across the update, we polished badges, notices, panels, loading states, spacing, font sizing, and several admin/backend screens to make the overall form experience smoother and more consistent.', 'gutenverse-form')}
             </p>
             <NoticeImage
                 fileName="update-notice-3.0.0-mockup-update-ux-form.png"
+                alt={__('Polished form builder interface', 'gutenverse-form')}
+            />
+        </section>
+
+        <section className="form-300-section">
+            <SectionTitle
+                icon="update-notice-3.0.0-icon-spam-protection.png"
+                title={__('Improved Spam Protection', 'gutenverse-form')}
+            />
+            <p>
+                {__('Built-in Akismet and CAPTCHA integration in the Form Settings automatically filters bot submissions to keep your entries and inbox clean.', 'gutenverse-form')}
+            </p>
+            <NoticeImage
+                fileName="update-notice-3.0.0-graphic-improve-spam-protection.png"
                 alt={__('Polished form builder interface', 'gutenverse-form')}
             />
         </section>
