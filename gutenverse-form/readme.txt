@@ -307,6 +307,7 @@ New and improved:
 
 Bug fixes:
 * Move frontend styling into inline, not using file anymore
+* Fixed responsive breakpoints for hide display option
 
 = 2.8.0 =
 
