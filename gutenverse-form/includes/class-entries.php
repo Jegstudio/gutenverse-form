@@ -115,26 +115,20 @@ class Entries {
 	 * @return array
 	 */
 	public static function get_entry_list_capabilities() {
-		$has_license  = self::has_pro_plugin() && ! empty( get_option( 'gutenverse-license', '' ) );
 		$capabilities = array(
-			'viewAll'      => false,
-			'export'       => false,
-			'filter'       => false,
-			'olderDetails' => false,
+			'viewAll'      => true,
+			'export'       => true,
+			'filter'       => true,
+			'olderDetails' => true,
 		);
 
-		$capabilities['viewAll']      = (bool) apply_filters( 'gutenverse_form_entry_list_can_view_all', $capabilities['viewAll'], $has_license );
-		$capabilities['export']       = (bool) apply_filters( 'gutenverse_form_entry_list_can_export', $capabilities['export'], $has_license );
-		$capabilities['filter']       = (bool) apply_filters( 'gutenverse_form_entry_list_can_filter', $capabilities['filter'], $has_license );
-		$capabilities['olderDetails'] = (bool) apply_filters( 'gutenverse_form_entry_list_can_view_older_details', $capabilities['olderDetails'], $has_license );
-
 		$capabilities = wp_parse_args(
-			apply_filters( 'gutenverse_form_entry_list_capabilities', $capabilities, $has_license ),
+			apply_filters( 'gutenverse_form_entry_list_capabilities', $capabilities, true ),
 			array(
-				'viewAll'      => false,
-				'export'       => false,
-				'filter'       => false,
-				'olderDetails' => false,
+				'viewAll'      => true,
+				'export'       => true,
+				'filter'       => true,
+				'olderDetails' => true,
 			)
 		);
 
@@ -152,7 +146,7 @@ class Entries {
 		return array(
 			'apiPath'       => '/gutenverse-form-client/v1/entries',
 			'exportUrl'     => add_query_arg( '_wpnonce', wp_create_nonce( 'wp_rest' ), rest_url( '/gutenverse-form-client/v1/entries/export' ) ),
-			'limit'         => self::FREE_ENTRY_LIMIT,
+			'limit'         => -1,
 			'pageUrl'       => self::get_admin_page_url(),
 			'nativeListUrl' => admin_url( 'edit.php?post_type=' . self::POST_TYPE ),
 			'licenseUrl'    => admin_url( 'admin.php?page=gutenverse&path=license' ),
@@ -533,44 +527,8 @@ class Entries {
 		return $sources;
 	}
 
-	/**
-	 * Get latest entry IDs available to free users.
-	 *
-	 * @return array
-	 */
-	private static function get_limited_entry_ids() {
-		$ids = get_posts(
-			array(
-				'post_type'              => self::POST_TYPE,
-				'post_status'            => array( 'publish' ),
-				'posts_per_page'         => self::FREE_ENTRY_LIMIT,
-				'orderby'                => 'date',
-				'order'                  => 'DESC',
-				'fields'                 => 'ids',
-				'no_found_rows'          => true,
-				'update_post_meta_cache' => false,
-				'update_post_term_cache' => false,
-			)
-		);
-
-		return array_map( 'intval', $ids );
-	}
-
-	/**
-	 * Check if an entry detail is available.
-	 *
-	 * @param int $entry_id Entry ID.
-	 *
-	 * @return bool
-	 */
 	public static function can_view_entry_detail( $entry_id ) {
-		$capabilities = self::get_entry_list_capabilities();
-
-		if ( ! empty( $capabilities['olderDetails'] ) ) {
-			return true;
-		}
-
-		return in_array( (int) $entry_id, self::get_limited_entry_ids(), true );
+		return self::POST_TYPE === get_post_type( $entry_id );
 	}
 
 	/**
@@ -610,14 +568,15 @@ class Entries {
 	private static function get_entry_query_args( $request, $capabilities, $export = false ) {
 		$view     = sanitize_key( (string) $request->get_param( 'view' ) );
 		$view_all = ! empty( $capabilities['viewAll'] ) && 'all' === $view;
-		$per_page = $view_all ? absint( $request->get_param( 'per_page' ) ) : self::FREE_ENTRY_LIMIT;
-		$per_page = $per_page ? min( $per_page, self::FREE_ENTRY_LIMIT ) : self::FREE_ENTRY_LIMIT;
-		$page     = $view_all ? max( 1, absint( $request->get_param( 'page' ) ) ) : 1;
+		$per_page = absint( $request->get_param( 'per_page' ) );
+		$page     = max( 1, absint( $request->get_param( 'page' ) ) );
 
 		if ( $export ) {
 			$view_all = true;
 			$per_page = -1;
 			$page     = 1;
+		} elseif ( ! $per_page ) {
+			$per_page = self::FREE_ENTRY_LIMIT;
 		}
 
 		$args = array(
@@ -628,6 +587,16 @@ class Entries {
 			'orderby'        => 'date',
 			'order'          => 'DESC',
 		);
+
+		if ( ! $view_all ) {
+			$args['date_query'] = array(
+				array(
+					'after'     => '24 hours ago',
+					'inclusive' => true,
+					'column'    => 'post_date',
+				),
+			);
+		}
 
 		if ( ! empty( $capabilities['filter'] ) && $view_all ) {
 			$form_id    = absint( $request->get_param( 'form_id' ) );
@@ -806,18 +775,18 @@ class Entries {
 
 		$view = sanitize_key( (string) $request->get_param( 'view' ) );
 
-		$is_limited = empty( $capabilities['viewAll'] ) || 'all' !== $view;
+		$is_limited = false;
 
 		return array(
 			'entries'      => $entries,
-			'total'        => $is_limited ? count( $entries ) : (int) $query->found_posts,
-			'totalPages'   => $is_limited ? 1 : (int) $query->max_num_pages,
+			'total'        => (int) $query->found_posts,
+			'totalPages'   => (int) $query->max_num_pages,
 			'page'         => isset( $args['paged'] ) ? (int) $args['paged'] : 1,
-			'perPage'      => isset( $args['posts_per_page'] ) ? (int) $args['posts_per_page'] : self::FREE_ENTRY_LIMIT,
-			'limit'        => self::FREE_ENTRY_LIMIT,
+			'perPage'      => isset( $args['posts_per_page'] ) ? (int) $args['posts_per_page'] : -1,
+			'limit'        => -1,
 			'limited'      => $is_limited,
-			'forms'        => ! empty( $capabilities['filter'] ) ? self::get_form_options() : array(),
-			'sources'      => ! empty( $capabilities['filter'] ) ? self::get_source_options() : array(),
+			'forms'        => self::get_form_options(),
+			'sources'      => self::get_source_options(),
 			'capabilities' => $capabilities,
 		);
 	}
