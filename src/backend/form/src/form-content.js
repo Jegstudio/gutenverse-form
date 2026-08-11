@@ -8,10 +8,8 @@ import { IconCloseSVG } from 'gutenverse-core/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { CardPro } from 'gutenverse-core/components';
 import { Modal } from '@wordpress/components';
-import { isEmpty } from 'gutenverse-core/helper';
-import { CardBannerPro, PopupInsufficientTier, DefaultLayout } from 'gutenverse-core/components';
+import { CardBannerPro, PopupInsufficientTier } from 'gutenverse-core/components';
 import { createGutenverseEmailDesign } from '../../email-template/data-model';
-import { useInstanceId } from '@wordpress/compose';
 
 const FormGroup = ({ title, description, children, className = '' }) => {
     return (
@@ -121,7 +119,7 @@ const ProEmailLockNotice = ({ type, hasExistingData = false, onToggleExistingDat
                 </button>
             </InlineNotice>}
             <CardPro
-                text={__('This Feature Available at Professional or Higher Plan!', 'gutenverse-form')}
+                text={__('This Feature Available at Basic or Higher Plan!', 'gutenverse-form')}
             />
         </FormGroup>
     );
@@ -1472,7 +1470,6 @@ export const FormContent = (props) => {
     const [tab, setActiveTab] = useState('general');
     const [hideFormNotice, setHideFormNotice] = useState(window?.GutenverseConfig?.hideFormNotice || false);
     const [popupInsufficientTier, setPopupInsufficientTier] = useState(false);
-    const [insufficientTierDesc, setInsufficientTierDesc] = useState('');
     const emptyLicense = applyFilters('gutenverse.panel.tab.pro.content', true);
 
     const emailLocked = !!emptyLicense;
@@ -1576,7 +1573,7 @@ export const FormContent = (props) => {
                 iconLottieSrc={`${formImageBase}/form-action-icon-protection-pro.png`}
                 iconNavSrc={`${formImageBase}/form-action-icon-file-upload-pro.png`}
                 numIconSrc={`${formImageBase}/form-action-icon-gutenverse-news-pro.png`}
-                text={__('This Feature Available at Professional or Higher Plan!', 'gutenverse-form')}
+                text={__('This Feature Available at Basic or Higher Plan!', 'gutenverse-form')}
             />
         </div>,
         {...props,
@@ -1648,7 +1645,7 @@ export const FormContent = (props) => {
         <PopupInsufficientTier
             active={popupInsufficientTier}
             setActive={setPopupInsufficientTier}
-            description={insufficientTierDesc}
+            description={''}
         />
         <div className="form-notice-wrapper">
             <CardBannerPro

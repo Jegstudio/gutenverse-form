@@ -2,8 +2,8 @@ import classnames from 'classnames';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
-import { ButtonUpgradePro, EscListener } from 'gutenverse-core/components';
-import { IconCloseSVG, InfoIcon } from 'gutenverse-core/icons';
+import { ButtonUpgradePro } from 'gutenverse-core/components';
+import { InfoIcon } from 'gutenverse-core/icons';
 import {
     IconGoogleSheetSVG,
     IconMailerLiteSVG,
@@ -22,6 +22,7 @@ import {
 import { TextControl, TextareaControl, SelectControl, Button, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
+import { openFreemiusPopup } from 'gutenverse-core/helper';
 
 const services = [
     { id: 'whatsapp', title: 'Whatsapp', description: __('Send form notifications directly to your WhatsApp.', 'gutenverse-form'), icon: <IconWhatsAppSVG /> },
@@ -82,74 +83,69 @@ const DisableModal = ({ isOpen, onConfirm, onCancel }) => {
     );
 };
 
-const UpgradeModal = ({ isOpen, onClose }) => {
-    const popupRef = useRef(null);
-    const popupImageDir = (window['GutenverseDashboard']?.imgDir || integrationConfig?.imgDir || '').replace(/\/$/, '');
+const IntegrationUpgradeBanner = () => {
     const upgradeLink = upgradeProUrl || integrationUpgradeUrl;
 
-    useEffect(() => {
-        if (!isOpen) {
-            return undefined;
-        }
-
-        const handleClickOutside = (event) => {
-            if (popupRef.current && !popupRef.current.contains(event.target)) {
-                onClose();
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isOpen, onClose]);
-
-    if (!isOpen) return null;
-
     return (
-        <>
-            <EscListener execute={onClose} />
-            <div className="popup-pro">
-                <div className="popup-content" ref={popupRef}>
-                    {popupImageDir && (
-                        <>
-                            <img className="image popup-image-background" src={`${popupImageDir}/pop-up-bg-popup-banner.png`} />
-                            <img className="image popup-image-mockup" src={`${popupImageDir}/pop-up-mockup-pro.png`} />
-                            <img className="image popup-image-cube" src={`${popupImageDir}/pop-up-3d-cube-2.png`} />
-                            <img className="image popup-image-element1" src={`${popupImageDir}/pop-up-icon-element.png`} />
-                            <img className="image popup-image-element2" src={`${popupImageDir}/pop-up-icon-element-2.png`} />
-                            <img className="image popup-image-element3" src={`${popupImageDir}/pop-up-icon-element-3.png`} />
-                            <img className="image popup-image-arrow" src={`${popupImageDir}/banner-arrow-blue.png`} />
-                        </>
-                    )}
-                    <div className="close" onClick={onClose}>
-                        <IconCloseSVG size={20} />
-                    </div>
-                    <div className="content">
-                        <h3 className="details">
-                            {__('Form integrations require Gutenverse Pro with the Professional license tier or higher.', 'gutenverse-form')}
-                        </h3>
-                        <ButtonUpgradePro
-                            location="popup"
-                            isBanner={true}
-                            link={appendTrackingParams(upgradeLink)}
-                            customStyles={{ height: '16px', padding: '12px 25px 12px 30px' }}
-                            licenseType={integrationLicenseType}
-                        />
-                    </div>
-                </div>
+        <div
+            className="integration-upgrade-banner"
+            style={{
+                alignItems: 'center',
+                background: 'linear-gradient(135deg, #FFFFFF 0%, #FFF3FA 48%, #EAF7FF 100%)',
+                border: '1px solid #E3E4E6',
+                borderRadius: '8px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '24px',
+                minHeight: '120px',
+                margin: '0 25px 30px',
+                padding: '28px 32px',
+            }}
+        >
+            <div className="content" style={{ maxWidth: '660px' }}>
+                <h3
+                    className="details"
+                    style={{
+                        color: '#011627',
+                        fontFamily: 'Roboto, sans-serif',
+                        fontSize: '22px',
+                        fontWeight: 600,
+                        lineHeight: 1.35,
+                        margin: 0,
+                    }}
+                >
+                    {__('Form integrations require Gutenverse Pro with the Professional license tier or higher.', 'gutenverse-form')}
+                </h3>
             </div>
-        </>
+            <div style={{ flexShrink: 0 }}>
+                <ButtonUpgradePro
+                    location="integration-dashboard"
+                    isBanner={true}
+                    link={appendTrackingParams(upgradeLink)}
+                    customStyles={{ height: '16px', padding: '12px 25px 12px 30px' }}
+                    licenseType={integrationLicenseType}
+                />
+            </div>
+        </div>
+    );
+};
+
+const openIntegrationPricingPopup = (event = null) => {
+    openFreemiusPopup(
+        event,
+        appendTrackingParams(upgradeProUrl || integrationUpgradeUrl),
+        { medium: 'dashboardIntegration' }
     );
 };
 
 const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
     const isActive = !!status;
 
-    const handleToggle = () => {
+    const handleToggle = (event) => {
         if (!hasIntegrationPro) {
-            setIsUpgradeOpen(true);
+            event?.stopPropagation();
+            openIntegrationPricingPopup(event);
             return;
         }
 
@@ -167,10 +163,13 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
 
     return (
         <>
-            <div className={classnames('integration-item', {
-                active: isActive,
-                locked: !hasIntegrationPro,
-            })}>
+            <div
+                className={classnames('integration-item', {
+                    active: isActive,
+                    locked: !hasIntegrationPro,
+                })}
+                onClick={!hasIntegrationPro ? openIntegrationPricingPopup : undefined}
+            >
                 {!hasIntegrationPro && <p className="pro-label">{__('PRO', 'gutenverse-form')}</p>}
                 <div className="item-header">
                     <div className="item-icon">
@@ -190,9 +189,10 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                     </div>
                     {isActive && (
                         <button
-                            onClick={() => {
+                            onClick={(event) => {
                                 if (!hasIntegrationPro) {
-                                    setIsUpgradeOpen(true);
+                                    event.stopPropagation();
+                                    openIntegrationPricingPopup(event);
                                     return;
                                 }
                                 onSetup(service.id);
@@ -209,10 +209,6 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                 isOpen={isModalOpen}
                 onConfirm={confirmDisable}
                 onCancel={() => setIsModalOpen(false)}
-            />
-            <UpgradeModal
-                isOpen={isUpgradeOpen}
-                onClose={() => setIsUpgradeOpen(false)}
             />
         </>
     );
@@ -236,21 +232,24 @@ const TabSetting = ({ integrations, setIntegrations, onSetup }) => {
     };
 
     return (
-        <div className="form-tab-body">
-            <div className="integration-list">
-                <p><span><InfoIcon /></span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings. Please refresh the page after you finish setting up the intergrations', 'gutenverse-form')}</p>
-                {services.map((service) => (
-                    <IntegrationItem
-                        key={service.id}
-                        service={service}
-                        status={integrations[service.id]}
-                        onToggle={onToggle}
-                        onSetup={onSetup}
-                        loading={saving === service.id}
-                    />
-                ))}
+        <>
+            {!hasIntegrationPro && <IntegrationUpgradeBanner />}
+            <div className="form-tab-body">
+                <div className="integration-list">
+                    <p><span><InfoIcon /></span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings. Please refresh the page after you finish setting up the intergrations', 'gutenverse-form')}</p>
+                    {services.map((service) => (
+                        <IntegrationItem
+                            key={service.id}
+                            service={service}
+                            status={integrations[service.id]}
+                            onToggle={onToggle}
+                            onSetup={onSetup}
+                            loading={saving === service.id}
+                        />
+                    ))}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 
