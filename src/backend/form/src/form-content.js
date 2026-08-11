@@ -57,6 +57,76 @@ const InlineNotice = ({ type = 'info', children, onClose }) => {
     );
 };
 
+const confirmationEmailFields = [
+    'user_confirm',
+    'auto_select_email',
+    'email_input_name',
+    'user_email_subject',
+    'user_email_form',
+    'user_email_reply_to',
+    'user_email_reply_to_dynamic',
+    'user_email_body',
+    'user_email_subject_meta_key',
+    'user_email_template',
+];
+
+const notificationEmailFields = [
+    'admin_confirm',
+    'admin_email_subject',
+    'admin_email_subject_meta_key',
+    'admin_email_to',
+    'admin_email_from',
+    'admin_email_reply_to',
+    'admin_email_reply_to_dynamic',
+    'admin_note',
+    'admin_email_meta_key',
+    'admin_message_input_name',
+    'admin_email_template',
+];
+
+const hasEmailFieldData = (values = {}, fields = []) => fields.some(field => {
+    const value = values[field];
+
+    if (Array.isArray(value)) {
+        return value.length > 0;
+    }
+
+    if (typeof value === 'boolean') {
+        return value;
+    }
+
+    return value !== undefined && value !== null && value !== '';
+});
+
+const noopUpdateValue = () => { };
+
+const ProEmailLockNotice = ({ type, hasExistingData = false, onToggleExistingData }) => {
+    const isConfirmation = type === 'confirmation';
+
+    return (
+        <FormGroup
+            title={isConfirmation ? __('Send Confirmation Email', 'gutenverse-form') : __('Send Admin Notification', 'gutenverse-form')}
+            description={isConfirmation
+                ? __('Enable a form-specific confirmation email for users who submit this form.', 'gutenverse-form')
+                : __('Enable a form-specific notification email for site admins when this form is submitted.', 'gutenverse-form')}
+        >
+            {hasExistingData && <InlineNotice type="info warning">
+                <span>{__('Your existing Form Action email settings are still saved and will continue to work.', 'gutenverse-form')} </span>
+                <button
+                    type="button"
+                    style={{ background: 'none', border: 0, padding: 0, color: '#3B57F7', cursor: 'pointer', font: 'inherit' }}
+                    onClick={onToggleExistingData}
+                >
+                    {__('Edit existing data', 'gutenverse-form')}
+                </button>
+            </InlineNotice>}
+            <CardPro
+                text={__('This Feature Available at Professional or Higher Plan!', 'gutenverse-form')}
+            />
+        </FormGroup>
+    );
+};
+
 const ExampleFillButton = ({
     onClick,
     title = __('Need a quick starting point?', 'gutenverse-form'),
@@ -918,9 +988,10 @@ export const EmailTemplateManager = ({ templateId, fieldName, updateValue, email
 
 const TabConfirmation = (props) => {
     const {
-        values, updateValue, placeholderDescription, availableInputFields = [],
+        values, updateValue, placeholderDescription, availableInputFields = [], emailLocked = false,
     } = props;
     const [exampleFilled, setExampleFilled] = useState(false);
+    const [showLockedExistingData, setShowLockedExistingData] = useState(false);
     const fillConfirmationExample = () => {
         updateValue('email_input_name', findPreferredInputId(availableInputFields, ['email', 'mail'], 'input-email'));
         updateValue('user_email_form', __('johndoe@gmail.com', 'gutenverse-form'));
@@ -939,9 +1010,13 @@ const TabConfirmation = (props) => {
     };
 
     const dashboardFormSettingsUrl = getDashboardFormSettingsUrl();
+    const hasExistingData = hasEmailFieldData(values, confirmationEmailFields);
+    const fieldUpdateValue = emailLocked && !showLockedExistingData ? noopUpdateValue : updateValue;
+    const showEmailSettings = emailLocked ? hasExistingData && showLockedExistingData : values.user_confirm;
+    const showLockedBanner = emailLocked && !showLockedExistingData;
 
     return <div className="form-tab-body">
-        {!values.user_confirm && <div style={{ marginBottom: '20px' }}>
+        {!emailLocked && !values.user_confirm && <div style={{ marginBottom: '20px' }}>
             <InlineNotice type="info warning">
                 {createInterpolateElement(
                     __('This form will use the default confirmation email settings from <dashboard>Dashboard Form Settings</dashboard>, even if Send Confirmation Email is disabled.', 'gutenverse-form'),
@@ -958,25 +1033,32 @@ const TabConfirmation = (props) => {
                 updateValue={updateValue}
             />
         </div>}
-        <FormGroup
+        {showLockedBanner ? <ProEmailLockNotice
+            type="confirmation"
+            hasExistingData={hasExistingData}
+            onToggleExistingData={() => setShowLockedExistingData(!showLockedExistingData)}
+        /> : <FormGroup
             title={__('Send Confirmation Email', 'gutenverse-form')}
             description={__('Enable a form-specific confirmation email for users who submit this form.', 'gutenverse-form')}
         >
             <ControlCheckbox
                 id={'user_confirm'}
-                title={__('Enable Confirmation Email', 'gutenverse-form')}
+                title={emailLocked ? <span className="form-captcha-title">
+                    <span>{__('Enable Confirmation Email', 'gutenverse-form')}</span>
+                    <span className="pro-label">{__('PRO', 'gutenverse-form')}</span>
+                </span> : __('Enable Confirmation Email', 'gutenverse-form')}
                 description={__('Send an automated confirmation email to the user upon submission.', 'gutenverse-form')}
                 value={values.user_confirm}
                 updateValue={updateValue}
             />
-        </FormGroup>
-        {values.user_confirm && <>
-            <ExampleFillButton
+        </FormGroup>}
+        {showEmailSettings && <>
+            {!emailLocked && <ExampleFillButton
                 onClick={fillConfirmationExample}
                 title={__('Want help filling this email?', 'gutenverse-form')}
                 description={__('Insert a sample confirmation setup so you can edit from a realistic starting point.', 'gutenverse-form')}
                 success={exampleFilled}
-            />
+            />}
             <FormGroup
                 title={__('Recipient Settings', 'gutenverse-form')}
                 description={__('Choose which submitted email address receives the confirmation.', 'gutenverse-form')}
@@ -988,7 +1070,7 @@ const TabConfirmation = (props) => {
                         description={__('The specific input ID (name) to use as the recipient email address.', 'gutenverse-form')}
                         defaultValue={'input-email'}
                         value={values.email_input_name}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                         inputFields={availableInputFields}
                     />
                 )}
@@ -1007,7 +1089,7 @@ const TabConfirmation = (props) => {
                         { label: __('Static Text', 'gutenverse-form'), value: 'static' },
                         { label: __('Meta Action', 'gutenverse-form'), value: 'post_meta' },
                     ]}
-                    updateValue={updateValue}
+                    updateValue={fieldUpdateValue}
                 />
                 {values.user_email_subject_type === 'post_meta' && (
                     <ControlText
@@ -1015,7 +1097,7 @@ const TabConfirmation = (props) => {
                         title={__('Meta Key', 'gutenverse-form')}
                         description={__('The custom field name containing the subject.', 'gutenverse-form')}
                         value={values.user_email_subject_meta_key || ''}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                     />
                 )}
                 {(!values.user_email_subject_type || values.user_email_subject_type === 'static') && (
@@ -1024,7 +1106,7 @@ const TabConfirmation = (props) => {
                         title={__('Email Subject', 'gutenverse-form')}
                         description={placeholderDescription(__('The subject line for the confirmation email.', 'gutenverse-form'))}
                         value={values.user_email_subject}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                     />
                 )}
                 <ControlText
@@ -1032,7 +1114,7 @@ const TabConfirmation = (props) => {
                     title={__('Sender Email', 'gutenverse-form')}
                     description={__('The email address the confirmation is sent from. Must match your SMTP settings.', 'gutenverse-form')}
                     value={values.user_email_form}
-                    updateValue={updateValue}
+                    updateValue={fieldUpdateValue}
                 />
                 <ControlSelect
                     id={'user_email_reply_to_type'}
@@ -1043,7 +1125,7 @@ const TabConfirmation = (props) => {
                         { label: __('Static Email', 'gutenverse-form'), value: 'static' },
                         { label: __('Post Author / Site Admin', 'gutenverse-form'), value: 'dynamic' },
                     ]}
-                    updateValue={updateValue}
+                    updateValue={fieldUpdateValue}
                 />
                 {values.user_email_reply_to_type === 'dynamic' ? (
                     <InlineNotice type="warning">
@@ -1055,7 +1137,7 @@ const TabConfirmation = (props) => {
                         title={__('Reply-To Address', 'gutenverse-form')}
                         description={__('The static email address where user replies will be sent.', 'gutenverse-form')}
                         value={values.user_email_reply_to}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                     />
                 )}
             </FormGroup>
@@ -1073,7 +1155,7 @@ const TabConfirmation = (props) => {
                         { label: __('Static Text', 'gutenverse-form'), value: 'static' },
                         { label: __('Email Template', 'gutenverse-form'), value: 'template' },
                     ]}
-                    updateValue={updateValue}
+                    updateValue={fieldUpdateValue}
                 />
                 {(!values.user_message_type || values.user_message_type === 'static') && (
                     <ControlTextarea
@@ -1081,11 +1163,17 @@ const TabConfirmation = (props) => {
                         title={__('Email Body', 'gutenverse-form')}
                         description={placeholderDescription(__('The content of the confirmation email.', 'gutenverse-form'))}
                         value={values.user_email_body}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                     />
                 )}
                 {values.user_message_type === 'template' && (
-                    <EmailTemplateManager
+                    emailLocked ? <ControlText
+                        id={'user_email_template'}
+                        title={__('Email Template', 'gutenverse-form')}
+                        description={__('Saved email template ID.', 'gutenverse-form')}
+                        value={values.user_email_template}
+                        updateValue={fieldUpdateValue}
+                    /> : <EmailTemplateManager
                         templateId={values.user_email_template}
                         fieldName={'user_email_template'}
                         updateValue={updateValue}
@@ -1103,8 +1191,9 @@ const TabConfirmation = (props) => {
 };
 
 const TabNotification = (props) => {
-    const { values, updateValue, placeholderDescription, availableInputFields = [] } = props;
+    const { values, updateValue, placeholderDescription, availableInputFields = [], emailLocked = false } = props;
     const [exampleFilled, setExampleFilled] = useState(false);
+    const [showLockedExistingData, setShowLockedExistingData] = useState(false);
     const fillNotificationExample = () => {
         updateValue('admin_email_from', __('johndoe@gmail.com', 'gutenverse-form'));
         if (values.admin_email_subject_type === 'post_meta') {
@@ -1133,9 +1222,13 @@ const TabNotification = (props) => {
     };
 
     const dashboardFormSettingsUrl = getDashboardFormSettingsUrl();
+    const hasExistingData = hasEmailFieldData(values, notificationEmailFields);
+    const fieldUpdateValue = emailLocked && !showLockedExistingData ? noopUpdateValue : updateValue;
+    const showEmailSettings = emailLocked ? hasExistingData && showLockedExistingData : values.admin_confirm;
+    const showLockedBanner = emailLocked && !showLockedExistingData;
 
     return <div className="form-tab-body">
-        {!values.admin_confirm && <div style={{ marginBottom: '20px' }}>
+        {!emailLocked && !values.admin_confirm && <div style={{ marginBottom: '20px' }}>
             <InlineNotice type="info warning">
                 {createInterpolateElement(
                     __('This form will use the default admin notification settings from <dashboard>Dashboard Form Settings</dashboard>, even if Send Admin Notification is disabled.', 'gutenverse-form'),
@@ -1152,25 +1245,32 @@ const TabNotification = (props) => {
                 updateValue={updateValue}
             />
         </div>}
-        <FormGroup
+        {showLockedBanner ? <ProEmailLockNotice
+            type="notification"
+            hasExistingData={hasExistingData}
+            onToggleExistingData={() => setShowLockedExistingData(!showLockedExistingData)}
+        /> : <FormGroup
             title={__('Send Admin Notification', 'gutenverse-form')}
             description={__('Enable a form-specific notification email for site admins when this form is submitted.', 'gutenverse-form')}
         >
             <ControlCheckbox
                 id={'admin_confirm'}
-                title={__('Enable Admin Notification', 'gutenverse-form')}
+                title={emailLocked ? <span className="form-captcha-title">
+                    <span>{__('Enable Admin Notification', 'gutenverse-form')}</span>
+                    <span className="pro-label">{__('PRO', 'gutenverse-form')}</span>
+                </span> : __('Enable Admin Notification', 'gutenverse-form')}
                 description={__('Send an email notification to the site administrator upon submission.', 'gutenverse-form')}
                 value={values.admin_confirm}
                 updateValue={updateValue}
             />
-        </FormGroup>
-        {values.admin_confirm && <>
-            <ExampleFillButton
+        </FormGroup>}
+        {showEmailSettings && <>
+            {!emailLocked && <ExampleFillButton
                 onClick={fillNotificationExample}
                 title={__('Need a notification example?', 'gutenverse-form')}
                 description={__('Insert sample notification values for recipients, subject, sender, and message content.', 'gutenverse-form')}
                 success={exampleFilled}
-            />
+            />}
             <FormGroup
                 title={__('Email Details', 'gutenverse-form')}
                 description={__('Set the subject, sender, and reply-to address for the admin notification.', 'gutenverse-form')}
@@ -1184,7 +1284,7 @@ const TabNotification = (props) => {
                         { label: __('Static Text', 'gutenverse-form'), value: 'static' },
                         { label: __('Meta Action', 'gutenverse-form'), value: 'post_meta' },
                     ]}
-                    updateValue={updateValue}
+                    updateValue={fieldUpdateValue}
                 />
                 {values.admin_email_subject_type === 'post_meta' && (
                     <ControlText
@@ -1192,7 +1292,7 @@ const TabNotification = (props) => {
                         title={__('Meta Key', 'gutenverse-form')}
                         description={__('The custom field name containing the subject.', 'gutenverse-form')}
                         value={values.admin_email_subject_meta_key || ''}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                     />
                 )}
                 {(!values.admin_email_subject_type || values.admin_email_subject_type === 'static') && (
@@ -1201,7 +1301,7 @@ const TabNotification = (props) => {
                         title={__('Email Subject', 'gutenverse-form')}
                         description={placeholderDescription(__('The subject line for the notification email.', 'gutenverse-form'))}
                         value={values.admin_email_subject}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                     />
                 )}
                 <ControlText
@@ -1209,7 +1309,7 @@ const TabNotification = (props) => {
                     title={__('Sender Email', 'gutenverse-form')}
                     description={__('The email address the notification is sent from. Must match your SMTP settings.', 'gutenverse-form')}
                     value={values.admin_email_from}
-                    updateValue={updateValue}
+                    updateValue={fieldUpdateValue}
                 />
                 <ControlSelect
                     id={'admin_email_reply_to_type'}
@@ -1220,7 +1320,7 @@ const TabNotification = (props) => {
                         { label: __('Static Email', 'gutenverse-form'), value: 'static' },
                         { label: __('Dynamic Recipient', 'gutenverse-form'), value: 'dynamic' },
                     ]}
-                    updateValue={updateValue}
+                    updateValue={fieldUpdateValue}
                 />
                 {values.admin_email_reply_to_type === 'dynamic' ? (
                     <FieldIdControl
@@ -1228,7 +1328,7 @@ const TabNotification = (props) => {
                         title={__('Reply-To Field ID', 'gutenverse-form')}
                         description={__('The specific input ID (name) to use as the reply-to email address.', 'gutenverse-form')}
                         value={values.admin_email_reply_to_dynamic}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                         inputFields={availableInputFields}
                     />
                 ) : (
@@ -1237,7 +1337,7 @@ const TabNotification = (props) => {
                         title={__('Reply-To Address', 'gutenverse-form')}
                         description={__('The static email address where admin replies will be sent.', 'gutenverse-form')}
                         value={values.admin_email_reply_to}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                     />
                 )}
             </FormGroup>
@@ -1255,7 +1355,7 @@ const TabNotification = (props) => {
                         { label: __('Static Email', 'gutenverse-form'), value: 'static' },
                         { label: __('Dynamic Recipient', 'gutenverse-form'), value: 'dynamic' },
                     ]}
-                    updateValue={updateValue}
+                    updateValue={fieldUpdateValue}
                 />
                 {values.admin_email_type === 'dynamic' ? (
                     <>
@@ -1268,7 +1368,7 @@ const TabNotification = (props) => {
                                 { label: __('Post Author', 'gutenverse-form'), value: 'post_author' },
                                 { label: __('Meta Action', 'gutenverse-form'), value: 'post_meta' },
                             ]}
-                            updateValue={updateValue}
+                            updateValue={fieldUpdateValue}
                         />
                         {values.admin_email_source === 'post_meta' && (
                             <ControlText
@@ -1276,7 +1376,7 @@ const TabNotification = (props) => {
                                 title={__('Meta Key', 'gutenverse-form')}
                                 description={__('The custom field name containing the recipient\'s email address.', 'gutenverse-form')}
                                 value={values.admin_email_meta_key || ''}
-                                updateValue={updateValue}
+                                updateValue={fieldUpdateValue}
                             />
                         )}
                     </>
@@ -1286,7 +1386,7 @@ const TabNotification = (props) => {
                         title={__('Recipient Email', 'gutenverse-form')}
                         description={__('The email address(es) to receive notifications. Separate multiple emails with commas.', 'gutenverse-form')}
                         value={values.admin_email_to}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                     />
                 )}
             </FormGroup>
@@ -1305,7 +1405,7 @@ const TabNotification = (props) => {
                         { label: __('Form Input (Dynamic)', 'gutenverse-form'), value: 'dynamic' },
                         { label: __('Email Template', 'gutenverse-form'), value: 'template' },
                     ]}
-                    updateValue={updateValue}
+                    updateValue={fieldUpdateValue}
                 />
                 {values.admin_message_type === 'dynamic' && (
                     <FieldIdControl
@@ -1313,7 +1413,7 @@ const TabNotification = (props) => {
                         title={__('Message Field ID', 'gutenverse-form')}
                         description={__('The form input ID that contains the message body.', 'gutenverse-form')}
                         value={values.admin_message_input_name}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                         inputFields={availableInputFields}
                     />
                 )}
@@ -1323,11 +1423,17 @@ const TabNotification = (props) => {
                         title={__('Email Body', 'gutenverse-form')}
                         description={placeholderDescription(__('The content of the notification email. You can use field tags to include form data.', 'gutenverse-form'))}
                         value={values.admin_note}
-                        updateValue={updateValue}
+                        updateValue={fieldUpdateValue}
                     />
                 )}
                 {values.admin_message_type === 'template' && (
-                    <EmailTemplateManager
+                    emailLocked ? <ControlText
+                        id={'admin_email_template'}
+                        title={__('Email Template', 'gutenverse-form')}
+                        description={__('Saved email template ID.', 'gutenverse-form')}
+                        value={values.admin_email_template}
+                        updateValue={fieldUpdateValue}
+                    /> : <EmailTemplateManager
                         templateId={values.admin_email_template}
                         fieldName={'admin_email_template'}
                         updateValue={updateValue}
@@ -1369,15 +1475,18 @@ export const FormContent = (props) => {
     const [insufficientTierDesc, setInsufficientTierDesc] = useState('');
     const emptyLicense = applyFilters('gutenverse.panel.tab.pro.content', true);
 
+    const emailLocked = !!emptyLicense;
     const tabs = {
         general: {
             label: __('General', 'gutenverse-form'),
         },
         confirmation: {
             label: __('Confirmation', 'gutenverse-form'),
+            pro: emailLocked,
         },
         notification: {
             label: __('Notification', 'gutenverse-form'),
+            pro: emailLocked,
         },
         proSetting: {
             label: __('Setting', 'gutenverse-form'),
@@ -1433,7 +1542,7 @@ export const FormContent = (props) => {
     );
 
     const tabProps = {
-        ...props, availableInputFields, emailTemplates, metaKeys, placeholderDescription, refreshTemplates: fetchEmailTemplates,
+        ...props, availableInputFields, emailTemplates, metaKeys, placeholderDescription, refreshTemplates: fetchEmailTemplates, emailLocked,
     };
 
     const changeActive = key => {
