@@ -44,7 +44,77 @@ const FormGroup = ({ title, description, children, className = '' }) => (
     </div>
 );
 
-const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData, emailTemplates, refreshTemplates }) => {
+const ProBadge = () => (
+    <span
+        className="pro-label"
+        style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            borderRadius: '4px',
+            background: '#FF5C7A',
+            color: '#FFFFFF',
+            fontSize: '11px',
+            fontWeight: 700,
+            lineHeight: 1,
+            marginLeft: '6px',
+            padding: '4px 6px',
+            verticalAlign: 'middle',
+        }}
+    >
+        {__('PRO', 'gutenverse-form')}
+    </span>
+);
+
+const DashboardEmailLockNotice = ({ type }) => {
+    const isConfirmation = type === 'confirmation';
+    const openUpgradePopup = (event = null) => {
+        openFreemiusPopup(
+            event,
+            `${upgradeProUrl}?utm_source=gutenverse&utm_medium=formEmailSetting&utm_client_site=${clientUrl}&utm_client_theme=${activeTheme}`,
+            { medium: 'formEmailSetting' }
+        );
+    };
+
+    return <div
+        className="form-tab-body"
+        onMouseEnter={prefetchPricingPlanData}
+        onFocus={prefetchPricingPlanData}
+    >
+        <h2>
+            {isConfirmation ? __('Confirmation Mail to User (Default Setting)', 'gutenverse-form') : __('Notification Mail to Admin (Default Setting)', 'gutenverse-form')}
+            <ProBadge />
+        </h2>
+        <span>
+            {isConfirmation
+                ? __('Upgrade to Pro to configure default automated confirmation emails for users.', 'gutenverse-form')
+                : __('Upgrade to Pro to configure default automated notification emails for admins.', 'gutenverse-form')}
+        </span>
+        <ControlCheckbox
+            id={isConfirmation ? 'user_confirm' : 'admin_confirm'}
+            title={<span className="form-captcha-title">
+                <span>{isConfirmation ? __('Enable Confirmation Email', 'gutenverse-form') : __('Enable Admin Notification', 'gutenverse-form')}</span>
+                <ProBadge />
+            </span>}
+            description={isConfirmation
+                ? __('Send confirmation email to users after they submit a form.', 'gutenverse-form')
+                : __('Send notification email to admins after a form receives a submission.', 'gutenverse-form')}
+            value={false}
+            updateValue={() => { }}
+            disabled={true}
+        />
+        <div className="actions">
+            <button
+                type="button"
+                className="gutenverse-button"
+                onClick={openUpgradePopup}
+            >
+                {__('Upgrade to Pro', 'gutenverse-form')}
+            </button>
+        </div>
+    </div>;
+};
+
+const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData, emailTemplates, refreshTemplates, emailLocked = false }) => {
     const {
         form_confirmation = {}
     } = settingValues;
@@ -81,6 +151,10 @@ const FormConfirmation = ({ settingValues, updateSettingValues, saving, saveData
         updateValues(nextValues);
         setExampleFilled(true);
     };
+
+    if (emailLocked) {
+        return <DashboardEmailLockNotice type="confirmation" />;
+    }
 
     return <div className="form-tab-body">
         <h2>{__('Confirmation Mail to User (Default Setting)', 'gutenverse-form')}</h2>
@@ -241,7 +315,7 @@ const FormDailySummary = ({ settingValues, updateSettingValues, saving, saveData
     </div>;
 };
 
-const FormNotification = ({ settingValues, updateSettingValues, saving, saveData, emailTemplates, refreshTemplates }) => {
+const FormNotification = ({ settingValues, updateSettingValues, saving, saveData, emailTemplates, refreshTemplates, emailLocked = false }) => {
     const {
         form_notification = {}
     } = settingValues;
@@ -299,6 +373,10 @@ const FormNotification = ({ settingValues, updateSettingValues, saving, saveData
         updateValues(nextValues);
         setExampleFilled(true);
     };
+
+    if (emailLocked) {
+        return <DashboardEmailLockNotice type="notification" />;
+    }
 
     return <div className="form-tab-body">
         <h2>{__('Notification Mail to Admin (Default Setting)', 'gutenverse-form')}</h2>
@@ -620,6 +698,7 @@ const FormSpamProtection = ({ settingValues, updateSettingValues, saving, saveDa
 
 const FormSetting = (props) => {
     const [formActive, setFormActive] = useState('dashboard');
+    const emailLocked = !!applyFilters('gutenverse.panel.tab.pro.content', true);
 
     let form = '';
 
@@ -628,10 +707,10 @@ const FormSetting = (props) => {
             form = <FormDailySummary {...props} />;
             break;
         case 'confirmation':
-            form = <FormConfirmation {...props} />;
+            form = <FormConfirmation {...props} emailLocked={emailLocked} />;
             break;
         case 'notification':
-            form = <FormNotification {...props} />;
+            form = <FormNotification {...props} emailLocked={emailLocked} />;
             break;
         default:
             form = null;
@@ -648,8 +727,14 @@ const FormSetting = (props) => {
             <p>{__('This setting will be used for form on submit notifications', 'gutenverse-form')}</p>
             <div className="form-setting">
                 <div className={`${formActive === 'dashboard' ? 'active' : ''}`} onClick={() => setFormActive('dashboard')}>{__('Dashboard', 'gutenverse-form')}</div>
-                <div className={`${formActive === 'confirmation' ? 'active' : ''}`} onClick={() => setFormActive('confirmation')}>{__('User Confirmation', 'gutenverse-form')}</div>
-                <div className={`${formActive === 'notification' ? 'active' : ''}`} onClick={() => setFormActive('notification')}>{__('Admin Notification', 'gutenverse-form')}</div>
+                <div className={`${formActive === 'confirmation' ? 'active' : ''}`} onClick={() => setFormActive('confirmation')}>
+                    {__('User Confirmation', 'gutenverse-form')}
+                    {emailLocked && <ProBadge />}
+                </div>
+                <div className={`${formActive === 'notification' ? 'active' : ''}`} onClick={() => setFormActive('notification')}>
+                    {__('Admin Notification', 'gutenverse-form')}
+                    {emailLocked && <ProBadge />}
+                </div>
             </div>
             <div className="form-setting-content">
                 {form}

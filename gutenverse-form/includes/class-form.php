@@ -40,6 +40,210 @@ class Form {
 	const OWNER_INSTANCE_META = '_gutenverse_form_owner_instance_id';
 
 	/**
+	 * Check whether form action email automation can be used.
+	 *
+	 * @return bool
+	 */
+	public static function can_use_pro_email_actions() {
+		$has_license = function_exists( 'gutenverse_pro_active' ) && gutenverse_pro_active() && ! empty( get_option( 'gutenverse-license', '' ) );
+
+		return (bool) apply_filters( 'gutenverse_form_can_use_pro_email_actions', $has_license );
+	}
+
+	/**
+	 * Get fields controlled by the Pro email automation gate.
+	 *
+	 * @return array
+	 */
+	private static function get_email_action_fields() {
+		return array_merge(
+			self::get_confirmation_email_action_fields(),
+			self::get_notification_email_action_fields(),
+			array(
+				'overwrite_default_confirmation',
+				'overwrite_default_notification',
+				'variable_mapping',
+			)
+		);
+	}
+
+	/**
+	 * Get confirmation email fields.
+	 *
+	 * @return array
+	 */
+	private static function get_confirmation_email_action_fields() {
+		return array(
+			'user_confirm',
+			'auto_select_email',
+			'email_input_name',
+			'user_email_subject',
+			'user_email_form',
+			'user_email_reply_to',
+			'user_email_reply_to_type',
+			'user_email_reply_to_dynamic',
+			'user_email_body',
+			'user_email_subject_type',
+			'user_email_subject_meta_key',
+			'user_message_type',
+			'user_email_template',
+		);
+	}
+
+	/**
+	 * Get admin notification email fields.
+	 *
+	 * @return array
+	 */
+	private static function get_notification_email_action_fields() {
+		return array(
+			'admin_confirm',
+			'admin_email_subject',
+			'admin_email_subject_type',
+			'admin_email_subject_meta_key',
+			'admin_email_to',
+			'admin_email_from',
+			'admin_email_reply_to',
+			'admin_email_reply_to_type',
+			'admin_email_reply_to_dynamic',
+			'admin_note',
+			'admin_email_type',
+			'admin_email_source',
+			'admin_email_meta_key',
+			'admin_message_type',
+			'admin_message_input_name',
+			'admin_email_template',
+		);
+	}
+
+	/**
+	 * Check whether existing settings contain real email data.
+	 *
+	 * @param array $params Form action params.
+	 * @param array $fields Fields to inspect.
+	 *
+	 * @return bool
+	 */
+	private static function has_locked_email_group_data( $params, $fields ) {
+		foreach ( $fields as $field ) {
+			if ( ! array_key_exists( $field, $params ) ) {
+				continue;
+			}
+
+			$value = $params[ $field ];
+
+			if ( is_array( $value ) && ! empty( $value ) ) {
+				return true;
+			}
+
+			if ( is_bool( $value ) && $value ) {
+				return true;
+			}
+
+			if ( is_string( $value ) && '' !== $value && ! in_array( $value, array( '0', 'static', 'post_author' ), true ) ) {
+				return true;
+			}
+
+			if ( ! is_array( $value ) && ! is_bool( $value ) && ! is_string( $value ) && ! empty( $value ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check whether confirmation email settings contain usable saved data.
+	 *
+	 * @param array $params Form action params.
+	 *
+	 * @return bool
+	 */
+	public static function has_confirmation_email_action_data( $params ) {
+		return is_array( $params ) && self::has_locked_email_group_data( $params, self::get_confirmation_email_action_fields() );
+	}
+
+	/**
+	 * Check whether admin notification settings contain usable saved data.
+	 *
+	 * @param array $params Form action params.
+	 *
+	 * @return bool
+	 */
+	public static function has_notification_email_action_data( $params ) {
+		return is_array( $params ) && self::has_locked_email_group_data( $params, self::get_notification_email_action_fields() );
+	}
+
+	/**
+	 * Clear one locked email group.
+	 *
+	 * @param array $params Form action params.
+	 * @param array $fields Fields to clear.
+	 *
+	 * @return array
+	 */
+	private static function clear_locked_email_group_params( $params, $fields ) {
+		foreach ( $fields as $field ) {
+			$params[ $field ] = '';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Remove email automation settings when creating a form action without Pro.
+	 *
+	 * @param array $params Form action params.
+	 *
+	 * @return array
+	 */
+	private static function clear_locked_email_action_params( $params ) {
+		foreach ( self::get_email_action_fields() as $field ) {
+			$params[ $field ] = 'variable_mapping' === $field ? array() : '';
+		}
+
+		$params['overwrite_default_confirmation'] = true;
+		$params['overwrite_default_notification'] = true;
+
+		return $params;
+	}
+
+	/**
+	 * Preserve existing email automation settings while Pro is unavailable.
+	 *
+	 * @param array $params Form action params.
+	 *
+	 * @return array
+	 */
+	private static function preserve_locked_email_action_params( $params ) {
+		$existing = ! empty( $params['id'] ) ? get_post_meta( (int) $params['id'], 'form-data', true ) : array();
+		$existing = is_array( $existing ) ? $existing : array();
+
+		if ( empty( $existing ) ) {
+			return self::clear_locked_email_action_params( $params );
+		}
+
+		$has_confirmation = self::has_locked_email_group_data( $existing, self::get_confirmation_email_action_fields() );
+		$has_notification = self::has_locked_email_group_data( $existing, self::get_notification_email_action_fields() );
+
+		if ( ! $has_confirmation ) {
+			$params = self::clear_locked_email_group_params( $params, self::get_confirmation_email_action_fields() );
+			$params['overwrite_default_confirmation'] = true;
+		}
+
+		if ( ! $has_notification ) {
+			$params = self::clear_locked_email_group_params( $params, self::get_notification_email_action_fields() );
+			$params['overwrite_default_notification'] = true;
+		}
+
+		if ( ! $has_confirmation && ! $has_notification ) {
+			$params['variable_mapping'] = array();
+		}
+
+		return $params;
+	}
+
+	/**
 	 * Init constructor.
 	 */
 	public function __construct() {
@@ -1604,6 +1808,10 @@ class Form {
 		$params = self::normalize_form_action_params( $params );
 		unset( $params['id'] );
 
+		if ( ! self::can_use_pro_email_actions() ) {
+			$params = self::clear_locked_email_action_params( $params );
+		}
+
 		$form_data = array(
 			'post_title'  => $params['title'],
 			'post_status' => 'publish',
@@ -1631,6 +1839,10 @@ class Form {
 	 */
 	public static function edit_form_action( $params ) {
 		$params = self::normalize_form_action_params( $params );
+
+		if ( ! self::can_use_pro_email_actions() ) {
+			$params = self::preserve_locked_email_action_params( $params );
+		}
 
 		update_post_meta(
 			$params['id'],

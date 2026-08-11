@@ -2001,23 +2001,31 @@ class Api {
 				$mail_form_data     = is_array( $form_data_settings ) ? $form_data_settings : $form_setting;
 				$entry_id           = $result['entry_id'];
 
-				$confirmation_defaults = $this->get_dashboard_form_setting_defaults( $settings_data, 'confirmation' );
-				$notification_defaults = $this->get_dashboard_form_setting_defaults( $settings_data, 'notification' );
+				$has_pro_email_actions       = Form::can_use_pro_email_actions();
+				$confirmation_defaults       = $this->get_dashboard_form_setting_defaults( $settings_data, 'confirmation' );
+				$notification_defaults       = $this->get_dashboard_form_setting_defaults( $settings_data, 'notification' );
+				$use_confirmation_defaults   = ! empty( $confirmation_defaults ) && ! $this->is_form_setting_truthy( $mail_form_data['overwrite_default_confirmation'] ?? false );
+				$use_notification_defaults   = ! empty( $notification_defaults ) && ! $this->is_form_setting_truthy( $mail_form_data['overwrite_default_notification'] ?? false );
+				$can_send_confirmation_email = $has_pro_email_actions || Form::has_confirmation_email_action_data( $mail_form_data ) || ( $use_confirmation_defaults && Form::has_confirmation_email_action_data( $confirmation_defaults ) );
+				$can_send_notification_email = $has_pro_email_actions || Form::has_notification_email_action_data( $mail_form_data ) || ( $use_notification_defaults && Form::has_notification_email_action_data( $notification_defaults ) );
 
-				if ( ! empty( $confirmation_defaults ) && ! $this->is_form_setting_truthy( $mail_form_data['overwrite_default_confirmation'] ?? false ) ) {
+				if ( $can_send_confirmation_email && $use_confirmation_defaults ) {
 					$mail_form_data = $this->merge_form_setting_defaults( $mail_form_data, $confirmation_defaults );
 				}
 
-				if ( ! empty( $notification_defaults ) && ! $this->is_form_setting_truthy( $mail_form_data['overwrite_default_notification'] ?? false ) ) {
+				if ( $can_send_notification_email && $use_notification_defaults ) {
 					$mail_form_data = $this->merge_form_setting_defaults( $mail_form_data, $notification_defaults );
 				}
-				$mail_list = $this->mail_list( $params['entry-data'], $mail_form_data );
 
-				if ( ! empty( $mail_list ) ) {
-					$result = ( new Mail() )->send_user_email( $form_id, $mail_form_data, $entry_id, $params, $mail_list );
+				if ( $can_send_confirmation_email ) {
+					$mail_list = $this->mail_list( $params['entry-data'], $mail_form_data );
+
+					if ( ! empty( $mail_list ) ) {
+						$result = ( new Mail() )->send_user_email( $form_id, $mail_form_data, $entry_id, $params, $mail_list );
+					}
 				}
 
-				if ( ! empty( $mail_form_data['admin_confirm'] ) ) {
+				if ( $can_send_notification_email && ! empty( $mail_form_data['admin_confirm'] ) ) {
 					$result = ( new Mail() )->send_admin_email( $form_id, $mail_form_data, $entry_id, $params );
 				}
 			}
