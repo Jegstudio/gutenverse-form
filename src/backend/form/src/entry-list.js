@@ -32,12 +32,6 @@ const normalizeCapabilities = (capabilities = {}) => ({
     ...capabilities,
 });
 
-const hasExplicitRecentView = () => {
-    const params = new URLSearchParams(window.location.search);
-
-    return params.get('view') === 'recent';
-};
-
 const hasAllEntryListCapabilities = (capabilities = {}) => (
     ! hasActiveProLicense() &&
     capabilities.viewAll &&
@@ -157,7 +151,7 @@ const getInitialQuery = (capabilities) => {
         params.get('date') ||
         params.get('search')
     );
-    const view = capabilities.viewAll && (requestedView !== 'recent' || hasRequestedFilter) ? 'all' : 'recent';
+    const view = capabilities.viewAll ? 'all' : 'recent';
 
     return {
         view,
@@ -658,22 +652,6 @@ const EntryListActions = ({ capabilities = {}, config = {}, limit = 10, query, s
 
     return (
         <div className="entry-list-actions">
-            <div className="entry-list-view-toggle" aria-label={__('Entry list view', 'gutenverse-form')}>
-                <button
-                    type="button"
-                    className={query.view === 'recent' ? 'active' : ''}
-                    onClick={() => setQuery(current => ({ ...current, view: 'recent', page: 1 }))}
-                >
-                    {__('Recent', 'gutenverse-form')}
-                </button>
-                <button
-                    type="button"
-                    className={query.view === 'all' ? 'active' : ''}
-                    onClick={() => setQuery(current => ({ ...current, view: 'all', page: 1 }))}
-                >
-                    {__('All Entries', 'gutenverse-form')}
-                </button>
-            </div>
             {capabilities.export && (
                 <a className="entry-list-button entry-list-button--primary" href={buildExportUrl()}>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -831,7 +809,6 @@ const EntryList = () => {
     const [deleteError, setDeleteError] = useState('');
     const [filtersSettled, setFiltersSettled] = useState(() => !shouldWaitForEntryListFilters());
     const [entryListFilterVersion, setEntryListFilterVersion] = useState(0);
-    const shouldDefaultToAllEntries = useMemo(() => !hasExplicitRecentView(), []);
     const lockedDetailNotice = useMemo(() => {
         const params = new URLSearchParams(window.location.search);
 
@@ -855,18 +832,6 @@ const EntryList = () => {
                 setLoading(false);
             });
     }, [config, query, capabilities.viewAll, capabilities.filter]);
-
-    useEffect(() => {
-        if (!capabilities.viewAll || !shouldDefaultToAllEntries) {
-            return;
-        }
-
-        setQuery(current => current.view === 'all' ? current : {
-            ...current,
-            page: 1,
-            view: 'all',
-        });
-    }, [capabilities.viewAll, shouldDefaultToAllEntries]);
 
     useEffect(() => {
         let fallbackTimer = null;
