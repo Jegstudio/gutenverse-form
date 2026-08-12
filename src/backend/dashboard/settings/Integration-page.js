@@ -288,10 +288,6 @@ const randomPlaceholderExample = (fieldKey = '', placeholder = '') => {
         return withExamplePrefix(`+1 ${randomDigits(3)}-${randomDigits(3)}-${randomDigits(4)}`);
     }
 
-    if (/email/.test(normalizedKey)) {
-        return withExamplePrefix(`${randomAlphaNum(6).toLowerCase()}@example.com`);
-    }
-
     if (/token|secret|key/.test(normalizedKey)) {
         return withExamplePrefix(randomAlphaNum(28));
     }
