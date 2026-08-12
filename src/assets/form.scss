@@ -1612,6 +1612,40 @@ body {
         display: block;
         border-radius: 10px;
     }
+
+    .form-setting-upgrade-notice {
+        align-items: center;
+        background: #fff9e2;
+        border: 1px solid #eee4bd;
+        border-radius: 5px;
+        color: #524e3e;
+        display: flex;
+        font-family: "Roboto", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        gap: 10px;
+        justify-content: center;
+        line-height: 20px;
+        margin: 16px auto 32px;
+        max-width: 460px;
+        padding: 12px 16px;
+        text-align: left;
+
+        span {
+            align-items: center;
+            background: #ffc908;
+            border-radius: 50%;
+            color: #fff;
+            display: inline-flex;
+            flex: 0 0 18px;
+            font-size: 12px;
+            font-weight: 700;
+            height: 18px;
+            justify-content: center;
+            line-height: 1;
+            width: 18px;
+        }
+    }
 }
 
 .gutenverse-close {

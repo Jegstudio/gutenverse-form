@@ -98,9 +98,50 @@ const hasEmailFieldData = (values = {}, fields = []) => fields.some(field => {
 
 const noopUpdateValue = () => { };
 
+const formActionCardProAssets = {
+    confirmation: {
+        mockupLibrarySrc: 'form-action-mockup-confirmation-email.png',
+        iconLottieSrc: 'form-action-icon-notification.png',
+        iconNavSrc: 'form-action-icon-user.png',
+        numIconSrc: 'form-action-icon-gutenverse-form.png',
+    },
+    notification: {
+        mockupLibrarySrc: 'form-action-mockup-admin-notification.png',
+        iconLottieSrc: 'form-action-graphic-confirmation-email.png',
+        iconNavSrc: 'form-action-icon-user.png',
+        numIconSrc: 'form-action-icon-gutenverse-form.png',
+    },
+    settings: {
+        mockupLibrarySrc: 'form-action-mockup-editor-settings.png',
+        iconLottieSrc: 'form-action-icon-protection-pro.png',
+        iconNavSrc: 'form-action-icon-file-upload-pro.png',
+        numIconSrc: 'form-action-icon-gutenverse-news-pro.png',
+    },
+};
+
+const getFormActionImageSrc = fileName => {
+    const imageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
+
+    return imageBase && fileName ? `${imageBase}/${fileName}` : undefined;
+};
+
+const FormActionCardPro = ({ variant = 'settings', text }) => {
+    const assets = formActionCardProAssets[variant] || formActionCardProAssets.settings;
+
+    return (
+        <CardPro
+            num={true}
+            text={text}
+            mockupLibrarySrc={getFormActionImageSrc(assets.mockupLibrarySrc)}
+            iconLottieSrc={getFormActionImageSrc(assets.iconLottieSrc)}
+            iconNavSrc={getFormActionImageSrc(assets.iconNavSrc)}
+            numIconSrc={getFormActionImageSrc(assets.numIconSrc)}
+        />
+    );
+};
+
 const ProEmailLockNotice = ({ type, hasExistingData = false, onToggleExistingData }) => {
     const isConfirmation = type === 'confirmation';
-    const formImageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
 
     return (
         <FormGroup
@@ -119,13 +160,9 @@ const ProEmailLockNotice = ({ type, hasExistingData = false, onToggleExistingDat
                     {__('Edit existing data', 'gutenverse-form')}
                 </button>
             </InlineNotice>}
-            <CardPro
-                num={true}
+            <FormActionCardPro
+                variant={isConfirmation ? 'confirmation' : 'notification'}
                 text={__('This Feature Available at Basic or Higher Plan!', 'gutenverse-form')}
-                mockupLibrarySrc={isConfirmation ? `${formImageBase}/form-action-mockup-confirmation-email.png` : `${formImageBase}/form-action-mockup-admin-notification.png`}
-                iconLottieSrc={isConfirmation ? `${formImageBase}/form-action-icon-notification.png` : `${formImageBase}/form-action-graphic-confirmation-email.png`}
-                iconNavSrc={`${formImageBase}/form-action-icon-user.png`}
-                numIconSrc={`${formImageBase}/form-action-icon-gutenverse-form.png`}
             />
         </FormGroup>
     );
@@ -1564,8 +1601,6 @@ export const FormContent = (props) => {
     );
 
     const imageBase = window?.GutenverseConfig?.gutenverseFormVideoDir || '';
-    const formImageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
-
     const ProTabSetting = applyFilters(
         'gutenverse-form.pro-form-action-settings',
         <div className="form-tab-body">
@@ -1573,12 +1608,8 @@ export const FormContent = (props) => {
                 <span>{__('Unlock Advanced Form Settings', 'gutenverse-form')}</span>
                 {__('Unlock captcha protection, file upload validation, and advanced form controls to secure submissions and customize how your forms behave.', 'gutenverse-form')}
             </p>
-            <CardPro
-                num={true}
-                mockupLibrarySrc={`${formImageBase}/form-action-mockup-editor-settings.png`}
-                iconLottieSrc={`${formImageBase}/form-action-icon-protection-pro.png`}
-                iconNavSrc={`${formImageBase}/form-action-icon-file-upload-pro.png`}
-                numIconSrc={`${formImageBase}/form-action-icon-gutenverse-news-pro.png`}
+            <FormActionCardPro
+                variant="settings"
                 text={__('This Feature Available at Basic or Higher Plan!', 'gutenverse-form')}
             />
         </div>,
@@ -1601,6 +1632,10 @@ export const FormContent = (props) => {
             <video className="integration-video" autoPlay={true} loop={true}>
                 <source src={`${dir}/integration-form.mp4`} type="video/mp4" />
             </video>
+            <p className="form-setting-upgrade-notice">
+                <span aria-hidden="true">i</span>
+                {__('This feature available at Professional or Higher Plan.', 'gutenverse-form')}
+            </p>
         </div>,
         {...props,
             tab: 'ProTabIntegration',
