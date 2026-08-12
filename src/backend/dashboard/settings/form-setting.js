@@ -89,19 +89,29 @@ const DashboardEmailLockNotice = ({ type }) => {
                 ? __('Upgrade to Pro to configure default automated confirmation emails for users.', 'gutenverse-form')
                 : __('Upgrade to Pro to configure default automated notification emails for admins.', 'gutenverse-form')}
         </span>
-        <ControlCheckbox
-            id={isConfirmation ? 'user_confirm' : 'admin_confirm'}
-            title={<span className="form-captcha-title">
-                <span>{isConfirmation ? __('Enable Confirmation Email', 'gutenverse-form') : __('Enable Admin Notification', 'gutenverse-form')}</span>
-                <ProBadge />
-            </span>}
-            description={isConfirmation
-                ? __('Send confirmation email to users after they submit a form.', 'gutenverse-form')
-                : __('Send notification email to admins after a form receives a submission.', 'gutenverse-form')}
-            value={false}
-            updateValue={() => { }}
-            disabled={true}
-        />
+        <div className="dashboard-email-lock-field">
+            <ControlCheckbox
+                id={isConfirmation ? 'user_confirm' : 'admin_confirm'}
+                title={<span className="form-captcha-title">
+                    <span>{isConfirmation ? __('Enable Confirmation Email', 'gutenverse-form') : __('Enable Admin Notification', 'gutenverse-form')}</span>
+                    <ProBadge />
+                </span>}
+                description={isConfirmation
+                    ? __('Send confirmation email to users after they submit a form.', 'gutenverse-form')
+                    : __('Send notification email to admins after a form receives a submission.', 'gutenverse-form')}
+                value={false}
+                updateValue={() => { }}
+                disabled={true}
+            />
+            <button
+                type="button"
+                className="dashboard-email-lock-overlay"
+                onClick={openUpgradePopup}
+                aria-label={isConfirmation
+                    ? __('Upgrade to Pro to unlock Confirmation Email', 'gutenverse-form')
+                    : __('Upgrade to Pro to unlock Admin Notification', 'gutenverse-form')}
+            />
+        </div>
         <div className="actions">
             <button
                 type="button"

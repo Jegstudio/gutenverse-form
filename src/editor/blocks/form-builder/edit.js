@@ -62,14 +62,51 @@ const collectFormBuilderBlocks = (blocks = [], result = []) => {
     return result;
 };
 
-const persistCurrentPost = () => {
-    setTimeout(() => {
-        const editorDispatch = dispatch('core/editor');
+let persistCurrentPostTimer = null;
+let persistCurrentPostUnsubscribe = null;
 
-        if (editorDispatch?.savePost) {
-            editorDispatch.savePost();
+const runPersistCurrentPost = () => {
+    const editorSelect = select('core/editor');
+    const editorDispatch = dispatch('core/editor');
+    const isSaving = !!(
+        editorSelect?.isSavingPost?.() ||
+        editorSelect?.isAutosavingPost?.()
+    );
+
+    if (isSaving) {
+        if (!persistCurrentPostUnsubscribe) {
+            persistCurrentPostUnsubscribe = subscribe(() => {
+                const nextEditorSelect = select('core/editor');
+                const nextIsSaving = !!(
+                    nextEditorSelect?.isSavingPost?.() ||
+                    nextEditorSelect?.isAutosavingPost?.()
+                );
+
+                if (!nextIsSaving) {
+                    persistCurrentPostUnsubscribe();
+                    persistCurrentPostUnsubscribe = null;
+                    runPersistCurrentPost();
+                }
+            });
         }
-    }, 0);
+
+        return;
+    }
+
+    if (editorDispatch?.savePost) {
+        editorDispatch.savePost();
+    }
+};
+
+const persistCurrentPost = () => {
+    if (persistCurrentPostTimer) {
+        clearTimeout(persistCurrentPostTimer);
+    }
+
+    persistCurrentPostTimer = setTimeout(() => {
+        persistCurrentPostTimer = null;
+        runPersistCurrentPost();
+    }, 750);
 };
 
 const NoticeMessages = ({ successExample = false, errorExample = false }) => {

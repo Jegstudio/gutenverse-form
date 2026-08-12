@@ -1616,6 +1616,47 @@ class Form {
 	}
 
 	/**
+	 * Get an available title for a cloned form action.
+	 *
+	 * @param string $title Original form action title.
+	 *
+	 * @return string
+	 */
+	private static function get_unique_clone_title( $title ) {
+		$base_title = trim( $title ) . esc_html__( ' Clone', 'gutenverse-form' );
+		$candidate  = $base_title;
+		$suffix     = 2;
+
+		while ( self::form_action_title_exists( $candidate ) ) {
+			$candidate = $base_title . ' ' . $suffix;
+			++$suffix;
+		}
+
+		return $candidate;
+	}
+
+	/**
+	 * Check whether a form action title already exists.
+	 *
+	 * @param string $title Form action title.
+	 *
+	 * @return boolean
+	 */
+	private static function form_action_title_exists( $title ) {
+		global $wpdb;
+
+		$match = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT ID FROM {$wpdb->posts} WHERE post_type = %s AND post_title = %s AND post_status <> 'trash' LIMIT 1",
+				self::POST_TYPE,
+				$title
+			)
+		);
+
+		return ! empty( $match );
+	}
+
+	/**
 	 * Ensure a form action belongs to the current form builder instance.
 	 *
 	 * @param integer $id          Form action ID.
@@ -2127,7 +2168,7 @@ class Form {
 
 		$title     = get_the_title( $post );
 		$meta      = get_post_meta( $id, 'form-data', true );
-		$new_title = $title . esc_html__( ' Clone', 'gutenverse-form' );
+		$new_title = self::get_unique_clone_title( $title );
 
 		if ( ! is_array( $meta ) ) {
 			$meta = array();

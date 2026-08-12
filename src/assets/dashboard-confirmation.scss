@@ -466,6 +466,36 @@
         }
     }
 
+    .dashboard-email-lock-field {
+        position: relative;
+
+        .control-wrapper {
+            transition: background-color 0.2s ease;
+        }
+
+        &:hover .control-wrapper,
+        &:focus-within .control-wrapper {
+            background-color: #fbfbff;
+        }
+    }
+
+    .dashboard-email-lock-overlay {
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        inset: 0;
+        padding: 0;
+        position: absolute;
+        width: 100%;
+        z-index: 2;
+
+        &:focus {
+            border-radius: 6px;
+            box-shadow: 0 0 0 2px #3b57f7;
+            outline: none;
+        }
+    }
+
     @media (max-width: 782px) {
 
         .gutenverse-example-fill {
