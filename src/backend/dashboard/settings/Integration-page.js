@@ -44,6 +44,7 @@ const integrationConfig = {
     ...(window['GutenverseDashboard'] || {}),
 };
 const hasIntegrationPro = !!integrationConfig?.hasIntegrationPro;
+const isProfessionalTier = applyFilters( 'gutenverse-form.pro-form-action-settings', 'less', { tab: 'ProTabIntegration', proCaptcha: true } ) === 'less' ? false : true;
 const integrationUpgradeUrl = integrationConfig?.integrationUpgradeUrl || '';
 const integrationImageDir = integrationConfig?.imgDir || '';
 const admin_url = integrationConfig?.adminUrl || '';
@@ -100,7 +101,7 @@ const IntegrationUpgradeBanner = () => {
                 <h3 className="title">{__('Don’t Let Hot Leads Go Cold', 'gutenverse-form')}</h3>
                 <p className="description">{__('Without instant notifications and connected workflows, valuable inquiries can sit unnoticed. Upgrade to Pro to keep every lead moving.', 'gutenverse-form')}</p>
                 <ButtonUpgradePro
-                    location="form-builder"
+                    location="themeList"
                     link={appendTrackingParams(upgradeLink)}
                     isBanner={true}
                     customStyles={{ position: 'relative', padding: '8px 12px' }}
@@ -131,7 +132,7 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
     const isActive = !!status;
 
     const handleToggle = (event) => {
-        if (!hasIntegrationPro) {
+        if (!hasIntegrationPro || !isProfessionalTier) {
             event?.stopPropagation();
             openIntegrationPricingPopup(event);
             return;
@@ -154,11 +155,14 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
             <div
                 className={classnames('integration-item', {
                     active: isActive,
-                    locked: !hasIntegrationPro,
+                    locked: !hasIntegrationPro || !isProfessionalTier,
+                    upgrade: hasIntegrationPro && !isProfessionalTier,
                 })}
-                onClick={!hasIntegrationPro ? openIntegrationPricingPopup : undefined}
+                onClick={(!hasIntegrationPro || !isProfessionalTier) ? openIntegrationPricingPopup : undefined}
             >
-                {!hasIntegrationPro && <p className="pro-label">{__('PRO', 'gutenverse-form')}</p>}
+                {(!hasIntegrationPro || !isProfessionalTier) && <p className="pro-label">
+                    { (hasIntegrationPro && !isProfessionalTier) ? __('Upgrade', 'gutenverse-form') : __('PRO', 'gutenverse-form')}
+                </p>}
                 <div className="item-header">
                     <div className="item-icon">
                         {service.icon}
@@ -178,7 +182,7 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                     {isActive && (
                         <button
                             onClick={(event) => {
-                                if (!hasIntegrationPro) {
+                                if (!hasIntegrationPro || !isProfessionalTier) {
                                     event.stopPropagation();
                                     openIntegrationPricingPopup(event);
                                     return;
@@ -221,7 +225,7 @@ const TabSetting = ({ integrations, setIntegrations, onSetup }) => {
 
     return (
         <>
-            {!hasIntegrationPro && <IntegrationUpgradeBanner />}
+            {(!hasIntegrationPro || !isProfessionalTier) && <IntegrationUpgradeBanner />}
             <div className="form-tab-body">
                 <div className="integration-list">
                     <p><span><InfoIcon /></span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings. Please refresh the page after you finish setting up the intergrations', 'gutenverse-form')}</p>

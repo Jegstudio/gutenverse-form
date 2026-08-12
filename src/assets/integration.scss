@@ -89,7 +89,8 @@
                 position: relative;
             }
 
-            .button-upgrade-pro {
+            .button-upgrade-pro,
+            .button-upgrade-plan-banner {
                 position: relative;
             }
 
@@ -457,6 +458,13 @@
                     top: 0;
                     transform: rotate(-45deg) translate(-9px, -13px);
                     z-index: 2;
+                }
+            }
+
+            &.upgrade {
+                .pro-label {
+                    left: -6px;
+                    padding: 15px 16px 5px;
                 }
             }
 

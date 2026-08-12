@@ -1514,6 +1514,7 @@ export const FormContent = (props) => {
     const [hideFormNotice, setHideFormNotice] = useState(window?.GutenverseConfig?.hideFormNotice || false);
     const [popupInsufficientTier, setPopupInsufficientTier] = useState(false);
     const emptyLicense = applyFilters('gutenverse.panel.tab.pro.content', true);
+    const isProfessionalTier = applyFilters( 'gutenverse-form.pro-form-action-settings', 'less', { tab: 'ProTabIntegration', proCaptcha: true } ) === 'less' ? false : true;
 
     const emailLocked = !!emptyLicense;
     const tabs = {
@@ -1661,6 +1662,7 @@ export const FormContent = (props) => {
         <span className="form-tab-label">
             <span>{item.label}</span>
             {item.pro && emptyLicense && <span className="form-tab-pro-badge">{__('PRO', 'gutenverse-form')}</span>}
+            {item.pro && !emptyLicense && !isProfessionalTier && <span className="form-tab-pro-badge">{__('Upgrade', 'gutenverse-form')}</span>}
         </span>
     );
 
@@ -1698,7 +1700,8 @@ export const FormContent = (props) => {
             {Object.keys(tabs).map(key => {
                 const item = tabs[key];
                 const classes = classnames('header-item', {
-                    active: key === tab
+                    active: key === tab,
+                    upgrade: key === 'proIntegration' && (!emptyLicense && !isProfessionalTier)
                 });
 
                 return key === 'proSetting'
