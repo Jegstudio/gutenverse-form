@@ -45,22 +45,7 @@ const FormGroup = ({ title, description, children, className = '' }) => (
 );
 
 const ProBadge = () => (
-    <span
-        className="pro-label"
-        style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            borderRadius: '4px',
-            background: '#FF5C7A',
-            color: '#FFFFFF',
-            fontSize: '11px',
-            fontWeight: 700,
-            lineHeight: 1,
-            marginLeft: '6px',
-            padding: '4px 6px',
-            verticalAlign: 'middle',
-        }}
-    >
+    <span className="pro-label">
         {__('PRO', 'gutenverse-form')}
     </span>
 );
