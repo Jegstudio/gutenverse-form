@@ -100,6 +100,7 @@ const noopUpdateValue = () => { };
 
 const ProEmailLockNotice = ({ type, hasExistingData = false, onToggleExistingData }) => {
     const isConfirmation = type === 'confirmation';
+    const formImageBase = window?.GutenverseConfig?.gutenverseFormImgDir || '';
 
     return (
         <FormGroup
@@ -119,7 +120,12 @@ const ProEmailLockNotice = ({ type, hasExistingData = false, onToggleExistingDat
                 </button>
             </InlineNotice>}
             <CardPro
+                num={true}
                 text={__('This Feature Available at Basic or Higher Plan!', 'gutenverse-form')}
+                mockupLibrarySrc={isConfirmation ? `${formImageBase}/form-action-mockup-confirmation-email.png` : `${formImageBase}/form-action-mockup-admin-notification.png`}
+                iconLottieSrc={isConfirmation ? `${formImageBase}/form-action-icon-notification.png` : `${formImageBase}/form-action-graphic-confirmation-email.png`}
+                iconNavSrc={`${formImageBase}/form-action-icon-user.png`}
+                numIconSrc={`${formImageBase}/form-action-icon-gutenverse-form.png`}
             />
         </FormGroup>
     );

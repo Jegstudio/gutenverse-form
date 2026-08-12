@@ -45,6 +45,7 @@ const integrationConfig = {
 };
 const hasIntegrationPro = !!integrationConfig?.hasIntegrationPro;
 const integrationUpgradeUrl = integrationConfig?.integrationUpgradeUrl || '';
+const integrationImageDir = integrationConfig?.imgDir || '';
 const admin_url = integrationConfig?.adminUrl || '';
 const integrationLicenseType = ['professional'];
 const appendTrackingParams = (url) => {
@@ -87,44 +88,31 @@ const IntegrationUpgradeBanner = () => {
     const upgradeLink = upgradeProUrl || integrationUpgradeUrl;
 
     return (
-        <div
-            className="integration-upgrade-banner"
-            style={{
-                alignItems: 'center',
-                background: 'linear-gradient(135deg, #FFFFFF 0%, #FFF3FA 48%, #EAF7FF 100%)',
-                border: '1px solid #E3E4E6',
-                borderRadius: '8px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                gap: '24px',
-                minHeight: '120px',
-                margin: '0 25px 30px',
-                padding: '28px 32px',
-            }}
-        >
-            <div className="content" style={{ maxWidth: '660px' }}>
-                <h3
-                    className="details"
-                    style={{
-                        color: '#011627',
-                        fontFamily: 'Roboto, sans-serif',
-                        fontSize: '22px',
-                        fontWeight: 600,
-                        lineHeight: 1.35,
-                        margin: 0,
-                    }}
-                >
-                    {__('Form integrations require Gutenverse Pro with the Professional license tier or higher.', 'gutenverse-form')}
-                </h3>
-            </div>
-            <div style={{ flexShrink: 0 }}>
+        <div className="form-notice-wrapper integration-form-notice-wrapper">
+            <div className="form-pro-notice">
+                {integrationImageDir && (
+                    <img
+                        className="banner-image-background"
+                        src={`${integrationImageDir}/card-banner-bg-form.png`}
+                        alt=""
+                    />
+                )}
+                <h3 className="title">{__('Don’t Let Hot Leads Go Cold', 'gutenverse-form')}</h3>
+                <p className="description">{__('Without instant notifications and connected workflows, valuable inquiries can sit unnoticed. Upgrade to Pro to keep every lead moving.', 'gutenverse-form')}</p>
                 <ButtonUpgradePro
-                    location="integration-dashboard"
-                    isBanner={true}
+                    location="form-builder"
                     link={appendTrackingParams(upgradeLink)}
-                    customStyles={{ height: '16px', padding: '12px 25px 12px 30px' }}
+                    isBanner={true}
+                    customStyles={{ position: 'relative', padding: '8px 12px' }}
                     licenseType={integrationLicenseType}
                 />
+                {integrationImageDir && (
+                    <img
+                        className="banner-image-mockup"
+                        src={`${integrationImageDir}/card-banner-mockup-form.png`}
+                        alt=""
+                    />
+                )}
             </div>
         </div>
     );

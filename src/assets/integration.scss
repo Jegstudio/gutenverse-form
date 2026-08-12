@@ -56,6 +56,65 @@
         box-shadow: none;
     }
 
+    .integration-form-notice-wrapper {
+        margin-bottom: 30px;
+
+        .form-pro-notice {
+            border: 1px solid rgba(227, 228, 230, 1);
+            border-radius: 5px;
+            overflow: hidden;
+            padding: 24px;
+            position: relative;
+
+            .title {
+                color: rgba(1, 22, 39, 1);
+                font-family: "Roboto", sans-serif;
+                font-size: 18px;
+                font-weight: 500;
+                line-height: 22px;
+                margin: 0;
+                position: relative;
+            }
+
+            .description {
+                color: rgba(1, 22, 39, 0.6);
+                font-family: "Roboto", sans-serif;
+                font-size: 12px;
+                font-weight: 400;
+                line-height: 140%;
+                margin-bottom: 7px;
+                margin-top: 6px;
+                max-width: 385px;
+                padding-bottom: 9px;
+                position: relative;
+            }
+
+            .button-upgrade-pro {
+                position: relative;
+            }
+
+            .banner-image-background {
+                height: 100%;
+                left: 0;
+                object-fit: cover;
+                position: absolute;
+                top: 0;
+                width: 100%;
+            }
+
+            .banner-image-mockup {
+                border-radius: inherit;
+                height: auto;
+                object-fit: cover;
+                position: absolute;
+                right: 0;
+                top: 0;
+                transform: translate(10%, -16%);
+                width: 237px;
+            }
+        }
+    }
+
     .integration-header {
         padding: 24px 30px;
         border-bottom: 1px solid #e6e6ef;
