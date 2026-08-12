@@ -44,10 +44,9 @@ const integrationConfig = {
     ...(window['GutenverseDashboard'] || {}),
 };
 const hasIntegrationPro = !!integrationConfig?.hasIntegrationPro;
-const isProfessionalTier = applyFilters( 'gutenverse-form.pro-form-action-settings', 'less', { tab: 'ProTabIntegration', proCaptcha: true } ) === 'less' ? false : true;
+const isProfessionalTier = () => applyFilters( 'gutenverse-form.pro-form-action-settings', 'less', { tab: 'ProTabIntegration', proCaptcha: true } ) === 'less' ? false : true;
 const integrationUpgradeUrl = integrationConfig?.integrationUpgradeUrl || '';
 const integrationImageDir = integrationConfig?.imgDir || '';
-const admin_url = integrationConfig?.adminUrl || '';
 const integrationLicenseType = ['professional'];
 const appendTrackingParams = (url) => {
     if (!url) {
@@ -132,7 +131,7 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
     const isActive = !!status;
 
     const handleToggle = (event) => {
-        if (!hasIntegrationPro || !isProfessionalTier) {
+        if (!hasIntegrationPro || !isProfessionalTier()) {
             event?.stopPropagation();
             openIntegrationPricingPopup(event);
             return;
@@ -155,13 +154,13 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
             <div
                 className={classnames('integration-item', {
                     active: isActive,
-                    locked: !hasIntegrationPro || !isProfessionalTier,
-                    upgrade: hasIntegrationPro && !isProfessionalTier,
+                    locked: !hasIntegrationPro || !isProfessionalTier(),
+                    upgrade: hasIntegrationPro && !isProfessionalTier(),
                 })}
-                onClick={(!hasIntegrationPro || !isProfessionalTier) ? openIntegrationPricingPopup : undefined}
+                onClick={(!hasIntegrationPro || !isProfessionalTier()) ? openIntegrationPricingPopup : undefined}
             >
-                {(!hasIntegrationPro || !isProfessionalTier) && <p className="pro-label">
-                    { (hasIntegrationPro && !isProfessionalTier) ? __('Upgrade', 'gutenverse-form') : __('PRO', 'gutenverse-form')}
+                {(!hasIntegrationPro || !isProfessionalTier()) && <p className="pro-label">
+                    { (hasIntegrationPro && !isProfessionalTier()) ? __('Upgrade', 'gutenverse-form') : __('PRO', 'gutenverse-form')}
                 </p>}
                 <div className="item-header">
                     <div className="item-icon">
@@ -182,7 +181,7 @@ const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
                     {isActive && (
                         <button
                             onClick={(event) => {
-                                if (!hasIntegrationPro || !isProfessionalTier) {
+                                if (!hasIntegrationPro || !isProfessionalTier()) {
                                     event.stopPropagation();
                                     openIntegrationPricingPopup(event);
                                     return;
@@ -225,7 +224,7 @@ const TabSetting = ({ integrations, setIntegrations, onSetup }) => {
 
     return (
         <>
-            {(!hasIntegrationPro || !isProfessionalTier) && <IntegrationUpgradeBanner />}
+            {(!hasIntegrationPro || !isProfessionalTier()) && <IntegrationUpgradeBanner />}
             <div className="form-tab-body">
                 <div className="integration-list">
                     <p><span><InfoIcon /></span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings. Please refresh the page after you finish setting up the intergrations', 'gutenverse-form')}</p>
@@ -321,12 +320,6 @@ const normalizeFieldForDashboard = (fieldKey, field = {}) => ({
     ...field,
     placeholder: field?.placeholder ? randomPlaceholderExample(fieldKey, field.placeholder) : field?.placeholder,
 });
-
-const ArrowLeftIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-);
 
 const SecretField = ({ fieldKey, field, value, onChange }) => {
     const [isEditing, setIsEditing] = useState(false);
