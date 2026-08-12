@@ -5,7 +5,7 @@ import { applyFilters, hasFilter } from '@wordpress/hooks';
 import { ButtonUpgradePro } from 'gutenverse-core/components';
 import { IconCloseSVG, IconEyeSVG, IconSearchSVG, IconTrashSVG } from 'gutenverse-core/icons';
 import { signal } from 'gutenverse-core/editor-helper';
-import { ActivateLicenseButton, hasActiveProLicense, hasProLicenseData, strongDescription } from './helper';
+import { ActivateLicenseButton, hasProLicenseData, strongDescription } from './helper';
 
 const defaultCapabilities = {
     viewAll: false,
@@ -33,7 +33,6 @@ const normalizeCapabilities = (capabilities = {}) => ({
 });
 
 const hasAllEntryListCapabilities = (capabilities = {}) => (
-    ! hasActiveProLicense() &&
     capabilities.viewAll &&
     capabilities.export &&
     capabilities.filter &&
@@ -898,7 +897,7 @@ const EntryList = () => {
     const actions = <EntryListActions {...filterProps} />;
     const controls = <EntryListControls {...filterProps} />;
     const footer = <EntryListFooter {...filterProps} />;
-    const defaultEntryListContent = hasAllEntryListCapabilities(capabilities) ? null : <EntryListUpgrade config={config} />;
+    const defaultEntryListContent = data?.limited && !hasAllEntryListCapabilities(capabilities) ? <EntryListUpgrade config={config} /> : null;
     const proEntryListContent = applyFilters(proEntryListContentFilter, defaultEntryListContent, filterProps);
 
     const openDeleteEntryModal = (entry) => {

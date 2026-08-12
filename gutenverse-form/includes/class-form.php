@@ -1590,6 +1590,57 @@ class Form {
 	}
 
 	/**
+	 * Claim an unowned form action for one form builder instance.
+	 *
+	 * @param integer $form_id     Form action ID.
+	 * @param integer $post_id     Owner post ID.
+	 * @param string  $instance_id Owner instance ID.
+	 *
+	 * @return boolean
+	 */
+	private static function claim_unowned_form_action( $form_id, $post_id, $instance_id ) {
+		$form_id     = absint( $form_id );
+		$post_id     = absint( $post_id );
+		$instance_id = self::sanitize_form_instance_id( $instance_id );
+
+		if ( ! $form_id || ! $post_id || empty( $instance_id ) ) {
+			return false;
+		}
+
+		$owner = self::get_form_action_owner( $form_id );
+
+		if ( self::is_matching_form_action_owner( $owner, $post_id, $instance_id ) ) {
+			return true;
+		}
+
+		if ( self::has_form_action_owner( $owner ) ) {
+			return false;
+		}
+
+		$claimed = add_post_meta( $form_id, self::OWNER_INSTANCE_META, $instance_id, true );
+
+		if ( ! $claimed ) {
+			$owner = self::get_form_action_owner( $form_id );
+
+			if ( self::is_matching_form_action_owner( $owner, $post_id, $instance_id ) ) {
+				return true;
+			}
+		}
+
+		if ( $claimed || ( empty( $owner['post_id'] ) && (string) $owner['instance_id'] === (string) $instance_id ) ) {
+			update_post_meta( $form_id, self::OWNER_POST_META, $post_id );
+
+			return self::is_matching_form_action_owner(
+				self::get_form_action_owner( $form_id ),
+				$post_id,
+				$instance_id
+			);
+		}
+
+		return false;
+	}
+
+	/**
 	 * Prepare form action assignment response.
 	 *
 	 * @param integer $form_id Form action ID.
@@ -1693,9 +1744,7 @@ class Form {
 			return self::prepare_form_action_assignment_response( $id );
 		}
 
-		if ( ! self::has_form_action_owner( $owner ) && self::get_form_action_reference_count( $id ) <= 1 ) {
-			self::update_form_action_owner( $id, $post_id, $instance_id );
-
+		if ( ! self::has_form_action_owner( $owner ) && self::claim_unowned_form_action( $id, $post_id, $instance_id ) ) {
 			return self::prepare_form_action_assignment_response(
 				$id,
 				array(
