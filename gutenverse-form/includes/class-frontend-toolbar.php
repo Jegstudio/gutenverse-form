@@ -43,7 +43,16 @@ class Frontend_Toolbar {
 				'id'     => 'form-entries',
 				'parent' => $parent,
 				'title'  => esc_html__( 'Form Entries', 'gutenverse-form' ),
-				'href'   => admin_url( 'edit.php?post_type=' . Entries::POST_TYPE ),
+				'href'   => Entries::get_admin_page_url(),
+			)
+		);
+
+		$admin_bar->add_menu(
+			array(
+				'id'     => 'form-integration',
+				'parent' => $parent,
+				'title'  => esc_html__( 'Integrations', 'gutenverse-form' ),
+				'href'   => admin_url( 'admin.php?page=gutenverse-dashboard&path=settings&settings=form&sub-menu=form_integrations' ),
 			)
 		);
 	}

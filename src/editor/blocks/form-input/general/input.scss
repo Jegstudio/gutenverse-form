@@ -108,6 +108,24 @@
       display: block;
     }
   }
+
+  &.guten-form-input-outside-builder {
+    background: #f8f8fc;
+    border: 1px solid #dedfe7;
+    border-radius: 4px;
+    box-sizing: border-box;
+    container-name: guten-form-input-outside-builder;
+    container-type: inline-size;
+    padding: 34px;
+
+    &.guten-input-position-left {
+      display: block;
+
+      .label-wrapper {
+        width: auto;
+      }
+    }
+  }
 }
 
 .guten-input-position- {

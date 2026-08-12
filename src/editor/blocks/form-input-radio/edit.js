@@ -65,6 +65,7 @@ const FormInputRadioBlock = compose(
                             name={inputName} value={item.value}
                             className="gutenverse-input-radio"
                             type="radio"
+                            checked={item.selected}
                         />
                         <span className="radio">
                             {item.label}

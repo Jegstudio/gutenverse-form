@@ -1,0 +1,232 @@
+{
+	"apiVersion": 3,
+	"name": "gutenverse/form-notice",
+	"class_callback": "\\Gutenverse_Form\\Block\\Form_Notice",
+	"title": "Form Notice",
+	"description": "Form Notice Block",
+	"category": "gutenverse-form",
+	"allowCopyStyle": true,
+	"attributes": {
+		"elementId": {
+			"type": "string"
+		},
+		"hideNoticeEditor": {
+			"type": "boolean",
+			"default": false
+		},
+		"messageSource": {
+			"type": "string",
+			"default": "default"
+		},
+		"successMessage": {
+			"type": "string",
+			"default": "Form submitted successfully."
+		},
+		"errorMessage": {
+			"type": "string",
+			"default": "There was an error submitting the form."
+		},
+		"iconSuccess": {
+			"type": "string",
+			"default": "fas fa-check-circle"
+		},
+		"iconError": {
+			"type": "string",
+			"default": "gtn gtn-warning-light"
+		},
+		"iconSuccessType": {
+			"type": "string",
+			"default": "svg"
+		},
+		"iconSuccessSVG": {
+			"type": "string",
+			"default": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgRnJlZSA2LjUuMSBieSBAZm9udGF3ZXNvbWUgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbSBMaWNlbnNlIC0gaHR0cHM6Ly9mb250YXdlc29tZS5jb20vbGljZW5zZS9mcmVlIChJY29uczogQ0MgQlkgNC4wLCBGb250czogU0lMIE9GTCAxLjEsIENvZGU6IE1JVCBMaWNlbnNlKSBDb3B5cmlnaHQgMjAyMyBGb250aWNvbnMsIEluYy4gLS0+PHBhdGggZD0iTTI1NiA1MTJBMjU2IDI1NiAwIDEgMCAyNTYgMGEyNTYgMjU2IDAgMSAwIDAgNTEyek0zNjkgMjA5TDI0MSAzMzdjLTkuNCA5LjQtMjQuNiA5LjQtMzMuOSAwbC02NC02NGMtOS40LTkuNC05LjQtMjQuNiAwLTMzLjlzMjQuNi05LjQgMzMuOSAwbDQ3IDQ3TDMzNSAxNzVjOS40LTkuNCAyNC42LTkuNCAzMy45IDBzOS40IDI0LjYgMCAzMy45eiIvPjwvc3ZnPg=="
+		},
+		"iconErrorType": {
+			"type": "string",
+			"default": "svg"
+		},
+		"iconErrorSVG": {
+			"type": "string",
+			"default": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CjxwYXRoIGQ9Ik0yOS41OTQgMzAuNDA2aC0yOC43ODFxLTAuMjE5IDAtMC40MDYtMC4xMDl0LTAuMjgxLTAuMjk3cS0wLjEyNS0wLjE4OC0wLjEyNS0wLjM5MXQwLjA5NC0wLjM5MWwxNC40MDYtMjUuNjI1cTAuMDk0LTAuMTg4IDAuMjgxLTAuMjk3dDAuNDA2LTAuMTA5IDAuNDA2IDAuMTA5IDAuMzEzIDAuMjk3bDE0LjQwNiAyNS42MjVxMC4wOTQgMC4xODggMC4wOTQgMC4zOTF0LTAuMTI1IDAuMzkxcS0wLjA5NCAwLjE4OC0wLjI4MSAwLjI5N3QtMC40MDYgMC4xMDl2MHpNMi4xNTYgMjguODEzaDI2LjA2M2wtMTMuMDMxLTIzLjE4OC0xMy4wMzEgMjMuMTg4ek0xNS4xODggMjIuNDA2cS0wLjMxMyAwLTAuNTQ3LTAuMjM0dC0wLjIzNC0wLjU3OHYtOHEwLTAuMzEzIDAuMjM0LTAuNTQ3dDAuNTQ3LTAuMjM0cTAuMzQ0IDAgMC41NzggMC4yMzR0MC4yMzQgMC41NDd2OHEwIDAuMzQ0LTAuMjM0IDAuNTc4dC0wLjU3OCAwLjIzNHpNMTUuMTg4IDI3LjE4OHEtMC4zMTMgMC0wLjU0Ny0wLjIzNHQtMC4yMzQtMC41NDd2LTEuNTk0cTAtMC4zNDQgMC4yMzQtMC41Nzh0MC41NDctMC4yMzRxMC4zNDQgMCAwLjU3OCAwLjIzNHQwLjIzNCAwLjU3OHYxLjU5NHEwIDAuMzEzLTAuMjM0IDAuNTQ3dC0wLjU3OCAwLjIzNHoiPjwvcGF0aD4KPC9zdmc+Cg=="
+		},
+		"iconLayoutSuccess": {
+			"type": "string",
+			"default": "left",
+			"copyStyle": true
+		},
+		"iconLayoutError": {
+			"type": "string",
+			"default": "left",
+			"copyStyle": true
+		},
+
+		"backgroundSuccess": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"backgroundError": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"borderResponsiveSuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"borderResponsiveError": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"paddingSuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"paddingError": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"marginSuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"marginError": {
+			"type": "object",
+			"copyStyle": true
+		},
+
+		"iconColorSuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconColorError": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconSizeSuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconSizeError": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBackgroundSuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBackgroundError": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBorderSuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconBorderError": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconPaddingSuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"iconPaddingError": {
+			"type": "object",
+			"copyStyle": true
+		},
+
+		"textColorSuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"textColorError": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"typographySuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"typographyError": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"contentMarginSuccess": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"contentMarginError": {
+			"type": "object",
+			"copyStyle": true
+		},
+
+		"zIndex": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningType": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningWidth": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningAlign": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningLocation": {
+			"type": "string",
+			"copyStyle": true
+		},
+		"positioningLeft": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningRight": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningTop": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"positioningBottom": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"animation": {
+			"type": "object",
+			"default": {},
+			"copyStyle": true
+		},
+		"transform": {
+			"type": "object",
+			"copyStyle": true
+		},
+		"hideDesktop": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"hideTablet": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"hideMobile": {
+			"type": "boolean",
+			"copyStyle": true
+		},
+		"condition": {
+			"type": "object",
+			"default": {}
+		}
+	},
+	"supports": {
+		"className": false
+	},
+	"keywords": ["form", "notice", "message", "success", "error"],
+	"style": ["gutenverse-form-frontend-form-notice-style"]
+}

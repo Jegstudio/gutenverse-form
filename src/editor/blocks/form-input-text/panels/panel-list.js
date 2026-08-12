@@ -9,6 +9,7 @@ import { panelIcon } from './panel-icon';
 import { panelIconStyle } from './panel-icon-style';
 import { TabSetting, TabStyle } from 'gutenverse-core/controls';
 import { panelLogic } from '../../form-input/general/panels/panel-logic';
+import { inputValuePanel } from '../../form-input/general/panels/panel-input-value';
 
 export const panelList = () => {
     return [
@@ -17,6 +18,12 @@ export const panelList = () => {
             panelArray: contentPanel,
             initialOpen: true,
             tabRole: TabSetting
+        },
+        {
+            title: __("Input Value", "gutenverse-form"),
+            panelArray: inputValuePanel,
+            initialOpen: false,
+            tabRole: TabSetting,
         },
         {
             title: __('Icon', 'gutenverse'),

@@ -1,7 +1,86 @@
-import { Default, u } from 'gutenverse-core-frontend';
+import { Default, getNonce, u } from 'gutenverse-core-frontend';
 import isEmpty from 'lodash/isEmpty';
-import apiFetch from '@wordpress/api-fetch';
 import { applyFilters } from '@wordpress/hooks';
+
+const getRestUrl = (path) => {
+    const apiRoot = window?.wpApiSettings?.root || `${window.location.origin}/wp-json/`;
+    return `${apiRoot.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
+};
+
+const getSubmitNonce = (formData) => {
+    if (!formData['require_login']) {
+        return Promise.resolve('');
+    }
+
+    return getNonce('wp_rest');
+};
+
+const submitPublicForm = (url, body, options = {}) => {
+    const headers = {};
+
+    if (options.nonce) {
+        headers['X-WP-Nonce'] = options.nonce;
+    }
+
+    return fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers,
+        body
+    }).then(response => {
+        return response.json().catch(() => ({})).then(data => {
+            if (!response.ok) {
+                const error = new Error(data?.message || response.statusText);
+                error.data = data;
+                throw error;
+            }
+
+            return data;
+        });
+    });
+};
+
+const submitJson = (url, data) => {
+    return fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then(response => {
+        return response.json().catch(() => ({})).then(result => {
+            if (!response.ok) {
+                const error = new Error(result?.message || result?.error || response.statusText);
+                error.data = result;
+                throw error;
+            }
+
+            return result;
+        });
+    });
+};
+
+const renderNoticeIcon = (icon, iconType = 'icon', iconSVG = '') => {
+    if (iconType === 'svg' && iconSVG) {
+        try {
+            const svgData = atob(iconSVG);
+            return `<div class="gutenverse-icon-svg">${svgData}</div>`;
+        } catch (e) {
+            if (iconSVG.trim().startsWith('<svg')) {
+                return `<div class="gutenverse-icon-svg">${iconSVG}</div>`;
+            }
+
+            return '';
+        }
+    }
+
+    if (icon) {
+        return `<i class="${icon}"></i>`;
+    }
+
+    return '';
+};
 
 class GutenverseFormValidation extends Default {
     /* public */
@@ -16,15 +95,25 @@ class GutenverseFormValidation extends Default {
         const formBuilder = u(element);
         const formId = formBuilder.data('form-id');
         const { data, missingLabel, isAdmin } = window['GutenverseFormValidationData'];
-        const formData = data.filter(el => el.formId == formId);
+        const matchedFormData = data.find(el => el.formId == formId);
+        const hasAssignedForm = !!formId;
 
         this.__captchaJS(formBuilder);
-        if (formData.length !== 0) {
-            if (formData[0]['require_login'] && !formData[0]['logged_in']) {
+        this._initDynamicValues(formBuilder);
+        if (matchedFormData || hasAssignedForm) {
+            const formData = matchedFormData || {
+                formId,
+                require_login: false,
+                logged_in: true,
+                form_success_notice: false,
+                form_error_notice: false
+            };
+
+            if (formData['require_login'] && !formData['logged_in']) {
                 formBuilder.remove();
             } else {
                 formBuilder.attr('style', '');
-                this._onSubmit(formBuilder, formData[0]);
+                this._onSubmit(formBuilder, formData);
             }
             // REMINDER : button classes added here instead of from block save.js, it is done this way to prevent "Block Recovery" issue.
             const buttonUpdates = [];
@@ -87,6 +176,39 @@ class GutenverseFormValidation extends Default {
         }
     }
 
+    _initDynamicValues(formBuilder) {
+        formBuilder.find('.gutenverse-input').each(input => {
+            const dynamicConfig = u(input).data('dynamic-value');
+            if (dynamicConfig) {
+                try {
+                    const config = typeof dynamicConfig === 'string' ? JSON.parse(dynamicConfig) : dynamicConfig;
+                    if ((config.type === 'custom' || config.type === 'pro-dynamic') && config.custom) {
+                        if (!input.value) input.value = config.custom;
+                    } else if (config.type === 'query' && config.query?.key) {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const val = urlParams.get(config.query.key);
+                        if (val && !input.value) input.value = val;
+                    } else if (config.type === 'user' && config.user?.type) {
+                        const userData = window['GutenverseFormValidationData']?.userData;
+                        if (userData) {
+                            let val = '';
+                            if (config.user.type === 'role') {
+                                val = userData.role ? userData.role.join(', ') : '';
+                            } else if (config.user.type === 'meta' && config.user.meta) {
+                                val = userData[config.user.meta] || '';
+                            } else {
+                                val = userData[config.user.type];
+                            }
+                            if (val && !input.value) input.value = val;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Gutenverse Form: Error parsing dynamic value', e);
+                }
+            }
+        });
+    }
+
     _getInputValue(currentFormBuilder, input, validation) {
         let value = input.value;
 
@@ -145,7 +267,7 @@ class GutenverseFormValidation extends Default {
             value = input.checked;
         }
         if (input.type === 'checkbox' && u(input).hasClass('gutenverse-input-gdpr')) {
-            value = u(input).data('value');
+            value = input.checked ? u(input).data('value') : u(input).data('unchecked-value');
         }
 
         if (u(input).hasClass('gutenverse-input-mobile')) {
@@ -180,22 +302,89 @@ class GutenverseFormValidation extends Default {
         return null;
     }
 
+    _getRecaptchaResponse(captcha) {
+        if (captcha.nodes.length === 0) {
+            return null;
+        }
+
+        const sitekey = u(captcha.nodes[0]).data('sitekey');
+        const recaptcha = window.grecaptcha;
+
+        if (!sitekey || !recaptcha || typeof recaptcha.getResponse !== 'function') {
+            return null;
+        }
+
+        try {
+            const form = u(captcha.nodes[0]).closest('form');
+            const responseField = form.find('textarea[name="g-recaptcha-response"]').nodes
+                .find(field => field?.value);
+
+            if (responseField?.value) {
+                return responseField.value;
+            }
+
+            const defaultResponse = recaptcha.getResponse();
+            if (defaultResponse) {
+                return defaultResponse;
+            }
+
+            const clientIds = Object.keys(window.___grecaptcha_cfg?.clients || {})
+                .map(id => Number(id))
+                .filter(id => Number.isInteger(id));
+
+            for (const clientId of clientIds) {
+                const response = recaptcha.getResponse(clientId);
+                if (response) {
+                    return response;
+                }
+            }
+
+            return null;
+        } catch {
+            return null;
+        }
+    }
+
+    _resetRecaptcha(captcha) {
+        if (captcha.nodes.length === 0) {
+            return;
+        }
+
+        const recaptcha = window.grecaptcha;
+
+        if (!recaptcha || typeof recaptcha.getResponse !== 'function' || typeof recaptcha.reset !== 'function') {
+            return;
+        }
+
+        try {
+            const recaptchaResponse = this._getRecaptchaResponse(captcha);
+
+            if (recaptchaResponse) {
+                recaptcha.reset();
+            }
+        } catch {
+            // The external script can become unavailable after submit; keep cleanup non-blocking.
+        }
+    }
+
     _onSubmit(formBuilder, formData) {
         const instance = this;
         const formId = formBuilder.data('form-id');
-        const postId = !isEmpty(window['GutenverseData']) ? window['GutenverseData']['postId'] : 0;
+        const postId = formBuilder.data('post-id') || (!isEmpty(window['GutenverseData']) ? window['GutenverseData']['postId'] : 0);
+        const submitUrl = formBuilder.data('submit-url') || getRestUrl('gutenverse-form-client/v1/form/submit');
         const hideAfterSubmit = formBuilder.data('hide-after');
         const redirectTo = formBuilder.data('redirect');
+        const startedAtInput = formBuilder.find('input[name="gutenverse-form-started-at"]').first();
+        const loadStartedAt = window.performance && typeof window.performance.now === 'function' ? window.performance.now() : Date.now();
+
+        if (startedAtInput && !startedAtInput.value) {
+            startedAtInput.value = Date.now();
+        }
+
         formBuilder.on('submit', (e) => {
             e.preventDefault();
-            let recaptchaResponse = null;
             const captcha = formBuilder.find('.gutenverse-recaptcha');
-            if (captcha.nodes.length > 0) {
-                const sitekey = u(captcha.nodes[0]).data('sitekey');
-                if (sitekey) {
-                    recaptchaResponse = grecaptcha.getResponse(); // eslint-disable-line
-                }
-            }
+            const recaptchaResponse = instance._getRecaptchaResponse(captcha);
 
             const element = e.target;
             const currentFormBuilder = u(element);
@@ -203,10 +392,6 @@ class GutenverseFormValidation extends Default {
             let validFlag = true;
             let value = null;
             let isPayment = false;
-            let paymentMethod = false;
-            let paymentPrice = false;
-            let paymentItemName = false;
-            let paymentOption = false;
             formBuilder.find('.gutenverse-input').each(function (input) {
                 const currentInput = u(input);
                 const validation = JSON.parse(currentInput.data('validation'));
@@ -228,24 +413,15 @@ class GutenverseFormValidation extends Default {
                         value: value,
                         type
                     });
-                    if (validation) {
-                        isPayment = ('payment' === validation.type) && value;
-                        paymentMethod = ('payment' === validation.type) ? value : false;
-                        paymentOption = ('payment' === validation.type) ? JSON.parse(currentInput.data('payment-option')) : false;
-                    } else {
-                        isPayment = false;
-                        paymentMethod = false;
-                        paymentOption = false;
+                    if (validation && 'payment' === validation.type && value) {
+                        isPayment = true;
                     }
                 }
             });
             if (captcha.nodes.length > 0 && !recaptchaResponse) {
                 validFlag = false;
-                const notifclass = 'guten-error';
                 const message = window?.GutenverseFormValidationData?.recaptchaLabel || 'Please confirm that you are not a robot.';
-                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
-                currentFormBuilder.find('.form-notification').remove();
-                currentFormBuilder.prepend(notice);
+                this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit, message);
             }
 
             //uncomment this when done debugging
@@ -254,6 +430,18 @@ class GutenverseFormValidation extends Default {
                 const requestBody = new FormData();
                 requestBody.append('form-entry[formId]', formId);
                 requestBody.append('form-entry[postId]', postId);
+
+                const integrationSourceInput = currentFormBuilder.find('input[name="gutenverse-form-integration-source"]').first();
+                if (integrationSourceInput) {
+                    requestBody.append('form-entry[integrationSource]', integrationSourceInput.value);
+                }
+
+                const honeypotInput = currentFormBuilder.find('input[name="gutenverse-form-hp"]').first();
+                const currentStartedAtInput = currentFormBuilder.find('input[name="gutenverse-form-started-at"]').first();
+                const currentTime = window.performance && typeof window.performance.now === 'function' ? window.performance.now() : Date.now();
+                requestBody.append('gutenverse-form-hp', honeypotInput ? honeypotInput.value : '');
+                requestBody.append('gutenverse-form-started-at', currentStartedAtInput && currentStartedAtInput.value ? currentStartedAtInput.value : Date.now());
+                requestBody.append('gutenverse-form-elapsed', Math.max(0, Math.floor(currentTime - loadStartedAt)));
 
                 // append each value field
                 values.forEach(({ id, value, type }, idx) => {
@@ -269,61 +457,35 @@ class GutenverseFormValidation extends Default {
                 // remove existing notification on another submit
                 currentFormBuilder.find('.form-notification').remove();
                 setTimeout(() => {
-                    apiFetch({
-                        path: 'gutenverse-form-client/v1/form/submit',
-                        method: 'POST',
-                        body: requestBody
-                    }).then(({ entry_id }) => {
+                    getSubmitNonce(formData).then(nonce => submitPublicForm(submitUrl, requestBody, {
+                        nonce
+                    })).then(({ entry_id }) => {
                         if (isPayment) {
-                            const amountId = paymentOption.amountInput;
-                            const price = values.find(item => item.id === amountId);
-                            paymentPrice = price.value;
                             const message = 'Please wait you are being redirected';
                             const notifclass = 'guten-loading';
                             const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
                             currentFormBuilder.prepend(notice);
 
-                            apiFetch({
-                                path: 'gutenverse-pro/v1/form-payment',
-                                method: 'POST',
-                                data: {
-                                    payment: {
-                                        paymentMethod,
-                                        paymentPrice,
-                                        paymentOption,
-                                        paymentItemName,
-                                        redirectTo,
-                                        id: entry_id,
-                                        currentUrl: window.location.href
-                                    }
-                                },
+                            submitJson(getRestUrl('gutenverse-pro/v1/form-payment'), {
+                                payment: {
+                                    id: entry_id
+                                }
                             }).then((data) => {
                                 window.location = data.url;
                             }).catch((e) => {
-                                currentFormBuilder.find('.form-notification').remove();
                                 const message = (e.data && e.data.error) ? e.data.error : e.message;
-                                const notifclass = 'guten-error';
-                                const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
-                                currentFormBuilder.prepend(notice);
+                                this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit, message);
                                 currentFormBuilder.removeClass('loading');
                             });
                         } else {
                             this._requestMessage(currentFormBuilder, formData, 'success', hideAfterSubmit);
                         }
                     }).catch((e) => {
-                        currentFormBuilder.find('.form-notification').remove();
                         const message = (e.data && e.data.error) ? e.data.error : e.message;
-                        const notifclass = 'guten-error';
-                        const notice = `<div class="form-notification"><div class="notification-body ${notifclass}">${message}</div></div>`;
-                        currentFormBuilder.prepend(notice);
+                        this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit, message);
                         currentFormBuilder.removeClass('loading');
-                        this._requestMessage(currentFormBuilder, formData, 'error', hideAfterSubmit);
                     }).finally(() => {
-                        if (captcha.nodes.length > 0) {
-                            if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse().length > 0) {
-                                grecaptcha.reset();
-                            }
-                        }
+                        instance._resetRecaptcha(captcha);
                         currentFormBuilder.removeClass('loading');
 
                         if (redirectTo && !isPayment) {
@@ -336,7 +498,8 @@ class GutenverseFormValidation extends Default {
         });
     }
 
-    _requestMessage(currentFormBuilder, formData, notifClass, hideAfterSubmit) {
+    _requestMessage(currentFormBuilder, formData, notifClass, hideAfterSubmit, overrideMessage = '') {
+        const noticeBlock = currentFormBuilder.find('.guten-form-notice');
         let message = '';
         let notifclass = '';
 
@@ -351,6 +514,69 @@ class GutenverseFormValidation extends Default {
                 break;
             default:
                 break;
+        }
+
+        if (!isEmpty(overrideMessage)) {
+            message = overrideMessage;
+        }
+
+        if (noticeBlock.nodes.length > 0) {
+            const noticeWrapper = noticeBlock.find(
+                '.guten-form-notice-wrapper',
+            );
+            const noticeContent = noticeBlock.find(
+                '.guten-form-notice-content',
+            );
+            const noticeIcon = noticeBlock.find('.guten-form-notice-icon');
+            const noticeData = JSON.parse(
+                noticeBlock.attr('data-notice') || '{}',
+            );
+
+            // Determine message
+            let finalMessage = message;
+            if (isEmpty(overrideMessage) && noticeData.messageSource === 'custom') {
+                finalMessage =
+                    notifClass === 'success'
+                        ? noticeData.successMessage
+                        : noticeData.errorMessage;
+            }
+
+            // Handle Icon
+            noticeIcon.html('');
+            const currentIcon =
+                notifClass === 'success'
+                    ? noticeData.iconSuccess
+                    : noticeData.iconError;
+            const currentType =
+                notifClass === 'success'
+                    ? noticeData.iconSuccessType
+                    : noticeData.iconErrorType;
+            const currentSVG =
+                notifClass === 'success'
+                    ? noticeData.iconSuccessSVG
+                    : noticeData.iconErrorSVG;
+            const currentLayout =
+                notifClass === 'success'
+                    ? noticeData.iconLayoutSuccess
+                    : noticeData.iconLayoutError;
+
+            noticeIcon.html(renderNoticeIcon(currentIcon, currentType, currentSVG));
+
+            noticeContent.html(finalMessage);
+            noticeBlock.removeClass(
+                'status-success status-error notice-success notice-error show-notice',
+            );
+            noticeBlock.addClass(
+                `status-${notifClass} notice-${notifClass} show-notice`,
+            );
+
+            noticeWrapper.removeClass(
+                'layout-left layout-right layout-top layout-bottom',
+            );
+            noticeWrapper.addClass(`layout-${currentLayout}`);
+            noticeWrapper.attr('style', 'display: flex;');
+
+            return;
         }
 
         if (!isEmpty(message)) {

@@ -10,15 +10,20 @@ import { u } from 'gutenverse-core/components';
 const CreateForm = () => {
     const [open, setOpen] = useState(false);
     const [values, setValues] = useState({
-        title: 'Form Action'
+        title: 'Form Action',
+        integrations: {
+            useDashboardSettings: false,
+            use_dashboard_settings: false,
+        },
     });
     const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
 
     const updateValue = (id, value) => {
-        setValues({
-            ...values,
+        setValues((prevValues) => ({
+            ...prevValues,
             [id]: value
-        });
+        }));
     };
 
     useEffect(() => {
@@ -35,12 +40,28 @@ const CreateForm = () => {
 
         setValues({
             ...values,
+            integrations: {
+                useDashboardSettings: false,
+                use_dashboard_settings: false,
+                ...(values.integrations || {}),
+                ...(data.integrations || {}),
+            },
             ...data
         });
     }, []);
 
     const submitFormAction = () => {
+        if (saving) {
+            return;
+        }
+
+        if (!values.title || !values.title.trim()) {
+            setError(__('Please enter a form action title before saving.', 'gutenverse-form'));
+            return;
+        }
+
         setSaving(true);
+        setError('');
         apiFetch({
             path: 'gutenverse-form-client/v1/form-action/create',
             method: 'POST',
@@ -50,6 +71,9 @@ const CreateForm = () => {
         }).then(() => {
             setSaving(false);
             location.reload();
+        }).catch(err => {
+            setError(err?.message || __('Could not create the form action. Please try again.', 'gutenverse-form'));
+            setSaving(false);
         });
     };
 
@@ -70,16 +94,27 @@ const CreateForm = () => {
                     </>
                 </DrawerHeader>
                 <DrawerBody>
+                    {error && <div className="gutenverse-form-save-error">{error}</div>}
                     <FormContent values={values} updateValue={updateValue} />
                 </DrawerBody>
                 <DrawerFooter>
                     <>
-                        <div className="gutenverse-button create" onClick={() => submitFormAction()}>
+                        <button
+                            type="button"
+                            className={`gutenverse-button create ${saving ? 'disabled' : ''}`}
+                            onClick={() => submitFormAction()}
+                            disabled={saving}
+                        >
                             {saving ? __('Saving...', 'gutenverse-form') : __('Create Form', 'gutenverse-form')}
-                        </div>
-                        <div className="gutenverse-button cancel" onClick={() => closeDrawer()}>
+                        </button>
+                        <button
+                            type="button"
+                            className="gutenverse-button cancel"
+                            onClick={() => closeDrawer()}
+                            disabled={saving}
+                        >
                             {__('Cancel', 'gutenverse-form')}
-                        </div>
+                        </button>
                     </>
                 </DrawerFooter>
             </DrawerContainer>;

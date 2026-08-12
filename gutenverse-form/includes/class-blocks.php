@@ -21,6 +21,24 @@ class Blocks {
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_blocks' ), 99 );
 		add_filter( 'gutenverse_block_categories', array( $this, 'block_category' ) );
+		add_filter( 'render_block', array( $this, 'render_form_builder' ), 10, 2 );
+	}
+
+	/**
+	 * Render Form Builder.
+	 *
+	 * @param string $block_content .
+	 * @param array  $block .
+	 *
+	 * @return string
+	 */
+	public function render_form_builder( $block_content, $block ) {
+		if ( 'gutenverse/form-builder' === $block['blockName'] ) {
+			$post_id       = get_the_ID();
+			$block_content = str_replace( '<form', '<form data-post-id="' . $post_id . '"', $block_content );
+		}
+
+		return $block_content;
 	}
 
 	/**
@@ -41,6 +59,7 @@ class Blocks {
 	 * Register All Blocks
 	 */
 	public function register_blocks() {
+		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-notice/block.json' );
 		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-builder/block.json' );
 		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-checkbox/block.json' );
 		$this->register_dynamic_block( GUTENVERSE_FORM_DIR . '/block/form-input-date/block.json' );

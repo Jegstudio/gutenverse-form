@@ -18,8 +18,8 @@ export const panelList = () => {
             tabRole: TabSetting,
         },
         {
-            title: __('Checkbox Content', 'gutenverse-form'),
-            panelArray: radioContentPanel,
+            title: __('Radio Content', 'gutenverse-form'),
+            panelArray: (props) => radioContentPanel(props),
             initialOpen: true,
             tabRole: TabSetting,
         },

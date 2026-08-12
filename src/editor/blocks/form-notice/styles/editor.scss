@@ -1,0 +1,45 @@
+.guten-form-notice {
+	.guten-form-notice-wrapper {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
+		&.layout-top {
+			flex-direction: column;
+		}
+		&.layout-bottom {
+			flex-direction: column-reverse;
+		}
+		&.layout-right {
+			flex-direction: row-reverse;
+		}
+		&.layout-left {
+			flex-direction: row;
+		}
+	}
+
+	.guten-form-notice-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		i,
+		svg {
+			line-height: 1;
+		}
+	}
+
+	&.status-success {
+		// Default success colors if not overridden by styles
+		color: #155724;
+		background-color: #d4edda;
+		border-color: #c3e6cb;
+	}
+
+	&.status-error {
+		// Default error colors if not overridden by styles
+		color: #721c24;
+		background-color: #f8d7da;
+		border-color: #f5c6cb;
+	}
+}

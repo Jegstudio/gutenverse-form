@@ -1,0 +1,673 @@
+import classnames from 'classnames';
+import { __, sprintf } from '@wordpress/i18n';
+import { useEffect, useRef, useState } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
+import { ButtonUpgradePro } from 'gutenverse-core/components';
+import { InfoIcon } from 'gutenverse-core/icons';
+import {
+    IconGoogleSheetSVG,
+    IconMailerLiteSVG,
+    IconTelegramSVG,
+    IconDiscordSVG,
+    IconWhatsAppSVG,
+    IconWebhookSVG,
+    IconGetResponseSVG,
+    IconDripSVG,
+    IconActiveCampaignSVG,
+    IconConvertKitSVG,
+    IconSlackSVG,
+    IconSettingsSVG,
+    IconWarningSVG,
+    IconMailchimpSVG } from '../../../assets/icon/index';
+import { TextControl, TextareaControl, SelectControl, Button, Notice } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
+import { activeTheme, clientUrl, upgradeProUrl } from 'gutenverse-core/config';
+import { openFreemiusPopup } from 'gutenverse-core/helper';
+
+const services = [
+    { id: 'whatsapp', title: 'Whatsapp', description: __('Send form notifications directly to your WhatsApp.', 'gutenverse-form'), icon: <IconWhatsAppSVG /> },
+    { id: 'telegram', title: 'Telegram', description: __('Receive form alerts via Telegram bot.', 'gutenverse-form'), icon: <IconTelegramSVG /> },
+    { id: 'discord', title: 'Discord', description: __('Integrate form submissions with your Discord channel.', 'gutenverse-form'), icon: <IconDiscordSVG /> },
+    { id: 'mailchimp', title: 'Mail Chimp', description: __('Subscribe users to your Mailchimp email lists.', 'gutenverse-form'), icon: <IconMailchimpSVG /> },
+    { id: 'slack', title: 'Slack', description: __('Get real-time form notifications in your Slack workspace.', 'gutenverse-form'), icon: <IconSlackSVG /> },
+    { id: 'webhook', title: 'Webhook', description: __('Send form data to any external URL or service.', 'gutenverse-form'), icon: <IconWebhookSVG /> },
+    { id: 'get_response', title: 'GetResponse', description: __('Connect your forms to GetResponse marketing automation.', 'gutenverse-form'), icon: <IconGetResponseSVG /> },
+    { id: 'drip', title: 'Drip', description: __('Sync form data with Drip CRM and marketing platform.', 'gutenverse-form'), icon: <IconDripSVG /> },
+    { id: 'active_campaign', title: 'Active Campaign', description: __('Automate your marketing with ActiveCampaign integration.', 'gutenverse-form'), icon: <IconActiveCampaignSVG /> },
+    { id: 'convert_kit', title: 'Kit (Convert Kit)', description: __('Grow your audience with Kit integration.', 'gutenverse-form'), icon: <IconConvertKitSVG /> },
+    { id: 'mailer', title: 'Mailer', description: __('Connect form data to your MailerLite account.', 'gutenverse-form'), icon: <IconMailerLiteSVG /> },
+    { id: 'google_sheets', title: 'Google Sheets', description: __('Save form submissions directly to Google Sheets.', 'gutenverse-form'), icon: <IconGoogleSheetSVG /> },
+];
+
+const integrationConfig = {
+    ...(window['GutenverseConfig'] || {}),
+    ...(window['GutenverseDashboard'] || {}),
+};
+const hasIntegrationPro = !!integrationConfig?.hasIntegrationPro;
+const isProfessionalTier = () => applyFilters( 'gutenverse-form.pro-form-action-settings', 'less', { tab: 'ProTabIntegration', proCaptcha: true } ) === 'less' ? false : true;
+const integrationUpgradeUrl = integrationConfig?.integrationUpgradeUrl || '';
+const integrationImageDir = integrationConfig?.imgDir || '';
+const integrationLicenseType = ['professional'];
+const appendTrackingParams = (url) => {
+    if (!url) {
+        return null;
+    }
+
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}utm_source=gutenverse&utm_medium=dashboard&utm_client_site=${clientUrl}&utm_client_theme=${activeTheme}`;
+};
+
+const DisableModal = ({ isOpen, onConfirm, onCancel }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="gutenverse-modal-overlay" onClick={onCancel}>
+            <div className="gutenverse-modal-content" onClick={(e) => e.stopPropagation()}>
+                <button className="modal-close" onClick={onCancel}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                </button>
+                <div className="modal-body">
+                    <div className="modal-header">
+                        <IconWarningSVG />
+                    </div>
+                    <h2>{__('Disable This Integration?', 'gutenverse-form')}</h2>
+                    <p>{__('Are you sure you want to disable this integration? This may break existing forms using this service.', 'gutenverse-form')}</p>
+                </div>
+                <div className="modal-footer">
+                    <button className="button-disable" onClick={onConfirm}>{__('Disable', 'gutenverse-form')}</button>
+                    <button className="button-cancel" onClick={onCancel}>{__('Cancel', 'gutenverse-form')}</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const IntegrationUpgradeBanner = () => {
+    const upgradeLink = upgradeProUrl || integrationUpgradeUrl;
+
+    return (
+        <div className="form-notice-wrapper integration-form-notice-wrapper">
+            <div className="form-pro-notice">
+                {integrationImageDir && (
+                    <img
+                        className="banner-image-background"
+                        src={`${integrationImageDir}/card-banner-bg-form.png`}
+                        alt=""
+                    />
+                )}
+                <h3 className="title">{__('Don’t Let Hot Leads Go Cold', 'gutenverse-form')}</h3>
+                <p className="description">{__('Without instant notifications and connected workflows, valuable inquiries can sit unnoticed. Upgrade to Pro to keep every lead moving.', 'gutenverse-form')}</p>
+                <ButtonUpgradePro
+                    location="themeList"
+                    link={appendTrackingParams(upgradeLink)}
+                    isBanner={true}
+                    customStyles={{ position: 'relative', padding: '8px 12px' }}
+                    licenseType={integrationLicenseType}
+                />
+                {integrationImageDir && (
+                    <img
+                        className="banner-image-mockup"
+                        src={`${integrationImageDir}/card-banner-mockup-form.png`}
+                        alt=""
+                    />
+                )}
+            </div>
+        </div>
+    );
+};
+
+const openIntegrationPricingPopup = (event = null) => {
+    openFreemiusPopup(
+        event,
+        appendTrackingParams(upgradeProUrl || integrationUpgradeUrl),
+        { medium: 'dashboardIntegration' }
+    );
+};
+
+const IntegrationItem = ({ service, status, onToggle, onSetup }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const isActive = !!status;
+
+    const handleToggle = (event) => {
+        if (!hasIntegrationPro || !isProfessionalTier()) {
+            event?.stopPropagation();
+            openIntegrationPricingPopup(event);
+            return;
+        }
+
+        if (isActive) {
+            setIsModalOpen(true);
+        } else {
+            onToggle(service.id, true);
+        }
+    };
+
+    const confirmDisable = () => {
+        onToggle(service.id, false);
+        setIsModalOpen(false);
+    };
+
+    return (
+        <>
+            <div
+                className={classnames('integration-item', {
+                    active: isActive,
+                    locked: !hasIntegrationPro || !isProfessionalTier(),
+                    upgrade: hasIntegrationPro && !isProfessionalTier(),
+                })}
+                onClick={(!hasIntegrationPro || !isProfessionalTier()) ? openIntegrationPricingPopup : undefined}
+            >
+                {(!hasIntegrationPro || !isProfessionalTier()) && <p className="pro-label">
+                    { (hasIntegrationPro && !isProfessionalTier()) ? __('Upgrade', 'gutenverse-form') : __('PRO', 'gutenverse-form')}
+                </p>}
+                <div className="item-header">
+                    <div className="item-icon">
+                        {service.icon}
+                    </div>
+                    <div className="item-info">
+                        <div className="item-title">{service.title}</div>
+                        <div className="item-description">{service.description}</div>
+                    </div>
+                </div>
+                <div className="item-footer">
+                    <div className="item-toggle-wrap">
+                        <div className={classnames('gutenverse-toggle', { active: isActive })} onClick={handleToggle}>
+                            <span className="toggle-label">{isActive ? __('ON', 'gutenverse-form') : __('OFF', 'gutenverse-form')}</span>
+                            <div className="toggle-handle" />
+                        </div>
+                    </div>
+                    {isActive && (
+                        <button
+                            onClick={(event) => {
+                                if (!hasIntegrationPro || !isProfessionalTier()) {
+                                    event.stopPropagation();
+                                    openIntegrationPricingPopup(event);
+                                    return;
+                                }
+                                onSetup(service.id);
+                            }}
+                            className="setup-link-button"
+                        >
+                            {__('Continue setup', 'gutenverse-form')}
+                            <IconSettingsSVG />
+                        </button>
+                    )}
+                </div>
+            </div>
+            <DisableModal
+                isOpen={isModalOpen}
+                onConfirm={confirmDisable}
+                onCancel={() => setIsModalOpen(false)}
+            />
+        </>
+    );
+};
+
+const TabSetting = ({ integrations, setIntegrations, onSetup }) => {
+    const [saving, setSaving] = useState(null);
+
+    const onToggle = (id, value) => {
+        setSaving(id);
+        apiFetch({
+            path: 'gutenverse-form-client/v1/integration/save',
+            method: 'POST',
+            data: { key: id, value },
+        }).then(() => {
+            setIntegrations((prev) => ({ ...prev, [id]: value }));
+            setSaving(null);
+        }).catch(() => {
+            setSaving(null);
+        });
+    };
+
+    return (
+        <>
+            {(!hasIntegrationPro || !isProfessionalTier()) && <IntegrationUpgradeBanner />}
+            <div className="form-tab-body">
+                <div className="integration-list">
+                    <p><span><InfoIcon /></span>{__('Enable or disable integrations globally. These settings apply to all forms by default unless overridden in individual Form Builder settings. Please refresh the page after you finish setting up the intergrations', 'gutenverse-form')}</p>
+                    {services.map((service) => (
+                        <IntegrationItem
+                            key={service.id}
+                            service={service}
+                            status={integrations[service.id]}
+                            onToggle={onToggle}
+                            onSetup={onSetup}
+                            loading={saving === service.id}
+                        />
+                    ))}
+                </div>
+            </div>
+        </>
+    );
+};
+
+const formatFieldLabel = (field) => {
+    if (!field?.required) {
+        return field?.label;
+    }
+
+    return (
+        <>
+            {field.label} <span className="required-indicator">*</span>
+        </>
+    );
+};
+
+const SECRET_CLEAR_SENTINEL = '__gutenverse_clear_secret__';
+const randomDigits = (length = 6) => Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+const randomAlphaNum = (length = 12) => {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+};
+const randomHex = (length = 24) => {
+    const chars = 'abcdef0123456789';
+    return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+};
+const stripExamplePrefix = (value = '') => value.replace(/^\s*(example|eg|e\.g\.|ex)\s*:\s*/i, '').trim();
+const withExamplePrefix = (value = '') => `ex: ${stripExamplePrefix(value)}`;
+const randomUrlForField = (fieldKey = '') => {
+    if (/webhook/i.test(fieldKey)) {
+        return `https://hooks.example.com/form/${randomAlphaNum(10).toLowerCase()}`;
+    }
+
+    if (/api[_-]?url/i.test(fieldKey)) {
+        return `https://api-${randomAlphaNum(6).toLowerCase()}.example.com`;
+    }
+
+    return `https://example.com/${randomAlphaNum(8).toLowerCase()}`;
+};
+const randomPlaceholderExample = (fieldKey = '', placeholder = '') => {
+    const cleanPlaceholder = stripExamplePrefix(placeholder);
+    const normalizedKey = String(fieldKey || '').toLowerCase();
+
+    if (/url|webhook/.test(normalizedKey)) {
+        return withExamplePrefix(randomUrlForField(normalizedKey));
+    }
+
+    if (/phone|recipient/.test(normalizedKey)) {
+        return withExamplePrefix(`+1 ${randomDigits(3)}-${randomDigits(3)}-${randomDigits(4)}`);
+    }
+
+    if (/token|secret|key/.test(normalizedKey)) {
+        return withExamplePrefix(randomAlphaNum(28));
+    }
+
+    if (/chat|list|group|campaign|form_id|formid|sheet|number_id|business_number_id|id$/.test(normalizedKey)) {
+        return withExamplePrefix(randomDigits(10));
+    }
+
+    if (/message|note|body|content|text/.test(normalizedKey)) {
+        return withExamplePrefix(cleanPlaceholder || `Send submission to ${randomAlphaNum(5).toLowerCase()} channel`);
+    }
+
+    let result = cleanPlaceholder
+        .replace(/https?:\/\/[^\s,]+/gi, randomUrlForField(normalizedKey))
+        .replace(/\+\d[\d\s-]{7,}\d/g, `+1 ${randomDigits(3)}-${randomDigits(3)}-${randomDigits(4)}`)
+        .replace(/\b\d{6,}\b/g, match => randomDigits(match.length))
+        .replace(/\b[a-f0-9]{16,}\b/gi, match => randomHex(match.length))
+        .replace(/\b[a-z0-9_-]{16,}\b/gi, match => randomAlphaNum(match.length));
+
+    if (!result) {
+        result = randomAlphaNum(10);
+    }
+
+    return withExamplePrefix(result);
+};
+const normalizeFieldForDashboard = (fieldKey, field = {}) => ({
+    ...field,
+    placeholder: field?.placeholder ? randomPlaceholderExample(fieldKey, field.placeholder) : field?.placeholder,
+});
+
+const SecretField = ({ fieldKey, field, value, onChange }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const hasDraftValue = typeof value === 'string' && value.length > 0 && value !== SECRET_CLEAR_SENTINEL;
+    const hasSavedValue = !!field?.hasSavedValue;
+
+    const description = field.description || __('This value is stored securely and hidden after saving.', 'gutenverse-form');
+
+    return (
+        <div className="setup-secret-field">
+            {!isEditing && hasSavedValue ? (
+                <>
+                    <div className="components-base-control">
+                        <div className="components-base-control__field">
+                            <label className="components-base-control__label">
+                                {formatFieldLabel(field)}
+                            </label>
+                            <p>{__('Credentials saved.', 'gutenverse-form')}</p>
+                            <p className="description">{description}</p>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <Button
+                            variant="secondary"
+                            onClick={() => {
+                                setIsEditing(true);
+                                onChange(fieldKey, '');
+                            }}
+                        >
+                            {__('Change Credentials', 'gutenverse-form')}
+                        </Button>
+                        <Button
+                            variant="tertiary"
+                            isDestructive
+                            onClick={() => {
+                                setIsEditing(true);
+                                onChange(fieldKey, SECRET_CLEAR_SENTINEL);
+                            }}
+                        >
+                            {__('Clear Credentials', 'gutenverse-form')}
+                        </Button>
+                    </div>
+                </>
+            ) : field.type === 'textarea' ? (
+                <TextareaControl
+                    label={formatFieldLabel(field)}
+                    value={value === SECRET_CLEAR_SENTINEL ? '' : (value || '')}
+                    onChange={(val) => onChange(fieldKey, val)}
+                    placeholder={field.placeholder}
+                    help={description}
+                    rows={10}
+                />
+            ) : (
+                <TextControl
+                    label={formatFieldLabel(field)}
+                    value={value === SECRET_CLEAR_SENTINEL ? '' : (value || '')}
+                    onChange={(val) => onChange(fieldKey, val)}
+                    placeholder={field.placeholder}
+                    help={description}
+                    type="password"
+                />
+            )}
+            {isEditing && hasSavedValue && !hasDraftValue && value !== SECRET_CLEAR_SENTINEL && (
+                <p className="description">
+                    {__('Leave this empty to keep the currently saved credential, or paste a new one to replace it.', 'gutenverse-form')}
+                </p>
+            )}
+        </div>
+    );
+};
+
+
+const ServiceSetup = ({ serviceId, title, onBack }) => {
+    const [fields, setFields] = useState({});
+    const [settings, setSettings] = useState({});
+    const [isSaving, setIsSaving] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [notice, setNotice] = useState(null);
+    const [toast, setToast] = useState({
+        status: 'success',
+        message: '',
+    });
+    const [showToast, setShowToast] = useState(false);
+    const [documentationUrl, setDocumentationUrl] = useState('');
+    const [apiVersion, setApiVersion] = useState('');
+
+    const showNotificationToast = (status, message) => {
+        setToast({ status, message });
+        setShowToast(true);
+    };
+
+    useEffect(() => {
+        if (!showToast) {
+            return undefined;
+        }
+
+        const timeout = setTimeout(() => {
+            setShowToast(false);
+        }, toast?.status === 'success' ? 2000 : 5000);
+
+        return () => clearTimeout(timeout);
+    }, [showToast, toast]);
+
+    useEffect(() => {
+        if (!serviceId) {
+            return undefined;
+        }
+
+        let mounted = true;
+        setIsLoading(true);
+        setNotice(null);
+
+        apiFetch({
+            path: `gutenverse-form-client/v1/integration/settings?service=${serviceId}`,
+            method: 'GET',
+        }).then((response) => {
+            if (!mounted) {
+                return;
+            }
+
+            const responseFields = response?.fields || {};
+            const normalizedFields = Object.fromEntries(
+                Object.entries(responseFields).map(([key, field]) => [key, normalizeFieldForDashboard(key, field)])
+            );
+
+            setFields(normalizedFields);
+            setSettings(response?.settings || {});
+            setDocumentationUrl(response?.documentationUrl || '');
+            setApiVersion(response?.apiVersion || '');
+            setIsLoading(false);
+        }).catch((err) => {
+            if (!mounted) {
+                return;
+            }
+
+            setFields({});
+            setSettings({});
+            setDocumentationUrl('');
+            setApiVersion('');
+            setNotice({ type: 'error', message: err?.message || __('Failed to load integration settings.', 'gutenverse-form') });
+            showNotificationToast('failed', __('Failed to load integration settings.', 'gutenverse-form'));
+            setIsLoading(false);
+        });
+
+        return () => {
+            mounted = false;
+        };
+    }, [serviceId]);
+
+    const handleSave = () => {
+        setIsSaving(true);
+        setNotice(null);
+        apiFetch({
+            path: 'gutenverse-form-client/v1/integration/save_settings',
+            method: 'POST',
+            data: { service: serviceId, settings },
+        }).then(() => {
+            setIsSaving(false);
+            setNotice(null);
+            showNotificationToast('success', __('Settings saved successfully.', 'gutenverse-form'));
+        }).catch((err) => {
+            setIsSaving(false);
+            setNotice({ type: 'error', message: err.message || __('Failed to save settings.', 'gutenverse-form') });
+            showNotificationToast('failed', __('Failed to save settings.', 'gutenverse-form'));
+        });
+    };
+
+    const updateSetting = (key, value) => {
+        setSettings((prev) => ({ ...prev, [key]: value }));
+    };
+
+    return (
+        <div className="service-setup-content">
+            <div className="integration-setup-shell">
+                <div className="integration-header">
+                    <button className="back-button" onClick={onBack} aria-label={__('Back to integration list', 'gutenverse-form')}>
+                        <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.5996 4.60156H0.599609M4.34961 0.601562L0.599609 4.60156L4.34961 8.60156" stroke="#3B57F7" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    </button>
+                    <h1>{title || __('Integration', 'gutenverse-form')}</h1>
+                </div>
+                <div className="integration-setup-body">
+                    <div className="integration-setup-intro">
+                        <h3>{__('Setup', 'gutenverse-form')} {title}</h3>
+                        {apiVersion && (
+                            <p className="integration-api-version">
+                                {sprintf(__('API Ver. %s', 'gutenverse-form'), apiVersion)}
+                            </p>
+                        )}
+                    </div>
+                    {notice?.type === 'error' && (
+                        <Notice status={notice.type} onRemove={() => setNotice(null)}>
+                            {notice.message}
+                        </Notice>
+                    )}
+                    <div className="setup-fields">
+                        {isLoading && (
+                            <p>{__('Loading integration settings...', 'gutenverse-form')}</p>
+                        )}
+                        {!isLoading && Object.keys(fields).length === 0 && !notice && (
+                            <p>{__('No settings are available for this integration.', 'gutenverse-form')}</p>
+                        )}
+                        {!isLoading && Object.keys(fields).map((key) => {
+                            const field = fields[key];
+                            return (
+                                <div key={key} className="setup-field-item">
+                                    {field.sensitive ? (
+                                        <SecretField
+                                            fieldKey={key}
+                                            field={field}
+                                            value={settings[key]}
+                                            onChange={updateSetting}
+                                        />
+                                    ) : field.type === 'textarea' ? (
+                                        <TextareaControl
+                                            label={formatFieldLabel(field)}
+                                            value={settings[key] || ''}
+                                            onChange={(val) => updateSetting(key, val)}
+                                            placeholder={field.placeholder}
+                                            help={field.description}
+                                            rows={10}
+                                        />
+                                    ) : field.type === 'select' ? (
+                                        <SelectControl
+                                            label={formatFieldLabel(field)}
+                                            value={settings[key] || field.default || ''}
+                                            options={field.options || []}
+                                            onChange={(val) => updateSetting(key, val)}
+                                            help={field.description}
+                                        />
+                                    ) : (
+                                        <TextControl
+                                            label={formatFieldLabel(field)}
+                                            value={settings[key] || ''}
+                                            onChange={(val) => updateSetting(key, val)}
+                                            placeholder={field.placeholder}
+                                            help={field.description}
+                                        />
+                                    )}
+                                </div>
+                            );
+                        })}
+                        {documentationUrl && (
+                            <div className="setup-doc-note">
+                                <p>
+                                    {__('Need help setting up this integration? ', 'gutenverse-form')}
+                                    <a href={documentationUrl} target="_blank" rel="noreferrer">
+                                        {__('Check the service documentation for setup instructions', 'gutenverse-form')}
+                                    </a>
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                    <div className="setup-footer">
+                        <Button
+                            isPrimary
+                            isBusy={isSaving}
+                            onClick={handleSave}
+                            disabled={isSaving || isLoading}
+                        >
+                            {__('Save Settings', 'gutenverse-form')}
+                        </Button>
+                    </div>
+                </div>
+            </div>
+            <div className={`gutenverse-notification-toast ${toast?.status} ${showToast ? 'show' : ''}`}>
+                {toast?.status === 'success' ? (
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="14" height="14" rx="7" fill="#17B26A" />
+                        <path d="M10.5 4.375L5.6875 9.1875L3.5 7" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                ) : (
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 0C3.15 0 0 3.15 0 7C0 10.85 3.15 14 7 14C10.85 14 14 10.85 14 7C14 3.15 10.85 0 7 0ZM9.59 8.61C9.87 8.89 9.87 9.31 9.59 9.59C9.31 9.87 8.89 9.87 8.61 9.59L7 7.98L5.39 9.59C5.11 9.87 4.69 9.87 4.41 9.59C4.13 9.31 4.13 8.89 4.41 8.61L6.02 7L4.41 5.39C4.13 5.11 4.13 4.69 4.41 4.41C4.69 4.13 5.11 4.13 5.39 4.41L7 6.02L8.61 4.41C8.89 4.13 9.31 4.13 9.59 4.41C9.87 4.69 9.87 5.11 9.59 5.39L7.98 7L9.59 8.61Z" fill="#F04438" />
+                    </svg>
+                )}
+                {toast?.message}
+            </div>
+        </div>
+    );
+};
+
+const IntegrationPage = () => {
+    const [currentService, setCurrentService] = useState('');
+    const [integrations, setIntegrations] = useState(integrationConfig?.integrations || {});
+    const pageRef = useRef(null);
+
+    useEffect(() => {
+        const pageElement = pageRef.current;
+        const settingsWrapper = pageElement?.closest('.settings-tab-body-wrapper');
+
+        if (!settingsWrapper) {
+            return undefined;
+        }
+
+        settingsWrapper.classList.toggle('gutenverse-form-integration-detail-open', !!currentService);
+
+        return () => {
+            settingsWrapper.classList.remove('gutenverse-form-integration-detail-open');
+        };
+    }, [currentService]);
+
+    useEffect(() => {
+        if (!currentService) {
+            return;
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [currentService]);
+
+    if (currentService) {
+        const service = services.find(s => s.id === currentService);
+        return (
+            <div
+                ref={pageRef}
+                className="gutenverse-form-integration-wrap is-service-setup"
+            >
+                <div className="form-tab-body">
+                    <ServiceSetup
+                        serviceId={currentService}
+                        title={service?.title}
+                        onBack={() => setCurrentService('')}
+                    />
+                </div>
+            </div>
+        );
+    }
+
+    const SettingTab = applyFilters(
+        'gutenverse.form.integration.tab.setting',
+        <TabSetting
+            integrations={integrations}
+            setIntegrations={setIntegrations}
+            onSetup={setCurrentService}
+        />,
+    );
+
+    return (
+        <>
+            <div ref={pageRef} className="gutenverse-form-integration-wrap">
+
+                {SettingTab}
+
+                {applyFilters('gutenverse.form.integration.content.setting', null)}
+            </div>
+        </>
+    );
+};
+
+export default IntegrationPage;

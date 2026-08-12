@@ -2,6 +2,8 @@
 import { createRoot } from '@wordpress/element';
 import CreateFormAction from './src/create-form-action';
 import EditFormAction from './src/edit-form-action';
+import EntryList from './src/entry-list';
+import FormDashboard from './src/form-dashboard';
 import { doAction } from '@wordpress/hooks';
 import domReady from '@wordpress/dom-ready';
 
@@ -17,5 +19,17 @@ domReady(() => {
                 <EditFormAction />
             </>
         );
+    }
+
+    const dashboardElement = document.getElementById('gutenverse-form-dashboard');
+    if (dashboardElement) {
+        const dashboardRoot = createRoot(dashboardElement);
+        dashboardRoot.render(<FormDashboard />);
+    }
+
+    const entryListElement = document.getElementById('gutenverse-form-entry-list');
+    if (entryListElement) {
+        const entryListRoot = createRoot(entryListElement);
+        entryListRoot.render(<EntryList />);
     }
 });

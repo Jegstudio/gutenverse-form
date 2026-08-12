@@ -44,6 +44,13 @@ class Init {
 	public $dashboard;
 
 	/**
+	 * Hold instance of email template
+	 *
+	 * @var Email_Template
+	 */
+	public $email_template;
+
+	/**
 	 * Hold frontend assets instance
 	 *
 	 * @var Frontend_Assets
@@ -100,6 +107,27 @@ class Init {
 	public $form_validation;
 
 	/**
+	 * Hold Dynamic Value Instance.
+	 *
+	 * @var Dynamic_Value
+	 */
+	public $dynamic_value;
+
+	/**
+	 * Hold Integration Instance.
+	 *
+	 * @var Integration
+	 */
+	public $integration;
+
+	/**
+	 * Hold Daily Summary Instance.
+	 *
+	 * @var Daily_Summary
+	 */
+	public $daily_summary;
+
+	/**
 	 * Singleton page for Init Class
 	 *
 	 * @return Gutenverse
@@ -123,6 +151,7 @@ class Init {
 		add_action( 'plugins_loaded', array( $this, 'framework_loaded' ), 99 );
 		add_filter( 'gutenverse_companion_plugin_list', array( $this, 'plugin_name' ) );
 		register_activation_hook( GUTENVERSE_FORM_FILE, array( $this, 'set_activation_transient' ) );
+		register_deactivation_hook( GUTENVERSE_FORM_FILE, array( 'Gutenverse_Form\Daily_Summary', 'clear_event' ) );
 	}
 
 	/**
@@ -130,6 +159,7 @@ class Init {
 	 */
 	public function set_activation_transient() {
 		set_transient( 'gutenverse_redirect', 1, 30 );
+		Daily_Summary::schedule_event();
 	}
 
 	/**
@@ -182,7 +212,7 @@ class Init {
 		}
 		$plugins = get_plugins();
 		$checks  = array(
-			'gutenverse' => array(
+			'gutenverse'      => array(
 				'plugin' => 'gutenverse/gutenverse.php',
 			),
 			'gutenverse-news' => array(
@@ -335,9 +365,12 @@ class Init {
 	 * Initialize Form
 	 */
 	public function init_post_type() {
-		$this->form      = new Form();
-		$this->entries   = new Entries();
-		$this->dashboard = new Dashboard();
+		$this->form           = new Form();
+		$this->entries        = new Entries();
+		$this->dashboard      = new Dashboard();
+		$this->email_template = new Email_Template();
+		$this->integration    = new Integration();
+		$this->daily_summary  = new Daily_Summary();
 	}
 
 	/**
@@ -351,6 +384,7 @@ class Init {
 		$this->meta_option      = new Meta_Option();
 		$this->blocks           = new Blocks();
 		$this->form_validation  = new Form_Validation();
+		$this->dynamic_value    = new Dynamic_Value();
 	}
 
 	/**

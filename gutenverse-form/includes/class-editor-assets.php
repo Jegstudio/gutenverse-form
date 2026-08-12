@@ -62,12 +62,41 @@ class Editor_Assets {
 	 */
 	public function block_config( $config ) {
 		$config['gutenverseFormImgDir']              = GUTENVERSE_FORM_URL . '/assets/img';
+		$config['gutenverseFormVideoDir']            = GUTENVERSE_FORM_URL . '/assets/video';
 		$config['pluginVersions'][ GUTENVERSE_FORM ] = array(
 			'name'           => GUTENVERSE_FORM_NAME,
 			'version'        => GUTENVERSE_FORM_VERSION,
 			'currentNotice'  => GUTENVERSE_FORM_NOTICE_VERSION,
-			'noticeVersions' => array( '1.0.0' ),
+			'noticeVersions' => array( '3.0.0', '1.0.0' ),
 		);
+
+		// Global Integrations.
+		$global_integrations = array();
+		$enabled_services    = get_option( 'gutenverse_form_integrations', array() );
+		$available_services  = Integration::get_services();
+
+		foreach ( $available_services as $service ) {
+			$service_name = $service['service_name'];
+			if ( ! empty( $enabled_services[ $service_name ] ) ) {
+				$service_settings = get_option( "gutenverse_form_{$service_name}_settings", array() );
+				if ( ! empty( $service_settings['apply_globally'] ) ) {
+					$instance = ( new Integration() )->get_service_instance( $service_name );
+					$fields   = ( $instance && method_exists( $instance, 'get_fields' ) ) ? $instance->get_fields() : array();
+
+					foreach ( $fields as $key => $field ) {
+						if ( ! empty( $field['sensitive'] ) ) {
+							unset( $service_settings[ $key ] );
+						}
+					}
+
+					$global_integrations[] = array_merge(
+						array( 'type' => $service_name ),
+						$service_settings
+					);
+				}
+			}
+		}
+		$config['globalIntegrations'] = $global_integrations;
 
 		return $config;
 	}

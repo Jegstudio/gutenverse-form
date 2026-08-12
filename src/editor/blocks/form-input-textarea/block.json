@@ -6,6 +6,7 @@
 	"description": "Gutenverse Input Textarea",
 	"category": "gutenverse-form",
 	"allowCopyStyle": true,
+	"styleGroup": "form-input-field",
 	"attributes": {
 		"elementId": {
 			"type": "string"
@@ -16,10 +17,12 @@
 		},
 		"showLabel": {
 			"type": "boolean",
+			"copyStyle": true,
 			"default": true
 		},
 		"showHelper": {
 			"type": "boolean",
+			"copyStyle": true,
 			"default": true
 		},
 		"inputHelper": {
@@ -338,7 +341,8 @@
 			"default": "gtn gtn-text-size-light"
 		},
 		"iconSVG": {
-			"type": "string"
+			"type": "string",
+			"default": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CjxwYXRoIGQ9Ik0xMS4xMjUgMjYuMDk0bC0yLjAzMS00LjgxMy0yLjc1LTYuNDA2cS0wLjA5NC0wLjIxOS0wLjI5Ny0wLjM0NHQtMC40NTMtMC4xMjVxLTAuMjE5IDAtMC40MjIgMC4xMjV0LTAuMjk3IDAuMzQ0bC0yLjc1IDYuNDA2LTIuMDYzIDQuODEzcS0wLjEyNSAwLjI4MSAwIDAuNTk0dDAuNDM4IDAuNDM4cTAuMjgxIDAuMTU2IDAuNTk0IDAuMDMxdDAuNDM4LTAuNDM4bDEuODQ0LTQuMzEzaDQuNDM4bDEuODQ0IDQuMzEzcTAuMDk0IDAuMjE5IDAuMjk3IDAuMzQ0dDAuNDUzIDAuMTI1cTAuMDYzIDAgMC4xNDEtMC4wMTZ0MC4xNzItMC4wNDdxMC4zMTMtMC4xMjUgMC40MzgtMC40Mzh0LTAuMDMxLTAuNTk0djB6TTQuMDYzIDIwLjgxM2wxLjUzMS0zLjU5NCAxLjUzMSAzLjU5NGgtMy4wNjN6TTMxLjkzOCAyNi4wOTRsLTMuMzQ0LTgtNC42NTYtMTEuMTg4cS0wLjA5NC0wLjI1LTAuMjk3LTAuMzc1dC0wLjQ1My0wLjEyNXEtMC4yMTkgMC0wLjQyMiAwLjEyNXQtMC4yOTcgMC4zNzVsLTQuNjU2IDExLjE4OGgtMC4wMzFsLTMuMzEzIDhxLTAuMTI1IDAuMzEzIDAgMC42MDl0MC40MzggMC40MjJxMC4yODEgMC4xNTYgMC41OTQgMC4wMTZ0MC40MzgtMC40MjJsMy4xMjUtNy41MzFoOC4yODFsMy4xMjUgNy41MzFxMC4wOTQgMC4yMTkgMC4yOTcgMC4zNDR0MC40MjIgMC4xMjVxMC4wOTQgMCAwLjE3Mi0wLjAxNnQwLjE0MS0wLjA0N3EwLjMxMy0wLjEyNSAwLjQzOC0wLjQyMnQwLTAuNjA5djB6TTE5LjcxOSAxNy41OTRsMy40NjktOC4zMTMgMy40NjkgOC4zMTNoLTYuOTM4eiI+PC9wYXRoPgo8L3N2Zz4K"
 		},
 		"iconSize": {
 			"type": "object",
@@ -487,6 +491,50 @@
 		"iconBoxShadowFocus": {
 			"type": "object",
 			"copyStyle": true
+		},
+		"defaultValueType": {
+			"type": "string",
+			"default": "custom"
+		},
+		"customDefaultValue": {
+			"type": "string",
+			"default": ""
+		},
+		"loopDataType": {
+			"type": "string",
+			"default": "id"
+		},
+		"loopDataMetaKey": {
+			"type": "string",
+			"default": ""
+		},
+		"loopDataTaxonomySlug": {
+			"type": "string",
+			"default": ""
+		},
+		"queryParamKey": {
+			"type": "string",
+			"default": ""
+		},
+		"userDataType": {
+			"type": "string",
+			"default": "id"
+		},
+		"userDataMetaKey": {
+			"type": "string",
+			"default": ""
+		},
+		"fallbackDefaultValue": {
+			"type": "string",
+			"default": ""
+		},
+		"dynamicContent": {
+			"type": "object",
+			"default": {}
+		},
+		"isDynamic": {
+			"type": "boolean",
+			"default": false
 		},
 		"flexAlignSelf": {
 			"type": "object",

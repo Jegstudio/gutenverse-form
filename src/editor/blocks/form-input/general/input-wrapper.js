@@ -1,14 +1,15 @@
 import classnames from 'classnames';
 import { compose } from '@wordpress/compose';
 import { withMouseMoveEffect } from 'gutenverse-core/hoc';
-import { useEffect, useState } from '@wordpress/element';
-import { useBlockProps } from '@wordpress/block-editor';
+import { useEffect } from '@wordpress/element';
+import { useBlockProps, RichText } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-import { RichText } from '@wordpress/block-editor';
 import { useAnimationEditor } from 'gutenverse-core/hooks';
 import { useDisplayEditor } from 'gutenverse-core/hooks';
 import { select } from '@wordpress/data';
 import { BlockPanelController } from 'gutenverse-core/controls';
+import FormNavigation from './form-navigation';
+import { isBlockPreviewContext } from './is-preview-context';
 
 export const recursiveParentBlock = clientId => {
     const {
@@ -57,6 +58,7 @@ const InputWrapper = compose(
 
     const animationClass = useAnimationEditor(attributes);
     const displayClass = useDisplayEditor(attributes);
+    const isOutsideFormBuilder = !recursiveParentBlock(clientId) && !isBlockPreviewContext(elementRef?.current);
 
     const blockProps = useBlockProps({
         className: classnames(
@@ -70,17 +72,12 @@ const InputWrapper = compose(
             displayClass,
             {
                 'hide-label': !showLabel,
-                'hide-helper': !showHelper
+                'hide-helper': !showHelper,
+                'guten-form-input-outside-builder': isOutsideFormBuilder
             }
         ),
         ref: elementRef
     });
-
-    const [validParent, setValidParent] = useState(true);
-
-    useEffect(() => {
-        setValidParent(recursiveParentBlock(clientId));
-    }, []);
 
     useEffect(() => {
         if (elementRef && setBlockRef) {
@@ -112,11 +109,10 @@ const InputWrapper = compose(
     const Required = required && <span className="required-badge">*</span>;
 
     return <>
+        <FormNavigation clientId={clientId} />
         <BlockPanelController panelList={panelList} props={props} elementRef={elementRef} />
         <div  {...blockProps}>
-            {!validParent && <h1 className="input-warning">
-                {__('Please put input element inside Form Builder', 'gutenverse-form')}
-            </h1>}
+            <FormNavigation clientId={clientId} helperPlacement="inside" />
             <div className="label-wrapper">
                 {Label}
                 {Required}

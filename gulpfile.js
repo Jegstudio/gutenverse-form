@@ -87,12 +87,32 @@ gulp.task('update-notice', function () {
         .pipe(gulp.dest('gutenverse-form/assets/css/'));
 });
 
-gulp.task('build-process', gulp.parallel('blocks', 'form', 'frontend-block-styles', 'general-input', 'update-notice'));
+gulp.task('email-template', function () {
+    return gulp
+        .src([path.resolve(__dirname, './src/assets/email-template.scss')])
+        .pipe(sass({ includePaths: ['node_modules'] }))
+        .pipe(sass(sassOptions).on('error', sass.logError))
+        .pipe(concat('email-template.css'))
+        .pipe(postcss(postCSSOptions))
+        .pipe(gulp.dest('gutenverse-form/assets/css/'));
+});
+
+gulp.task('integration', function () {
+    return gulp
+        .src([path.resolve(__dirname, './src/assets/integration.scss')])
+        .pipe(sass({ includePaths: ['node_modules'] }))
+        .pipe(sass(sassOptions).on('error', sass.logError))
+        .pipe(concat('integration.css'))
+        .pipe(postcss(postCSSOptions))
+        .pipe(gulp.dest('gutenverse-form/assets/css/'));
+});
+
+gulp.task('build-process', gulp.parallel('blocks', 'form', 'frontend-block-styles', 'general-input', 'update-notice', 'email-template', 'integration'));
 
 gulp.task('build', gulp.series('build-process'));
 
 const watchProcess = (basePath = '.') => {
-    gulp.watch([`${basePath}/src/**/*.scss`], gulp.parallel(['blocks', 'form', 'frontend-block-styles', 'general-input', 'update-notice']));
+    gulp.watch([`${basePath}/src/**/*.scss`], gulp.parallel(['blocks', 'form', 'frontend-block-styles', 'general-input', 'update-notice', 'email-template', 'integration']));
 };
 
 gulp.task(
