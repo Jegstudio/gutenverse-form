@@ -727,6 +727,69 @@ class Entries {
 	}
 
 	/**
+	 * Get a readable label for an entry source URL.
+	 *
+	 * @param string $source_url Source URL.
+	 *
+	 * @return string
+	 */
+	private static function source_url_label( $source_url ) {
+		$source_url = esc_url_raw( $source_url );
+
+		if ( empty( $source_url ) ) {
+			return '';
+		}
+
+		$home = wp_parse_url( home_url( '/' ) );
+		$url  = wp_parse_url( $source_url );
+
+		if ( ! empty( $home['host'] ) && ! empty( $url['host'] ) && strtolower( $home['host'] ) === strtolower( $url['host'] ) ) {
+			$home_path = isset( $home['path'] ) ? trim( $home['path'], '/' ) : '';
+			$path      = isset( $url['path'] ) ? trim( $url['path'], '/' ) : '';
+
+			return $path === $home_path ? __( 'Home', 'gutenverse-form' ) : '/' . $path;
+		}
+
+		return $source_url;
+	}
+
+	/**
+	 * Get source data for an entry.
+	 *
+	 * @param integer $entry_id Entry ID.
+	 * @param integer $ref_id   Source post ID.
+	 *
+	 * @return array
+	 */
+	private static function get_entry_source_data( $entry_id, $ref_id ) {
+		$ref_id = absint( $ref_id );
+
+		if ( $ref_id ) {
+			return array(
+				'id'    => $ref_id,
+				'title' => self::plain_post_title( $ref_id ),
+				'url'   => get_permalink( $ref_id ),
+			);
+		}
+
+		$source_url = esc_url_raw( get_post_meta( $entry_id, 'source-url', true ) );
+
+		if ( $source_url ) {
+			return array(
+				'id'    => 0,
+				'title' => self::source_url_label( $source_url ),
+				'url'   => $source_url,
+			);
+		}
+
+		return array(
+			'id'    => 0,
+			'title' => __( 'No referral', 'gutenverse-form' ),
+			'url'   => '',
+		);
+	}
+
+	/**
 	 * Prepare one entry for the React list.
 	 *
 	 * @param \WP_Post $post Entry post.
@@ -736,6 +799,7 @@ class Entries {
 	private static function prepare_entry_for_list( $post ) {
 		$form_id       = (int) get_post_meta( $post->ID, 'form-id', true );
 		$ref_id        = (int) get_post_meta( $post->ID, 'post-id', true );
+		$source        = self::get_entry_source_data( $post->ID, $ref_id );
 		$detail_access = self::can_view_entry_detail( $post->ID );
 
 		return array(
@@ -745,9 +809,9 @@ class Entries {
 			'dateGmt'         => get_gmt_from_date( $post->post_date ),
 			'formId'          => $form_id,
 			'formTitle'       => $form_id ? self::plain_post_title( $form_id ) : __( 'No form', 'gutenverse-form' ),
-			'referralId'      => $ref_id,
-			'referralTitle'   => $ref_id ? self::plain_post_title( $ref_id ) : __( 'No referral', 'gutenverse-form' ),
-			'referralUrl'     => $ref_id ? get_permalink( $ref_id ) : '',
+			'referralId'      => $source['id'],
+			'referralTitle'   => $source['title'],
+			'referralUrl'     => $source['url'],
 			'canViewDetail'   => $detail_access,
 			'detailUrl'       => $detail_access ? admin_url( 'post.php?post=' . (int) $post->ID . '&action=edit' ) : '',
 			'lockedDetail'    => ! $detail_access,
@@ -887,12 +951,13 @@ class Entries {
 		foreach ( $query->posts as $post ) {
 			$form_id  = (int) get_post_meta( $post->ID, 'form-id', true );
 			$ref_id   = (int) get_post_meta( $post->ID, 'post-id', true );
+			$source   = self::get_entry_source_data( $post->ID, $ref_id );
 			$row      = array(
 				$post->ID,
 				get_the_date( '', $post ),
 				self::plain_post_title( $post ),
 				$form_id ? self::plain_post_title( $form_id ) : '',
-				$ref_id ? self::plain_post_title( $ref_id ) : '',
+				$source['title'],
 			);
 			$values   = isset( $prepared_entry_map[ $post->ID ] ) ? $prepared_entry_map[ $post->ID ] : array();
 
@@ -1205,9 +1270,8 @@ class Entries {
 
 		if ( 'post_parent' === $column ) {
 			$ref_id   = get_post_meta( $post_id, 'post-id', true );
-			$title    = get_the_title( $ref_id );
-			$link     = get_post_permalink( $ref_id );
-			$form_ref = 0 !== (int) $ref_id ? '<a href="' . $link . '">' . $title . '</a>' : __( 'no-referral', 'gutenverse-form' );
+			$source   = self::get_entry_source_data( $post_id, (int) $ref_id );
+			$form_ref = ! empty( $source['url'] ) ? '<a href="' . esc_url( $source['url'] ) . '">' . esc_html( $source['title'] ) . '</a>' : esc_html( $source['title'] );
 
 			gutenverse_print_html( $form_ref );
 		}
@@ -1881,46 +1945,15 @@ class Entries {
 	}
 
 	/**
-	 * Get the source page link for an entry.
-	 *
-	 * @param mixed $source_id Source post ID.
-	 *
-	 * @return string
-	 */
-	private function entry_source_link_html( $source_id ) {
-		$source_id = absint( $source_id );
-
-		if ( ! $source_id ) {
-			return esc_html__( 'No source', 'gutenverse-form' );
-		}
-
-		$source_title = self::plain_post_title( $source_id );
-		$source_url   = get_permalink( $source_id );
-
-		if ( ! $source_title ) {
-			$source_title = sprintf(
-				/* translators: %d: Source post ID. */
-				__( 'Source #%d', 'gutenverse-form' ),
-				$source_id
-			);
-		}
-
-		if ( ! $source_url ) {
-			return esc_html( $source_title );
-		}
-
-		return '<a href="' . esc_url( $source_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $source_title ) . '</a>';
-	}
-
-	/**
 	 * Get a custom source link label for an entry.
 	 *
 	 * @param mixed  $source_id Source post ID.
 	 * @param string $label     Link label.
+	 * @param mixed  $entry_id  Entry ID.
 	 *
 	 * @return string
 	 */
-	private function entry_source_link_html_with_label( $source_id, $label ) {
+	private function entry_source_link_html_with_label( $source_id, $label, $entry_id = 0 ) {
 		$source_id = absint( $source_id );
 		$label     = trim( (string) $label );
 
@@ -1928,11 +1961,8 @@ class Entries {
 			return esc_html__( 'Not found', 'gutenverse-form' );
 		}
 
-		if ( ! $source_id ) {
-			return esc_html( $label );
-		}
-
-		$source_url = get_permalink( $source_id );
+		$source     = self::get_entry_source_data( $entry_id, $source_id );
+		$source_url = $source['url'];
 
 		if ( ! $source_url ) {
 			return esc_html( $label );
@@ -1950,7 +1980,7 @@ class Entries {
 		$form_id     = get_post_meta( $post->ID, 'form-id', true );
 		$source_id   = get_post_meta( $post->ID, 'post-id', true );
 		$form_title  = $form_id ? self::plain_post_title( $form_id ) : '';
-		$form_action = $form_title ? $this->entry_source_link_html_with_label( $source_id, $form_title ) : esc_html__( 'Not found', 'gutenverse-form' );
+		$form_action = $form_title ? $this->entry_source_link_html_with_label( $source_id, $form_title, $post->ID ) : esc_html__( 'Not found', 'gutenverse-form' );
 
 		$result  = '<div class="gutenverse-entry-detail-list">';
 		$result .= $this->entry_detail_item( esc_html__( 'Form ID', 'gutenverse-form' ), $form_id ? esc_html( $form_id ) : esc_html__( 'Form is not set', 'gutenverse-form' ) );
@@ -2057,6 +2087,7 @@ class Entries {
 		$params = array(
 			'form-id'      => get_post_meta( $entry_id, 'form-id', true ),
 			'post-id'      => get_post_meta( $entry_id, 'post-id', true ),
+			'source-url'   => get_post_meta( $entry_id, 'source-url', true ),
 			'entry-data'   => get_post_meta( $entry_id, 'entry-data', true ),
 			'browser-data' => get_post_meta( $entry_id, 'browser-data', true ),
 			'integrations' => get_post_meta( $entry_id, 'integrations', true ),

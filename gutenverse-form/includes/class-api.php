@@ -659,13 +659,15 @@ class Api {
 	 *
 	 * @return array|null
 	 */
-	private function find_submission_form_builder_block( $blocks, $form_id, $element_id ) {
+	private function find_submission_form_builder_block( $blocks, $form_id, $element_id, &$visited = array() ) {
 		if ( empty( $blocks ) || ! is_array( $blocks ) ) {
 			return null;
 		}
 
 		foreach ( $blocks as $block ) {
-			if ( isset( $block['blockName'] ) && 'gutenverse/form-builder' === $block['blockName'] ) {
+			$block_name = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
+
+			if ( 'gutenverse/form-builder' === $block_name ) {
 				$attrs            = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
 				$block_element_id = isset( $attrs['elementId'] ) && is_scalar( $attrs['elementId'] ) ? sanitize_key( $attrs['elementId'] ) : '';
 
@@ -677,12 +679,316 @@ class Api {
 				}
 			}
 
-			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-				$found = $this->find_submission_form_builder_block( $block['innerBlocks'], $form_id, $element_id );
+			$referenced_blocks = $this->get_referenced_submission_blocks( $block, $visited );
+
+			if ( ! empty( $referenced_blocks ) ) {
+				$found = $this->find_submission_form_builder_block( $referenced_blocks, $form_id, $element_id, $visited );
 
 				if ( $found ) {
 					return $found;
 				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+				$found = $this->find_submission_form_builder_block( $block['innerBlocks'], $form_id, $element_id, $visited );
+
+				if ( $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get blocks referenced by reusable blocks, template parts, and patterns.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $block   Parsed block.
+	 * @param array $visited Visited reference keys.
+	 *
+	 * @return array
+	 */
+	private function get_referenced_submission_blocks( $block, &$visited ) {
+		if ( empty( $block['blockName'] ) || empty( $block['attrs'] ) || ! is_array( $block['attrs'] ) ) {
+			return array();
+		}
+
+		$block_name = (string) $block['blockName'];
+		$attrs      = $block['attrs'];
+
+		if ( 'core/block' === $block_name && ! empty( $attrs['ref'] ) ) {
+			$ref_id = absint( $attrs['ref'] );
+
+			if ( ! $ref_id ) {
+				return array();
+			}
+
+			return $this->get_submission_blocks_from_post_reference( $ref_id, 'reusable', $visited );
+		}
+
+		if ( 'core/template-part' === $block_name ) {
+			return $this->get_submission_blocks_from_template_part( $attrs, $visited );
+		}
+
+		if ( 'core/pattern' === $block_name && ! empty( $attrs['slug'] ) && is_scalar( $attrs['slug'] ) ) {
+			return $this->get_submission_blocks_from_pattern( (string) $attrs['slug'], $visited );
+		}
+
+		return array();
+	}
+
+	/**
+	 * Get parsed blocks from a referenced post once.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param integer $post_id Post ID.
+	 * @param string  $prefix  Visited key prefix.
+	 * @param array   $visited Visited reference keys.
+	 *
+	 * @return array
+	 */
+	private function get_submission_blocks_from_post_reference( $post_id, $prefix, &$visited ) {
+		$post_id = absint( $post_id );
+
+		if ( ! $post_id ) {
+			return array();
+		}
+
+		$key = sanitize_key( $prefix ) . ':' . $post_id;
+
+		if ( isset( $visited[ $key ] ) ) {
+			return array();
+		}
+
+		$visited[ $key ] = true;
+		$post            = get_post( $post_id );
+
+		if ( ! $post || empty( $post->post_content ) || ! has_blocks( $post->post_content ) ) {
+			return array();
+		}
+
+		return parse_blocks( $post->post_content );
+	}
+
+	/**
+	 * Get parsed blocks from a template part reference.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $attrs   Template part attributes.
+	 * @param array $visited Visited reference keys.
+	 *
+	 * @return array
+	 */
+	private function get_submission_blocks_from_template_part( $attrs, &$visited ) {
+		$slug = isset( $attrs['slug'] ) && is_scalar( $attrs['slug'] ) ? sanitize_title( $attrs['slug'] ) : '';
+
+		if ( empty( $slug ) ) {
+			return array();
+		}
+
+		$theme = isset( $attrs['theme'] ) && is_scalar( $attrs['theme'] ) ? sanitize_text_field( $attrs['theme'] ) : get_stylesheet();
+		$key   = 'template-part:' . $theme . ':' . $slug;
+
+		if ( isset( $visited[ $key ] ) ) {
+			return array();
+		}
+
+		$visited[ $key ] = true;
+
+		if ( function_exists( 'gutenverse_get_template_part_pattern_post_data' ) ) {
+			$post = gutenverse_get_template_part_pattern_post_data( $attrs, 'wp_template_part' );
+
+			if ( $post && ! empty( $post->post_content ) && has_blocks( $post->post_content ) ) {
+				return parse_blocks( $post->post_content );
+			}
+		}
+
+		if ( function_exists( 'get_block_template' ) ) {
+			$template = get_block_template( $theme . '//' . $slug, 'wp_template_part' );
+
+			if ( $template && ! empty( $template->content ) && has_blocks( $template->content ) ) {
+				return parse_blocks( $template->content );
+			}
+		}
+
+		return array();
+	}
+
+	/**
+	 * Get parsed blocks from a registered pattern.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $slug    Pattern slug.
+	 * @param array  $visited Visited reference keys.
+	 *
+	 * @return array
+	 */
+	private function get_submission_blocks_from_pattern( $slug, &$visited ) {
+		$slug = sanitize_text_field( $slug );
+
+		if ( empty( $slug ) || ! class_exists( '\WP_Block_Patterns_Registry' ) ) {
+			return array();
+		}
+
+		$key = 'pattern:' . $slug;
+
+		if ( isset( $visited[ $key ] ) ) {
+			return array();
+		}
+
+		$visited[ $key ] = true;
+		$pattern         = \WP_Block_Patterns_Registry::get_instance()->get_registered( $slug );
+		$content         = isset( $pattern['content'] ) && is_string( $pattern['content'] ) ? $pattern['content'] : '';
+
+		if ( empty( $content ) || ! has_blocks( $content ) ) {
+			return array();
+		}
+
+		return parse_blocks( $content );
+	}
+
+	/**
+	 * Search saved templates and patterns for the submitted form builder block.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int    $form_id         Assigned Gutenverse form ID.
+	 * @param string $element_id      Form builder block element ID.
+	 * @param int    $source_post_id  Submitted source post ID.
+	 *
+	 * @return array|null
+	 */
+	private function find_submission_form_builder_block_in_global_content( $form_id, $element_id, $source_post_id = 0 ) {
+		$visited = array();
+
+		$posts = get_posts(
+			array(
+				'post_type'              => array( 'wp_template', 'wp_template_part', 'wp_block', 'gutenverse-template', 'gutenverse-template-part', 'gutenverse_template', 'gutenverse_template_part' ),
+				'post_status'            => array( 'publish', 'future', 'draft', 'pending', 'private' ),
+				'posts_per_page'         => -1,
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+
+		foreach ( $posts as $post ) {
+			if ( (int) $source_post_id === (int) $post->ID || empty( $post->post_content ) || ! has_blocks( $post->post_content ) ) {
+				continue;
+			}
+
+			$found = $this->find_submission_form_builder_block( parse_blocks( $post->post_content ), $form_id, $element_id, $visited );
+
+			if ( $found ) {
+				return $found;
+			}
+		}
+
+		$found = $this->find_submission_form_builder_block_in_block_templates( $form_id, $element_id, $visited );
+
+		if ( $found ) {
+			return $found;
+		}
+
+		return $this->find_submission_form_builder_block_in_registered_patterns( $form_id, $element_id, $visited );
+	}
+
+	/**
+	 * Search block templates and template parts from WordPress template registry.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int    $form_id    Assigned Gutenverse form ID.
+	 * @param string $element_id Form builder block element ID.
+	 * @param array  $visited    Visited reference keys.
+	 *
+	 * @return array|null
+	 */
+	private function find_submission_form_builder_block_in_block_templates( $form_id, $element_id, &$visited ) {
+		if ( ! function_exists( 'get_block_templates' ) ) {
+			return null;
+		}
+
+		foreach ( array( 'wp_template', 'wp_template_part' ) as $template_type ) {
+			$templates = get_block_templates( array(), $template_type );
+
+			if ( empty( $templates ) || ! is_array( $templates ) ) {
+				continue;
+			}
+
+			foreach ( $templates as $template ) {
+				if ( empty( $template->id ) || empty( $template->content ) || ! has_blocks( $template->content ) ) {
+					continue;
+				}
+
+				$key = 'block-template:' . $template_type . ':' . $template->id;
+
+				if ( isset( $visited[ $key ] ) ) {
+					continue;
+				}
+
+				$visited[ $key ] = true;
+				$found           = $this->find_submission_form_builder_block( parse_blocks( $template->content ), $form_id, $element_id, $visited );
+
+				if ( $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Search all registered patterns for the submitted form builder block.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int    $form_id    Assigned Gutenverse form ID.
+	 * @param string $element_id Form builder block element ID.
+	 * @param array  $visited    Visited reference keys.
+	 *
+	 * @return array|null
+	 */
+	private function find_submission_form_builder_block_in_registered_patterns( $form_id, $element_id, &$visited ) {
+		if ( ! class_exists( '\WP_Block_Patterns_Registry' ) ) {
+			return null;
+		}
+
+		$registry = \WP_Block_Patterns_Registry::get_instance();
+
+		if ( ! method_exists( $registry, 'get_all_registered' ) ) {
+			return null;
+		}
+
+		$patterns = $registry->get_all_registered();
+
+		if ( empty( $patterns ) || ! is_array( $patterns ) ) {
+			return null;
+		}
+
+		foreach ( $patterns as $slug => $pattern ) {
+			$key     = is_string( $slug ) ? 'pattern:' . $slug : '';
+			$content = isset( $pattern['content'] ) && is_string( $pattern['content'] ) ? $pattern['content'] : '';
+
+			if ( empty( $content ) || ! has_blocks( $content ) || ( $key && isset( $visited[ $key ] ) ) ) {
+				continue;
+			}
+
+			if ( $key ) {
+				$visited[ $key ] = true;
+			}
+
+			$found = $this->find_submission_form_builder_block( parse_blocks( $content ), $form_id, $element_id, $visited );
+
+			if ( $found ) {
+				return $found;
 			}
 		}
 
@@ -705,16 +1011,24 @@ class Api {
 		$source_type        = isset( $integration_source['type'] ) && is_scalar( $integration_source['type'] ) ? sanitize_key( $integration_source['type'] ) : '';
 		$element_id         = isset( $integration_source['elementId'] ) && is_scalar( $integration_source['elementId'] ) ? sanitize_key( $integration_source['elementId'] ) : '';
 
-		if ( 'block' !== $source_type || ! $post_id || empty( $element_id ) ) {
+		if ( 'block' !== $source_type || empty( $element_id ) ) {
 			return null;
 		}
 
-		$post = get_post( $post_id );
-		if ( ! $post || empty( $post->post_content ) ) {
-			return null;
+		$visited = array();
+		$found   = null;
+
+		$post = $post_id ? get_post( $post_id ) : null;
+
+		if ( $post && ! empty( $post->post_content ) && has_blocks( $post->post_content ) ) {
+			$found = $this->find_submission_form_builder_block( parse_blocks( $post->post_content ), $form_id, $element_id, $visited );
 		}
 
-		return $this->find_submission_form_builder_block( parse_blocks( $post->post_content ), $form_id, $element_id );
+		if ( $found ) {
+			return $found;
+		}
+
+		return $this->find_submission_form_builder_block_in_global_content( $form_id, $element_id, $post_id );
 	}
 
 	/**
@@ -1925,6 +2239,14 @@ class Api {
 		if ( isset( $form_data ) ) {
 			$settings_data       = get_option( 'gutenverse-settings', array() );
 			$post_id             = absint( $form_entry['postId'] ?? 0 );
+			$source_url          = isset( $form_entry['sourceUrl'] ) && is_scalar( $form_entry['sourceUrl'] ) ? esc_url_raw( wp_unslash( (string) $form_entry['sourceUrl'] ) ) : '';
+			$source_host         = strtolower( (string) ( $source_url ? wp_parse_url( $source_url, PHP_URL_HOST ) : '' ) );
+			$home_host           = strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
+
+			if ( $source_host && $home_host && $source_host !== $home_host ) {
+				$source_url = '';
+			}
+
 			$integration_source  = $this->get_submission_integration_source( $form_entry );
 			$integration_context = array();
 
@@ -1944,6 +2266,7 @@ class Api {
 			$params = array(
 				'form-id'      => $form_id,
 				'post-id'      => $post_id,
+				'source-url'   => $source_url,
 				'entry-data'   => $form_data,
 				'browser-data' => $this->get_browser_data( $form_entry ),
 				'integrations' => $normalized_integrations,

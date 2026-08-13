@@ -370,7 +370,7 @@ class GutenverseFormValidation extends Default {
     _onSubmit(formBuilder, formData) {
         const instance = this;
         const formId = formBuilder.data('form-id');
-        const postId = formBuilder.data('post-id') || (!isEmpty(window['GutenverseData']) ? window['GutenverseData']['postId'] : 0);
+        const postId = formBuilder.attr('data-post-id') !== undefined ? formBuilder.data('post-id') : 0;
         const submitUrl = formBuilder.data('submit-url') || getRestUrl('gutenverse-form-client/v1/form/submit');
         const hideAfterSubmit = formBuilder.data('hide-after');
         const redirectTo = formBuilder.data('redirect');
@@ -430,6 +430,7 @@ class GutenverseFormValidation extends Default {
                 const requestBody = new FormData();
                 requestBody.append('form-entry[formId]', formId);
                 requestBody.append('form-entry[postId]', postId);
+                requestBody.append('form-entry[sourceUrl]', window.location.href);
 
                 const integrationSourceInput = currentFormBuilder.find('input[name="gutenverse-form-integration-source"]').first();
                 if (integrationSourceInput) {

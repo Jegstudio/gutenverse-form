@@ -982,15 +982,23 @@ class Form {
 				$post_id   = (int) get_post_meta( $entry_id, 'post-id', true );
 				$post_item = $post_id > 0 ? get_post( $post_id ) : null;
 				$post_type = $post_item ? get_post_type_object( $post_item->post_type ) : null;
+				$source_url = ! $post_item ? esc_url_raw( get_post_meta( $entry_id, 'source-url', true ) ) : '';
+				$source_title = '';
+
+				if ( $post_item ) {
+					$source_title = get_the_title( $post_item );
+				} elseif ( $source_url ) {
+					$source_title = untrailingslashit( $source_url ) === untrailingslashit( home_url( '/' ) ) ? __( 'Home', 'gutenverse-form' ) : $source_url;
+				}
 
 				$entries[ $form_id ][] = array(
 					'id'            => $entry_id,
 					'title'         => get_the_title( $entry_id ),
 					'date'          => get_the_date( '', $entry_id ),
 					'edit_url'      => get_edit_post_link( $entry_id, 'raw' ),
-					'source_title'  => $post_item ? get_the_title( $post_item ) : '',
+					'source_title'  => $source_title,
 					'source_type'   => $post_type ? $post_type->labels->singular_name : '',
-					'source_view'   => $post_item ? get_permalink( $post_item ) : '',
+					'source_view'   => $post_item ? get_permalink( $post_item ) : $source_url,
 					'source_edit'   => $post_item ? get_edit_post_link( $post_item->ID, 'raw' ) : '',
 					'source_status' => $post_item ? get_post_status( $post_item ) : '',
 				);

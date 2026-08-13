@@ -21,7 +21,7 @@ class Blocks {
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_blocks' ), 99 );
 		add_filter( 'gutenverse_block_categories', array( $this, 'block_category' ) );
-		add_filter( 'render_block', array( $this, 'render_form_builder' ), 10, 2 );
+		add_filter( 'render_block', array( $this, 'render_form_builder' ), 10, 3 );
 	}
 
 	/**
@@ -29,16 +29,111 @@ class Blocks {
 	 *
 	 * @param string $block_content .
 	 * @param array  $block .
+	 * @param object $instance Block instance.
 	 *
 	 * @return string
 	 */
-	public function render_form_builder( $block_content, $block ) {
-		if ( 'gutenverse/form-builder' === $block['blockName'] ) {
-			$post_id       = get_the_ID();
-			$block_content = str_replace( '<form', '<form data-post-id="' . $post_id . '"', $block_content );
+	public function render_form_builder( $block_content, $block, $instance = null ) {
+		if ( isset( $block['blockName'] ) && 'gutenverse/form-builder' === $block['blockName'] ) {
+			$post_id       = $this->get_form_builder_source_post_id( $instance );
+			$block_content = str_replace( '<form', '<form data-post-id="' . esc_attr( $post_id ) . '"', $block_content );
 		}
 
 		return $block_content;
+	}
+
+	/**
+	 * Get the public source post for a rendered form builder.
+	 *
+	 * @param object $block_instance Block instance.
+	 *
+	 * @return integer
+	 */
+	private function get_form_builder_source_post_id( $block_instance = null ) {
+		$front_source = $this->get_front_or_posts_page_source_post_id();
+
+		if ( null !== $front_source ) {
+			return $front_source;
+		}
+
+		$context_post_id = $this->get_block_context_post_id( $block_instance );
+
+		if ( $this->is_public_source_post( $context_post_id ) ) {
+			return $context_post_id;
+		}
+
+		$queried_post_id = absint( get_queried_object_id() );
+
+		if ( $this->is_public_source_post( $queried_post_id ) ) {
+			return $queried_post_id;
+		}
+
+		if ( is_singular() ) {
+			$post_id = absint( get_the_ID() );
+
+			if ( $this->is_public_source_post( $post_id ) ) {
+				return $post_id;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Get source for front page or posts page requests.
+	 *
+	 * Returning null means the current request is not a front/posts page request.
+	 *
+	 * @return integer|null
+	 */
+	private function get_front_or_posts_page_source_post_id() {
+		if ( is_front_page() ) {
+			return 'page' === get_option( 'show_on_front' ) ? absint( get_option( 'page_on_front' ) ) : 0;
+		}
+
+		if ( is_home() ) {
+			return absint( get_option( 'page_for_posts' ) );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get post ID from block context.
+	 *
+	 * @param object $block_instance Block instance.
+	 *
+	 * @return integer
+	 */
+	private function get_block_context_post_id( $block_instance ) {
+		if ( $block_instance instanceof \WP_Block && ! empty( $block_instance->context['postId'] ) ) {
+			return absint( $block_instance->context['postId'] );
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Check whether a post is a public content source.
+	 *
+	 * @param integer $post_id Post ID.
+	 *
+	 * @return bool
+	 */
+	private function is_public_source_post( $post_id ) {
+		$post_id = absint( $post_id );
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$post = get_post( $post_id );
+
+		if ( ! $post ) {
+			return false;
+		}
+
+		return ! in_array( $post->post_type, array( 'wp_template', 'wp_template_part', 'wp_block' ), true );
 	}
 
 	/**
