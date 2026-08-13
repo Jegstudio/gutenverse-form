@@ -5,7 +5,7 @@ Tags: form, form builder, contact form, block form, booking form
 Requires at least: 5.9
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -287,6 +287,11 @@ Website: https://gutenverse.com/
 Terms: https://gutenverse.com/terms-and-conditions/
 
 == Changelog ==
+
+= 3.0.1 =
+
+Bug fixes:
+* Fix issue with form can't be submitted when inside template/pattern
 
 = 3.0.0 =
 
