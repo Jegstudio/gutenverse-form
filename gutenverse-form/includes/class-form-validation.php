@@ -196,7 +196,6 @@ class Form_Validation extends Style_Generator {
 				'missingLabel' => esc_html__( 'Form action is missing, please assign form action into this form.', 'gutenverse-form' ),
 				'isAdmin'      => $include_user_data && current_user_can( 'manage_options' ),
 				'userData'     => $user_data,
-				'additional_check'  => $include_user_data,
 			)
 		);
 	}
