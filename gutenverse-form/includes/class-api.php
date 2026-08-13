@@ -498,17 +498,11 @@ class Api {
 	 */
 	public function edit_form_action( $request ) {
 		$form = $request->get_param( 'form' );
+		$params = is_array( $form ) ? $form : array();
 
-		$params = wp_parse_args(
-			$form,
-			array(
-				'id'            => '',
-				'title'         => '',
-				'require_login' => '',
-				'user_browser'  => '',
-				'use_cache'     => '',
-			)
-		);
+		if ( ! isset( $params['id'] ) ) {
+			$params['id'] = '';
+		}
 
 		$form_action = Form::edit_form_action( $params );
 		return rest_ensure_response( $form_action );
@@ -2649,9 +2643,10 @@ class Api {
 
 		if ( Form::POST_TYPE === $post_type ) {
 			$data                          = get_post_meta( (int) $form_id, 'form-data', true );
-			$result['require_login']       = $data['require_login'];
-			$result['form_success_notice'] = $data['form_success_notice'];
-			$result['form_error_notice']   = $data['form_error_notice'];
+			$data                          = is_array( $data ) ? $data : array();
+			$result['require_login']       = ! empty( $data['require_login'] );
+			$result['form_success_notice'] = isset( $data['form_success_notice'] ) ? $data['form_success_notice'] : '';
+			$result['form_error_notice']   = isset( $data['form_error_notice'] ) ? $data['form_error_notice'] : '';
 		}
 
 		return $result;

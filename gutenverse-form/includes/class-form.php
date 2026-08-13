@@ -40,6 +40,20 @@ class Form {
 	const OWNER_INSTANCE_META = '_gutenverse_form_owner_instance_id';
 
 	/**
+	 * Form action source clone post meta key.
+	 *
+	 * @var string
+	 */
+	const CLONED_FROM_META = '_gutenverse_form_cloned_from';
+
+	/**
+	 * Form action clone time post meta key.
+	 *
+	 * @var string
+	 */
+	const CLONED_AT_META = '_gutenverse_form_cloned_at';
+
+	/**
 	 * Check whether form action email automation can be used.
 	 *
 	 * @return bool
@@ -1936,7 +1950,17 @@ class Form {
 	 * @return array
 	 */
 	public static function edit_form_action( $params ) {
-		$params = self::normalize_form_action_params( $params );
+		$id       = isset( $params['id'] ) ? absint( $params['id'] ) : 0;
+		$existing = $id ? get_post_meta( $id, 'form-data', true ) : array();
+		$existing = is_array( $existing ) ? $existing : array();
+
+		if ( $id && ! isset( $existing['title'] ) ) {
+			$existing['title'] = get_the_title( $id );
+		}
+
+		$params       = array_merge( $existing, $params );
+		$params['id'] = $id;
+		$params       = self::normalize_form_action_params( $params );
 
 		if ( ! self::can_use_pro_email_actions() ) {
 			$params = self::preserve_locked_email_action_params( $params );
@@ -2253,6 +2277,9 @@ class Form {
 				array( 'status' => 500 )
 			);
 		}
+
+		update_post_meta( $new_form_action_id, self::CLONED_FROM_META, $id );
+		update_post_meta( $new_form_action_id, self::CLONED_AT_META, time() );
 
 		$cloned_meta = get_post_meta( $new_form_action_id, 'form-data', true );
 		$cloned_meta = self::duplicate_email_templates_for_cloned_action( $cloned_meta, $new_form_action_id, $new_title );
