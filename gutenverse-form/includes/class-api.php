@@ -1039,6 +1039,7 @@ class Api {
 			'gutenverse/form-input-textarea'    => 'textarea',
 			'gutenverse/form-input-number'      => 'number',
 			'gutenverse/form-input-telp'        => 'telp',
+			'gutenverse/form-input-mobile'      => 'mobile',
 			'gutenverse/form-input-date'        => 'date',
 			'gutenverse/form-input-select'      => 'select',
 			'gutenverse/form-input-radio'       => 'radio',
@@ -1065,6 +1066,7 @@ class Api {
 			'gutenverse/form-input-textarea'    => 'input-textarea',
 			'gutenverse/form-input-number'      => 'input-number',
 			'gutenverse/form-input-telp'        => 'input-phone',
+			'gutenverse/form-input-mobile'      => 'input-mobile',
 			'gutenverse/form-input-date'        => 'input-date',
 			'gutenverse/form-input-select'      => 'input-select',
 			'gutenverse/form-input-radio'       => 'input-radio',
@@ -1275,13 +1277,7 @@ class Api {
 		$block = $this->get_submission_form_builder_block( $form_entry, $form_id );
 
 		if ( empty( $block ) || ! is_array( $block ) ) {
-			return new WP_REST_Response(
-				array(
-					'status'  => 'failed',
-					'message' => 'Invalid form context.',
-				),
-				400
-			);
+			return $this->get_fallback_submission_field_schema( $form_entry, $form_id );
 		}
 
 		$type_map         = $this->get_form_input_block_type_map();
@@ -1306,6 +1302,101 @@ class Api {
 		}
 
 		return $schema;
+	}
+
+	/**
+	 * Build a minimal schema when the saved form builder block cannot be resolved.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $form_entry Form entry data.
+	 * @param int   $form_id    Form ID.
+	 *
+	 * @return array|WP_REST_Response
+	 */
+	private function get_fallback_submission_field_schema( $form_entry, $form_id ) {
+		$integration_source = $this->get_submission_integration_source( $form_entry );
+		$source_type        = isset( $integration_source['type'] ) && is_scalar( $integration_source['type'] ) ? sanitize_key( $integration_source['type'] ) : '';
+		$element_id         = isset( $integration_source['elementId'] ) && is_scalar( $integration_source['elementId'] ) ? sanitize_key( $integration_source['elementId'] ) : '';
+		$post_id            = absint( $form_entry['postId'] ?? 0 );
+		$source_url         = isset( $form_entry['sourceUrl'] ) && is_scalar( $form_entry['sourceUrl'] ) ? esc_url_raw( wp_unslash( (string) $form_entry['sourceUrl'] ) ) : '';
+
+		if ( 'block' !== $source_type || empty( $element_id ) || ! $this->is_valid_fallback_submission_source( $post_id, $source_url ) || empty( $form_entry['data'] ) || ! is_array( $form_entry['data'] ) ) {
+			return $this->make_public_submit_schema_error( 'Invalid form context.' );
+		}
+
+		$allowed_types = array(
+			'text',
+			'select',
+			'telp',
+			'mobile',
+			'radio',
+			'date',
+			'gdpr',
+			'image-radio',
+			'payment',
+			'email',
+			'textarea',
+			'number',
+			'calculation',
+			'switch',
+			'multiselect',
+			'multi-group-select',
+			'checkbox',
+			'file',
+		);
+		$allowed_types = apply_filters( 'gutenverse_form_public_submit_fallback_field_types', $allowed_types, $form_entry, $form_id );
+		$allowed_types = is_array( $allowed_types ) ? array_map( 'sanitize_key', $allowed_types ) : array();
+		$schema        = array();
+
+		foreach ( $form_entry['data'] as $data ) {
+			if ( ! is_array( $data ) ) {
+				return $this->make_public_submit_schema_error( 'Invalid form data.' );
+			}
+
+			$field_id   = isset( $data['id'] ) && is_scalar( $data['id'] ) ? sanitize_key( $data['id'] ) : '';
+			$field_type = isset( $data['type'] ) && is_scalar( $data['type'] ) ? sanitize_key( $data['type'] ) : '';
+
+			if ( empty( $field_id ) || empty( $field_type ) || ! in_array( $field_type, $allowed_types, true ) ) {
+				return $this->make_public_submit_schema_error( 'Invalid form field.' );
+			}
+
+			$schema[ $field_id ] = array(
+				'type'     => $field_type,
+				'required' => false,
+			);
+		}
+
+		return apply_filters( 'gutenverse_form_public_submit_fallback_field_schema', $schema, $form_entry, $form_id );
+	}
+
+	/**
+	 * Check whether a fallback submit still belongs to a public site source.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int    $post_id    Submitted source post ID.
+	 * @param string $source_url Submitted source URL.
+	 *
+	 * @return bool
+	 */
+	private function is_valid_fallback_submission_source( $post_id, $source_url ) {
+		$post_id = absint( $post_id );
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$post = get_post( $post_id );
+
+		if ( ! $post || in_array( $post->post_type, array( 'wp_template', 'wp_template_part', 'wp_block' ), true ) ) {
+			return false;
+		}
+
+		$source_host = wp_parse_url( $source_url, PHP_URL_HOST );
+		$site_host   = wp_parse_url( home_url(), PHP_URL_HOST );
+
+		return ! empty( $source_host ) && ! empty( $site_host ) && strtolower( $source_host ) === strtolower( $site_host );
 	}
 
 	/**
