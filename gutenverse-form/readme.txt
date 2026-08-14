@@ -292,6 +292,7 @@ Terms: https://gutenverse.com/terms-and-conditions/
 
 Bug fixes:
 * Fix issue with form can't be submitted when using form data from version below 2.5.0
+* Fix issue with background featured image
 
 = 3.0.1 =
 
