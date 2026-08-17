@@ -235,7 +235,7 @@ class Daily_Summary {
 	 * @return array
 	 */
 	private function get_summary_data() {
-		$boundaries  = $this->get_today_boundaries();
+		$boundaries  = $this->get_previous_day_boundaries();
 		$site_url    = home_url( '/' );
 		$site_domain = wp_parse_url( $site_url, PHP_URL_HOST );
 
@@ -264,10 +264,13 @@ class Daily_Summary {
 
 		$form_rows = array();
 		foreach ( $form_counts as $form_id => $count ) {
+			$count = (int) $count;
+
 			$form_rows[] = array(
 				'id'            => $form_id,
 				'title'         => get_the_title( $form_id ),
-				'today_count'   => (int) $count,
+				'report_count'  => $count,
+				'today_count'   => $count,
 				'total_entries' => isset( $total_counts[ $form_id ] ) ? (int) $total_counts[ $form_id ] : 0,
 				'entries_url'   => Entries::get_admin_page_url( array( 'form_id' => $form_id ) ),
 			);
@@ -276,39 +279,42 @@ class Daily_Summary {
 		usort(
 			$form_rows,
 			static function ( $left, $right ) {
-				if ( (int) $left['today_count'] === (int) $right['today_count'] ) {
+				if ( (int) $left['report_count'] === (int) $right['report_count'] ) {
 					return strcmp( $left['title'], $right['title'] );
 				}
 
-				return (int) $right['today_count'] <=> (int) $left['today_count'];
+				return (int) $right['report_count'] <=> (int) $left['report_count'];
 			}
 		);
 
+		$total_submissions = array_sum( $form_counts );
+
 		return array(
-			'date_label'              => wp_date( get_option( 'date_format' ), $boundaries['start']->getTimestamp(), wp_timezone() ),
-			'site_name'               => get_bloginfo( 'name' ),
-			'site_url'                => $site_url,
-			'site_domain'             => $site_domain,
-			'dashboard_url'           => admin_url( 'admin.php?page=' . Form::POST_TYPE ),
-			'today_total_submissions' => array_sum( $form_counts ),
-			'forms_with_submissions'  => count( $form_rows ),
-			'tracked_forms'           => count( $form_ids ),
-			'forms'                   => $form_rows,
+			'date_label'               => wp_date( get_option( 'date_format' ), $boundaries['start']->getTimestamp(), wp_timezone() ),
+			'site_name'                => get_bloginfo( 'name' ),
+			'site_url'                 => $site_url,
+			'site_domain'              => $site_domain,
+			'dashboard_url'            => admin_url( 'admin.php?page=' . Form::POST_TYPE ),
+			'report_total_submissions' => $total_submissions,
+			'today_total_submissions'  => $total_submissions,
+			'forms_with_submissions'   => count( $form_rows ),
+			'tracked_forms'            => count( $form_ids ),
+			'forms'                    => $form_rows,
 		);
 	}
 
 	/**
-	 * Get today boundaries in the site timezone.
+	 * Get previous completed day boundaries in the site timezone.
 	 *
 	 * @return array
 	 */
-	private function get_today_boundaries() {
+	private function get_previous_day_boundaries() {
 		$timezone = wp_timezone();
-		$now      = new \DateTimeImmutable( 'now', $timezone );
+		$today    = ( new \DateTimeImmutable( 'now', $timezone ) )->setTime( 0, 0, 0 );
 
 		return array(
-			'start' => $now->setTime( 0, 0, 0 ),
-			'end'   => $now->setTime( 23, 59, 59 ),
+			'start' => $today->modify( '-1 day' ),
+			'end'   => $today->modify( '-1 second' ),
 		);
 	}
 
@@ -342,14 +348,14 @@ class Daily_Summary {
 		foreach ( $summary['forms'] as $form ) {
 			$form_rows .= '<tr>';
 			$form_rows .= '<td class="gv-table-cell gv-border-top" style="padding:18px 22px;border-top:1px solid #eef0f4;color:#071827;font-size:15px;font-weight:400;line-height:1.4;">' . esc_html( $form['title'] ) . '</td>';
-			$form_rows .= '<td class="gv-table-cell gv-border-top" style="padding:18px;border-top:1px solid #eef0f4;color:#071827;font-size:15px;font-weight:400;line-height:1.4;text-align:center;">' . esc_html( $form['today_count'] ) . '</td>';
+			$form_rows .= '<td class="gv-table-cell gv-border-top" style="padding:18px;border-top:1px solid #eef0f4;color:#071827;font-size:15px;font-weight:400;line-height:1.4;text-align:center;">' . esc_html( $form['report_count'] ) . '</td>';
 			$form_rows .= '<td class="gv-table-cell gv-border-top" style="padding:18px;border-top:1px solid #eef0f4;color:#071827;font-size:15px;font-weight:400;line-height:1.4;text-align:center;">' . esc_html( $form['total_entries'] ) . '</td>';
 			$form_rows .= '<td class="gv-border-top" width="132" nowrap="nowrap" style="width:132px;padding:18px 22px 18px 16px;border-top:1px solid #eef0f4;line-height:1.4;text-align:right;white-space:nowrap;"><a class="gv-link" href="' . esc_url( $form['entries_url'] ) . '" style="display:inline-block;color:#3856ff;font-size:14px;font-weight:700;line-height:1.3;text-decoration:underline;white-space:nowrap;">' . esc_html__( 'View Entries', 'gutenverse-form' ) . '</a></td>';
 			$form_rows .= '</tr>';
 		}
 
 		if ( empty( $form_rows ) ) {
-			$form_rows = '<tr><td class="gv-table-cell gv-border-top" colspan="4" style="padding:22px;border-top:1px solid #eef0f4;color:#405160;font-size:14px;line-height:1.5;text-align:center;">' . esc_html__( 'No form submissions were received today.', 'gutenverse-form' ) . '</td></tr>';
+			$form_rows = '<tr><td class="gv-table-cell gv-border-top" colspan="4" style="padding:22px;border-top:1px solid #eef0f4;color:#405160;font-size:14px;line-height:1.5;text-align:center;">' . esc_html__( 'No form submissions were received for this report day.', 'gutenverse-form' ) . '</td></tr>';
 		}
 
 		ob_start();
@@ -368,7 +374,7 @@ class Daily_Summary {
 											<?php
 											printf(
 												/* translators: 1: site name, 2: report date */
-												esc_html__( 'Today\'s activity snapshot for %1$s on %2$s.', 'gutenverse-form' ),
+												esc_html__( 'Activity snapshot for %1$s on %2$s.', 'gutenverse-form' ),
 												esc_html( $summary['site_name'] ),
 												esc_html( $summary['date_label'] )
 											);
@@ -380,7 +386,7 @@ class Daily_Summary {
 									<td class="gv-content" bgcolor="#ffffff" style="padding:38px 38px 8px;background:#ffffff;">
 										<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:separate;border-spacing:0;">
 											<tr>
-												<?php echo wp_kses_post( $this->get_metric_card( __( 'Today\'s Submission', 'gutenverse-form' ), $summary['today_total_submissions'] ) ); ?>
+												<?php echo wp_kses_post( $this->get_metric_card( __( 'Submissions', 'gutenverse-form' ), $summary['report_total_submissions'] ) ); ?>
 												<?php echo wp_kses_post( $this->get_metric_card( __( 'Forms with Submission', 'gutenverse-form' ), $summary['forms_with_submissions'] ) ); ?>
 												<?php echo wp_kses_post( $this->get_metric_card( __( 'Tracked Forms', 'gutenverse-form' ), $summary['tracked_forms'], true ) ); ?>
 											</tr>
@@ -392,7 +398,7 @@ class Daily_Summary {
 										<table class="gv-table" role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="width:100%;background:#ffffff;border:1px solid #e1e3e8;border-radius:7px;border-collapse:separate;border-spacing:0;overflow:hidden;">
 											<tr>
 												<th class="gv-table-heading" align="left" bgcolor="#fafbfc" style="padding:18px 22px;background:#fafbfc;color:#405160;font-size:15px;font-weight:700;letter-spacing:0;line-height:1.4;text-transform:none;"><?php esc_html_e( 'Form', 'gutenverse-form' ); ?></th>
-												<th class="gv-table-heading" width="86" bgcolor="#fafbfc" style="width:86px;padding:18px;background:#fafbfc;color:#405160;font-size:15px;font-weight:700;letter-spacing:0;line-height:1.4;text-transform:none;"><?php esc_html_e( 'Today', 'gutenverse-form' ); ?></th>
+												<th class="gv-table-heading" width="86" bgcolor="#fafbfc" style="width:86px;padding:18px;background:#fafbfc;color:#405160;font-size:15px;font-weight:700;letter-spacing:0;line-height:1.4;text-transform:none;"><?php esc_html_e( 'Report Day', 'gutenverse-form' ); ?></th>
 												<th class="gv-table-heading" width="86" bgcolor="#fafbfc" style="width:86px;padding:18px;background:#fafbfc;color:#405160;font-size:15px;font-weight:700;letter-spacing:0;line-height:1.4;text-transform:none;"><?php esc_html_e( 'Total', 'gutenverse-form' ); ?></th>
 												<th class="gv-table-heading" align="right" width="132" nowrap="nowrap" bgcolor="#fafbfc" style="width:132px;padding:18px 22px 18px 16px;background:#fafbfc;color:#405160;font-size:15px;font-weight:700;letter-spacing:0;line-height:1.4;text-transform:none;white-space:nowrap;"><?php esc_html_e( 'Action', 'gutenverse-form' ); ?></th>
 											</tr>
