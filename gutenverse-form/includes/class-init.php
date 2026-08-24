@@ -149,6 +149,7 @@ class Init {
 			add_action( 'plugins_loaded', array( $this, 'plugin_loaded' ) );
 		}
 		add_action( 'plugins_loaded', array( $this, 'framework_loaded' ), 99 );
+		add_action( 'rest_api_init', array( $this, 'init_api' ) );
 		add_filter( 'gutenverse_companion_plugin_list', array( $this, 'plugin_name' ) );
 		register_activation_hook( GUTENVERSE_FORM_FILE, array( $this, 'set_activation_transient' ) );
 		register_deactivation_hook( GUTENVERSE_FORM_FILE, array( 'Gutenverse_Form\Daily_Summary', 'clear_event' ) );
@@ -274,7 +275,6 @@ class Init {
 	 * Load text domain
 	 */
 	public function load_textdomain() {
-		add_action( 'rest_api_init', array( $this, 'init_api' ) );
 		load_plugin_textdomain( 'gutenverse-form', false, GUTENVERSE_FORM_LANG_DIR );
 	}
 
@@ -294,7 +294,6 @@ class Init {
 	 * Only load when framework already loaded.
 	 */
 	public function framework_loaded() {
-
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
@@ -365,26 +364,37 @@ class Init {
 	 * Initialize Form
 	 */
 	public function init_post_type() {
-		$this->form           = new Form();
-		$this->entries        = new Entries();
-		$this->dashboard      = new Dashboard();
-		$this->email_template = new Email_Template();
-		$this->integration    = new Integration();
-		$this->daily_summary  = new Daily_Summary();
+		if ( is_admin() ) {
+			$this->form           = new Form();
+			$this->entries        = new Entries();
+			$this->email_template = new Email_Template();
+			$this->integration    = new Integration();
+		}
+
+		// Need to let this outside, because cron need to be executed even though its outside admin panel.
+		$this->daily_summary = new Daily_Summary();
 	}
 
 	/**
 	 * Initialize Instance
 	 */
 	public function init_instance() {
-		$this->frontend_assets  = new Frontend_Assets();
-		$this->editor_assets    = new Editor_Assets();
-		$this->style_generator  = new Style_Generator();
-		$this->frontend_toolbar = new Frontend_Toolbar();
-		$this->meta_option      = new Meta_Option();
-		$this->blocks           = new Blocks();
-		$this->form_validation  = new Form_Validation();
-		$this->dynamic_value    = new Dynamic_Value();
+		$this->style_generator = new Style_Generator();
+		$this->meta_option     = new Meta_Option();
+		$this->blocks          = new Blocks();
+		$this->form_validation = new Form_Validation();
+		$this->dynamic_value   = new Dynamic_Value();
+
+		if ( is_user_logged_in() ) {
+			$this->frontend_toolbar = new Frontend_Toolbar();
+		}
+
+		if ( is_admin() ) {
+			$this->dashboard     = new Dashboard();
+			$this->editor_assets = new Editor_Assets();
+		} else {
+			$this->frontend_assets = new Frontend_Assets();
+		}
 	}
 
 	/**
