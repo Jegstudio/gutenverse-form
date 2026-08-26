@@ -292,6 +292,7 @@ Terms: https://gutenverse.com/terms-and-conditions/
 
 Bug fixes:
 * Fixed issue with block element ID
+* Fixed styling handler id
 
 = 3.0.4 =
 
