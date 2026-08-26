@@ -3,7 +3,7 @@
 Contributors: Jegstudio
 Tags: form, form builder, contact form, block form, booking form
 Requires at least: 5.9
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.0
 Stable tag: 3.0.5
 License: GPLv3
