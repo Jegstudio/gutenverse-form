@@ -11,6 +11,10 @@
     max-width: 860px;
     text-align: left;
     width: 100%;
+
+    &:empty {
+        display: none;
+    }
 }
 
 .gutenverse-form-action-ownership-notice {
