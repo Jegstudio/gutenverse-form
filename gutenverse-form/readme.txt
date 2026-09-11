@@ -292,6 +292,7 @@ Terms: https://gutenverse.com/terms-and-conditions/
 New and improved:
 - Improve php load time
 - Improve plugin version check
+- Improve banner event experience
 
 = 3.0.6 =
 
