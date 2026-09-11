@@ -291,6 +291,7 @@ Terms: https://gutenverse.com/terms-and-conditions/
 = 3.0.8 =
 New and improved:
 - Improve php load time
+- Improve plugin version check
 
 = 3.0.6 =
 
