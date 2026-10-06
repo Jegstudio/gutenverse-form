@@ -219,6 +219,9 @@ class Init {
 			'gutenverse-news' => array(
 				'plugin' => 'gutenverse-news/gutenverse-news.php',
 			),
+			'jnews-blocks'    => array(
+				'plugin' => 'jnews-blocks/jnews-blocks.php',
+			),
 		);
 
 		$is_using_other_framework = false;
