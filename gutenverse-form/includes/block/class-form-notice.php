@@ -37,6 +37,20 @@ class Form_Notice extends Block_Abstract {
 			'iconLayoutError'   => isset( $this->attributes['iconLayoutError'] ) ? $this->attributes['iconLayoutError'] : 'left',
 		);
 
+		foreach ( array( 'iconSuccessSVG', 'iconErrorSVG' ) as $key ) {
+			if ( ! is_string( $data[ $key ] ) || '' === $data[ $key ] ) {
+				$data[ $key ] = '';
+				continue;
+			}
+
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+			$svg_data = base64_decode( $data[ $key ], true );
+
+			if ( false === $svg_data || '' === $svg_data || ! gutenverse_is_svg_safe( $svg_data ) ) {
+				$data[ $key ] = '';
+			}
+		}
+
 		return esc_attr( wp_json_encode( $data ) );
 	}
 
