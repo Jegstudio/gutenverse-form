@@ -31,6 +31,17 @@ class Form_Input_Select extends Block_Abstract {
 	 */
 	private function get_dropdown_icon_data( $icon, $type, $svg ) {
 		if ( 'svg' === $type && ! empty( $svg ) ) {
+			if ( ! is_string( $svg ) ) {
+				return '';
+			}
+
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+			$svg_data = base64_decode( $svg, true );
+
+			if ( false === $svg_data || '' === $svg_data || ! gutenverse_is_svg_safe( $svg_data ) ) {
+				return '';
+			}
+
 			return array(
 				'type' => 'svg',
 				'svg'  => $svg,
