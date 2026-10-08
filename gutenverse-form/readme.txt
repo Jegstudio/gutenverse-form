@@ -290,7 +290,7 @@ Terms: https://gutenverse.com/terms-and-conditions/
 
 = 3.0.11 =
 Bug fixes:
-- Fixed vulnerability issues with SVG icons. credit: Animesh - Automattic Inc.
+- Fixed vulnerability issues with SVG icons. credit: John Ryan Albon - WPScan.
 
 = 3.0.10 =
 New and improved:
