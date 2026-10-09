@@ -290,6 +290,7 @@ Terms: https://gutenverse.com/terms-and-conditions/
 
 = 3.0.12 =
 Bug fixes:
+- Fix email template not running properly
 - Fix legacy form fallback
 - Check if SVG value is empty
 
