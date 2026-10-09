@@ -367,11 +367,13 @@ class Init {
 	 * Initialize Form
 	 */
 	public function init_post_type() {
+		// Register email templates on REST requests as well as admin requests.
+		$this->email_template = new Email_Template();
+
 		if ( is_admin() ) {
-			$this->form           = new Form();
-			$this->entries        = new Entries();
-			$this->email_template = new Email_Template();
-			$this->integration    = new Integration();
+			$this->form        = new Form();
+			$this->entries     = new Entries();
+			$this->integration = new Integration();
 		}
 
 		// Need to let this outside, because cron need to be executed even though its outside admin panel.
