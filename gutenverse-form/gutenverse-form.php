@@ -1,6 +1,7 @@
 <?php
 /**
  * Plugin Name: Gutenverse Form
+ * Requires PHP: 7.4
  * Description: Powerful and intuitive form builder plugin designed to streamline the process of creating and managing forms on your WordPress website.
  * Plugin URI: https://gutenverse.com/
  * Author: Jegstudio
