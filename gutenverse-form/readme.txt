@@ -5,7 +5,7 @@ Tags: form, form builder, contact form, block form, booking form
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.0.12
+Stable tag: 3.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -287,6 +287,13 @@ Website: https://gutenverse.com/
 Terms: https://gutenverse.com/terms-and-conditions/
 
 == Changelog ==
+
+= 3.1.0 =
+Compatibility:
+- Update minimum PHP version required to 7.4
+
+New and improved:
+- Add option to load CSS as file in the Dashboard Frontend settings
 
 = 3.0.12 =
 Bug fixes:
