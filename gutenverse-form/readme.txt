@@ -182,6 +182,15 @@ Learn more at [Gutenverse Form](https://gutenverse.com/form/).
 
 For more help, read the [Gutenverse documentation](https://gutenverse.com/docs/).
 
+== Discover More From Jegstudio ==
+
+Explore more products from the team behind Gutenverse Form.
+
+* **JNews** - Launch Your News or Magazine Website with a [News WordPress Theme](https://jnews.io/?utm_source=wporg&utm_medium=readme).
+* **JegKit** - Build Your Website with [Elementor Addons & Template Kits](https://jegkit.com/?utm_source=wporg&utm_medium=readme).
+* **Gutenverse** - Build Pages and Customize Your Site with [WordPress Blocks & Site Builder](https://gutenverse.com/?utm_source=wporg&utm_medium=readme).
+* **Gutenverse Themes** - Start Your Next Website with Ready-to-Use [WordPress Block Themes](https://gutenverse.com/themes/?utm_source=wporg&utm_medium=readme).
+
 == Frequently Asked Questions ==
 
 = Can I create booking forms and reservation forms? =
