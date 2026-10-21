@@ -182,6 +182,37 @@ Learn more at [Gutenverse Form](https://gutenverse.com/form/).
 
 For more help, read the [Gutenverse documentation](https://gutenverse.com/docs/).
 
+== Use of 3rd-Party Services ==
+
+Gutenverse Form may connect to the following third-party services when you enable related features.
+
+= Google reCAPTCHA =
+
+If you add the reCAPTCHA block and configure reCAPTCHA keys, the plugin sends the reCAPTCHA response token to Google for verification. This is used only to validate the form submission and protect forms from spam.
+
+Service endpoint: https://www.google.com/recaptcha/api/siteverify
+Privacy Policy: https://policies.google.com/privacy
+Terms of Service: https://policies.google.com/terms
+
+= Optional Form Integrations [PRO] =
+
+When you enable a [PRO] form integration, submitted form data and configured field mappings may be sent to the selected external service. Supported integration options can include WhatsApp, Telegram, Discord, Mailchimp, Slack, webhooks, GetResponse, Drip, ActiveCampaign, Kit, MailerLite, and Google Sheets, depending on the integrations available on your site.
+
+Data is sent only for integrations you configure and enable. Review the privacy policy and terms of the external service you connect before sending visitor data to that service.
+
+= Optional Payment Gateways [PRO] =
+
+When you enable a [PRO] payment gateway such as LemonSqueezy, submitted payment, customer, order, and transaction data may be sent to the selected payment provider so the payment can be processed.
+
+Data is sent only for payment gateways you configure and enable. Review the privacy policy and terms of the payment provider before collecting payment data.
+
+= Gutenverse.com =
+
+The Gutenverse dashboard may include optional links, template/library access, documentation, support, or newsletter subscription features from gutenverse.com. Newsletter data is sent only when you manually submit your email address.
+
+Website: https://gutenverse.com/
+Terms: https://gutenverse.com/terms-and-conditions/
+
 == Discover More From Jegstudio ==
 
 Explore more products from the team behind Gutenverse Form.
@@ -263,37 +294,6 @@ After some updates, WordPress may show an "Attempt Block Recovery" button for bl
 14. Subscribe Form - Build email subscribe and lead generation forms.
 15. Form Notice - Configure visitor success and error messages after submission.
 16. Responsive Styling - Customize labels, placeholders, spacing, borders, colors, and typography.
-
-== Use of 3rd-Party Services ==
-
-Gutenverse Form may connect to the following third-party services when you enable related features.
-
-= Google reCAPTCHA =
-
-If you add the reCAPTCHA block and configure reCAPTCHA keys, the plugin sends the reCAPTCHA response token to Google for verification. This is used only to validate the form submission and protect forms from spam.
-
-Service endpoint: https://www.google.com/recaptcha/api/siteverify
-Privacy Policy: https://policies.google.com/privacy
-Terms of Service: https://policies.google.com/terms
-
-= Optional Form Integrations [PRO] =
-
-When you enable a [PRO] form integration, submitted form data and configured field mappings may be sent to the selected external service. Supported integration options can include WhatsApp, Telegram, Discord, Mailchimp, Slack, webhooks, GetResponse, Drip, ActiveCampaign, Kit, MailerLite, and Google Sheets, depending on the integrations available on your site.
-
-Data is sent only for integrations you configure and enable. Review the privacy policy and terms of the external service you connect before sending visitor data to that service.
-
-= Optional Payment Gateways [PRO] =
-
-When you enable a [PRO] payment gateway such as LemonSqueezy, submitted payment, customer, order, and transaction data may be sent to the selected payment provider so the payment can be processed.
-
-Data is sent only for payment gateways you configure and enable. Review the privacy policy and terms of the payment provider before collecting payment data.
-
-= Gutenverse.com =
-
-The Gutenverse dashboard may include optional links, template/library access, documentation, support, or newsletter subscription features from gutenverse.com. Newsletter data is sent only when you manually submit your email address.
-
-Website: https://gutenverse.com/
-Terms: https://gutenverse.com/terms-and-conditions/
 
 == Changelog ==
 
