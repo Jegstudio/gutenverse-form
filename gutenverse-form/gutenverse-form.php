@@ -3,10 +3,10 @@
  * Plugin Name: Gutenverse Form
  * Requires PHP: 7.4
  * Description: Powerful and intuitive form builder plugin designed to streamline the process of creating and managing forms on your WordPress website.
- * Plugin URI: https://gutenverse.com/
+ * Plugin URI: https://gutenverse.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Author: Jegstudio
  * Version: 3.1.0
- * Author URI: https://jegtheme.com/
+ * Author URI: https://jegtheme.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * License: GPLv3
  * Text Domain: gutenverse-form
  *
