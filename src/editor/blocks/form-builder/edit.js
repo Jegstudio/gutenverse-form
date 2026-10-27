@@ -26,13 +26,13 @@ import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { isBlockPreviewContext } from '../form-input/general/is-preview-context';
 import { signal } from 'gutenverse-core/editor-helper';
+import { collectStandaloneFormBuilders, isSyncedPatternChild } from './ownership';
 
 const BULK_STYLE_PANEL_STATE = {
     panel: 'setting',
     section: 2,
 };
 
-const FORM_BUILDER_BLOCK_NAME = 'gutenverse/form-builder';
 const APPOINTMENT_TEMPLATE_ID = 'appointment';
 const APPOINTMENT_TEMPLATE_PREVIEW_IMAGE = 'form-builder-appointment.png';
 const FORM_BUILDER_TEMPLATES_FILTER = 'gutenverse-form.form-builder-templates';
@@ -47,20 +47,6 @@ const createFormInstanceId = () => {
 };
 
 const getFormActionId = (formId) => formId?.value || '';
-
-const collectFormBuilderBlocks = (blocks = [], result = []) => {
-    blocks.forEach(block => {
-        if (block.name === FORM_BUILDER_BLOCK_NAME) {
-            result.push(block);
-        }
-
-        if (block.innerBlocks?.length) {
-            collectFormBuilderBlocks(block.innerBlocks, result);
-        }
-    });
-
-    return result;
-};
 
 let persistCurrentPostTimer = null;
 let persistCurrentPostUnsubscribe = null;
@@ -510,9 +496,16 @@ const useFormActionOwnership = ({ attributes, clientId, setAttributes, disabled 
     const formActionId = getFormActionId(attributes.formId);
     const formInstanceId = attributes.formInstanceId || '';
     const formBuilderBlocks = useSelect(
-        (select) => collectFormBuilderBlocks(select('core/block-editor').getBlocks()),
+        (select) => collectStandaloneFormBuilders(select('core/block-editor').getBlocks()),
         []
     );
+    // Synced pattern inner blocks are read-only previews (their onChange is a no-op).
+    // Mutating ownership here creates actions that cannot be persisted to the pattern.
+    const isSharedPreview = useSelect(
+        (select) => isSyncedPatternChild(select('core/block-editor'), clientId),
+        [clientId]
+    );
+    const ownershipDisabled = disabled || isSharedPreview;
     const currentPostId = useSelect(
         (select) => select('core/editor')?.getCurrentPostId?.() || 0,
         []
@@ -530,17 +523,17 @@ const useFormActionOwnership = ({ attributes, clientId, setAttributes, disabled 
     };
 
     useEffect(() => {
-        if (disabled) {
+        if (ownershipDisabled) {
             return;
         }
 
         if (!attributes.formInstanceId) {
             setAttributes({ formInstanceId: createFormInstanceId() });
         }
-    }, [attributes.formInstanceId, disabled, setAttributes]);
+    }, [attributes.formInstanceId, ownershipDisabled, setAttributes]);
 
     useEffect(() => {
-        if (disabled) {
+        if (ownershipDisabled) {
             return;
         }
 
@@ -551,10 +544,10 @@ const useFormActionOwnership = ({ attributes, clientId, setAttributes, disabled 
             setOwnershipNotice('');
             setAttributes({ formInstanceId: createFormInstanceId() });
         }
-    }, [clientId, disabled, formActionId, formInstanceId, formBuilderBlocks, setAttributes]);
+    }, [clientId, ownershipDisabled, formActionId, formInstanceId, formBuilderBlocks, setAttributes]);
 
     useEffect(() => {
-        if (disabled) {
+        if (ownershipDisabled) {
             return;
         }
 
@@ -599,9 +592,9 @@ const useFormActionOwnership = ({ attributes, clientId, setAttributes, disabled 
         }).catch(() => {
             ownershipRequestKey.current = '';
         });
-    }, [clientId, currentPostId, disabled, formActionId, formInstanceId, formBuilderBlocks, setAttributes]);
+    }, [clientId, currentPostId, ownershipDisabled, formActionId, formInstanceId, formBuilderBlocks, setAttributes]);
 
-    return disabled ? '' : ownershipNotice;
+    return ownershipDisabled ? '' : ownershipNotice;
 };
 
 const FormBuilderBlock = compose(

@@ -1730,6 +1730,59 @@ class Form {
 	}
 
 	/**
+	 * Find a matching block in a saved block tree.
+	 *
+	 * @param array    $blocks Parsed blocks.
+	 * @param callable $match  Block matcher.
+	 * @return boolean
+	 */
+	private static function blocks_contain_match( $blocks, $match ) {
+		foreach ( $blocks as $block ) {
+			if ( $match( $block ) || ( ! empty( $block['innerBlocks'] ) && self::blocks_contain_match( $block['innerBlocks'], $match ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Preserve an action when its builder is moved into a synced pattern.
+	 * The former owner must reference the pattern and no longer contain the
+	 * builder itself. Copying a builder or pattern still needs a new action.
+	 *
+	 * @param integer $form_id     Form action ID.
+	 * @param array   $owner       Previous owner.
+	 * @param integer $post_id     Pattern post ID.
+	 * @param string  $instance_id Builder instance ID.
+	 * @return boolean
+	 */
+	private static function is_form_action_moved_to_pattern( $form_id, $owner, $post_id, $instance_id ) {
+		$pattern = get_post( $post_id );
+		$source  = get_post( $owner['post_id'] );
+
+		if ( ! $pattern || 'wp_block' !== $pattern->post_type || ! $source || (string) $owner['instance_id'] !== (string) $instance_id ) {
+			return false;
+		}
+
+		$pattern_blocks = parse_blocks( $pattern->post_content );
+		$source_blocks  = parse_blocks( $source->post_content );
+		$matches_form   = static function ( $block ) use ( $form_id, $instance_id ) {
+			return 'gutenverse/form-builder' === $block['blockName'] &&
+				isset( $block['attrs']['formId']['value'], $block['attrs']['formInstanceId'] ) &&
+				(int) $block['attrs']['formId']['value'] === (int) $form_id &&
+				(string) $block['attrs']['formInstanceId'] === (string) $instance_id;
+		};
+		$matches_ref    = static function ( $block ) use ( $post_id ) {
+			return 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] ) && (int) $block['attrs']['ref'] === (int) $post_id;
+		};
+
+		return self::blocks_contain_match( $source_blocks, $matches_ref ) &&
+			! self::blocks_contain_match( $source_blocks, $matches_form ) &&
+			self::blocks_contain_match( $pattern_blocks, $matches_form );
+	}
+
+	/**
 	 * Ensure a form action belongs to the current form builder instance.
 	 *
 	 * @param integer $id          Form action ID.
@@ -1773,6 +1826,12 @@ class Form {
 					'claimed' => true,
 				)
 			);
+		}
+
+		if ( self::is_form_action_moved_to_pattern( $id, $owner, $post_id, $instance_id ) ) {
+			self::update_form_action_owner( $id, $post_id, $instance_id );
+
+			return self::prepare_form_action_assignment_response( $id );
 		}
 
 		$copied_id = self::clone_form_action( $id, $post_id, $instance_id );
