@@ -5,7 +5,7 @@ Tags: form, form builder, contact form, block form, booking form
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.2.0
+Stable tag: 3.2.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -296,6 +296,10 @@ After some updates, WordPress may show an "Attempt Block Recovery" button for bl
 16. Responsive Styling - Customize labels, placeholders, spacing, borders, colors, and typography.
 
 == Changelog ==
+
+= 3.2.1 =
+Bug fixes:
+- fix issue with popup pricing
 
 = 3.2.0 =
 New and Improved:
