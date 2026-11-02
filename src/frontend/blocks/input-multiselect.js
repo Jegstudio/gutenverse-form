@@ -45,5 +45,5 @@ class GutenverseMultiInputSelect extends Default {
 const selected = u('.guten-form-input-multiselect');
 
 if (selected) {
-    new GutenverseMultiInputSelect(selected);
+    new GutenverseMultiInputSelect(selected, '.guten-form-input-multiselect');
 }

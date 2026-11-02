@@ -41,5 +41,5 @@ class GutenverseInputRadio extends Default {
 const selected = u('.guten-form-input-radio');
 
 if (selected.length > 0) {
-    new GutenverseInputRadio(selected);
+    new GutenverseInputRadio(selected, '.guten-form-input-radio');
 }

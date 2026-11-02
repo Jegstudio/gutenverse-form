@@ -667,5 +667,5 @@ class GutenverseFormValidation extends Default {
 const selected = u('.guten-form-builder');
 
 if (selected) {
-    new GutenverseFormValidation(selected);
+    new GutenverseFormValidation(selected, '.guten-form-builder');
 }

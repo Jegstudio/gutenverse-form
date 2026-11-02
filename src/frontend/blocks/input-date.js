@@ -25,7 +25,7 @@ class GutenverseInputDate extends Default {
 const selected = u('.guten-form-input-date');
 
 if (selected) {
-    new GutenverseInputDate(selected);
+    new GutenverseInputDate(selected, '.guten-form-input-date');
 }
 
 

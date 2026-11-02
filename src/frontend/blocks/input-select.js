@@ -149,5 +149,5 @@ class GutenverseInputSelect extends Default {
 const selected = u('.guten-form-input-select');
 
 if (selected) {
-    new GutenverseInputSelect(selected);
+    new GutenverseInputSelect(selected, '.guten-form-input-select');
 }

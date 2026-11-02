@@ -25,5 +25,5 @@ class GutenverseInputGDPR extends Default {
 const selected = u('.guten-form-input-gdpr');
 
 if (selected) {
-    new GutenverseInputGDPR(selected);
+    new GutenverseInputGDPR(selected, '.guten-form-input-gdpr');
 }
