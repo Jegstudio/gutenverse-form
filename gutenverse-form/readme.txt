@@ -5,7 +5,7 @@ Tags: form, form builder, contact form, block form, booking form
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.2.1
+Stable tag: 3.2.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -297,7 +297,17 @@ After some updates, WordPress may show an "Attempt Block Recovery" button for bl
 
 == Changelog ==
 
-Fix block scripts not working when loaded via JNews Blocks Post Autoload
+= 3.2.2 =
+New and Improved:
+- Add fallback images for featured image backgrounds in container blocks
+- Add an option to enable background slideshows on mobile devices
+- Update shared core with separate generated CSS loading and dashboard integration improvements
+
+Bug fixes:
+- Fix form and input block scripts not working when loaded via JNews Blocks Post Autoload
+- Fix frontend background colors not updating when switching from global to custom colors
+- Fix pricing and license upgrade button conflicts with JNews Blocks
+- Fix security issues in form submissions, CSV exports, and dynamic metadata. Credit: Wade Sparks from VulnCheck.
 
 = 3.2.1 =
 Bug fixes:
