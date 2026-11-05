@@ -707,6 +707,22 @@ class Entries {
 	}
 
 	/**
+	 * Prevent spreadsheet applications from interpreting exported cells as formulas.
+	 *
+	 * @param mixed $value Exported cell value.
+	 * @return string
+	 */
+	private static function csv_cell_text( $value ) {
+		$value = (string) $value;
+
+		if ( preg_match( '/^[\x00-\x20]*[=+@-]|^[\x00-\x20]*[\t\r\n]/', $value ) ) {
+			return "'" . $value;
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Get a post title as plain text without WordPress display entities.
 	 *
 	 * @param int|\WP_Post $post     Post ID or object.
@@ -946,7 +962,7 @@ class Entries {
 		header( 'Content-Disposition: attachment; filename=' . $filename );
 
 		$output = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		fputcsv( $output, array_merge( array( 'Entry ID', 'Date', 'Title', 'Form', 'Referral' ), $field_keys ) );
+		fputcsv( $output, array_map( array( __CLASS__, 'csv_cell_text' ), array_merge( array( 'Entry ID', 'Date', 'Title', 'Form', 'Referral' ), $field_keys ) ) );
 
 		foreach ( $query->posts as $post ) {
 			$form_id  = (int) get_post_meta( $post->ID, 'form-id', true );
@@ -965,7 +981,7 @@ class Entries {
 				$row[] = isset( $values[ $field_key ] ) ? $values[ $field_key ] : '';
 			}
 
-			fputcsv( $output, $row );
+			fputcsv( $output, array_map( array( __CLASS__, 'csv_cell_text' ), $row ) );
 		}
 
 		fclose( $output ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose

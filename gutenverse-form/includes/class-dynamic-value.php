@@ -95,6 +95,20 @@ class Dynamic_Value {
 	}
 
 	/**
+	 * Only expose metadata explicitly approved by trusted server-side code.
+	 *
+	 * @param string $type Metadata object type.
+	 * @param mixed  $key Requested metadata key.
+	 * @return bool
+	 */
+	private function is_allowed_meta_key( $type, $key ) {
+		$defaults = 'user' === $type ? array( 'first_name', 'last_name', 'nickname', 'description' ) : array();
+		$allowed  = apply_filters( 'gutenverse_form_dynamic_' . $type . '_meta_allowed_keys', $defaults );
+
+		return is_string( $key ) && '' !== $key && is_array( $allowed ) && in_array( $key, $allowed, true );
+	}
+
+	/**
 	 * Resolve Loop Data.
 	 *
 	 * @param string $type       Loop Data Type.
@@ -123,7 +137,7 @@ class Dynamic_Value {
 				break;
 			case 'meta':
 				$meta_key = isset( $attributes['loopDataMetaKey'] ) ? $attributes['loopDataMetaKey'] : '';
-				if ( ! empty( $meta_key ) ) {
+				if ( $this->is_allowed_meta_key( 'post', $meta_key ) ) {
 					$value = get_post_meta( $post->ID, $meta_key, true );
 				}
 				break;
@@ -138,7 +152,7 @@ class Dynamic_Value {
 				break;
 		}
 
-		return ! empty( $value ) ? (string) $value : ( isset( $attributes['fallbackDefaultValue'] ) ? (string) $attributes['fallbackDefaultValue'] : '' );
+		return is_scalar( $value ) && ! empty( $value ) ? (string) $value : ( isset( $attributes['fallbackDefaultValue'] ) ? (string) $attributes['fallbackDefaultValue'] : '' );
 	}
 
 	/**
@@ -150,7 +164,7 @@ class Dynamic_Value {
 	private function resolve_query_data( $attributes ) {
 		$key   = isset( $attributes['queryParamKey'] ) ? $attributes['queryParamKey'] : '';
 		$value = ! empty( $key ) && isset( $_GET[ $key ] ) ? $_GET[ $key ] : '';
-		return ! empty( $value ) ? (string) $value : ( isset( $attributes['fallbackDefaultValue'] ) ? (string) $attributes['fallbackDefaultValue'] : '' );
+		return is_scalar( $value ) && ! empty( $value ) ? (string) $value : ( isset( $attributes['fallbackDefaultValue'] ) ? (string) $attributes['fallbackDefaultValue'] : '' );
 	}
 
 	/**
@@ -192,12 +206,12 @@ class Dynamic_Value {
 				break;
 			case 'meta':
 				$meta_key = isset( $attributes['userDataMetaKey'] ) ? $attributes['userDataMetaKey'] : '';
-				if ( ! empty( $meta_key ) ) {
+				if ( $this->is_allowed_meta_key( 'user', $meta_key ) ) {
 					$value = get_user_meta( $user->ID, $meta_key, true );
 				}
 				break;
 		}
 
-		return ! empty( $value ) ? (string) $value : ( isset( $attributes['fallbackDefaultValue'] ) ? (string) $attributes['fallbackDefaultValue'] : '' );
+		return is_scalar( $value ) && ! empty( $value ) ? (string) $value : ( isset( $attributes['fallbackDefaultValue'] ) ? (string) $attributes['fallbackDefaultValue'] : '' );
 	}
 }
