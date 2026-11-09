@@ -297,10 +297,6 @@ After some updates, WordPress may show an "Attempt Block Recovery" button for bl
 
 == Changelog ==
 
-= 3.2.3 =
-Bug fixes:
-- Fix vulnerability = still can be injected to the value for csv.
-
 = 3.2.2 =
 New and Improved:
 - Add fallback images for featured image backgrounds in container blocks
