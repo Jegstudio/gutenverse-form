@@ -712,7 +712,7 @@ class Entries {
 	 * @param mixed $value Exported cell value.
 	 * @return string
 	 */
-	private static function csv_cell_text( $value ) {
+	public static function csv_cell_text( $value ) {
 		$value = (string) $value;
 
 		if ( preg_match( '/^[\x00-\x20]*[=+@-]|^[\x00-\x20]*[\t\r\n]/', $value ) ) {

@@ -397,37 +397,27 @@ class Api {
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 
+		$output = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+
 		foreach ( $posts as $id => $post ) {
 			$form = get_post_meta( $post->ID, 'entry-data', true );
 			if ( 0 === $id ) {
-				foreach ( $form as $id => $data ) {
-					echo esc_html( $data['id'] );
-
-					if ( count( $form ) > ( $id + 1 ) ) {
-						echo ',';
-					}
+				$headers = array();
+				foreach ( $form as $data ) {
+					$headers[] = Entries::csv_cell_text( $data['id'] );
 				}
-				echo "\n";
+				fputcsv( $output, $headers, ',', '"', '' );
 			}
 
-			foreach ( $form as $id => $data ) {
-				if ( is_array( $data['value'] ) ) {
-					echo '"';
-					echo esc_html( implode( ',', $data['value'] ) );
-					echo '"';
-				} else {
-					echo '"';
-					echo esc_html( str_replace( '"', '`', $data['value'] ) );
-					echo '"';
-				}
-
-				if ( count( $form ) > ( $id + 1 ) ) {
-					echo ',';
-				}
+			$row = array();
+			foreach ( $form as $data ) {
+				$value = is_array( $data['value'] ) ? implode( ',', $data['value'] ) : $data['value'];
+				$row[] = Entries::csv_cell_text( $value );
 			}
-			echo "\n";
+			fputcsv( $output, $row, ',', '"', '' );
 		}
 
+		fclose( $output ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
 	}
 
